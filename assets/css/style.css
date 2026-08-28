@@ -58,6 +58,10 @@
 
 html { scroll-behavior: smooth; }
 
+[x-cloak] { display: none !important; }
+
+.text-text-muted { color: var(--text-muted); }
+
 body {
   background: var(--bg);
   color: var(--text);
@@ -211,6 +215,8 @@ select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
 .line-clamp-3 {
   display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
 }
+
+.break-inside-avoid { break-inside: avoid; }
 
 /* Sidebar item active state (admin) */
 .side-link {
