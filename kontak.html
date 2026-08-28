@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kontak | Program Studi Hukum — UMP</title>
+<meta name="description" content="Website resmi Program Studi Hukum Universitas Muhammadiyah Papua.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        colors: { navy: '#0B1F3A', royal: '#2A4E9E', gold: '#C9A227', bg: '#E8ECF1' },
+        fontFamily: { sans: ['Inter','sans-serif'], display: ['Poppins','sans-serif'] },
+      }
+    }
+  }
+</script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="assets/css/style.css">
+
+</head>
+<body x-data class="font-sans">
+
+<header x-data="{ mobileOpen:false, ...themeStore() }" class="sticky top-0 z-50 neu-flat backdrop-blur">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex items-center justify-between py-3 gap-4">
+      <a href="index.html" class="flex items-center gap-3 shrink-0">
+        <div class="w-11 h-11 neu-raised-sm flex items-center justify-center">
+          <span class="font-display font-bold text-navy dark:text-white text-base">UMP</span>
+        </div>
+        <div class="leading-tight hidden sm:block">
+          <p class="font-display font-semibold text-navy dark:text-white text-sm">Program Studi Hukum</p>
+          <p class="text-[11px] text-text-muted">Universitas Muhammadiyah Papua</p>
+        </div>
+      </a>
+
+      <nav class="hidden xl:flex items-center gap-0.5 overflow-x-auto">
+        <a href="index.html" class="px-3 py-2 rounded-xl text-sm text-navy/70 dark:text-slate-300 hover:text-royal transition-colors whitespace-nowrap">Beranda</a>
+        <a href="profil.html" class="px-3 py-2 rounded-xl text-sm text-navy/70 dark:text-slate-300 hover:text-royal transition-colors whitespace-nowrap">Profil</a>
+        <a href="dosen.html" class="px-3 py-2 rounded-xl text-sm text-navy/70 dark:text-slate-300 hover:text-royal transition-colors whitespace-nowrap">Dosen</a>
+        <a href="kurikulum.html" class="px-3 py-2 rounded-xl text-sm text-navy/70 dark:text-slate-300 hover:text-royal transition-colors whitespace-nowrap">Kurikulum</a>
+        <a href="berita.html" class="px-3 py-2 rounded-xl text-sm text-navy/70 dark:text-slate-300 hover:text-royal transition-colors whitespace-nowrap">Berita</a>
+        <a href="pengumuman.html" class="px-3 py-2 rounded-xl text-sm text-navy/70 dark:text-slate-300 hover:text-royal transition-colors whitespace-nowrap">Pengumuman</a>
+        <a href="kegiatan.html" class="px-3 py-2 rounded-xl text-sm text-navy/70 dark:text-slate-300 hover:text-royal transition-colors whitespace-nowrap">Kegiatan</a>
+        <a href="prestasi.html" class="px-3 py-2 rounded-xl text-sm text-navy/70 dark:text-slate-300 hover:text-royal transition-colors whitespace-nowrap">Prestasi</a>
+        <a href="artikel.html" class="px-3 py-2 rounded-xl text-sm text-navy/70 dark:text-slate-300 hover:text-royal transition-colors whitespace-nowrap">Artikel Hukum</a>
+        <a href="galeri.html" class="px-3 py-2 rounded-xl text-sm text-navy/70 dark:text-slate-300 hover:text-royal transition-colors whitespace-nowrap">Galeri</a>
+        <a href="dokumen.html" class="px-3 py-2 rounded-xl text-sm text-navy/70 dark:text-slate-300 hover:text-royal transition-colors whitespace-nowrap">Dokumen</a>
+        <a href="alumni.html" class="px-3 py-2 rounded-xl text-sm text-navy/70 dark:text-slate-300 hover:text-royal transition-colors whitespace-nowrap">Alumni</a>
+        <a href="kontak.html" class="px-3 py-2 rounded-xl text-sm text-royal font-semibold transition-colors whitespace-nowrap">Kontak</a>
+      </nav>
+
+      <div class="flex items-center gap-2 shrink-0">
+        <div class="hidden md:flex items-center neu-pressed px-3 py-2 gap-2 w-44">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          <input type="text" placeholder="Cari informasi Prodi..." class="bg-transparent text-sm outline-none w-full placeholder:text-text-muted">
+        </div>
+        <button @click="toggle()" class="neu-btn w-10 h-10 flex items-center justify-center" aria-label="Ganti mode gelap/terang">
+          <svg x-show="!dark" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+          <svg x-show="dark" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+        </button>
+        <a href="admin/login.html" class="hidden md:inline-flex neu-btn-primary px-4 py-2.5 rounded-xl text-sm">Portal Akademik</a>
+        <button @click="mobileOpen = !mobileOpen" class="xl:hidden neu-btn w-10 h-10 flex items-center justify-center" aria-label="Buka menu">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div x-show="mobileOpen" x-transition x-cloak class="xl:hidden pb-4 grid grid-cols-2 gap-2">
+      <a href="index.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Beranda</a>
+          <a href="profil.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Profil</a>
+          <a href="dosen.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Dosen</a>
+          <a href="kurikulum.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Kurikulum</a>
+          <a href="berita.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Berita</a>
+          <a href="pengumuman.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Pengumuman</a>
+          <a href="kegiatan.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Kegiatan</a>
+          <a href="prestasi.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Prestasi</a>
+          <a href="artikel.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Artikel Hukum</a>
+          <a href="galeri.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Galeri</a>
+          <a href="dokumen.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Dokumen</a>
+          <a href="alumni.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Alumni</a>
+          <a href="kontak.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-royal font-semibold">Kontak</a>
+      <a href="admin/login.html" class="col-span-2 text-center neu-btn-primary px-4 py-3 rounded-xl text-sm">Portal Akademik</a>
+    </div>
+  </div>
+</header>
+
+<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+  <div class="mb-10">
+    <span class="neu-badge badge-new mb-3">Kami Siap Membantu</span>
+    <h1 class="font-display font-bold text-3xl sm:text-4xl text-navy dark:text-white">Hubungi Program Studi Hukum</h1>
+  </div>
+
+  <div class="grid lg:grid-cols-5 gap-8">
+    <div class="lg:col-span-2 space-y-4">
+      
+      <div class="neu-raised p-5 flex items-start gap-4">
+        <div class="w-11 h-11 shrink-0 neu-raised-sm flex items-center justify-center text-royal">&#128205;</div>
+        <div>
+          <p class="text-xs text-text-muted mb-0.5">Alamat</p>
+          <p class="font-semibold text-navy dark:text-white text-sm">Jl. Yap Thiam Hien, Kel. Yobe, Jayapura Utara, Papua</p>
+        </div>
+      </div>
+      <div class="neu-raised p-5 flex items-start gap-4">
+        <div class="w-11 h-11 shrink-0 neu-raised-sm flex items-center justify-center text-royal">&#9993;</div>
+        <div>
+          <p class="text-xs text-text-muted mb-0.5">Email</p>
+          <p class="font-semibold text-navy dark:text-white text-sm">hukum@ump.ac.id</p>
+        </div>
+      </div>
+      <div class="neu-raised p-5 flex items-start gap-4">
+        <div class="w-11 h-11 shrink-0 neu-raised-sm flex items-center justify-center text-royal">&#128222;</div>
+        <div>
+          <p class="text-xs text-text-muted mb-0.5">Telepon</p>
+          <p class="font-semibold text-navy dark:text-white text-sm">(0967) 123-456</p>
+        </div>
+      </div>
+      <div class="neu-raised p-5 flex items-start gap-4">
+        <div class="w-11 h-11 shrink-0 neu-raised-sm flex items-center justify-center text-royal">&#128337;</div>
+        <div>
+          <p class="text-xs text-text-muted mb-0.5">Jam Layanan</p>
+          <p class="font-semibold text-navy dark:text-white text-sm">Senin &ndash; Jumat, 08.00 &ndash; 16.00 WIT</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="lg:col-span-3">
+      <div class="neu-raised p-6 sm:p-8" x-data="contactForm()">
+        <h2 class="font-display font-semibold text-xl text-navy dark:text-white mb-6">Kirim Pesan</h2>
+        <form @submit.prevent="submit()" class="space-y-4">
+          <div class="grid sm:grid-cols-2 gap-4">
+            <input x-model="form.nama" type="text" placeholder="Nama Lengkap" class="neu-input w-full" required>
+            <input x-model="form.email" type="email" placeholder="Alamat Email" class="neu-input w-full" required>
+          </div>
+          <input x-model="form.subjek" type="text" placeholder="Subjek" class="neu-input w-full">
+          <textarea x-model="form.pesan" rows="5" placeholder="Tulis pesan Anda..." class="neu-input w-full" required></textarea>
+          <button type="submit" :disabled="loading" class="neu-btn-primary px-6 py-3.5 rounded-xl w-full sm:w-auto">
+            <span x-show="!loading">Kirim Pesan</span>
+            <span x-show="loading">Mengirim...</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="neu-raised mt-8 h-64 overflow-hidden">
+    <img src="https://placehold.co/1200x400/EEF1F5/0B1F3A?text=Peta+Lokasi+Kampus" class="w-full h-full object-cover" alt="Peta lokasi kampus">
+  </div>
+</section>
+
+<footer class="mt-20 neu-flat">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 grid grid-cols-2 md:grid-cols-4 gap-10">
+    <div class="col-span-2 md:col-span-1">
+      <div class="flex items-center gap-3 mb-4">
+        <div class="w-11 h-11 neu-raised-sm flex items-center justify-center">
+          <span class="font-display font-bold text-navy dark:text-white text-base">UMP</span>
+        </div>
+        <p class="font-display font-semibold text-navy dark:text-white text-sm leading-tight">Program Studi<br>Hukum</p>
+      </div>
+      <p class="text-sm text-text-muted">Mencetak sarjana hukum yang berintegritas, profesional, dan berkeadilan.</p>
+    </div>
+    <div>
+      <p class="font-display font-semibold text-navy dark:text-white mb-3 text-sm">Program Studi</p>
+      <ul class="space-y-2 text-sm text-text-muted">
+        <li><a href="profil.html" class="hover:text-royal">Profil</a></li>
+        <li><a href="profil.html#visi-misi" class="hover:text-royal">Visi &amp; Misi</a></li>
+        <li><a href="dosen.html" class="hover:text-royal">Dosen</a></li>
+        <li><a href="kurikulum.html" class="hover:text-royal">Kurikulum</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="font-display font-semibold text-navy dark:text-white mb-3 text-sm">Akademik</p>
+      <ul class="space-y-2 text-sm text-text-muted">
+        <li><a href="berita.html" class="hover:text-royal">Berita</a></li>
+        <li><a href="pengumuman.html" class="hover:text-royal">Pengumuman</a></li>
+        <li><a href="kegiatan.html" class="hover:text-royal">Kegiatan</a></li>
+        <li><a href="dokumen.html" class="hover:text-royal">Dokumen</a></li>
+      </ul>
+    </div>
+    <div>
+      <p class="font-display font-semibold text-navy dark:text-white mb-3 text-sm">Kontak</p>
+      <ul class="space-y-2 text-sm text-text-muted">
+        <li>Jl. Yap Thiam Hien, Kel. Yobe, Jayapura Utara</li>
+        <li>hukum@ump.ac.id</li>
+        <li>(0967) 123-456</li>
+      </ul>
+    </div>
+  </div>
+  <div class="border-t border-black/5 dark:border-white/5 py-5 text-center text-xs text-text-muted">
+    © 2026 Program Studi Hukum — Universitas Muhammadiyah Papua. All Rights Reserved.
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
