@@ -1,22 +1,28 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Profil Prodi | Program Studi Hukum — UMP</title>
-<meta name="description" content="Website resmi Program Studi Hukum Universitas Muhammadiyah Papua.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/css/tailwind.min.css">
-<script src="../assets/js/app.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="../assets/css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profil Prodi | Program Studi Hukum — UMP</title>
+  <meta name="description" content="Website resmi Program Studi Hukum Universitas Muhammadiyah Papua.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/tailwind.min.css">
+  <script src="../assets/js/app.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
 
 </head>
+
 <body x-data="adminShell()" class="font-sans">
-    <div class="flex min-h-screen">
-      
-    <aside class="admin-sidebar w-72 shrink-0 neu-raised m-4 lg:mr-0 p-4 flex flex-col gap-1 fixed lg:sticky top-4 h-[calc(100vh-2rem)] overflow-y-auto z-40 bg-bg" :class="sidebarOpen ? 'sidebar-open' : ''">
+  <div class="flex min-h-screen">
+
+    <aside
+      class="admin-sidebar w-72 shrink-0 neu-raised m-4 lg:mr-0 p-4 flex flex-col gap-1 fixed lg:sticky top-4 h-[calc(100vh-2rem)] overflow-y-auto z-40 bg-bg"
+      :class="sidebarOpen ? 'sidebar-open' : ''">
       <div class="flex items-center gap-3 px-2 pb-4 mb-2 border-b border-black/5 dark:border-white/5">
         <div class="w-10 h-10 neu-raised-sm flex items-center justify-center">
           <span class="font-display font-bold text-navy dark:text-white text-sm">UMP</span>
@@ -27,79 +33,147 @@
         </div>
       </div>
       <a href="dashboard.html" class="side-link ">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-          <span>Dashboard</span>
-        </a>
-        <a href="profil-prodi.html" class="side-link active">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-          <span>Profil Prodi</span>
-        </a>
-        <a href="dosen.html" class="side-link ">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-1.13a4 4 0 100-8 4 4 0 000 8zm6 0a4 4 0 10-3.87-5"/></svg>
-          <span>Dosen</span>
-        </a>
-        <a href="kurikulum.html" class="side-link ">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-          <span>Kurikulum</span>
-        </a>
-        <a href="berita.html" class="side-link ">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
-          <span>Berita</span>
-        </a>
-        <a href="pengumuman.html" class="side-link ">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
-          <span>Pengumuman</span>
-        </a>
-        <a href="kegiatan.html" class="side-link ">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-          <span>Kegiatan</span>
-        </a>
-        <a href="prestasi.html" class="side-link ">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2"/></svg>
-          <span>Prestasi</span>
-        </a>
-        <a href="artikel.html" class="side-link ">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5A2.5 2.5 0 006.5 22H20v-5M4 19.5V4.5A2.5 2.5 0 016.5 2H20v15"/></svg>
-          <span>Artikel</span>
-        </a>
-        <a href="galeri.html" class="side-link ">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M4 4h16v16H4V4z"/></svg>
-          <span>Galeri</span>
-        </a>
-        <a href="dokumen.html" class="side-link ">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-          <span>Dokumen</span>
-        </a>
-        <a href="alumni.html" class="side-link ">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.42A12.083 12.083 0 0112 20.055 12.083 12.083 0 015.84 10.58L12 14z"/></svg>
-          <span>Alumni</span>
-        </a>
-        <a href="pengguna.html" class="side-link ">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-          <span>Pengguna</span>
-        </a>
-        <a href="aktivitas.html" class="side-link ">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          <span>Activity Log</span>
-        </a>
-        <a href="pengaturan.html" class="side-link ">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/></svg>
-          <span>Pengaturan</span>
-        </a>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+        </svg>
+        <span>Dashboard</span>
+      </a>
+      <a href="profil-prodi.html" class="side-link active">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <span>Profil Prodi</span>
+      </a>
+      <a href="dosen.html" class="side-link ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-1.13a4 4 0 100-8 4 4 0 000 8zm6 0a4 4 0 10-3.87-5" />
+        </svg>
+        <span>Dosen</span>
+      </a>
+      <a href="kurikulum.html" class="side-link ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+        <span>Kurikulum</span>
+      </a>
+      <a href="berita.html" class="side-link ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+        </svg>
+        <span>Berita</span>
+      </a>
+      <a href="pengumuman.html" class="side-link ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+        </svg>
+        <span>Pengumuman</span>
+      </a>
+      <a href="kegiatan.html" class="side-link ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        <span>Kegiatan</span>
+      </a>
+      <a href="prestasi.html" class="side-link ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2" />
+        </svg>
+        <span>Prestasi</span>
+      </a>
+      <a href="artikel.html" class="side-link ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5A2.5 2.5 0 006.5 22H20v-5M4 19.5V4.5A2.5 2.5 0 016.5 2H20v15" />
+        </svg>
+        <span>Artikel</span>
+      </a>
+      <a href="galeri.html" class="side-link ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M4 4h16v16H4V4z" />
+        </svg>
+        <span>Galeri</span>
+      </a>
+      <a href="dokumen.html" class="side-link ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <span>Dokumen</span>
+      </a>
+      <a href="alumni.html" class="side-link ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.42A12.083 12.083 0 0112 20.055 12.083 12.083 0 015.84 10.58L12 14z" />
+        </svg>
+        <span>Alumni</span>
+      </a>
+      <a href="pengguna.html" class="side-link ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+        <span>Pengguna</span>
+      </a>
+      <a href="aktivitas.html" class="side-link ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>Activity Log</span>
+      </a>
+      <a href="pengaturan.html" class="side-link ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+        </svg>
+        <span>Pengaturan</span>
+      </a>
       <button @click="logout()" class="side-link mt-2 text-red-500 hover:text-red-600">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
         <span>Logout</span>
       </button>
     </aside>
-    <div x-show="sidebarOpen" x-cloak x-transition @click="sidebarOpen=false" class="fixed inset-0 bg-navy/40 z-30 lg:hidden"></div>
-    
-      <div class="flex-1 min-w-0">
-        
+    <div x-show="sidebarOpen" x-cloak x-transition @click="sidebarOpen=false"
+      class="fixed inset-0 bg-navy/40 z-30 lg:hidden"></div>
+
+    <div class="flex-1 min-w-0">
+
       <div class="neu-flat sticky top-0 z-30 mb-6">
         <div class="flex items-center justify-between px-4 sm:px-6 py-4 gap-4">
           <div class="flex items-center gap-3">
-            <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden neu-btn w-10 h-10 flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            <button @click="sidebarOpen = !sidebarOpen"
+              class="lg:hidden neu-btn w-10 h-10 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
             </button>
             <div>
               <p class="text-xs text-text-muted">Admin / Profil Prodi</p>
@@ -108,97 +182,267 @@
           </div>
           <div class="flex items-center gap-2">
             <div class="hidden md:flex items-center neu-pressed px-3 py-2 gap-2 w-56">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-              <input type="text" placeholder="Cari data..." class="bg-transparent text-sm outline-none w-full placeholder:text-text-muted">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-muted" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input type="text" placeholder="Cari data..."
+                class="bg-transparent text-sm outline-none w-full placeholder:text-text-muted">
             </div>
-            <button class="neu-btn w-10 h-10 flex items-center justify-center relative" aria-label="Notifikasi">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-              <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-gold rounded-full"></span>
-            </button>
+
+            <div class="relative">
+              <button @click="notifOpen = !notifOpen" class="neu-btn w-10 h-10 flex items-center justify-center relative" aria-label="Notifikasi">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                <span x-show="unreadNotifs > 0" class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-500 text-white rounded-full text-[10px] font-bold flex items-center justify-center" x-text="unreadNotifs"></span>
+              </button>
+              <div x-show="notifOpen" @click.outside="notifOpen = false" x-transition x-cloak
+                   class="notif-dropdown">
+                <!-- Header -->
+                <div class="flex items-center justify-between px-4 py-3 border-b border-black/10 dark:border-white/10 bg-[#d0d8e8] dark:bg-[#1e2d4a] rounded-t-2xl">
+                  <div class="flex items-center gap-2">
+                    <span class="font-display font-semibold text-sm text-navy dark:text-white">&#128276; Notifikasi</span>
+                    <span x-show="unreadNotifs > 0" class="px-2 py-0.5 rounded-full text-[10px] bg-royal text-white font-bold" x-text="unreadNotifs + ' Baru'"></span>
+                  </div>
+                  <div class="flex items-center gap-3 text-[11px]">
+                    <button @click="markAllRead()" class="text-royal hover:underline font-semibold">Baca Semua</button>
+                    <span class="text-black/20 dark:text-white/20">|</span>
+                    <button @click="clearNotifs()" class="text-red-500 hover:underline font-semibold">Hapus</button>
+                  </div>
+                </div>
+                <!-- Scrollable list — NO overflow-hidden on parent -->
+                <div class="notif-list">
+                  <template x-for="n in notifications" :key="n.id">
+                    <div class="flex items-start gap-3 px-3 py-2.5 rounded-xl mx-2 my-1 transition-all cursor-default"
+                         :class="n.read ? 'bg-white/30 dark:bg-white/5' : 'bg-white/90 dark:bg-white/10 border-l-2 border-royal shadow-sm'">
+                      <span class="text-xl shrink-0 mt-0.5" x-text="n.icon || '&#128276;'"></span>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-xs font-semibold text-navy dark:text-white leading-snug" x-text="n.judul"></p>
+                        <p class="text-[11px] text-text-muted mt-0.5 leading-snug line-clamp-2" x-text="n.pesan"></p>
+                        <p class="text-[10px] text-royal font-mono mt-1" x-text="n.waktu"></p>
+                      </div>
+                      <span x-show="!n.read" class="w-2 h-2 rounded-full bg-royal shrink-0 mt-1.5 flex-none"></span>
+                    </div>
+                  </template>
+                  <div x-show="notifications.length === 0" class="text-center py-8 text-xs text-text-muted">
+                    <span class="block text-2xl mb-2">&#128276;</span>
+                    Belum ada notifikasi.
+                  </div>
+                </div>
+                <!-- Footer -->
+                <div class="px-4 py-2.5 border-t border-black/10 dark:border-white/10 bg-[#d0d8e8] dark:bg-[#1e2d4a] text-center rounded-b-2xl">
+                  <a href="activity-log.html" class="text-[11px] text-royal hover:underline font-semibold">Lihat semua aktivitas &rarr;</a>
+                </div>
+              </div>
+            </div>
             <button @click="toggle()" class="neu-btn w-10 h-10 flex items-center justify-center">
-              <svg x-show="!dark" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
-              <svg x-show="dark" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+              <svg x-show="!dark" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              </svg>
+              <svg x-show="dark" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
             </button>
-            <div class="w-10 h-10 neu-raised-sm flex items-center justify-center font-display font-semibold text-royal text-sm">AP</div>
+            <div
+              class="w-10 h-10 neu-raised-sm flex items-center justify-center font-display font-semibold text-royal text-sm">
+              AP</div>
           </div>
         </div>
       </div>
-    
-        <main class="px-4 sm:px-6 pb-10">
-          
-<div x-data="{
+
+      <main class="px-4 sm:px-6 pb-10">
+
+        <div x-data="{
     form: { ...SAMPLE_PROFIL },
     save() {
       if(!this.form.nama){ NeuAlert.error('Nama Program Studi wajib diisi.'); return; }
+      const prev = SAMPLE_PROFIL;
       SAMPLE_PROFIL = { ...this.form };
-      DB.save('profil', SAMPLE_PROFIL);
+      if(!DB.save('profil', SAMPLE_PROFIL)){ SAMPLE_PROFIL = prev; return; }
       logActivity('Memperbarui Profil Program Studi', '\u{1F3DB}\u{FE0F}');
       NeuAlert.updated('Profil Program Studi berhasil diperbarui.');
     }
   }" class="max-w-4xl">
-  <div class="neu-raised p-6 sm:p-8 space-y-5">
-    <div class="grid sm:grid-cols-2 gap-4">
-      <div>
-        <label class="text-xs font-semibold text-text-muted mb-2 block">Nama Program Studi</label>
-        <input x-model="form.nama" type="text" class="neu-input w-full">
-      </div>
-      <div>
-        <label class="text-xs font-semibold text-text-muted mb-2 block">Kode Prodi</label>
-        <input x-model="form.kode" type="text" class="neu-input w-full">
-      </div>
-      <div>
-        <label class="text-xs font-semibold text-text-muted mb-2 block">Fakultas</label>
-        <input x-model="form.fakultas" type="text" class="neu-input w-full">
-      </div>
-      <div>
-        <label class="text-xs font-semibold text-text-muted mb-2 block">Universitas</label>
-        <input x-model="form.universitas" type="text" class="neu-input w-full">
-      </div>
-      <div>
-        <label class="text-xs font-semibold text-text-muted mb-2 block">Status Akreditasi</label>
-        <select x-model="form.akreditasi" class="neu-input w-full">
-          <option>Unggul</option><option>A</option><option>B</option><option>C</option>
-        </select>
-      </div>
-    </div>
+          <div class="neu-raised p-6 sm:p-8 space-y-5">
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label class="text-xs font-semibold text-text-muted mb-2 block">Nama Program Studi</label>
+                <input x-model="form.nama" type="text" class="neu-input w-full">
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-text-muted mb-2 block">Kode Prodi</label>
+                <input x-model="form.kode" type="text" class="neu-input w-full">
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-text-muted mb-2 block">Fakultas</label>
+                <input x-model="form.fakultas" type="text" class="neu-input w-full">
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-text-muted mb-2 block">Universitas</label>
+                <input x-model="form.universitas" type="text" class="neu-input w-full">
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-text-muted mb-2 block">Status Akreditasi</label>
+                <select x-model="form.akreditasi" class="neu-input w-full">
+                  <option>Unggul</option>
+                  <option>A</option>
+                  <option>B</option>
+                  <option>C</option>
+                </select>
+              </div>
+            </div>
 
-    <div>
-      <label class="text-xs font-semibold text-text-muted mb-2 block">Deskripsi Singkat</label>
-      <textarea x-model="form.deskripsi" rows="3" class="neu-input w-full"></textarea>
-    </div>
-    <div>
-      <label class="text-xs font-semibold text-text-muted mb-2 block">Sejarah</label>
-      <textarea x-model="form.sejarah" rows="3" class="neu-input w-full"></textarea>
-    </div>
-    <div class="grid sm:grid-cols-2 gap-4">
-      <div>
-        <label class="text-xs font-semibold text-text-muted mb-2 block">Visi</label>
-        <textarea x-model="form.visi" rows="3" class="neu-input w-full"></textarea>
-      </div>
-      <div>
-        <label class="text-xs font-semibold text-text-muted mb-2 block">Misi</label>
-        <textarea x-model="form.misi" rows="3" class="neu-input w-full"></textarea>
-      </div>
-    </div>
-    <div>
-      <label class="text-xs font-semibold text-text-muted mb-2 block">Tujuan</label>
-      <textarea x-model="form.tujuan" rows="2" class="neu-input w-full"></textarea>
-    </div>
-    <div>
-      <label class="text-xs font-semibold text-text-muted mb-2 block">Profil Lulusan</label>
-      <textarea x-model="form.lulusan" rows="2" class="neu-input w-full"></textarea>
-    </div>
+            <div>
+              <label class="text-xs font-semibold text-text-muted mb-2 block">Deskripsi Singkat</label>
+              <textarea x-model="form.deskripsi" rows="3" class="neu-input w-full"></textarea>
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-text-muted mb-2 block">Sejarah</label>
+              <textarea x-model="form.sejarah" rows="3" class="neu-input w-full"></textarea>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label class="text-xs font-semibold text-text-muted mb-2 block">Visi</label>
+                <textarea x-model="form.visi" rows="3" class="neu-input w-full"></textarea>
+              </div>
+              <div>
+                <label class="text-xs font-semibold text-text-muted mb-2 block">Misi</label>
+                <textarea x-model="form.misi" rows="3" class="neu-input w-full"></textarea>
+              </div>
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-text-muted mb-2 block">Tujuan</label>
+              <textarea x-model="form.tujuan" rows="2" class="neu-input w-full"></textarea>
+            </div>
+            <div>
+              <label class="text-xs font-semibold text-text-muted mb-2 block">Profil Lulusan</label>
+              <textarea x-model="form.lulusan" rows="2" class="neu-input w-full"
+                placeholder="Pisahkan tiap profil dengan koma, mis: Praktisi hukum, Aparatur negara, Akademisi"></textarea>
+              <p class="text-[11px] text-text-muted mt-1">Setiap kata dipisah koma akan tampil sebagai kartu terpisah di
+                halaman Profil (publik).</p>
+            </div>
 
-    <button @click="save()" class="neu-btn-primary px-6 py-3 rounded-xl text-sm">Simpan Perubahan</button>
+            <button @click="save()" class="neu-btn-primary px-6 py-3 rounded-xl text-sm">Simpan Perubahan</button>
+          </div>
+        </div>
+
+        <!-- Struktur Organisasi: sebelumnya 3 kartu hardcode di profil.html tanpa
+     terhubung ke data apapun. Sekarang punya modul CRUD sendiri (disimpan
+     lewat DB seperti entitas lain) dan tampil dinamis di halaman publik. -->
+        <div class="max-w-4xl mt-6" x-data="{
+    rows: [...SAMPLE_STRUKTUR],
+    showModal: false, editing: null, uploadingFoto: false,
+    emptyForm() { return { id:null, nama:'', jabatan:'', foto:'' }; },
+    form: { id:null, nama:'', jabatan:'', foto:'' },
+    persist() { SAMPLE_STRUKTUR = this.rows; return DB.save('struktur', this.rows); },
+    openAdd() { this.editing = null; this.form = this.emptyForm(); this.showModal = true; },
+    openEdit(r) { this.editing = r.id; this.form = { ...r }; this.showModal = true; },
+    async onFoto(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      this.uploadingFoto = true;
+      try {
+        this.form.foto = await compressImageFile(file, { maxWidth: 280, maxHeight: 280, quality: 0.60 });
+      } catch (err) {
+        NeuAlert.error(err.message || 'Gagal memproses foto.');
+      } finally {
+        this.uploadingFoto = false;
+        e.target.value = '';
+      }
+    },
+    save() {
+      if(!this.form.nama || !this.form.jabatan){ NeuAlert.error('Nama dan Jabatan wajib diisi.'); return; }
+      if(this.editing){
+        const idx = this.rows.findIndex(x=>x.id===this.editing);
+        const prev = this.rows[idx];
+        this.rows[idx] = { ...this.form };
+        if(!this.persist()){ this.rows[idx] = prev; return; }
+        logActivity(`Memperbarui struktur organisasi: ${this.form.nama}`, '\u{270F}\u{FE0F}');
+        NeuAlert.updated();
+      } else {
+        this.form.id = Date.now();
+        this.rows.push({ ...this.form });
+        if(!this.persist()){ this.rows.pop(); return; }
+        logActivity(`Menambahkan struktur organisasi: ${this.form.nama}`, '\u{2795}');
+        NeuAlert.success();
+      }
+      this.showModal = false;
+    },
+    async remove(r) {
+      const ok = await NeuAlert.confirmDelete('data ini');
+      if(ok){
+        const prevList = this.rows;
+        this.rows = this.rows.filter(x=>x.id!==r.id);
+        if(!this.persist()){ this.rows = prevList; return; }
+        logActivity(`Menghapus struktur organisasi: ${r.nama}`, '\u{1F5D1}\u{FE0F}');
+        NeuAlert.deleted();
+      }
+    }
+  }">
+          <div class="neu-raised p-6 sm:p-8">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="font-display font-semibold text-navy dark:text-white text-sm">Struktur Organisasi</h2>
+              <button @click="openAdd()" class="neu-btn-primary px-4 py-2 rounded-xl text-xs">+ Tambah</button>
+            </div>
+            <div class="space-y-3">
+              <template x-for="r in rows" :key="r.id">
+                <div class="neu-raised-sm p-3 flex items-center gap-3">
+                  <img :src="r.foto || 'https://placehold.co/80x80/EEF1F5/0B1F3A?text=Foto'"
+                    class="w-12 h-12 rounded-xl object-cover shrink-0">
+                  <div class="flex-1 min-w-0">
+                    <p class="text-sm font-medium text-navy dark:text-white truncate" x-text="r.nama"></p>
+                    <p class="text-xs text-text-muted truncate" x-text="r.jabatan"></p>
+                  </div>
+                  <button @click="openEdit(r)"
+                    class="neu-btn w-9 h-9 rounded-lg flex items-center justify-center text-xs shrink-0">Ubah</button>
+                  <button @click="remove(r)"
+                    class="neu-btn w-9 h-9 rounded-lg flex items-center justify-center text-xs text-red-500 shrink-0">Hapus</button>
+                </div>
+              </template>
+              <p x-show="rows.length === 0" class="text-xs text-text-muted text-center py-4">Belum ada data.</p>
+            </div>
+          </div>
+
+          <div x-show="showModal" x-cloak
+            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy/40 backdrop-blur-sm" x-transition>
+            <div class="neu-raised p-6 sm:p-8 w-full max-w-md bg-bg" @click.outside="showModal=false">
+              <h3 class="font-display font-semibold text-lg text-navy dark:text-white mb-6"
+                x-text="editing ? 'Ubah Struktur' : 'Tambah Struktur'"></h3>
+              <div class="space-y-4">
+                <div class="flex items-center gap-4">
+                  <label
+                    class="neu-dropzone neu-pressed w-20 h-20 rounded-2xl flex items-center justify-center text-center text-text-muted text-[10px] overflow-hidden relative shrink-0">
+                    <img x-show="form.foto && !uploadingFoto" :src="form.foto"
+                      class="absolute inset-0 w-full h-full object-cover" alt="Pratinjau foto">
+                    <span x-show="!form.foto && !uploadingFoto">Unggah Foto</span>
+                    <span x-show="uploadingFoto">Memproses&hellip;</span>
+                    <input type="file" accept="image/*" class="hidden" @change="onFoto($event)">
+                  </label>
+                  <p class="text-xs text-text-muted">Foto opsional. Otomatis dikompres agar tidak memenuhi penyimpanan.
+                  </p>
+                </div>
+                <input x-model="form.nama" type="text" placeholder="Nama &amp; Gelar" class="neu-input w-full">
+                <input x-model="form.jabatan" type="text" placeholder="Jabatan" class="neu-input w-full">
+              </div>
+              <div class="flex gap-3 mt-6">
+                <button @click="showModal=false" class="neu-btn flex-1 py-3 rounded-xl text-sm">Batal</button>
+                <button @click="save()" class="neu-btn-primary flex-1 py-3 rounded-xl text-sm">Simpan</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </main>
+    </div>
   </div>
-</div>
 
-        </main>
-      </div>
-    </div>
-    
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
 </body>
+
 </html>

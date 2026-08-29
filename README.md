@@ -1,339 +1,495 @@
-# SPESIFIKASI FINAL
+# DOKUMENTASI SISTEM & SPESIFIKASI FINAL
+## Website Profil & Sistem Informasi Program Studi Hukum
+### Universitas Muhammadiyah Papua (UMP)
 
-## Website Profil & Sistem Informasi Program Studi Hukum — Universitas Muhammadiyah Papua
-
-> Dokumen ini menggabungkan **daftar fitur sistem** (dokumen 1) dan **master prompt desain UI** (dokumen 2) menjadi satu spesifikasi tunggal yang konsisten, tanpa duplikasi, siap dipakai sebagai acuan pengembangan (skripsi/prototipe/produksi).
-
-**Tagline visual:** _"Modern Legal Education. Professional Digital Experience."_
-**Identitas visual:** Academic · Professional · Modern · Clean · Elegant · Trustworthy · Neumorphism
+> Dokumen acuan resmi arsitektur sistem, spesifikasi basis data, **Entity Relationship Diagram (ERD)**, **Data Flow Diagram (DFD Level 0 & Level 1)**, dan **Flowchart Sistem** untuk Website Profil & Panel Manajemen Administrasi Akademik Program Studi Hukum UMP.
 
 ---
 
-## 1. Ringkasan Proyek
+## 📋 DAFTAR ISI
+1. [Ringkasan Proyek & Arsitektur System](#1-ringkasan-proyek--arsitektur-system)
+2. [Teknologi & Design System](#2-teknologi--design-system)
+3. [Struktur Berkas Proyek (35 Halaman HTML)](#3-struktur-berkas-proyek)
+4. [Spesifikasi Model Data & ERD (Entity Relationship Diagram)](#4-spesifikasi-model-data--erd)
+5. [Data Flow Diagram (DFD Level 0 & Level 1)](#5-data-flow-diagram-dfd)
+6. [Flowchart Sistem (Public & Admin Workflow)](#6-flowchart-sistem)
+7. [Fitur Utama & Panduan Pengoperasian](#7-fitur-utama--panduan-pengoperasian)
 
-Website Program Studi Hukum terdiri dari dua bagian utama yang berbagi satu design system yang sama:
+---
+
+## 1. 🏛️ RINGKASAN PROYEK & ARSITEKTUR SYSTEM
+
+Website Program Studi Hukum Universitas Muhammadiyah Papua dirancang sebagai platform informasi publik dan portal manajemen administrasi akademik yang berbasis **Single Page State Architecture** dengan mesin penyimpanan lokal terenkapsulasi (**LocalStorage Engine with Automatic Resilient Recovery**).
+
+### Arsitektur Utama Sistem:
+```
+                                ┌────────────────────────────────────────────────────────┐
+                                │       PENGUNJUNG PUBLIK / MAHASISWA / ALUMNI           │
+                                └───────────────────────────┬────────────────────────────┘
+                                                            │
+                                                            ▼
+                                ┌────────────────────────────────────────────────────────┐
+                                │         FRONTEND PORTAL PUBLIK (18 HALAMAN)            │
+                                │  • Navigation, Global Search & Interactive Maps        │
+                                │  • News, Announcements, Events, Documents & Gallery    │
+                                │  • Profil Prodi, Dosen, Kurikulum, Alumni & Prestasi   │
+                                └───────────────────────────┬────────────────────────────┘
+                                                            │
+                                                            ▼
+┌─────────────────────────────────────────┐     ┌────────────────────────────────────────┐
+│      SUPER ADMIN / EDITOR / OPERATOR    │ ──► │     ADMIN PANEL PORTAL (17 HALAMAN)    │
+│  • Authentication & Role Access Control │     │  • Dashboard Analytics & Quick Stats   │
+│  • Full CRUD Content & User Management  │     │  • Content Management (News, Dosen...) │
+│  • Reactive Notif & Activity Logging    │     │  • System Settings, Backup & Database  │
+└─────────────────────────────────────────┘     └───────────────────┬────────────────────┘
+                                                                    │
+                                                                    ▼
+                                ┌────────────────────────────────────────────────────────┐
+                                │     PERSISTENCE & REACTION ENGINE (app.js DB Engine)   │
+                                │  • LocalStorage Namespace: DB.NS ('prodihukum_')       │
+                                │  • Resilient Recovery & Automatic Image Compression    │
+                                │  • Alpine.js Reactive State Sync & Event Bus           │
+                                └────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 2. 🎨 TEKNOLOGI & DESIGN SYSTEM
+
+| Layer | Teknologi | Fungsi & Peran |
+|---|---|---|
+| **Struktur Semantik** | HTML5 | Menggunakan tag HTML5 semantik (`header`, `nav`, `aside`, `main`, `section`, `article`, `footer`). |
+| **Grid & Komponen** | Bootstrap 5.3.3 | Menyediakan sistem grid responsif, modal backdrop, dan utilitas pendukung layout. |
+| **Styling & Neumorphism** | Tailwind CSS + Custom CSS (`style.css`) | Antarmuka Neumorphic modern (`neu-raised`, `neu-pressed`, `neu-flat`, `neu-btn`), warna *Royal Blue* (`#2A4E9E`), *Deep Navy* (`#0B1F3A`), dan *Gold Accent* (`#D4AF37`). |
+| **Reaktivitas Engine** | Alpine.js 3.14.8 | Manajemen state reaktif tanpa halaman reload, filter langsung, modal state, binding data, serta integrasi hash URL. |
+| **Notifikasi Interaktif** | SweetAlert2 v11 | Alert konfirmasi penghapusan, notifikasi aksi sukses/gagal, dan alert aktivitas sistem. |
+| **Media & Peta** | Google Maps API Iframe | Peta lokasi kampus interaktif dengan fitur `touch-action: pan-y` pasif untuk kompatibilitas layar sentuh. |
+
+---
+
+## 3. 📁 STRUKTUR BERKAS PROYEK
+
+Proyek ini terdiri dari **35 halaman HTML utama** yang terbagi atas 18 Halaman Publik dan 17 Halaman Admin:
 
 ```
-WEBSITE PRODI HUKUM
+Perancangan-Dan-Pengembangan-website-profil-UMP-/
+├── index.html                  # Beranda Utama (Hero Law Theme, Stats, Agenda, Map)
+├── profil.html                 # Profil Prodi (Tab-based: Visi, Misi, Sejarah, Tujuan, Struktur)
+├── dosen.html                  # Daftar Dosen & Pengajar (Filter Jabatan & Pencarian)
+├── kurikulum.html              # Kurikulum & Struktur Mata Kuliah per Semester
+├── berita.html                 # Indeks Berita Prodi & Kategori
+├── pengumuman.html             # Indeks Pengumuman & Lampiran Berkas
+├── kegiatan.html               # Indeks Agenda & Kegiatan Mendatang
+├── artikel.html                # Indeks Artikel Hukum & Jurnal
+├── prestasi.html               # Galeri Prestasi Mahasiswa, Dosen & Alumni
+├── alumni.html                 # Direktori Alumni & Tracer Study
+├── galeri.html                 # Galeri Foto Kegiatan & Album
+├── dokumen.html                # Pusat Unduhan Dokumen Akademik & Formulir
+├── kontak.html                 # Kontak, Form Pesan & Peta Lokasi Kampus Interaktif
+├── detail-berita.html          # Detail Berita & Berita Terkait
+├── detail-pengumuman.html      # Detail Pengumuman & Tombol Unduh Lampiran
+├── detail-kegiatan.html        # Detail Kegiatan & Peta Lokasi Acara
+├── detail-artikel.html         # Detail Artikel Hukum & Penulis
+├── detail-galeri.html          # Detail Album Foto & Slideshow
 │
-├── FRONTEND (publik: mahasiswa, dosen, alumni, calon mahasiswa, masyarakat)
-└── ADMIN PANEL (Super Admin, Admin Prodi, Editor, Operator)
+├── admin/                      # PORTAL ADMINISTRASI AKADEMIK
+│   ├── login.html              # Halaman Login Admin (Law Court Aesthetic)
+│   ├── dashboard.html          # Dashboard Analytics & Quick Action
+│   ├── profil-prodi.html       # Management Visi, Misi, & Sejarah Prodi
+│   ├── dosen.html              # CRUD Data Dosen & NIDN
+│   ├── kurikulum.html          # CRUD Mata Kuliah & SKS
+│   ├── berita.html             # CRUD Berita & Publisher
+│   ├── pengumuman.html         # CRUD Pengumuman & Lampiran
+│   ├── kegiatan.html           # CRUD Agenda Kegiatan & Lokasi
+│   ├── prestasi.html           # CRUD Prestasi & Penghargaan
+│   ├── artikel.html            # CRUD Artikel Hukum & Penulis
+│   ├── galeri.html             # CRUD Foto Galeri & Album (Fix Modal & Compression)
+│   ├── dokumen.html            # CRUD Berkas & Dokumen Akademik
+│   ├── alumni.html             # CRUD Data Alumni & Pekerjaan
+│   ├── pengguna.html           # CRUD Akun Pengguna & Hak Akses (Role)
+│   ├── aktivitas.html          # Activity Log & Jejak Audit Sistem
+│   ├── pengaturan.html         # Pengaturan Website, Map Embed, Backup/Restore JSON
+│   └── activity-log.html       # Log Aktivitas Notifikasi
+│
+└── assets/                     # ASET SISTEM & STYLESHEET
+    ├── css/
+    │   ├── tailwind.min.css    # Tailwind Utility Build
+    │   └── style.css           # Custom Neumorphism Styles & Law Visual Themes
+    ├── js/
+    │   └── app.js              # Database Engine, State Store, Component Functions
+    └── image/
+        ├── logo-ump.png        # Logo Resmi UMP
+        ├── hero-law-bg.jpg     # Banner Visual Hukum & Timbangan Keadilan
+        └── law-court-bg.jpg    # Banner Visual Gedung Peradilan
 ```
 
-Prioritas pengembangan: **Usability > Accessibility > Performance > Visual Effects**
-
 ---
 
-## 2. Tech Stack
+## 4. 🗄️ SPESIFIKASI MODEL DATA & ERD
 
-| Layer                  | Teknologi                                                                         | Fungsi                                                                   |
-| ---------------------- | --------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| Struktur               | HTML5 semantic (`header`, `nav`, `main`, `section`, `article`, `aside`, `footer`) | Struktur dasar halaman                                                   |
-| Layout & komponen      | Bootstrap 5                                                                       | Grid, container, modal, navbar, dropdown, offcanvas                      |
-| Visual styling         | Tailwind CSS                                                                      | Spacing, typography, warna, shadow neumorphic, custom card               |
-| Interaktivitas         | Alpine.js                                                                         | Dropdown, tab, accordion, modal state, search/filter, dark mode, sidebar |
-| Notifikasi/UX feedback | SweetAlert2                                                                       | Konfirmasi hapus, sukses/gagal simpan, logout, validasi form             |
+Sistem menggunakan **16 Entitas Data Utama** yang terintegrasi secara relational melalui Kunci Utama (`id`) dan Kunci Asing (`foreign keys`):
 
-**Aturan pemakaian:** Tailwind untuk _visual design_, Bootstrap 5 untuk _struktur/komponen responsif tertentu_. Jangan mencampur utility class Bootstrap & Tailwind pada komponen yang sama hingga bertabrakan.
-
----
-
-## 3. Design System — Neumorphism UI
-
-### 3.1 Warna
-
-| Peran      | Nilai                                         |
-| ---------- | --------------------------------------------- |
-| Background | Soft Light / Cool Gray — `#E8ECF1`, `#EEF1F5` |
-| Primary    | Deep Navy                                     |
-| Secondary  | Royal Blue                                    |
-| Accent     | Gold / Amber                                  |
-| Success    | Emerald                                       |
-| Danger     | Red                                           |
-| Teks       | Dark Navy / Charcoal                          |
-
-Karakteristik permukaan neumorphic: soft outer shadow, soft inner shadow (untuk elemen pressed), raised card, rounded corner, gradasi halus. Shadow **tidak boleh berat/tebal**.
-
-Contoh konsep shadow:
-
-```css
-box-shadow:
-  10px 10px 25px rgba(...),
-  -10px -10px 25px rgba(...);
+```
+                                  ┌────────────────────────┐
+                                  │      PENGGUNA          │
+                                  │ (Users/Administrator)  │
+                                  └───────────┬────────────┘
+                                              │
+                    ┌─────────────────────────┼─────────────────────────┐
+                    │ 1:N                     │ 1:N                     │ 1:N
+                    ▼                         ▼                         ▼
+          ┌───────────────────┐     ┌───────────────────┐     ┌───────────────────┐
+          │      BERITA       │     │    PENGUMUMAN     │     │     KEGIATAN      │
+          └───────────────────┘     └───────────────────┘     └───────────────────┘
+                    │                         │                         │
+                    └─────────────────────────┼─────────────────────────┘
+                                              │ 1:N
+                                              ▼
+                                    ┌───────────────────┐
+                                    │   ACTIVITY_LOG    │
+                                    └───────────────────┘
 ```
 
-Radius yang dipakai: `12px / 16px / 20px / 24px`
+### 4.1 Tabel Detail Entitas Data (Data Dictionary)
 
-### 3.2 Tipografi
+#### 1. Entitas `PENGGUNA` (Admin & User Accounts)
+* **Deskripsi**: Menyimpan data akun pengelola dan hak akses admin.
+* **Tabel Name**: `prodihukum_pengguna`
 
-- Body: **Inter** atau **Plus Jakarta Sans**
-- Heading: **Poppins**
+| Field | Tipe Data | Constraint | Keterangan |
+|---|---|---|---|
+| `id` | INTEGER | PRIMARY KEY, AUTO_INCREMENT | Identitas unik pengguna |
+| `nama` | VARCHAR(100) | NOT NULL | Nama lengkap pengguna |
+| `email` | VARCHAR(100) | UNIQUE, NOT NULL | Alamat email / username login |
+| `role` | ENUM | 'Super Admin', 'Admin Prodi', 'Editor' | Hak akses pengguna |
+| `status` | ENUM | 'Aktif', 'Nonaktif' | Status keaktifan akun |
+| `avatar` | TEXT (BASE64) | NULLABLE | Foto profil pengguna |
 
-| Elemen | Ukuran  |
-| ------ | ------- |
-| H1     | 42–56px |
-| H2     | 32–40px |
-| H3     | 24–30px |
-| Body   | 15–17px |
-| Small  | 13–14px |
+#### 2. Entitas `BERITA` (News & Articles)
+* **Deskripsi**: Menyimpan warta berita prodi.
+* **Tabel Name**: `prodihukum_berita`
 
-### 3.3 Dark Mode (opsional)
+| Field | Tipe Data | Constraint | Keterangan |
+|---|---|---|---|
+| `id` | INTEGER | PRIMARY KEY | Identitas berita |
+| `judul` | VARCHAR(255) | NOT NULL | Judul berita |
+| `kategori` | VARCHAR(50) | NOT NULL | Kategori (Akademik, Prestasi, Event, dll) |
+| `tanggal` | DATE / STRING | NOT NULL | Tanggal publikasi (YYYY-MM-DD) |
+| `penulis` | VARCHAR(100) | NOT NULL | Nama penulis/editor |
+| `excerpt` | TEXT | NOT NULL | Ringkasan berita |
+| `konten` | LONGTEXT | NOT NULL | Isi artikel berita lengkap |
+| `gambar` | TEXT (BASE64) | NULLABLE | Thumbnail gambar berita |
+| `featured` | BOOLEAN | DEFAULT FALSE | Indikator berita utama di beranda |
 
-- Light: Soft Gray + Navy + Blue
-- Dark: Deep Navy + Dark Gray + Blue/Violet (tidak boleh terlalu hitam pekat)
-- Prinsip neumorphism tetap dipertahankan secara subtle di kedua mode.
+#### 3. Entitas `DOSEN` (Faculty Lecturers)
+* **Deskripsi**: Menyimpan data tenaga pengajar dan staf dosen.
+* **Tabel Name**: `prodihukum_dosen`
 
-### 3.4 Larangan visual
+| Field | Tipe Data | Constraint | Keterangan |
+|---|---|---|---|
+| `id` | INTEGER | PRIMARY KEY | Identitas dosen |
+| `nama` | VARCHAR(150) | NOT NULL | Nama lengkap & gelar dosen |
+| `nidn` | VARCHAR(30) | UNIQUE, NOT NULL | Nomor Induk Dosen Nasional |
+| `jabatan` | VARCHAR(100) | NOT NULL | Jabatan akademik (Lektor Kepala, Dosen Tetap) |
+| `keahlian` | VARCHAR(150) | NOT NULL | Bidang keahlian (Hukum Pidana, Hukum Perdata) |
+| `email` | VARCHAR(100) | NULLABLE | Email institusi dosen |
+| `foto` | TEXT (BASE64) | NULLABLE | Foto resmi dosen |
 
-Template usang · gradient berlebihan · shadow terlalu kuat · warna terlalu banyak · animasi berlebihan · font kecil · layout padat · icon tidak konsisten · kartu terlalu banyak dalam satu area · neumorphism yang mengorbankan keterbacaan teks · gambar palu hakim yang klise/berlebihan.
+#### 4. Entitas `KURIKULUM` (Academic Courses)
+* **Deskripsi**: Data mata kuliah prodi per semester.
+* **Tabel Name**: `prodihukum_kurikulum`
 
----
+| Field | Tipe Data | Constraint | Keterangan |
+|---|---|---|---|
+| `id` | INTEGER | PRIMARY KEY | Kode/ID mata kuliah |
+| `kode` | VARCHAR(20) | UNIQUE, NOT NULL | Kode mata kuliah (HKM101) |
+| `nama` | VARCHAR(150) | NOT NULL | Nama mata kuliah |
+| `sks` | INTEGER | NOT NULL | Jumlah Bobot SKS |
+| `semester` | INTEGER | NOT NULL (1 - 8) | Semester pengambilan |
+| `jenis` | ENUM | 'Wajib', 'Pilihan' | Jenis mata kuliah |
+| `deskripsi` | TEXT | NULLABLE | Silabus singkat mata kuliah |
 
-## 4. FRONTEND — Fitur & Halaman
+#### 5. Entitas `PENGUMUMAN` (Announcements)
+* **Tabel Name**: `prodihukum_pengumuman`
+* **Fields**: `id` (PK), `judul`, `tanggal`, `kategori`, `konten`, `lampiran` (File Name), `penting` (Boolean).
 
-### 4.1 Navbar (sticky saat scroll)
+#### 6. Entitas `KEGIATAN` (Events & Seminars)
+* **Tabel Name**: `prodihukum_kegiatan`
+* **Fields**: `id` (PK), `nama`, `tanggal`, `waktu`, `lokasi`, `penyelenggara`, `deskripsi`, `gambar`.
 
-- Logo universitas + teks "PROGRAM STUDI HUKUM"
-- Menu: Beranda, Profil, Dosen, Kurikulum, Berita, Pengumuman, Kegiatan, Prestasi, Artikel Hukum, Galeri, Dokumen, Alumni, Kontak
-- Search global, dark/light mode toggle, mobile menu (hamburger → offcanvas)
-- CTA: **Portal Akademik**
+#### 7. Entitas `PRESTASI` (Achievements)
+* **Tabel Name**: `prodihukum_prestasi`
+* **Fields**: `id` (PK), `nama`, `kategori` ('Mahasiswa', 'Dosen', 'Alumni'), `peringkat`, `tingkat` ('Nasional', 'Internasional'), `tahun`, `deskripsi`, `foto`.
 
-### 4.2 Hero Beranda
+#### 8. Entitas `ARTIKEL` (Legal Publications & Journals)
+* **Tabel Name**: `prodihukum_artikel`
+* **Fields**: `id` (PK), `judul`, `penulis`, `tanggal`, `kategori`, `excerpt`, `konten`, `dibaca` (Integer Counter).
 
-- Headline: _"Membangun Generasi Hukum yang Berintegritas, Profesional, dan Berkeadilan."_
-- Subheadline: _"Program Studi Hukum berkomitmen menyelenggarakan pendidikan hukum yang unggul, berintegritas, dan relevan dengan perkembangan masyarakat serta dunia profesional."_
-- Tombol: **Tentang Prodi**, **Lihat Kurikulum**
-- Neumorphic button, elemen geometris halus, ilustrasi akademik yang elegan
+#### 9. Entitas `GALERI` (Photo Gallery)
+* **Tabel Name**: `prodihukum_galeri`
+* **Fields**: `id` (PK), `judul`, `album` ('Seminar', 'Wisuda', 'Praktikum', dll), `src` (Base64 Image).
 
-### 4.3 Quick Information
+#### 10. Entitas `DOKUMEN` (Academic Files)
+* **Tabel Name**: `prodihukum_dokumen`
+* **Fields**: `id` (PK), `nama`, `kategori` ('Pedoman', 'Formulir', 'SK'), `ukuran`, `tanggal`, `fileUrl`.
 
-4–6 kartu neumorphic (icon, angka, label, deskripsi singkat, hover effect): Akreditasi, Kurikulum, Dosen, Mahasiswa, Alumni, Prestasi.
+#### 11. Entitas `ALUMNI` (Alumni Directory)
+* **Tabel Name**: `prodihukum_alumni`
+* **Fields**: `id` (PK), `nama`, `angkatan`, `tahunLulus`, `pekerjaan`, `instansi`, `testimoni`, `foto`.
 
-### 4.4 Daftar Halaman Frontend (final, 19 halaman)
+#### 12. Entitas `ACTIVITY_LOG` (Audit Trail)
+* **Tabel Name**: `prodihukum_aktivitas`
+* **Fields**: `id` (PK), `user` ('Admin Prodi'), `aksi`, `waktu` (Timestamp), `icon`.
 
-| #   | Halaman           | Isi Utama                                                                                                        |
-| --- | ----------------- | ---------------------------------------------------------------------------------------------------------------- |
-| 01  | Beranda           | Hero, quick info, highlight berita/kegiatan                                                                      |
-| 02  | Profil Prodi      | Tentang, Sejarah, Visi, Misi, Tujuan, Profil Lulusan, Kompetensi, Struktur Organisasi (Kaprodi, sekretaris, dll) |
-| 03  | Dosen             | Grid profil dosen + filter jabatan + search                                                                      |
-| 04  | Detail Dosen      | Modal/halaman detail (Alpine.js)                                                                                 |
-| 05  | Kurikulum         | Tabel MK per semester + filter + download                                                                        |
-| 06  | Berita            | Featured news + grid berita + filter kategori                                                                    |
-| 07  | Detail Berita     | Isi berita lengkap                                                                                               |
-| 08  | Pengumuman        | List neumorphic dengan badge status                                                                              |
-| 09  | Detail Pengumuman | Isi + lampiran                                                                                                   |
-| 10  | Kegiatan / Agenda | Kalender, timeline, event card                                                                                   |
-| 11  | Detail Kegiatan   | Info lengkap + CTA daftar                                                                                        |
-| 12  | Prestasi          | Filter kategori (mahasiswa/dosen/alumni/prodi) + level                                                           |
-| 13  | Artikel Hukum     | Portal akademik, filter kategori hukum                                                                           |
-| 14  | Detail Artikel    | Judul, penulis, referensi, artikel terkait, share                                                                |
-| 15  | Galeri            | Masonry grid + lightbox + filter album                                                                           |
-| 16  | Detail Galeri     | Album foto per kegiatan                                                                                          |
-| 17  | Dokumen           | Pusat dokumen publik (PDF/DOC/DOCX) dengan kategori                                                              |
-| 18  | Alumni            | Profil alumni + statistik (total, bekerja, wirausaha, studi lanjut)                                              |
-| 19  | Kontak            | Alamat, email, telepon, sosial media, jam layanan, form kontak                                                   |
+#### 13. Entitas `NOTIFIKASI` (System Notifications)
+* **Tabel Name**: `prodihukum_notifikasi`
+* **Fields**: `id` (PK), `judul`, `pesan`, `waktu`, `read` (Boolean), `icon`.
 
-### 4.5 Detail Konten per Modul
+#### 14. Entitas `PENGATURAN` (Website Configuration)
+* **Tabel Name**: `prodihukum_pengaturan`
+* **Fields**: `namaWebsite`, `deskripsi`, `email`, `telepon`, `alamat`, `mapEmbed`, `mapLink`, `koordinat`, `mahasiswaAktif`.
 
-**Dosen** — Foto, Nama, Gelar, NIDN/NIP/NIDK, Jabatan (Profesor/Lektor Kepala/Lektor/Asisten Ahli/Dosen), Bidang keahlian, Pendidikan (S1/S2/S3), Email, Profil singkat.
+#### 15. Entitas `PROFIL` (Program Study Profile)
+* **Tabel Name**: `prodihukum_profil`
+* **Fields**: `namaProdi`, `akreditasi`, `skAkreditasi`, `visi`, `misi` (Array), `sejarah`, `tujuan` (Array).
 
-**Kurikulum** — Tahun kurikulum, Kode MK, Nama MK, SKS, Semester, Jenis (Wajib/Pilihan), Prasyarat.
-
-**Berita** — Judul, Thumbnail, Isi, Kategori (Akademik, Kemahasiswaan, Penelitian, Pengabdian, Prestasi, Seminar, Kegiatan, Pengumuman), Penulis, Tanggal, Status publikasi.
-
-**Pengumuman** — Judul, Isi, Lampiran, Tanggal mulai/berakhir, Status (Baru/Penting/Aktif/Berakhir).
-
-**Kegiatan** — Nama, Tanggal, Waktu, Lokasi, Penyelenggara, Deskripsi, Poster, Dokumentasi. Jenis: seminar nasional, kuliah umum, workshop, sosialisasi, pengabdian masyarakat, penelitian, moot court, diskusi hukum.
-
-**Prestasi** — Nama, Kategori, Prestasi, Tingkat (Internasional/Nasional/Provinsi/Regional/Universitas), Tahun, Penyelenggara, Foto/sertifikat.
-
-**Artikel Hukum** — Judul, Penulis, Tanggal, Kategori (Pidana, Perdata, Tata Negara, Administrasi Negara, Internasional, Bisnis, Adat, Teknologi), Featured image, Isi, Referensi, Artikel terkait, Tombol share.
-
-**Galeri** — Album per kegiatan (Seminar, Kuliah Umum, Praktikum, Kegiatan Mahasiswa, Wisuda, Pengabdian, Penelitian).
-
-**Dokumen** — Nama dokumen, Kategori (Pedoman Akademik, Kurikulum, Formulir, Peraturan, SOP, Panduan, Akreditasi, Dokumen Publik), Format, Ukuran, Tanggal, Deskripsi, Tombol Download.
-
-**Alumni** — Foto, Nama, Tahun masuk/lulus, Program, Pekerjaan, Instansi, Jabatan, Email, LinkedIn, Testimoni.
-
-**Kontak** — Form: Nama, Email, Subjek, Pesan → Tombol **Kirim Pesan** → SweetAlert2: _"Pesan berhasil dikirim."_
-
-### 4.6 Search Global
-
-Satu search bar (_"Cari informasi Prodi..."_) mencakup: berita, dosen, artikel, kegiatan, pengumuman, dokumen.
-
-### 4.7 Footer
-
-| Kolom         | Isi                                   |
-| ------------- | ------------------------------------- |
-| Program Studi | Profil, Visi & Misi, Dosen, Kurikulum |
-| Akademik      | Berita, Pengumuman, Kegiatan, Dokumen |
-| Informasi     | Prestasi, Artikel, Galeri, Alumni     |
-| Kontak        | Alamat, Email, Telepon, Sosial Media  |
-
-Copyright: **© 2026 Program Studi Hukum. All Rights Reserved.**
+#### 16. Entitas `STRUKTUR` (Organization Structure)
+* **Tabel Name**: `prodihukum_struktur`
+* **Fields**: `id` (PK), `nama`, `jabatan`, `foto`.
 
 ---
 
-## 5. ADMIN PANEL — Fitur & Halaman
+### 4.2 Diagram ERD (Entity Relationship Diagram - Mermaid)
 
-### 5.1 Login
+```mermaid
+erDiagram
+    PENGGUNA ||--o{ BERITA : "memublikasikan"
+    PENGGUNA ||--o{ PENGUMUMAN : "membuat"
+    PENGGUNA ||--o{ KEGIATAN : "mengelola"
+    PENGGUNA ||--o{ ARTIKEL : "menulis"
+    PENGGUNA ||--o{ ACTIVITY_LOG : "mencatat"
 
-Panel login neumorphic terpusat, logo universitas, judul **"Admin Program Studi Hukum"**, field Username/Email + Password (show/hide via Alpine.js), opsi Remember Me & Lupa Password, tombol **Login**.
+    PENGGUNA {
+        int id PK
+        string nama
+        string email
+        string role
+        string status
+    }
 
-### 5.2 Role & Hak Akses
+    BERITA {
+        int id PK
+        string judul
+        string kategori
+        string tanggal
+        string penulis
+        text konten
+    }
 
-| Role        | Akses                                                                                |
-| ----------- | ------------------------------------------------------------------------------------ |
-| Super Admin | Akses penuh termasuk pengaturan sistem                                               |
-| Admin Prodi | Kelola seluruh konten & data prodi                                                   |
-| Editor      | Kelola Berita, Artikel, Kegiatan, Galeri, Pengumuman (tanpa akses pengaturan sistem) |
-| Operator    | Input data operasional terbatas                                                      |
+    PENGUMUMAN {
+        int id PK
+        string judul
+        string tanggal
+        string kategori
+        boolean penting
+    }
 
-Panel admin juga menampilkan: Role, Permission, Session status, Last login, Activity log. Data sensitif tidak ditampilkan di frontend publik.
+    KEGIATAN {
+        int id PK
+        string nama
+        string tanggal
+        string lokasi
+        string waktu
+    }
 
-### 5.3 Dashboard
+    DOSEN {
+        int id PK
+        string nama
+        string nidn
+        string jabatan
+        string keahlian
+    }
 
-Topbar: search, notifikasi, profil pengguna, theme switch, breadcrumb.
-Sidebar: Dashboard, Profil Prodi, Dosen, Kurikulum, Berita, Pengumuman, Kegiatan, Prestasi, Artikel, Galeri, Dokumen, Alumni, Pengguna, Pengaturan, Logout.
+    KURIKULUM {
+        int id PK
+        string kode
+        string nama
+        int sks
+        int semester
+    }
 
-**KPI Cards** (icon, angka, label, growth indicator, mini chart):
-Total Dosen · Total Mahasiswa · Total Alumni · Total Berita · Total Kegiatan · Total Artikel · Total Dokumen · Total Galeri
+    GALERI {
+        int id PK
+        string judul
+        string album
+        text src
+    }
 
-**Grafik Dashboard:**
-
-- Line chart — Statistik konten (Berita, Artikel, Kegiatan, Dokumen)
-- Donut chart — Statistik Alumni
-- Area chart — Statistik Pengunjung Website (harian/bulanan/total)
-
-### 5.4 Daftar Halaman Admin (final, 18 halaman) & CRUD per Modul
-
-| #     | Halaman              | Field / Fitur CRUD                                                                                                                |
-| ----- | -------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| 01    | Login                | Username/Email, Password                                                                                                          |
-| 02    | Dashboard            | KPI cards + grafik                                                                                                                |
-| 03    | Profil Prodi         | Nama Prodi, Kode Prodi, Fakultas, Universitas, Akreditasi, Deskripsi, Sejarah, Visi, Misi, Tujuan, Profil Lulusan                 |
-| 04–05 | Dosen / Tambah-Edit  | Foto, Nama, NIDN, NIP, Gelar, Jabatan, Email, Telepon, Bidang Keahlian, Pendidikan, Deskripsi, Status; + Search, Filter, Export   |
-| 06    | Kurikulum            | Kode, Nama MK, SKS, Semester, Jenis, Deskripsi; + Search, Filter Semester/Jenis, Import/Export                                    |
-| 07–08 | Berita / Tambah-Edit | Judul, Slug, Kategori, Featured Image, Excerpt, Content, Author, Status (Draft→Review→Published/Scheduled/Archived), Publish Date |
-| 09    | Pengumuman           | Judul, Isi, Kategori, Tanggal, Status, Lampiran                                                                                   |
-| 10    | Kegiatan             | Nama, Tanggal, Jam, Lokasi, Penyelenggara, Deskripsi, Poster, Status; tampilan kalender                                           |
-| 11    | Prestasi             | Nama, Kategori, Prestasi, Tingkat, Tahun, Foto, Deskripsi                                                                         |
-| 12    | Artikel              | Judul, Penulis, Kategori, Thumbnail, Isi (rich text editor), Tags, Status, Tanggal                                                |
-| 13    | Galeri               | Upload foto (single/multiple/drag&drop), Album, Kategori, Caption, Preview, Delete                                                |
-| 14    | Dokumen              | Nama Dokumen, Kategori, File, Format, Ukuran, Tanggal, Deskripsi, Status, Preview                                                 |
-| 15    | Alumni               | Nama, Foto, Tahun Lulus, Program, Pekerjaan, Instansi, Email, LinkedIn, Testimoni, Status                                         |
-| 16    | Pengguna             | Manajemen akun admin/editor/operator + role                                                                                       |
-| 17    | Pengaturan           | Lihat bagian 5.5                                                                                                                  |
-| 18    | Activity Log         | Riwayat aktivitas pengguna admin                                                                                                  |
-
-Semua modul CRUD mendukung: Tambah, Edit, Detail, Hapus, Upload gambar, Upload PDF, Publikasi/Sembunyikan konten.
-
-Konfirmasi hapus selalu memakai SweetAlert2:
-
-> _"Apakah Anda yakin ingin menghapus data ini?"_ — Tombol **Ya, Hapus** / **Batal**
-
-### 5.5 Pengaturan Website
-
-| Bagian       | Field                                                                            |
-| ------------ | -------------------------------------------------------------------------------- |
-| General      | Nama Website, Logo, Logo Universitas, Favicon, Deskripsi, Alamat, Email, Telepon |
-| Appearance   | Theme, Primary Color, Dark Mode, Sidebar                                         |
-| SEO          | Meta Title, Meta Description, Keywords, Slug artikel, Sitemap                    |
-| Social Media | Facebook, Instagram, YouTube, LinkedIn                                           |
-| Contact      | Email, Telepon, Alamat                                                           |
-| Sistem       | Backup Database                                                                  |
-
----
-
-## 6. Sistem Notifikasi (SweetAlert2) — Standar Pesan
-
-| Aksi             | Pesan                                         |
-| ---------------- | --------------------------------------------- |
-| Simpan           | "Data berhasil disimpan."                     |
-| Update           | "Data berhasil diperbarui."                   |
-| Hapus            | "Data berhasil dihapus."                      |
-| Konfirmasi hapus | "Apakah Anda yakin ingin menghapus data ini?" |
-| Error            | "Terjadi kesalahan. Silakan coba lagi."       |
-| Logout           | "Apakah Anda yakin ingin keluar?"             |
-
-Semua modal SweetAlert2 mengikuti tema Neumorphism (warna & radius konsisten dengan design system).
+    ACTIVITY_LOG {
+        int id PK
+        string user
+        string aksi
+        string waktu
+    }
+```
 
 ---
 
-## 7. Interaksi Alpine.js
+## 5. 🔄 DATA FLOW DIAGRAM (DFD)
 
-Mobile navigation · Sidebar · Dropdown · Modal · Tabs · Accordion · Search · Filter · Sorting · Pagination UI · Dark Mode · Notifikasi/Toast · Password visibility · Gallery lightbox · Calendar · Delete confirmation trigger · Form state · Loading state.
+### 5.1 DFD Level 0 (Diagram Konteks / Context Diagram)
 
----
-
-## 8. Component Library (reusable)
-
-Navbar · Sidebar · Footer · Button · Neumorphic Card · Stat Card · Profile Card · News Card · Event Card · Gallery Card · Document Card · Table · Modal · Dropdown · Tabs · Accordion · Badge · Alert · Toast · Pagination · Search · Filter · Form · File Upload · Calendar · Breadcrumb.
-
----
-
-## 9. UI States (wajib di semua halaman)
-
-| State         | Contoh                                 |
-| ------------- | -------------------------------------- |
-| Loading       | Skeleton loading                       |
-| Empty         | "Belum ada data."                      |
-| Error         | "Data gagal dimuat."                   |
-| Success       | "Data berhasil dimuat."                |
-| Search kosong | "Data yang Anda cari tidak ditemukan." |
-
----
-
-## 10. Responsive & Aksesibilitas
-
-**Breakpoint wajib diuji:** 320px, 375px, 390px (mobile) · 768px (tablet) · 1024px, 1280px, 1440px, 1920px (desktop/laptop).
-Mobile navigation: hamburger + offcanvas sidebar; bottom action bila diperlukan. Tabel: horizontal scroll atau mode kartu responsif.
-
-**Aksesibilitas (mengacu WCAG):** kontras teks jelas, label pada button & input, keyboard accessible, focus state terlihat, alt text gambar, semantic HTML, typography responsif, target sentuh minimal 44px. Neumorphism tidak boleh mengurangi keterbacaan/kontras elemen.
+```
+                 ┌────────────────────────────────────────────────────────┐
+                 │                  PENGUNJUNG PUBLIK                     │
+                 │          (Mahasiswa, Calon Mahasiswa, Alumni)          │
+                 └───────────┬────────────────────────────────┬───────────┘
+                             │                                ▲
+               Form Pesan,   │                                │ Info Akademik, Berita,
+               Search Query, │                                │ Dosen, Kurikulum, Peta,
+               Filter Request│                                │ Unduhan Dokumen
+                             ▼                                │
+                 ┌────────────────────────────────────────────────────────┐
+                 │                       PROSES 0.0                       │
+                 │           SISTEM INFORMASI PRODI HUKUM UMP             │
+                 └───────────┬────────────────────────────────┬───────────┘
+                             ▲                                │
+              Credential     │                                │ Dashboard Analytics,
+              Login, Data    │                                │ Status Notifikasi,
+              CRUD Update    │                                │ Activity Audit Log
+                             │                                ▼
+                 ┌────────────────────────────────────────────────────────┐
+                 │                 ADMINISTRATOR / PENGELOLA              │
+                 │             (Super Admin, Admin Prodi, Editor)         │
+                 └────────────────────────────────────────────────────────┘
+```
 
 ---
 
-## 11. Fitur Tambahan (Nice-to-have)
+### 5.2 DFD Level 1 (Diagram Rinci Proses)
 
-1. **Notifikasi** real-time saat ada berita/pengumuman baru
-2. **Responsive Design** penuh (laptop, tablet, smartphone)
-3. **Dark Mode** (☀️ Light / 🌙 Dark)
-4. **Statistik Pengunjung** (hari ini, bulan ini, total) — ditampilkan di dashboard admin
-5. **SEO** — meta title, meta description, slug artikel, sitemap
-6. **Backup Database** dari panel admin
+```
+                             [ PENGUNJUNG PUBLIK ]
+                                       │
+            ┌──────────────────────────┼──────────────────────────┐
+            │ Search / Filter Request  │ Submission Form          │ Request Document
+            ▼                          ▼                          ▼
+ ┌──────────────────────┐   ┌──────────────────────┐   ┌──────────────────────┐
+ │     PROSES 1.0       │   │     PROSES 2.0       │   │     PROSES 3.0       │
+ │   Pencarian &        │   │  Pesan & Hubungi     │   │  Unduh Dokumen &     │
+ │   Browsing Informasi │   │      Kampus          │   │   Lampiran File      │
+ └──────────┬───────────┘   └──────────┬───────────┘   └──────────┬───────────┘
+            │ Data Feed                │ Log Messages             │ File Streaming
+            ▼                          ▼                          ▼
+ ┌────────────────────────────────────────────────────────────────────────────┐
+ │                            DATA STORES (LocalStorage)                      │
+ │  DS-1: Berita    DS-2: Dosen     DS-3: Kurikulum   DS-4: Kegiatan        │
+ │  DS-5: Galeri    DS-6: Dokumen   DS-7: Pengumuman  DS-8: Activity Log    │
+ └─────────────────────────────────────┬──────────────────────────────────────┘
+                                       ▲
+                                       │ Data CRUD Operations
+                                       │
+ ┌─────────────────────────────────────┴──────────────────────────────────────┐
+ │     PROSES 4.0: Autentikasi & Manajemen Konten Admin (CRUD & Settings)     │
+ └─────────────────────────────────────▲──────────────────────────────────────┘
+                                       │ Login / Admin Commands
+                             [ ADMINISTRATOR / ADMIN ]
+```
 
 ---
 
-## 12. Prinsip Akhir
+## 6. 🔀 FLOWCHART SISTEM
 
-- Satu design system Neumorphism dipakai konsisten dari **Frontend hingga Admin Dashboard**, bukan sekadar mockup — seluruh komponen harus siap dikembangkan menjadi sistem nyata.
-- Tailwind untuk visual, Bootstrap 5 untuk struktur, Alpine.js untuk interaktivitas, SweetAlert2 untuk feedback — tidak tumpang tindih.
-- Prioritas: **Usability > Accessibility > Performance > Visual Effects.**
+### 6.1 Flowchart Pengunjung Publik (Public User Workflow)
 
-**Keyword desain acuan:** Premium Neumorphism UI · Modern University Website · Law School Website · Academic Portal · Professional Education Platform · Soft UI · Clean Dashboard · Responsive Web Design · Glass-free Neumorphism · Accessible UI · Minimalist Academic Design.
+```mermaid
+flowchart TD
+    Start([Mulai: Buka Website Prodi Hukum UMP]) --> Home[Tampil Halaman Beranda]
+    Home --> Choice{Pilih Navigasi}
+
+    Choice -->|Cari Informasi| Search[Input Kata Kunci di Search Bar]
+    Search --> ExecuteSearch[Eksekusi globalSearch]
+    ExecuteSearch --> DisplayResults[Tampilkan Hasil Pencarian & Detail Modal]
+
+    Choice -->|Profil Prodi| Profil[Buka profil.html]
+    Profil --> TabChoice{Pilih Tab Navigasi}
+    TabChoice -->|Visi & Misi| ShowVisi[Tampilkan Kartu Visi & Misi]
+    TabChoice -->|Dosen| ShowDosen[Tampilkan Daftar Dosen & Detail]
+    TabChoice -->|Kurikulum| ShowKur[Tampilkan Matkul per Semester]
+
+    Choice -->|Informasi Publik| Info[Berita / Pengumuman / Kegiatan]
+    Info --> FilterCat[Pilih Kategori / Filter]
+    FilterCat --> ViewDetail[Buka Detail & Map Acara]
+
+    Choice -->|Lokasi & Map| Map[Buka kontak.html]
+    Map --> ViewMap[Lihat Interactive Google Maps]
+    ViewMap --> MapNav[Klik Buka di Google Maps / Salin Alamat]
+
+    DisplayResults --> Finish([Selesai])
+    ShowVisi --> Finish
+    ShowDosen --> Finish
+    ShowKur --> Finish
+    ViewDetail --> Finish
+    MapNav --> Finish
+```
 
 ---
 
-## 13. Status Implementasi & Changelog Perbaikan
+### 6.2 Flowchart Administrator (Admin Panel Workflow)
 
-Proyek ini sudah diimplementasikan penuh sebagai kode statis (HTML/CSS/JS berjalan tanpa backend, data memakai `SAMPLE_*` di `assets/js/app.js`). Struktur final:
+```mermaid
+flowchart TD
+    StartAdmin([Mulai: Akses admin/login.html]) --> InputCred[Input Email & Password]
+    InputCred --> CheckCred{Validasi Kredensial}
 
-**Frontend (13 halaman + 5 halaman detail):** Beranda, Profil, Dosen, Kurikulum, Berita (+ detail), Pengumuman (+ detail), Kegiatan (+ detail), Prestasi, Artikel Hukum (+ detail), Galeri (+ detail), Dokumen, Alumni, Kontak.
+    CheckCred -->|Gagal| ErrMsg[Tampilkan SweetAlert Error] --> InputCred
+    CheckCred -->|Berhasil| SetSession[AUTH.login & Simpan Session User]
 
-**Admin Panel (16 halaman):** Login, Dashboard, Profil Prodi, Dosen, Kurikulum, Berita, Pengumuman, Kegiatan, Prestasi, Artikel, Galeri, Dokumen, Alumni, Pengguna, Pengaturan, Activity Log.
+    SetSession --> Dashboard[Tampilkan Dashboard Admin Analytics]
+    Dashboard --> AdminAction{Pilih Modul Admin}
 
-### Perbaikan pada audit terakhir
-- **Navbar/search tidak berfungsi** di 8 halaman (Beranda, Profil, Dosen, Kurikulum, Kontak, Prestasi, Dokumen, Alumni) — disamakan ke pola `siteHeader()` + `doSearch()` yang sudah benar di halaman lain.
-- **Bug nav-link aktif**: link "Beranda" pada navbar desktop (mega-menu dropdown) sebelumnya *selalu* tersorot aktif di semua halaman, sementara item di dalam dropdown (Dosen, Kurikulum, Berita, dst.) dan tombol trigger grup (Profil/Informasi/Mahasiswa) tidak pernah tersorot. Sudah diperbaiki: status aktif sekarang mengikuti halaman yang sedang dibuka, termasuk menyalakan trigger grup saat salah satu halaman di dalamnya aktif.
-- **Halaman Dosen**: kartu dan tombol "Lihat Profil" sebelumnya statis tanpa `@click`. Sekarang memakai `dosenPage()` — search & filter jabatan reaktif, dan modal detail dosen berfungsi penuh.
-- **Halaman Dokumen, Prestasi, Kurikulum, Alumni**: filter/tab semester sebelumnya dekoratif (tidak mengubah data). Sekarang tersambung ke `dokumenPage()`, `prestasiPage()`, `kurikulumPage()`, dan `alumniPage()` (baru ditambahkan) di `app.js`.
-- **`adminShell()`**: memperbaiki bug sidebar admin yang memakai `window.innerWidth` (dibaca sekali saat load, tidak reaktif saat resize) → diganti pendekatan CSS murni (`.admin-sidebar` + breakpoint 1024px).
-- **11 halaman admin yang hilang** (link mati di sidebar): Profil Prodi, Kurikulum, Pengumuman, Kegiatan, Prestasi, Artikel, Galeri, Dokumen, Alumni, Pengguna, Pengaturan — semua sudah dibangun dengan shell identik (sidebar/topbar) dan CRUD berfungsi (`adminCrudTable()`), plus halaman Activity Log yang sebelumnya belum ada.
-- **CSS pendukung** (`.modal-backdrop-neu`, `.admin-sidebar`) yang dipakai di markup tapi belum terdefinisikan sudah ditambahkan ke `style.css`.
-- Data kurikulum dilengkapi untuk Semester 6–8 (sebelumnya kosong sehingga tab tersebut tidak menampilkan apa pun).
+    AdminAction -->|Kelola Berita/Pengumuman| CRUDContent[Tambah / Edit / Hapus Konten]
+    AdminAction -->|Upload Foto Galeri| UploadImg[Pilih File Gambar]
+    UploadImg --> CompressImg[Proses CompressImageFile Base64]
+    CompressImg --> SaveGaleri[Simpan ke DS-Galeri]
 
-### Keterbatasan yang diketahui (bukan bug, keputusan desain)
-- Semua data bersumber dari array `SAMPLE_*` di `app.js` (tidak ada backend/database sungguhan) — perubahan lewat form admin tidak persisten setelah refresh halaman, sesuai sifat prototipe front-end.
-- Tombol Import/Export, Backup Database, dan upload berkas berjalan sebagai simulasi (menampilkan notifikasi SweetAlert2) karena tidak ada server penyimpanan.
-- Pencarian global (`doSearch()`) mencari lewat indeks statis dan berpindah halaman ke hasil pertama yang cocok saat menekan Enter — bukan dropdown saran langsung.
+    AdminAction -->|Pengaturan Website| Settings[Edit Alamat, Telepon, Google Maps Embed]
+    Settings --> SaveSettings[DB.save Pengaturan]
 
+    AdminAction -->|Notifikasi & Log| CheckLog[Lihat Activity Log Audit Trail]
+
+    CRUDContent --> WriteLog[System Call: logActivity & Dispatch Notif Event]
+    SaveGaleri --> WriteLog
+    SaveSettings --> WriteLog
+
+    WriteLog --> FinishAdmin([Selesai / Logout User])
+```
+
+---
+
+## 7. 🚀 FITUR UTAMA & PANDUAN PENGOPERASIAN
+
+### 7.1 Fitur Unggulan Sistem
+1. **Interactive Google Maps Embed (`touch-action: pan-y`)**:
+   Peta kampus interaktif yang lancar dioperasikan pada smartphone tanpa memblokir gesture scrolling halaman.
+2. **Tab-Based Profil & Deep Link Hash**:
+   Membuka bagian spesifik profil prodi (`#visi-misi`, `#struktur`, `#sejarah`) secara langsung dari URL hash.
+3. **Resilient LocalStorage DB & Auto-Compression**:
+   Gambar yang diunggah otomatis dikompres ke format ringan untuk menghemat kuota penyimpanan browser.
+4. **Real-time Reactive Notification Dropdown**:
+   Dropdown notifikasi dengan konfirmasi baca dan hapus instan tanpa refresh halaman.
+5. **Mobile Navigation Neumorphic Menu**:
+   Menu navigasi ponsel dengan bilah pencarian terpadu dan penanda indikator halaman aktif.
+
+### 7.2 Cara Pengoperasian & Pengujian Lokal
+1. **Menjalankan Proyek**:
+   - Proyek ini murni berbasis HTML, CSS, dan JavaScript (*Client-Side Engine*).
+   - Cukup buka file `index.html` langsung menggunakan peramban web (Chrome, Edge, Firefox, Safari) atau gunakan extension **Live Server** di VS Code / IDE.
+2. **Akses Portal Admin**:
+   - Buka halaman `admin/login.html` atau klik tombol **Portal Akademik** di header/footer.
+   - Masukkan email misal: `admin@ump.ac.id` dan password sembarang untuk simulasi login admin.
+3. **Uji Coba Fitur Backup & Restore Data**:
+   - Masuk ke menu **Pengaturan** di Admin Panel untuk mengunduh backup basis data dalam format JSON atau memulihkan data bawaan awal.
+
+---
+*Dokumentasi ini disusun secara komprehensif sebagai acuan pengembangan ERD, DFD Level 1, dan Flowchart Sistem Program Studi Hukum Universitas Muhammadiyah Papua.*

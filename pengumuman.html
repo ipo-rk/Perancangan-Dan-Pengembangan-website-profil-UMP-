@@ -121,53 +121,127 @@
           </button>
           <a href="admin/login.html" class="hidden md:inline-flex neu-btn-primary px-4 py-2.5 rounded-xl text-sm">Portal
             Akademik</a>
-          <button @click="mobileOpen = !mobileOpen" class="xl:hidden neu-btn w-10 h-10 flex items-center justify-center"
-            aria-label="Buka menu">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
+          <button @click="mobileOpen = !mobileOpen" class="xl:hidden neu-btn w-10 h-10 flex items-center justify-center transition-transform active:scale-95"
+            aria-label="Buka menu navigasi" :aria-expanded="mobileOpen">
+            <svg x-show="!mobileOpen" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+            <svg x-show="mobileOpen" x-cloak xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-royal" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
       </div>
 
-      <div x-show="mobileOpen" x-transition x-cloak class="xl:hidden pb-4 space-y-4">
-        <a href="index.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Beranda</a>
-
-        <div>
-          <p class="text-[11px] font-semibold uppercase tracking-wide text-text-muted mb-2 px-1">Profil</p>
-          <div class="grid grid-cols-2 gap-2">
-            <a href="profil.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Profil</a>
-            <a href="dosen.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Dosen</a>
-            <a href="kurikulum.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Kurikulum</a>
+            <!-- Mobile Navigation Menu -->
+      <div x-show="mobileOpen" 
+        x-transition:enter="transition ease-out duration-250 transform"
+        x-transition:enter-start="opacity-0 -translate-y-3 scale-98"
+        x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+        x-transition:leave="transition ease-in duration-150 transform"
+        x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+        x-transition:leave-end="opacity-0 -translate-y-3 scale-98"
+        x-cloak 
+        class="xl:hidden pb-6 pt-2">
+        <div class="neu-raised p-4 sm:p-5 rounded-3xl border border-black/5 dark:border-white/5 space-y-4 max-h-[80vh] overflow-y-auto">
+          
+          <!-- Mobile Search Bar -->
+          <div class="flex items-center neu-pressed px-3.5 py-2.5 gap-2.5 rounded-2xl">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-muted shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            <input x-model="searchQ" @keydown.enter="doSearch()" type="search" placeholder="Cari informasi prodi..." class="bg-transparent text-xs sm:text-sm outline-none w-full placeholder:text-text-muted">
+            <button @click="doSearch()" class="px-2.5 py-1 rounded-xl bg-royal/10 text-royal text-xs font-semibold hover:bg-royal hover:text-white transition-colors">Cari</button>
           </div>
-        </div>
 
-        <div>
-          <p class="text-[11px] font-semibold uppercase tracking-wide text-text-muted mb-2 px-1">Informasi</p>
-          <div class="grid grid-cols-2 gap-2">
-            <a href="berita.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Berita</a>
-            <a href="pengumuman.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-royal font-semibold">Pengumuman</a>
-            <a href="kegiatan.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Kegiatan</a>
-            <a href="artikel.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Artikel Hukum</a>
+          <!-- Menu Section: Utama -->
+          <div>
+            <a href="index.html" class="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
+              <span class="text-base">&#127968;</span>
+              <span class="text-sm font-medium">Beranda</span>
+            </a>
           </div>
-        </div>
 
-        <div>
-          <p class="text-[11px] font-semibold uppercase tracking-wide text-text-muted mb-2 px-1">Mahasiswa</p>
-          <div class="grid grid-cols-2 gap-2">
-            <a href="prestasi.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Prestasi</a>
-            <a href="alumni.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Alumni</a>
-            <a href="galeri.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Galeri</a>
+          <!-- Menu Section: Profil & Akademik -->
+          <div class="space-y-1.5 pt-2 border-t border-black/5 dark:border-white/5">
+            <p class="text-[11px] font-bold uppercase tracking-wider text-text-muted px-2">Profil &amp; Akademik</p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <a href="profil.html" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
+                <span>&#127963;</span>
+                <span>Profil Prodi</span>
+              </a>
+              <a href="dosen.html" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
+                <span>&#128104;&#8205;&#127979;</span>
+                <span>Dosen</span>
+              </a>
+              <a href="kurikulum.html" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
+                <span>&#128218;</span>
+                <span>Kurikulum</span>
+              </a>
+            </div>
           </div>
-        </div>
 
-        <div class="grid grid-cols-2 gap-2">
-          <a href="dokumen.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Dokumen</a>
-          <a href="kontak.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Kontak</a>
-        </div>
+          <!-- Menu Section: Informasi -->
+          <div class="space-y-1.5 pt-2 border-t border-black/5 dark:border-white/5">
+            <p class="text-[11px] font-bold uppercase tracking-wider text-text-muted px-2">Informasi &amp; Publikasi</p>
+            <div class="grid grid-cols-2 gap-2">
+              <a href="berita.html" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
+                <span>&#128240;</span>
+                <span>Berita</span>
+              </a>
+              <a href="pengumuman.html" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all bg-royal text-white font-semibold shadow-sm">
+                <span>&#128227;</span>
+                <span>Pengumuman</span>
+              </a>
+              <a href="kegiatan.html" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
+                <span>&#128197;</span>
+                <span>Kegiatan</span>
+              </a>
+              <a href="artikel.html" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
+                <span>&#9878;&#65039;</span>
+                <span>Artikel Hukum</span>
+              </a>
+            </div>
+          </div>
 
-        <a href="admin/login.html" class="block text-center neu-btn-primary px-4 py-3 rounded-xl text-sm">Portal Akademik</a>
+          <!-- Menu Section: Kemahasiswaan & Layanan -->
+          <div class="space-y-1.5 pt-2 border-t border-black/5 dark:border-white/5">
+            <p class="text-[11px] font-bold uppercase tracking-wider text-text-muted px-2">Kemahasiswaan &amp; Layanan</p>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              <a href="prestasi.html" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
+                <span>&#127942;</span>
+                <span>Prestasi</span>
+              </a>
+              <a href="alumni.html" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
+                <span>&#127891;</span>
+                <span>Alumni</span>
+              </a>
+              <a href="galeri.html" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
+                <span>&#128444;&#65039;</span>
+                <span>Galeri</span>
+              </a>
+              <a href="dokumen.html" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
+                <span>&#128196;</span>
+                <span>Dokumen</span>
+              </a>
+              <a href="kontak.html" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal sm:col-span-2">
+                <span>&#128222;</span>
+                <span>Kontak &amp; Lokasi</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Portal Akademik Button -->
+          <div class="pt-3 border-t border-black/5 dark:border-white/5">
+            <a href="admin/login.html" class="w-full text-center neu-btn-primary px-4 py-3 rounded-2xl text-sm font-semibold flex items-center justify-center gap-2 shadow-md">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+              </svg>
+              <span>Portal Akademik (Login Admin)</span>
+            </a>
+          </div>
+
+        </div>
       </div>
     </div>
   </header>
@@ -232,6 +306,12 @@
           <li x-text="p.alamat"></li>
           <li x-text="p.email"></li>
           <li x-text="p.telepon"></li>
+          <li class="pt-1">
+            <a href="kontak.html" class="text-royal font-semibold hover:underline inline-flex items-center gap-1.5 text-xs">
+              <span>&#128506;&#65039;</span>
+              <span>Peta &amp; Petunjuk Lokasi &rarr;</span>
+            </a>
+          </li>
         </ul>
       </div>
     </div>

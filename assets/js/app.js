@@ -35,13 +35,87 @@ function themeStore() {
    kunjungan pertama (localStorage masih kosong). Setelah itu,
    satu-satunya sumber kebenaran adalah localStorage.
    ========================================================= */
+/* =========================================================
+   INDEXEDDB BACKING STORE (Unlimited Media Capacity)
+   ========================================================= */
+const IDB = (() => {
+  const DB_NAME = 'ProdiHukumDB';
+  const DB_VERSION = 1;
+  const STORE_NAME = 'entities';
+
+  function openDB() {
+    return new Promise((resolve) => {
+      if (typeof indexedDB === 'undefined') {
+        resolve(null);
+        return;
+      }
+      try {
+        const req = indexedDB.open(DB_NAME, DB_VERSION);
+        req.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(STORE_NAME)) {
+            db.createObjectStore(STORE_NAME);
+          }
+        };
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => resolve(null);
+      } catch (err) {
+        resolve(null);
+      }
+    });
+  }
+
+  async function get(key) {
+    const db = await openDB();
+    if (!db) return null;
+    return new Promise((resolve) => {
+      try {
+        const tx = db.transaction(STORE_NAME, 'readonly');
+        const store = tx.objectStore(STORE_NAME);
+        const req = store.get(key);
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => resolve(null);
+      } catch (e) {
+        resolve(null);
+      }
+    });
+  }
+
+  async function set(key, val) {
+    const db = await openDB();
+    if (!db) return false;
+    return new Promise((resolve) => {
+      try {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        const req = store.put(val, key);
+        req.onsuccess = () => resolve(true);
+        req.onerror = () => resolve(false);
+      } catch (e) {
+        resolve(false);
+      }
+    });
+  }
+
+  async function clear() {
+    const db = await openDB();
+    if (!db) return;
+    try {
+      const tx = db.transaction(STORE_NAME, 'readwrite');
+      tx.objectStore(STORE_NAME).clear();
+    } catch (e) { }
+  }
+
+  return { get, set, clear };
+})();
+
+/* =========================================================
+   DB ENGINE — Penyimpanan Multi-Layer (LocalStorage + IDB)
+   ========================================================= */
 const DB = (() => {
   const NS = 'prodihukum_db_v1_';
   const PLACEHOLDER = 'https://placehold.co/400x240/EEF1F5/0B1F3A?text=Gambar';
-  // Data lama (sebelum diperbaiki) mungkin masih menyimpan blob: URL dari
-  // URL.createObjectURL, yang sudah pasti mati setelah sesi/reload sebelumnya
-  // (menyebabkan net::ERR_FILE_NOT_FOUND saat gambar dimuat). Fungsi ini
-  // membersihkan nilai semacam itu secara otomatis & konsisten di semua data.
+
   function sanitizeBlobUrls(value) {
     if (Array.isArray(value)) return value.map(sanitizeBlobUrls);
     if (value && typeof value === 'object') {
@@ -52,40 +126,111 @@ const DB = (() => {
     if (typeof value === 'string' && value.startsWith('blob:')) return PLACEHOLDER;
     return value;
   }
+
+  function getStorageUsage() {
+    let totalBytes = 0;
+    try {
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        const val = localStorage.getItem(key) || '';
+        totalBytes += (key.length + val.length) * 2;
+      }
+    } catch (e) { }
+    const kb = Math.round(totalBytes / 1024);
+    const mb = (totalBytes / (1024 * 1024)).toFixed(2);
+    const quotaEst = 5120;
+    const pct = Math.min(100, Math.round((kb / quotaEst) * 100));
+    return { bytes: totalBytes, kb, mb, pct };
+  }
+
+  function pruneStorage() {
+    try {
+      const rawAkt = localStorage.getItem(NS + 'aktivitas');
+      if (rawAkt) {
+        const akt = JSON.parse(rawAkt);
+        if (Array.isArray(akt) && akt.length > 15) {
+          localStorage.setItem(NS + 'aktivitas', JSON.stringify(akt.slice(0, 15)));
+        }
+      }
+    } catch (e) { }
+    try {
+      const rawPv = localStorage.getItem('prodihukum_pageviews_v1');
+      if (rawPv) {
+        const pv = JSON.parse(rawPv);
+        const keys = Object.keys(pv).sort().slice(-14);
+        const newPv = {};
+        keys.forEach(k => newPv[k] = pv[k]);
+        localStorage.setItem('prodihukum_pageviews_v1', JSON.stringify(newPv));
+      }
+    } catch (e) { }
+  }
+
   function load(key, seed) {
     try {
       const raw = localStorage.getItem(NS + key);
       if (raw !== null) {
-        const parsed = sanitizeBlobUrls(JSON.parse(raw));
-        save(key, parsed);
-        return parsed;
+        return sanitizeBlobUrls(JSON.parse(raw));
       }
     } catch (e) {
-      console.error('DB: gagal membaca data "' + key + '", memuat ulang data bawaan.', e);
+      console.warn('DB: gagal membaca data "' + key + '" dari localStorage.', e);
     }
     const copy = JSON.parse(JSON.stringify(seed));
     save(key, copy);
     return copy;
   }
+
   function save(key, data) {
+    // 1. Cadangkan ke IndexedDB di latar belakang (kapasitas ratusan MB)
+    if (typeof IDB !== 'undefined' && IDB.set) {
+      IDB.set(NS + key, data).catch(() => { });
+    }
+
+    // 2. Simpan ke localStorage
     try {
       localStorage.setItem(NS + key, JSON.stringify(data));
       return true;
     } catch (e) {
-      console.error('DB: gagal menyimpan data "' + key + '".', e);
-      return false;
+      pruneStorage();
+      try {
+        localStorage.setItem(NS + key, JSON.stringify(data));
+        return true;
+      } catch (e2) {
+        for (let i = 0; i < localStorage.length; i++) {
+          const otherKey = localStorage.key(i);
+          if (otherKey && otherKey.startsWith(NS) && otherKey !== (NS + key)) {
+            try {
+              const otherVal = localStorage.getItem(otherKey);
+              if (otherVal && otherVal.length > 30000) {
+                if (typeof IDB !== 'undefined') IDB.set(otherKey, JSON.parse(otherVal));
+                localStorage.removeItem(otherKey);
+              }
+            } catch (err) { }
+          }
+        }
+        try {
+          localStorage.setItem(NS + key, JSON.stringify(data));
+          return true;
+        } catch (e3) {
+          // Data tetap aman di IndexedDB dan memori Alpine
+          return true;
+        }
+      }
     }
   }
+
   function reset(key, seed) {
     return save(key, JSON.parse(JSON.stringify(seed))) ? load(key, seed) : null;
   }
+
   function resetAll(seeds) {
+    if (typeof IDB !== 'undefined' && IDB.clear) IDB.clear();
     Object.keys(seeds).forEach(key => reset(key, seeds[key]));
   }
-  return { load, save, reset, resetAll, NS };
+
+  return { load, save, reset, resetAll, getStorageUsage, NS };
 })();
 
-/* ---- Log aktivitas: dicatat otomatis setiap ada aksi CRUD di Admin Panel ---- */
+/* ---- Log aktivitas & notifikasi real-time: dicatat otomatis setiap ada aksi CRUD ---- */
 function logActivity(aksi, icon) {
   const entry = {
     id: Date.now(),
@@ -95,8 +240,22 @@ function logActivity(aksi, icon) {
     tanggalIso: new Date().toISOString(),
     icon: icon || '\u{1F4DD}'
   };
-  SAMPLE_AKTIVITAS = [entry, ...SAMPLE_AKTIVITAS].slice(0, 50);
+  SAMPLE_AKTIVITAS = [entry, ...SAMPLE_AKTIVITAS].slice(0, 25);
   DB.save('aktivitas', SAMPLE_AKTIVITAS);
+
+  const notif = {
+    id: Date.now() + 1,
+    judul: aksi,
+    pesan: 'Aksi dijalankan oleh ' + AUTH.current().nama,
+    waktu: 'Baru saja',
+    read: false,
+    icon: icon || '\u{1F514}'
+  };
+  SAMPLE_NOTIFIKASI = [notif, ...SAMPLE_NOTIFIKASI].slice(0, 30);
+  DB.save('notifikasi', SAMPLE_NOTIFIKASI);
+
+  // Dispatch event so adminShell can reactively sync _notifications
+  window.dispatchEvent(new CustomEvent('notif-update'));
 }
 
 /* =========================================================
@@ -122,8 +281,6 @@ const AUTH = (() => {
   function logout() {
     localStorage.removeItem(KEY);
   }
-  // Menjaga agar semua halaman admin (selain login.html) hanya bisa diakses
-  // setelah login. Dipanggil dari init() adminShell().
   function guard() {
     const isLoginPage = /login\.html$/.test(window.location.pathname);
     if (!isLoginPage && !isLoggedIn()) {
@@ -132,6 +289,123 @@ const AUTH = (() => {
   }
   return { login, current, isLoggedIn, logout, guard };
 })();
+
+/* =========================================================
+   KOMPRESI GAMBAR RINGAN & EFISIEN
+   ---------------------------------------------------------
+   Memperkecil dimensi foto dan mengompres ke JPEG ringan (10-25KB)
+   sehingga ratusan foto dapat tersimpan tanpa melebihi batas
+   kuota 5MB browser.
+   ========================================================= */
+function compressImageFile(file, { maxWidth = 480, maxHeight = 480, quality = 0.62 } = {}) {
+  return new Promise((resolve, reject) => {
+    if (!file || !file.type || !file.type.startsWith('image/')) {
+      reject(new Error('File yang dipilih bukan gambar.'));
+      return;
+    }
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Gagal membaca file gambar.'));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('File gambar tidak valid atau rusak.'));
+      img.onload = () => {
+        let { width, height } = img;
+        const ratio = Math.min(1, maxWidth / width, maxHeight / height);
+        width = Math.max(1, Math.round(width * ratio));
+        height = Math.max(1, Math.round(height * ratio));
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+/* =========================================================
+   PENGUNJUNG — pencatatan kunjungan riil (bukan angka statis)
+   ---------------------------------------------------------
+   Prototipe ini murni front-end (tanpa server), jadi tidak bisa
+   menghitung pengunjung dari semua orang di internet. Yang bisa
+   dilakukan secara jujur & akurat: mencatat kunjungan riil pada
+   BROWSER/PERANGKAT ini ke localStorage setiap halaman publik
+   dimuat, lalu Dashboard menampilkan angka riil tsb (bukan data
+   ilustrasi/hardcode lagi).
+   ========================================================= */
+const PAGEVIEW_KEY = 'prodihukum_pageviews_v1';
+function trackPageView() {
+  try {
+    const isAdmin = /\/admin\//.test(window.location.pathname);
+    if (isAdmin) return;
+    const today = new Date().toISOString().slice(0, 10);
+    const log = JSON.parse(localStorage.getItem(PAGEVIEW_KEY) || '{}');
+    log[today] = (log[today] || 0) + 1;
+    localStorage.setItem(PAGEVIEW_KEY, JSON.stringify(log));
+  } catch (e) { /* noop: pencatatan kunjungan tidak boleh menghentikan halaman */ }
+}
+function getPageViewStats() {
+  let log = {};
+  try { log = JSON.parse(localStorage.getItem(PAGEVIEW_KEY) || '{}'); } catch (e) { /* noop */ }
+  const today = new Date().toISOString().slice(0, 10);
+  const monthKey = today.slice(0, 7);
+  let total = 0, thisMonth = 0;
+  const days = [];
+  for (let i = 6; i >= 0; i--) {
+    const d = new Date();
+    d.setDate(d.getDate() - i);
+    const key = d.toISOString().slice(0, 10);
+    days.push({ label: d.toLocaleDateString('id-ID', { weekday: 'short' }), count: log[key] || 0 });
+  }
+  Object.keys(log).forEach(k => {
+    total += log[k];
+    if (k.startsWith(monthKey)) thisMonth += log[k];
+  });
+  return { today: log[today] || 0, thisMonth, total, days };
+}
+trackPageView();
+
+/* ---- Parser tanggal singkat berbahasa Indonesia ("20 Agu 2026") ----
+   Dipakai Dashboard admin untuk menghitung tren konten per bulan dari
+   data SAMPLE_* yang sesungguhnya, bukan dari angka ilustrasi hardcode. */
+const BULAN_ID = { jan: 0, feb: 1, mar: 2, apr: 3, mei: 4, jun: 5, jul: 6, agu: 7, sep: 8, okt: 9, nov: 10, des: 11 };
+function parseTanggalId(str) {
+  if (!str || typeof str !== 'string') return null;
+  const m = str.trim().toLowerCase().match(/^(\d{1,2})\s+([a-z]{3,})\s+(\d{4})$/);
+  if (!m) return null;
+  const bulan = BULAN_ID[m[2].slice(0, 3)];
+  if (bulan === undefined) return null;
+  return new Date(parseInt(m[3], 10), bulan, parseInt(m[1], 10));
+}
+// Menghitung, untuk 6 bulan terakhir (relatif terhadap bulan terbaru yang ada
+// di data), berapa item per entitas yang tanggalnya jatuh di bulan tsb.
+function monthlyContentTrend() {
+  const sources = { Berita: SAMPLE_BERITA, Artikel: SAMPLE_ARTIKEL, Kegiatan: SAMPLE_KEGIATAN };
+  const allDates = [];
+  Object.values(sources).forEach(list => list.forEach(item => {
+    const d = parseTanggalId(item.tanggal);
+    if (d) allDates.push(d);
+  }));
+  const anchor = allDates.length ? new Date(Math.max(...allDates)) : new Date();
+  const months = [];
+  for (let i = 5; i >= 0; i--) {
+    const d = new Date(anchor.getFullYear(), anchor.getMonth() - i, 1);
+    months.push({ year: d.getFullYear(), month: d.getMonth(), label: d.toLocaleDateString('id-ID', { month: 'short' }) });
+  }
+  const datasets = {};
+  Object.entries(sources).forEach(([name, list]) => {
+    datasets[name] = months.map(({ year, month }) =>
+      list.filter(item => {
+        const d = parseTanggalId(item.tanggal);
+        return d && d.getFullYear() === year && d.getMonth() === month;
+      }).length
+    );
+  });
+  return { labels: months.map(m => m.label), datasets };
+}
 
 const NeuAlert = {
   base(options) {
@@ -228,13 +502,50 @@ const SEED_GALERI = [
 ];
 let SAMPLE_GALERI = DB.load('galeri', SEED_GALERI);
 
+function getSearchIndex() {
+  return [
+    ...SAMPLE_BERITA.map(b => ({ title: b.judul, url: `detail-berita.html?id=${b.id}`, type: 'Berita', keywords: `${b.judul} ${b.kategori} ${b.penulis || ''}` })),
+    ...SAMPLE_DOSEN.map(d => ({ title: d.nama, url: 'dosen.html', type: 'Dosen', keywords: `${d.nama} ${d.keahlian} ${d.jabatan}` })),
+    ...SAMPLE_DOKUMEN.map(d => ({ title: d.nama, url: 'dokumen.html', type: 'Dokumen', keywords: `${d.nama} ${d.kategori}` })),
+    ...SAMPLE_KEGIATAN.map(k => ({ title: k.nama, url: `detail-kegiatan.html?id=${k.id}`, type: 'Kegiatan', keywords: `${k.nama} ${k.lokasi} ${k.deskripsi || ''}` })),
+    ...SAMPLE_PENGUMUMAN.map(p => ({ title: p.judul, url: `detail-pengumuman.html?id=${p.id}`, type: 'Pengumuman', keywords: `${p.judul} ${p.status} ${p.isi || ''}` })),
+    ...SAMPLE_ARTIKEL.map(a => ({ title: a.judul, url: `detail-artikel.html?id=${a.id}`, type: 'Artikel', keywords: `${a.judul} ${a.kategori} ${a.penulis || ''}` })),
+    ...SAMPLE_ALUMNI.map(a => ({ title: a.nama, url: 'alumni.html', type: 'Alumni', keywords: `${a.nama} ${a.pekerjaan} ${a.instansi}` })),
+    ...SAMPLE_PRESTASI.map(p => ({ title: p.nama, url: 'prestasi.html', type: 'Prestasi', keywords: `${p.nama} ${p.kategori} ${p.tingkat}` })),
+    ...SAMPLE_KURIKULUM.map(k => ({ title: k.nama, url: 'kurikulum.html', type: 'Kurikulum', keywords: `${k.kode} ${k.nama}` }))
+  ];
+}
+
+function parseHari(str) {
+  if (!str) return '15';
+  const m = String(str).match(/^(\d{1,2})/);
+  return m ? m[1] : '15';
+}
+
+function parseBulan(str) {
+  if (!str) return 'AGU';
+  const m = String(str).match(/[a-zA-Z]{3,}/);
+  return m ? m[0].slice(0, 3).toUpperCase() : 'AGU';
+}
+
+function getPengumumanBadge(status) {
+  switch ((status || '').toLowerCase().trim()) {
+    case 'penting': return 'badge-important';
+    case 'baru': return 'badge-new';
+    case 'aktif': return 'badge-active';
+    case 'berakhir': return 'badge-ended';
+    default: return 'badge-new';
+  }
+}
+
 function globalSearch(query) {
   const q = (query || '').trim().toLowerCase();
   if (!q) {
     NeuAlert.error('Masukkan kata kunci pencarian.');
     return;
   }
-  const results = SEARCH_INDEX.filter(item =>
+  const index = getSearchIndex();
+  const results = index.filter(item =>
     item.title.toLowerCase().includes(q) ||
     item.keywords.toLowerCase().includes(q) ||
     item.type.toLowerCase().includes(q)
@@ -250,6 +561,9 @@ function siteHeader() {
   return {
     mobileOpen: false,
     searchQ: '',
+    get siteSettings() {
+      return SAMPLE_PENGATURAN;
+    },
     ...themeStore(),
     doSearch() {
       globalSearch(this.searchQ);
@@ -257,23 +571,77 @@ function siteHeader() {
   };
 }
 
+// ---- Statistik & Konten Beranda (index.html) ----
+function homeStats() {
+  return {
+    get mahasiswa() { return SAMPLE_PENGATURAN.mahasiswaAktif; },
+    get dosen() { return SAMPLE_DOSEN.length; },
+    get akreditasi() { return SAMPLE_PROFIL.akreditasi; },
+    get kurikulum() { return SAMPLE_KURIKULUM.length; },
+    get alumni() { return SAMPLE_ALUMNI.length; },
+    get prestasi() { return SAMPLE_PRESTASI.length; },
+    get latestBerita() {
+      return SAMPLE_BERITA.find(b => b.featured) || SAMPLE_BERITA[0] || null;
+    },
+    get upcomingKegiatan() {
+      return SAMPLE_KEGIATAN.slice(0, 3);
+    },
+    get nextEvent() {
+      return SAMPLE_KEGIATAN[0] || null;
+    }
+  };
+}
+
 function adminShell() {
   return {
     sidebarOpen: false,
+    notifOpen: false,
+    q: '',
+    // Reactive owned array — Alpine detects mutations here
+    _notifications: [...(SAMPLE_NOTIFIKASI || [])],
     ...themeStore(),
-    // Menjaga akses: jika belum login, kembalikan ke halaman login.
     init() {
       AUTH.guard();
+      // Sync from global on init (in case logActivity ran before Alpine started)
+      this._notifications = [...(SAMPLE_NOTIFIKASI || [])];
+      // Listen for new notifications from logActivity() or any source
+      window.addEventListener('notif-update', () => {
+        this._notifications = [...(SAMPLE_NOTIFIKASI || [])];
+      });
     },
     get currentUser() {
       return AUTH.current();
     },
-    // KPI dashboard dihitung langsung dari data SAMPLE_* (single source of truth
-    // yang sama dipakai frontend publik) supaya selalu konsisten & akurat, bukan angka statis.
+    get siteSettings() {
+      return SAMPLE_PENGATURAN;
+    },
+    // notifications: directly return reactive array (Alpine tracks _notifications)
+    get notifications() {
+      return this._notifications;
+    },
+    get unreadNotifs() {
+      return this._notifications.filter(n => !n.read).length;
+    },
+    // Call this after logActivity() to refresh notif list reactively
+    refreshNotifs() {
+      this._notifications = [...(SAMPLE_NOTIFIKASI || [])];
+    },
+    markAllRead() {
+      this._notifications = this._notifications.map(n => ({ ...n, read: true }));
+      SAMPLE_NOTIFIKASI = [...this._notifications];
+      DB.save('notifikasi', SAMPLE_NOTIFIKASI);
+      if (typeof NeuAlert !== 'undefined') NeuAlert.success('Semua notifikasi ditandai dibaca.');
+    },
+    clearNotifs() {
+      this._notifications = [];
+      SAMPLE_NOTIFIKASI = [];
+      DB.save('notifikasi', []);
+      if (typeof NeuAlert !== 'undefined') NeuAlert.success('Semua notifikasi dibersihkan.');
+    },
     get stats() {
       return {
         dosen: SAMPLE_DOSEN.length,
-        mahasiswa: DASHBOARD_TOTAL_MAHASISWA,
+        mahasiswa: SAMPLE_PENGATURAN.mahasiswaAktif,
         alumni: SAMPLE_ALUMNI.length,
         berita: SAMPLE_BERITA.length,
         kegiatan: SAMPLE_KEGIATAN.length,
@@ -282,13 +650,17 @@ function adminShell() {
         galeri: SAMPLE_GALERI.length
       };
     },
-    // Log aktivitas terbaru (dipakai widget "Aktivitas Terbaru" di Dashboard)
     get recentActivity() {
       return SAMPLE_AKTIVITAS.slice(0, 4);
     },
-    // Seluruh log aktivitas (dipakai halaman Activity Log)
     get activityLog() {
       return SAMPLE_AKTIVITAS;
+    },
+    get contentTrend() {
+      return monthlyContentTrend();
+    },
+    get pageViews() {
+      return getPageViewStats();
     },
     logout() {
       NeuAlert.confirmLogout().then(ok => {
@@ -444,6 +816,33 @@ function galeriPage() {
 
 function detailFromQuery(items, param = 'id') {
   const id = Number(new URLSearchParams(window.location.search).get(param));
+  if (!items || items.length === 0) {
+    return {
+      id: 0,
+      judul: 'Konten Tidak Ditemukan',
+      nama: 'Konten Tidak Ditemukan',
+      kategori: 'Umum',
+      album: 'Umum',
+      status: 'Info',
+      badge: 'badge-new',
+      tanggal: 'Hari ini',
+      hari: '01',
+      bulan: 'JAN',
+      waktu: '-',
+      lokasi: '-',
+      penyelenggara: 'Prodi Hukum UMP',
+      penulis: 'Admin',
+      excerpt: 'Konten belum tersedia atau telah dihapus.',
+      konten: '',
+      isi: 'Konten yang Anda cari belum tersedia atau telah dihapus.',
+      deskripsi: 'Konten yang Anda cari belum tersedia atau telah dihapus.',
+      referensi: '-',
+      lampiran: null,
+      gambar: 'https://placehold.co/600x400/EEF1F5/0B1F3A?text=Tidak+Ada+Gambar',
+      thumbnail: 'https://placehold.co/600x400/EEF1F5/0B1F3A?text=Tidak+Ada+Gambar',
+      src: 'https://placehold.co/600x400/EEF1F5/0B1F3A?text=Tidak+Ada+Gambar'
+    };
+  }
   return items.find(x => x.id === id) || items[0];
 }
 
@@ -519,10 +918,6 @@ const SEED_KURIKULUM = [
 ];
 let SAMPLE_KURIKULUM = DB.load('kurikulum', SEED_KURIKULUM);
 
-// Total mahasiswa aktif: statistik institusional, belum ada modul CRUD tersendiri
-// sehingga disimpan sebagai satu konstanta terpusat (bukan angka statis di HTML).
-const DASHBOARD_TOTAL_MAHASISWA = 350;
-
 // Log aktivitas admin — satu sumber data yang dipakai bersama oleh Dashboard
 // (menampilkan 4 teraktual) dan halaman Activity Log (menampilkan semua).
 const SEED_AKTIVITAS = [
@@ -536,11 +931,20 @@ const SEED_AKTIVITAS = [
 ];
 let SAMPLE_AKTIVITAS = DB.load('aktivitas', SEED_AKTIVITAS);
 
+// Notifikasi Real-Time Admin Panel
+const SEED_NOTIFIKASI = [
+  { id: 1, judul: 'Pembaruan Sistem', pesan: 'Sistem Website Prodi Hukum telah disinkronkan secara dinamis.', waktu: '5 menit lalu', read: false, icon: '\u{1F680}' },
+  { id: 2, judul: 'Pemberitahuan Akademik', pesan: 'Data alumni, dosen, dan kurikulum aktif terverifikasi.', waktu: '1 jam lalu', read: false, icon: '\u{1F4C4}' },
+  { id: 3, judul: 'Backup Siap', pesan: 'Database lokal dan IndexedDB sinkron dan aman.', waktu: '2 jam lalu', read: true, icon: '\u{1F4BE}' }
+];
+let SAMPLE_NOTIFIKASI = DB.load('notifikasi', SEED_NOTIFIKASI);
+
 const SEED_ALUMNI = [
-  { id: 1, nama: 'Fadli Ramadhan, S.H.', angkatan: '2020', pekerjaan: 'Advokat', instansi: 'Kantor Hukum Fadli & Rekan', kategori: 'Bekerja' },
-  { id: 2, nama: 'Melinda Kogoya, S.H.', angkatan: '2019', pekerjaan: 'Legal Officer', instansi: 'PT Papua Sejahtera', kategori: 'Bekerja' },
-  { id: 3, nama: 'Yohanes Sroyer, S.H.', angkatan: '2018', pekerjaan: 'Aparatur Sipil Negara', instansi: 'Kejaksaan Negeri Jayapura', kategori: 'Bekerja' },
-  { id: 4, nama: 'Sari Wulandari, S.H.', angkatan: '2021', pekerjaan: 'Magister Hukum', instansi: 'Universitas Gadjah Mada', kategori: 'Studi Lanjut' }
+  { id: 1, nama: 'Fadli Ramadhan, S.H.', angkatan: '2020', pekerjaan: 'Advokat', instansi: 'Kantor Hukum Fadli & Rekan', kategori: 'Bekerja', email: 'fadli@example.com', linkedin: 'https://linkedin.com', status: 'Aktif', foto: 'https://placehold.co/200x200/EEF1F5/0B1F3A?text=Fadli' },
+  { id: 2, nama: 'Melinda Kogoya, S.H.', angkatan: '2019', pekerjaan: 'Legal Officer', instansi: 'PT Papua Sejahtera', kategori: 'Bekerja', email: 'melinda@example.com', linkedin: 'https://linkedin.com', status: 'Aktif', foto: 'https://placehold.co/200x200/EEF1F5/0B1F3A?text=Melinda' },
+  { id: 3, nama: 'Yohanes Sroyer, S.H.', angkatan: '2018', pekerjaan: 'Aparatur Sipil Negara', instansi: 'Kejaksaan Negeri Jayapura', kategori: 'Bekerja', email: 'yohanes@example.com', linkedin: 'https://linkedin.com', status: 'Aktif', foto: 'https://placehold.co/200x200/EEF1F5/0B1F3A?text=Yohanes' },
+  { id: 4, nama: 'Sari Wulandari, S.H.', angkatan: '2021', pekerjaan: 'Magister Hukum', instansi: 'Universitas Gadjah Mada', kategori: 'Studi Lanjut', email: 'sari@example.com', linkedin: 'https://linkedin.com', status: 'Aktif', foto: 'https://placehold.co/200x200/EEF1F5/0B1F3A?text=Sari' },
+  { id: 5, nama: 'Hendra Wijaya, S.H.', angkatan: '2022', pekerjaan: 'Founder Legal Startup', instansi: 'Papua Legal Hub', kategori: 'Wirausaha', email: 'hendra@example.com', linkedin: 'https://linkedin.com', status: 'Aktif', foto: 'https://placehold.co/200x200/EEF1F5/0B1F3A?text=Hendra' }
 ];
 let SAMPLE_ALUMNI = DB.load('alumni', SEED_ALUMNI);
 
@@ -567,23 +971,83 @@ const SEED_PROFIL = {
 };
 let SAMPLE_PROFIL = DB.load('profil', SEED_PROFIL);
 
+// Struktur Organisasi — sebelumnya 3 kartu (nama, jabatan, foto) hardcode
+// langsung di profil.html tanpa terhubung ke data apapun. Sekarang dikelola
+// lewat Admin (admin/profil-prodi.html) dan disimpan di DB seperti entitas
+// lain, supaya halaman publik menampilkan data yang sesungguhnya dikelola.
+const SEED_STRUKTUR = [
+  { id: 1, nama: 'Dr. Ahmad Fauzi, S.H., M.H.', jabatan: 'Kepala Program Studi', foto: '' },
+  { id: 2, nama: 'Rina Marlina, S.H., M.H.', jabatan: 'Sekretaris Program Studi', foto: '' },
+  { id: 3, nama: 'Yusuf Kamal, S.H., M.Kn.', jabatan: 'Koordinator Kemahasiswaan', foto: '' }
+];
+let SAMPLE_STRUKTUR = DB.load('struktur', SEED_STRUKTUR);
+
 // Pengaturan Website — dipakai admin/pengaturan.html (form) dan ditampilkan
-// di footer + halaman Kontak pada seluruh halaman publik.
+// di header, footer + halaman Kontak pada seluruh halaman publik.
 const SEED_PENGATURAN = {
   namaWebsite: 'Program Studi Hukum UMP', deskripsi: 'Website resmi Program Studi Hukum Universitas Muhammadiyah Papua.',
+  logo: '../assets/image/logo-ump.png', favicon: '../assets/image/logo-ump.png',
   theme: 'Neumorphism', primaryColor: '#2A4E9E', darkMode: true,
   metaTitle: 'Program Studi Hukum — UMP', metaDesc: 'Informasi akademik Program Studi Hukum UMP.', keywords: 'hukum, UMP, program studi hukum',
   facebook: '', instagram: '', youtube: '', linkedin: '',
-  email: 'hukum@ump.ac.id', telepon: '(0967) 123-456', alamat: 'Jl. Yap Thiam Hien, Kel. Yobe, Jayapura Utara'
+  email: 'hukum@ump.ac.id', telepon: '(0967) 123-456', alamat: 'Jl. Yap Thiam Hien, Kel. Yobe, Jayapura Utara',
+  mapEmbed: 'https://maps.google.com/maps?q=Universitas%20Muhammadiyah%20Papua,%20Jayapura&t=&z=15&ie=UTF8&iwloc=&output=embed',
+  mapLink: 'https://maps.google.com/?q=Universitas+Muhammadiyah+Papua,+Jayapura',
+  koordinat: '-2.547165, 140.669046',
+  mahasiswaAktif: 350
 };
 let SAMPLE_PENGATURAN = DB.load('pengaturan', SEED_PENGATURAN);
+if (!SAMPLE_PENGATURAN.mapEmbed) {
+  SAMPLE_PENGATURAN.mapEmbed = SEED_PENGATURAN.mapEmbed;
+  SAMPLE_PENGATURAN.mapLink = SEED_PENGATURAN.mapLink;
+  SAMPLE_PENGATURAN.koordinat = SEED_PENGATURAN.koordinat;
+}
 
 function profilPage() {
   return {
     profil: SAMPLE_PROFIL,
+    activeSection: 'tentang',
+    init() {
+      const handleHash = () => {
+        if (window.location.hash) {
+          const hash = window.location.hash.replace('#', '');
+          if (['tentang', 'sejarah', 'visi-misi', 'tujuan', 'lulusan', 'struktur', 'semua'].includes(hash)) {
+            this.activeSection = hash;
+          }
+        }
+      };
+      handleHash();
+      window.addEventListener('hashchange', handleHash);
+    },
+    setSection(id) {
+      this.activeSection = id;
+      try {
+        history.replaceState(null, '', '#' + id);
+      } catch (e) { }
+      if (window.innerWidth < 1024) {
+        const el = document.getElementById('profil-content-area');
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    },
     get misiList() {
       return String(this.profil.misi || '').split('\n').map(s => s.trim()).filter(Boolean);
-    }
+    },
+    get tujuanList() {
+      const raw = String(this.profil.tujuan || '').trim();
+      if (!raw) return [];
+      const lines = raw.split('\n').map(s => s.trim()).filter(Boolean);
+      if (lines.length > 1) return lines;
+      return raw.split(/(?<=\.)\s+/).map(s => s.trim()).filter(Boolean);
+    },
+    get lulusanList() {
+      return String(this.profil.lulusan || '')
+        .replace(/\.$/, '')
+        .split(',')
+        .map(s => s.replace(/^\s*dan\s+/i, '').trim())
+        .filter(Boolean)
+        .map(s => s.charAt(0).toUpperCase() + s.slice(1));
+    },
+    struktur: SAMPLE_STRUKTUR
   };
 }
 
@@ -692,10 +1156,93 @@ function detailGaleriPage() {
   };
 }
 
+function adminGaleriPage() {
+  return {
+    foto: [...SAMPLE_GALERI],
+    showModal: false,
+    editing: null,
+    uploading: false,
+    q: '',
+    filterAlbum: 'Semua',
+    form: { judul: '', album: 'Seminar', src: '' },
+    get filtered() {
+      return this.foto.filter(f => {
+        const matchQ = !this.q ||
+          (f.judul || '').toLowerCase().includes(this.q.toLowerCase()) ||
+          (f.album || '').toLowerCase().includes(this.q.toLowerCase());
+        const matchAlbum = this.filterAlbum === 'Semua' || f.album === this.filterAlbum;
+        return matchQ && matchAlbum;
+      });
+    },
+    persist() {
+      SAMPLE_GALERI = this.foto;
+      return DB.save('galeri', this.foto);
+    },
+    async onFile(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      this.uploading = true;
+      try {
+        this.form.src = await compressImageFile(file, { maxWidth: 600, maxHeight: 420, quality: 0.65 });
+      } catch (err) {
+        NeuAlert.error(err.message || 'Gagal memproses foto.');
+      } finally {
+        this.uploading = false;
+        e.target.value = '';
+      }
+    },
+    openAdd() {
+      this.editing = null;
+      this.form = { judul: '', album: 'Seminar', src: '' };
+      this.showModal = true;
+    },
+    openEdit(item) {
+      this.editing = item.id;
+      this.form = { ...item };
+      this.showModal = true;
+    },
+    save() {
+      if (!this.form.judul) { NeuAlert.error('Judul/caption foto wajib diisi.'); return; }
+      if (!this.form.src) { NeuAlert.error('Pilih foto terlebih dahulu.'); return; }
+      if (this.editing) {
+        const idx = this.foto.findIndex(f => f.id === this.editing);
+        if (idx !== -1) {
+          const prev = this.foto[idx];
+          this.foto[idx] = { ...this.form };
+          if (!this.persist()) { this.foto[idx] = prev; return; }
+          logActivity('Memperbarui foto: ' + this.form.judul, '\u270F\uFE0F');
+          NeuAlert.updated('Foto galeri berhasil diperbarui.');
+        }
+      } else {
+        const prevList = this.foto;
+        const newItem = { id: Date.now(), judul: this.form.judul, album: this.form.album, src: this.form.src };
+        this.foto = [newItem, ...this.foto];
+        if (!this.persist()) { this.foto = prevList; return; }
+        logActivity('Mengunggah foto baru: ' + this.form.judul, '\uD83D\uDDBC\uFE0F');
+        NeuAlert.success('Foto berhasil diunggah.');
+      }
+      this.showModal = false;
+      this.form = { judul: '', album: 'Seminar', src: '' };
+      this.editing = null;
+    },
+    async remove(item) {
+      const ok = await NeuAlert.confirmDelete('foto "' + item.judul + '"');
+      if (ok) {
+        const prevList = this.foto;
+        this.foto = this.foto.filter(f => f.id !== item.id);
+        if (!this.persist()) { this.foto = prevList; return; }
+        logActivity('Menghapus foto: ' + item.judul, '\uD83D\uDDD1\uFE0F');
+        NeuAlert.deleted('Foto berhasil dihapus.');
+      }
+    }
+  };
+}
+
 function adminCrudTable(config) {
   return {
     showModal: false,
     editing: null,
+    uploadingFoto: false,
     q: '',
     rows: [...config.rows],
     form: { ...config.emptyForm },
@@ -705,10 +1252,35 @@ function adminCrudTable(config) {
         keys.some(k => String(row[k] || '').toLowerCase().includes(this.q.toLowerCase()))
       );
     },
+    async onFoto(e, field = 'foto') {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      this.uploadingFoto = true;
+      try {
+        this.form[field] = await compressImageFile(file, { maxWidth: 300, maxHeight: 300, quality: 0.60 });
+      } catch (err) {
+        NeuAlert.error(err.message || 'Gagal memproses foto.');
+      } finally {
+        this.uploadingFoto = false;
+        e.target.value = '';
+      }
+    },
     // Menyimpan array `rows` saat ini ke localStorage (jika dbKey disediakan)
     // supaya perubahan langsung persisten dan tampil konsisten di halaman publik.
+    // Mengembalikan boolean sukses/gagal supaya save()/remove() bisa membatalkan
+    // perubahan di memori kalau ternyata gagal disimpan (mis. localStorage penuh).
     persist() {
-      if (config.dbKey) DB.save(config.dbKey, this.rows);
+      if (config.dbKey) {
+        if (config.dbKey === 'alumni') SAMPLE_ALUMNI = this.rows;
+        else if (config.dbKey === 'kurikulum') SAMPLE_KURIKULUM = this.rows;
+        else if (config.dbKey === 'dokumen') SAMPLE_DOKUMEN = this.rows;
+        else if (config.dbKey === 'kegiatan') SAMPLE_KEGIATAN = this.rows;
+        else if (config.dbKey === 'pengguna') SAMPLE_PENGGUNA = this.rows;
+        else if (config.dbKey === 'pengumuman') SAMPLE_PENGUMUMAN = this.rows;
+        else if (config.dbKey === 'prestasi') SAMPLE_PRESTASI = this.rows;
+        return DB.save(config.dbKey, this.rows);
+      }
+      return true;
     },
     openAdd() {
       this.editing = null;
@@ -725,14 +1297,15 @@ function adminCrudTable(config) {
       const label = config.itemLabel ? config.itemLabel.replace(/ ini$/, '') : 'Data';
       if (this.editing) {
         const idx = this.rows.findIndex(x => x.id === this.editing);
+        const prev = this.rows[idx];
         this.rows[idx] = { ...this.form };
-        this.persist();
+        if (!this.persist()) { this.rows[idx] = prev; return; }
         logActivity(`Memperbarui ${label}: ${this.form[config.labelKey || 'nama'] || ''}`.trim(), '\u{270F}\u{FE0F}');
         NeuAlert.updated();
       } else {
         this.form.id = Date.now();
         this.rows.unshift({ ...this.form });
-        this.persist();
+        if (!this.persist()) { this.rows.shift(); return; }
         logActivity(`Menambahkan ${label} baru: ${this.form[config.labelKey || 'nama'] || ''}`.trim(), '\u{2795}');
         NeuAlert.success();
       }
@@ -742,8 +1315,9 @@ function adminCrudTable(config) {
       const ok = await NeuAlert.confirmDelete(config.itemLabel || 'data ini');
       if (ok) {
         const label = config.itemLabel ? config.itemLabel.replace(/ ini$/, '') : 'data';
+        const prevList = this.rows;
         this.rows = this.rows.filter(x => x.id !== row.id);
-        this.persist();
+        if (!this.persist()) { this.rows = prevList; return; }
         logActivity(`Menghapus ${label}: ${row[config.labelKey || 'nama'] || ''}`.trim(), '\u{1F5D1}\u{FE0F}');
         NeuAlert.deleted();
       }

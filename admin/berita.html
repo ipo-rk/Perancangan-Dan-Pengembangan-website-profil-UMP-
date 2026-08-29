@@ -1,22 +1,28 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manajemen Berita | Program Studi Hukum — UMP</title>
-<meta name="description" content="Website resmi Program Studi Hukum Universitas Muhammadiyah Papua.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../assets/css/tailwind.min.css">
-<script src="../assets/js/app.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
-<link rel="stylesheet" href="../assets/css/style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Manajemen Berita | Program Studi Hukum — UMP</title>
+  <meta name="description" content="Website resmi Program Studi Hukum Universitas Muhammadiyah Papua.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/tailwind.min.css">
+  <script src="../assets/js/app.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
 
 </head>
+
 <body x-data="adminShell()" class="font-sans">
-    <div class="flex min-h-screen">
-      
-    <aside class="admin-sidebar w-72 shrink-0 neu-raised m-4 lg:mr-0 p-4 flex flex-col gap-1 fixed lg:sticky top-4 h-[calc(100vh-2rem)] overflow-y-auto z-40 bg-bg" :class="sidebarOpen ? 'sidebar-open' : ''">
+  <div class="flex min-h-screen">
+
+    <aside
+      class="admin-sidebar w-72 shrink-0 neu-raised m-4 lg:mr-0 p-4 flex flex-col gap-1 fixed lg:sticky top-4 h-[calc(100vh-2rem)] overflow-y-auto z-40 bg-bg"
+      :class="sidebarOpen ? 'sidebar-open' : ''">
       <div class="flex items-center gap-3 px-2 pb-4 mb-2 border-b border-black/5 dark:border-white/5">
         <div class="w-10 h-10 neu-raised-sm flex items-center justify-center">
           <span class="font-display font-bold text-navy dark:text-white text-sm">UMP</span>
@@ -27,75 +33,147 @@
         </div>
       </div>
       <a href="dashboard.html" class="side-link ">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-          <span>Dashboard</span>
-        </a>
-        <a href="profil-prodi.html" class="side-link ">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-          <span>Profil Prodi</span>
-        </a>
-        <a href="dosen.html" class="side-link ">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-1.13a4 4 0 100-8 4 4 0 000 8zm6 0a4 4 0 10-3.87-5"/></svg>
-          <span>Dosen</span>
-        </a>
-        <a href="kurikulum.html" class="side-link ">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
-          <span>Kurikulum</span>
-        </a>
-        <a href="berita.html" class="side-link active">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"/></svg>
-          <span>Berita</span>
-        </a>
-        <a href="pengumuman.html" class="side-link ">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg>
-          <span>Pengumuman</span>
-        </a>
-        <a href="kegiatan.html" class="side-link ">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
-          <span>Kegiatan</span>
-        </a>
-        <a href="prestasi.html" class="side-link ">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2"/></svg>
-          <span>Prestasi</span>
-        </a>
-        <a href="artikel.html" class="side-link ">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5A2.5 2.5 0 006.5 22H20v-5M4 19.5V4.5A2.5 2.5 0 016.5 2H20v15"/></svg>
-          <span>Artikel</span>
-        </a>
-        <a href="galeri.html" class="side-link ">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M4 4h16v16H4V4z"/></svg>
-          <span>Galeri</span>
-        </a>
-        <a href="dokumen.html" class="side-link ">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
-          <span>Dokumen</span>
-        </a>
-        <a href="alumni.html" class="side-link ">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.42A12.083 12.083 0 0112 20.055 12.083 12.083 0 015.84 10.58L12 14z"/></svg>
-          <span>Alumni</span>
-        </a>
-        <a href="pengguna.html" class="side-link ">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-          <span>Pengguna</span>
-        </a>
-        <a href="pengaturan.html" class="side-link ">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/></svg>
-          <span>Pengaturan</span>
-        </a>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+        </svg>
+        <span>Dashboard</span>
+      </a>
+      <a href="profil-prodi.html" class="side-link ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <span>Profil Prodi</span>
+      </a>
+      <a href="dosen.html" class="side-link ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-1.13a4 4 0 100-8 4 4 0 000 8zm6 0a4 4 0 10-3.87-5" />
+        </svg>
+        <span>Dosen</span>
+      </a>
+      <a href="kurikulum.html" class="side-link ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+        </svg>
+        <span>Kurikulum</span>
+      </a>
+      <a href="berita.html" class="side-link active">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+        </svg>
+        <span>Berita</span>
+      </a>
+      <a href="pengumuman.html" class="side-link ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z" />
+        </svg>
+        <span>Pengumuman</span>
+      </a>
+      <a href="kegiatan.html" class="side-link ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        <span>Kegiatan</span>
+      </a>
+      <a href="prestasi.html" class="side-link ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2" />
+        </svg>
+        <span>Prestasi</span>
+      </a>
+      <a href="artikel.html" class="side-link ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M4 19.5A2.5 2.5 0 016.5 17H20M4 19.5A2.5 2.5 0 006.5 22H20v-5M4 19.5V4.5A2.5 2.5 0 016.5 2H20v15" />
+        </svg>
+        <span>Artikel</span>
+      </a>
+      <a href="galeri.html" class="side-link ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14M4 4h16v16H4V4z" />
+        </svg>
+        <span>Galeri</span>
+      </a>
+      <a href="dokumen.html" class="side-link ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+        <span>Dokumen</span>
+      </a>
+      <a href="alumni.html" class="side-link ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.42A12.083 12.083 0 0112 20.055 12.083 12.083 0 015.84 10.58L12 14z" />
+        </svg>
+        <span>Alumni</span>
+      </a>
+      <a href="pengguna.html" class="side-link ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+        </svg>
+        <span>Pengguna</span>
+      </a>
+      <a href="aktivitas.html" class="side-link ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span>Activity Log</span>
+      </a>
+      <a href="pengaturan.html" class="side-link ">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+        </svg>
+        <span>Pengaturan</span>
+      </a>
       <button @click="logout()" class="side-link mt-2 text-red-500 hover:text-red-600">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
+            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+        </svg>
         <span>Logout</span>
       </button>
     </aside>
-    <div x-show="sidebarOpen" x-cloak x-transition @click="sidebarOpen=false" class="fixed inset-0 bg-navy/40 z-30 lg:hidden"></div>
-    
-      <div class="flex-1 min-w-0">
-        
+    <div x-show="sidebarOpen" x-cloak x-transition @click="sidebarOpen=false"
+      class="fixed inset-0 bg-navy/40 z-30 lg:hidden"></div>
+
+    <div class="flex-1 min-w-0">
+
       <div class="neu-flat sticky top-0 z-30 mb-6">
         <div class="flex items-center justify-between px-4 sm:px-6 py-4 gap-4">
           <div class="flex items-center gap-3">
-            <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden neu-btn w-10 h-10 flex items-center justify-center">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            <button @click="sidebarOpen = !sidebarOpen"
+              class="lg:hidden neu-btn w-10 h-10 flex items-center justify-center">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+              </svg>
             </button>
             <div>
               <p class="text-xs text-text-muted">Admin / Berita</p>
@@ -104,57 +182,120 @@
           </div>
           <div class="flex items-center gap-2">
             <div class="hidden md:flex items-center neu-pressed px-3 py-2 gap-2 w-56">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-              <input type="text" placeholder="Cari data..." class="bg-transparent text-sm outline-none w-full placeholder:text-text-muted">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-muted" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
+              </svg>
+              <input type="text" placeholder="Cari data..."
+                class="bg-transparent text-sm outline-none w-full placeholder:text-text-muted">
             </div>
-            <button class="neu-btn w-10 h-10 flex items-center justify-center relative" aria-label="Notifikasi">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-              <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-gold rounded-full"></span>
-            </button>
+
+            <div class="relative">
+              <button @click="notifOpen = !notifOpen" class="neu-btn w-10 h-10 flex items-center justify-center relative" aria-label="Notifikasi">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                <span x-show="unreadNotifs > 0" class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-500 text-white rounded-full text-[10px] font-bold flex items-center justify-center" x-text="unreadNotifs"></span>
+              </button>
+              <div x-show="notifOpen" @click.outside="notifOpen = false" x-transition x-cloak
+                   class="notif-dropdown">
+                <!-- Header -->
+                <div class="flex items-center justify-between px-4 py-3 border-b border-black/10 dark:border-white/10 bg-[#d0d8e8] dark:bg-[#1e2d4a] rounded-t-2xl">
+                  <div class="flex items-center gap-2">
+                    <span class="font-display font-semibold text-sm text-navy dark:text-white">&#128276; Notifikasi</span>
+                    <span x-show="unreadNotifs > 0" class="px-2 py-0.5 rounded-full text-[10px] bg-royal text-white font-bold" x-text="unreadNotifs + ' Baru'"></span>
+                  </div>
+                  <div class="flex items-center gap-3 text-[11px]">
+                    <button @click="markAllRead()" class="text-royal hover:underline font-semibold">Baca Semua</button>
+                    <span class="text-black/20 dark:text-white/20">|</span>
+                    <button @click="clearNotifs()" class="text-red-500 hover:underline font-semibold">Hapus</button>
+                  </div>
+                </div>
+                <!-- Scrollable list — NO overflow-hidden on parent -->
+                <div class="notif-list">
+                  <template x-for="n in notifications" :key="n.id">
+                    <div class="flex items-start gap-3 px-3 py-2.5 rounded-xl mx-2 my-1 transition-all cursor-default"
+                         :class="n.read ? 'bg-white/30 dark:bg-white/5' : 'bg-white/90 dark:bg-white/10 border-l-2 border-royal shadow-sm'">
+                      <span class="text-xl shrink-0 mt-0.5" x-text="n.icon || '&#128276;'"></span>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-xs font-semibold text-navy dark:text-white leading-snug" x-text="n.judul"></p>
+                        <p class="text-[11px] text-text-muted mt-0.5 leading-snug line-clamp-2" x-text="n.pesan"></p>
+                        <p class="text-[10px] text-royal font-mono mt-1" x-text="n.waktu"></p>
+                      </div>
+                      <span x-show="!n.read" class="w-2 h-2 rounded-full bg-royal shrink-0 mt-1.5 flex-none"></span>
+                    </div>
+                  </template>
+                  <div x-show="notifications.length === 0" class="text-center py-8 text-xs text-text-muted">
+                    <span class="block text-2xl mb-2">&#128276;</span>
+                    Belum ada notifikasi.
+                  </div>
+                </div>
+                <!-- Footer -->
+                <div class="px-4 py-2.5 border-t border-black/10 dark:border-white/10 bg-[#d0d8e8] dark:bg-[#1e2d4a] text-center rounded-b-2xl">
+                  <a href="activity-log.html" class="text-[11px] text-royal hover:underline font-semibold">Lihat semua aktivitas &rarr;</a>
+                </div>
+              </div>
+            </div>
             <button @click="toggle()" class="neu-btn w-10 h-10 flex items-center justify-center">
-              <svg x-show="!dark" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
-              <svg x-show="dark" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+              <svg x-show="!dark" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+              </svg>
+              <svg x-show="dark" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
             </button>
-            <div class="w-10 h-10 neu-raised-sm flex items-center justify-center font-display font-semibold text-royal text-sm">AP</div>
+            <div
+              class="w-10 h-10 neu-raised-sm flex items-center justify-center font-display font-semibold text-royal text-sm">
+              AP</div>
           </div>
         </div>
       </div>
-    
-        <main class="px-4 sm:px-6 pb-10">
-          
-    <div x-data="{
+
+      <main class="px-4 sm:px-6 pb-10">
+
+        <div x-data="{
         tab: 'list', editing: null,
         // Sumber data sama dengan yang dipakai halaman publik berita.html (SAMPLE_BERITA di app.js,
         // dimuat dari localStorage) supaya berita di admin & frontend selalu konsisten dan akurat.
         berita: [...SAMPLE_BERITA],
-        persist() { SAMPLE_BERITA = this.berita; DB.save('berita', this.berita); },
+        persist() { SAMPLE_BERITA = this.berita; return DB.save('berita', this.berita); },
         emptyForm() { return { judul:'', slug:'', kategori:'Akademik', excerpt:'', konten:'', status:'Draft', gambar:'' }; },
         form: {},
+        uploadingGambar: false,
         openList() { this.tab = 'list'; },
         openAdd() { this.editing = null; this.form = this.emptyForm(); this.tab = 'editor'; },
         openEdit(b) { this.editing = b.id; this.form = { ...b }; this.tab = 'editor'; },
-        onPhoto(e) {
+        async onPhoto(e) {
           const file = e.target.files && e.target.files[0];
           if (!file) return;
-          // Base64 data URL dipakai (bukan URL.createObjectURL) supaya gambar tetap
-          // valid setelah disimpan ke localStorage & halaman dimuat ulang/dibuka
-          // di tab/sesi baru — blob: URL akan mati begitu sesi berakhir.
-          const reader = new FileReader();
-          reader.onload = () => { this.form.gambar = reader.result; };
-          reader.readAsDataURL(file);
+          // Gambar dikompres (diperkecil & di-JPEG-kan) sebelum diubah ke base64
+          // supaya tidak lagi menyebabkan localStorage QuotaExceededError.
+          this.uploadingGambar = true;
+          try {
+            this.form.gambar = await compressImageFile(file, { maxWidth: 500, maxHeight: 320, quality: 0.62 });
+          } catch (err) {
+            NeuAlert.error(err.message || 'Gagal memproses gambar.');
+          } finally {
+            this.uploadingGambar = false;
+            e.target.value = '';
+          }
         },
         saveBerita() {
           if (!this.form.judul) { NeuAlert.error('Judul berita wajib diisi.'); return; }
           if (!this.form.gambar) { this.form.gambar = 'https://placehold.co/400x240/EEF1F5/0B1F3A?text=Berita'; }
           if (this.editing) {
             const idx = this.berita.findIndex(x => x.id === this.editing);
+            const prev = this.berita[idx];
             this.berita[idx] = { ...this.form, id: this.editing, tanggal: this.berita[idx].tanggal, penulis: this.berita[idx].penulis };
-            this.persist();
+            if(!this.persist()){ this.berita[idx] = prev; return; }
             logActivity(`Memperbarui berita: ${this.form.judul}`, '\u{270F}\u{FE0F}');
             NeuAlert.updated('Berita berhasil diperbarui.');
           } else {
             this.berita.unshift({ ...this.form, id: Date.now(), penulis: AUTH.current().nama, tanggal: new Date().toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' }) });
-            this.persist();
+            if(!this.persist()){ this.berita.shift(); return; }
             logActivity(`Menambahkan berita baru: ${this.form.judul}`, '\u{1F4C4}');
             NeuAlert.success('Berita berhasil disimpan.');
           }
@@ -163,120 +304,166 @@
         async remove(item) {
           const ok = await NeuAlert.confirmDelete('berita ini');
           if(ok){
+            const prevList = this.berita;
             this.berita = this.berita.filter(b=>b.id!==item.id);
-            this.persist();
+            if(!this.persist()){ this.berita = prevList; return; }
             logActivity(`Menghapus berita: ${item.judul}`, '\u{1F5D1}\u{FE0F}');
             NeuAlert.deleted('Berita berhasil dihapus.');
           }
         },
         publish(item){
           item.status='Published';
-          this.persist();
+          if(!this.persist()) return;
           logActivity(`Mempublikasikan berita: ${item.judul}`, '\u{2705}');
           NeuAlert.updated('Berita berhasil dipublikasikan.');
         },
       }">
 
-      <div class="flex items-center gap-2 mb-6">
-        <button type="button" @click="openList()" class="neu-btn px-5 py-2.5 rounded-xl text-xs" :class="tab==='list' ? 'is-pressed' : ''">Daftar Berita</button>
-        <button type="button" @click="openAdd()" class="neu-btn px-5 py-2.5 rounded-xl text-xs" :class="tab==='editor' ? 'is-pressed' : ''">+ Tulis Berita Baru</button>
-      </div>
-
-      <!-- ===== TAB: DAFTAR ===== -->
-      <div x-show="tab==='list'">
-        <div class="neu-raised p-2 sm:p-4">
-          <div class="table-scroll">
-            <table class="w-full min-w-[760px]">
-              <thead>
-                <tr class="text-left text-xs text-text-muted uppercase tracking-wide">
-                  <th class="py-3 px-4">Foto</th><th class="py-3 px-4">Judul</th><th class="py-3 px-4">Kategori</th><th class="py-3 px-4">Penulis</th>
-                  <th class="py-3 px-4">Tanggal</th><th class="py-3 px-4">Status</th><th class="py-3 px-4 text-right">Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                <template x-for="b in berita" :key="b.id">
-                  <tr class="border-b border-black/5 dark:border-white/5">
-                    <td class="py-3 px-4"><img :src="b.gambar" :alt="b.judul" class="neu-thumb"></td>
-                    <td class="py-3 px-4 text-sm font-medium text-navy dark:text-white max-w-xs" x-text="b.judul"></td>
-                    <td class="py-3 px-4 text-xs text-text-muted" x-text="b.kategori"></td>
-                    <td class="py-3 px-4 text-xs text-text-muted" x-text="b.penulis"></td>
-                    <td class="py-3 px-4 text-xs text-text-muted" x-text="b.tanggal"></td>
-                    <td class="py-3 px-4">
-                      <span class="neu-badge"
-                        :class="{'badge-ended': ['Draft','Archived'].includes(b.status), 'badge-new': b.status==='Review', 'badge-active': b.status==='Published', 'badge-important': b.status==='Scheduled'}"
-                        x-text="b.status"></span>
-                    </td>
-                    <td class="py-3 px-4">
-                      <div class="flex items-center justify-end gap-2">
-                        <button type="button" x-show="b.status!=='Published'" @click="publish(b)" class="neu-btn w-8 h-8 flex items-center justify-center" aria-label="Publikasikan" title="Publikasikan">
-                          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-                        </button>
-                        <button type="button" @click="openEdit(b)" class="neu-btn w-8 h-8 flex items-center justify-center" aria-label="Edit" title="Edit">
-                          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-royal" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                        </button>
-                        <button type="button" @click="remove(b)" class="neu-btn w-8 h-8 flex items-center justify-center" aria-label="Hapus" title="Hapus">
-                          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                </template>
-                <tr x-show="berita.length === 0">
-                  <td colspan="7" class="py-10 text-center text-sm text-text-muted">Belum ada berita.</td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="flex items-center gap-2 mb-6">
+            <button type="button" @click="openList()" class="neu-btn px-5 py-2.5 rounded-xl text-xs"
+              :class="tab==='list' ? 'is-pressed' : ''">Daftar Berita</button>
+            <button type="button" @click="openAdd()" class="neu-btn px-5 py-2.5 rounded-xl text-xs"
+              :class="tab==='editor' ? 'is-pressed' : ''">+ Tulis Berita Baru</button>
           </div>
-        </div>
-      </div>
 
-      <!-- ===== TAB: EDITOR ===== -->
-      <div x-show="tab==='editor'">
-        <div class="grid lg:grid-cols-3 gap-6">
-          <div class="lg:col-span-2 space-y-4">
-            <div class="neu-raised p-6">
-              <label class="text-xs font-semibold text-text-muted mb-2 block">Judul Berita</label>
-              <input x-model="form.judul" type="text" placeholder="Tulis judul berita..." class="neu-input w-full mb-4">
-              <label class="text-xs font-semibold text-text-muted mb-2 block">Slug URL</label>
-              <input x-model="form.slug" type="text" placeholder="judul-berita-otomatis" class="neu-input w-full mb-4">
-              <label class="text-xs font-semibold text-text-muted mb-2 block">Ringkasan (Excerpt)</label>
-              <textarea x-model="form.excerpt" rows="2" placeholder="Ringkasan singkat berita..." class="neu-input w-full mb-4"></textarea>
-              <label class="text-xs font-semibold text-text-muted mb-2 block">Isi Berita</label>
-              <textarea x-model="form.konten" rows="10" placeholder="Tulis isi berita di sini..." class="neu-input w-full"></textarea>
+          <!-- ===== TAB: DAFTAR ===== -->
+          <div x-show="tab==='list'">
+            <div class="neu-raised p-2 sm:p-4">
+              <div class="table-scroll">
+                <table class="w-full min-w-[760px]">
+                  <thead>
+                    <tr class="text-left text-xs text-text-muted uppercase tracking-wide">
+                      <th class="py-3 px-4">Foto</th>
+                      <th class="py-3 px-4">Judul</th>
+                      <th class="py-3 px-4">Kategori</th>
+                      <th class="py-3 px-4">Penulis</th>
+                      <th class="py-3 px-4">Tanggal</th>
+                      <th class="py-3 px-4">Status</th>
+                      <th class="py-3 px-4 text-right">Aksi</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <template x-for="b in berita" :key="b.id">
+                      <tr class="border-b border-black/5 dark:border-white/5">
+                        <td class="py-3 px-4"><img :src="b.gambar" :alt="b.judul" class="neu-thumb"></td>
+                        <td class="py-3 px-4 text-sm font-medium text-navy dark:text-white max-w-xs" x-text="b.judul">
+                        </td>
+                        <td class="py-3 px-4 text-xs text-text-muted" x-text="b.kategori"></td>
+                        <td class="py-3 px-4 text-xs text-text-muted" x-text="b.penulis"></td>
+                        <td class="py-3 px-4 text-xs text-text-muted" x-text="b.tanggal"></td>
+                        <td class="py-3 px-4">
+                          <span class="neu-badge"
+                            :class="{'badge-ended': ['Draft','Archived'].includes(b.status), 'badge-new': b.status==='Review', 'badge-active': b.status==='Published', 'badge-important': b.status==='Scheduled'}"
+                            x-text="b.status"></span>
+                        </td>
+                        <td class="py-3 px-4">
+                          <div class="flex items-center justify-end gap-2">
+                            <button type="button" x-show="b.status!=='Published'" @click="publish(b)"
+                              class="neu-btn w-8 h-8 flex items-center justify-center" aria-label="Publikasikan"
+                              title="Publikasikan">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-500" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M5 13l4 4L19 7" />
+                              </svg>
+                            </button>
+                            <button type="button" @click="openEdit(b)"
+                              class="neu-btn w-8 h-8 flex items-center justify-center" aria-label="Edit" title="Edit">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-royal" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                              </svg>
+                            </button>
+                            <button type="button" @click="remove(b)"
+                              class="neu-btn w-8 h-8 flex items-center justify-center" aria-label="Hapus" title="Hapus">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-500" fill="none"
+                                viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                              </svg>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    </template>
+                    <tr x-show="berita.length === 0">
+                      <td colspan="7" class="py-10 text-center text-sm text-text-muted">Belum ada berita.</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </div>
           </div>
-          <div class="space-y-4">
-            <div class="neu-raised p-6">
-              <label class="text-xs font-semibold text-text-muted mb-2 block">Featured Image</label>
-              <label class="neu-dropzone neu-pressed h-36 flex items-center justify-center text-center text-text-muted text-xs mb-2 overflow-hidden relative">
-                <img x-show="form.gambar" :src="form.gambar" class="absolute inset-0 w-full h-full object-cover" alt="Pratinjau gambar berita">
-                <span x-show="!form.gambar">Klik untuk unggah gambar<br><span class="text-[10px]">JPG/PNG, maks 2MB</span></span>
-                <span x-show="form.gambar" class="absolute inset-0 bg-navy/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[11px] font-medium">Ganti gambar</span>
-                <input type="file" accept="image/*" class="hidden" @change="onPhoto($event)">
-              </label>
-              <label class="text-xs font-semibold text-text-muted mb-2 block mt-4">Kategori</label>
-              <select x-model="form.kategori" class="neu-input w-full mb-4">
-                <option>Akademik</option><option>Kemahasiswaan</option><option>Penelitian</option>
-                <option>Pengabdian</option><option>Prestasi</option><option>Seminar</option><option>Kegiatan</option>
-              </select>
-              <label class="text-xs font-semibold text-text-muted mb-2 block">Status Publikasi</label>
-              <select x-model="form.status" class="neu-input w-full">
-                <option>Draft</option><option>Review</option><option>Published</option><option>Scheduled</option>
-              </select>
+
+          <!-- ===== TAB: EDITOR ===== -->
+          <div x-show="tab==='editor'">
+            <div class="grid lg:grid-cols-3 gap-6">
+              <div class="lg:col-span-2 space-y-4">
+                <div class="neu-raised p-6">
+                  <label class="text-xs font-semibold text-text-muted mb-2 block">Judul Berita</label>
+                  <input x-model="form.judul" type="text" placeholder="Tulis judul berita..."
+                    class="neu-input w-full mb-4">
+                  <label class="text-xs font-semibold text-text-muted mb-2 block">Slug URL</label>
+                  <input x-model="form.slug" type="text" placeholder="judul-berita-otomatis"
+                    class="neu-input w-full mb-4">
+                  <label class="text-xs font-semibold text-text-muted mb-2 block">Ringkasan (Excerpt)</label>
+                  <textarea x-model="form.excerpt" rows="2" placeholder="Ringkasan singkat berita..."
+                    class="neu-input w-full mb-4"></textarea>
+                  <label class="text-xs font-semibold text-text-muted mb-2 block">Isi Berita</label>
+                  <textarea x-model="form.konten" rows="10" placeholder="Tulis isi berita di sini..."
+                    class="neu-input w-full"></textarea>
+                </div>
+              </div>
+              <div class="space-y-4">
+                <div class="neu-raised p-6">
+                  <label class="text-xs font-semibold text-text-muted mb-2 block">Featured Image</label>
+                  <label
+                    class="neu-dropzone neu-pressed h-36 flex items-center justify-center text-center text-text-muted text-xs mb-2 overflow-hidden relative">
+                    <img x-show="form.gambar && !uploadingGambar" :src="form.gambar"
+                      class="absolute inset-0 w-full h-full object-cover" alt="Pratinjau gambar berita">
+                    <span x-show="!form.gambar && !uploadingGambar">Klik untuk unggah gambar<br><span
+                        class="text-[10px]">JPG/PNG &mdash; otomatis dikompres</span></span>
+                    <span x-show="uploadingGambar">Memproses gambar&hellip;</span>
+                    <span x-show="form.gambar && !uploadingGambar"
+                      class="absolute inset-0 bg-navy/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[11px] font-medium">Ganti
+                      gambar</span>
+                    <input type="file" accept="image/*" class="hidden" @change="onPhoto($event)">
+                  </label>
+                  <label class="text-xs font-semibold text-text-muted mb-2 block mt-4">Kategori</label>
+                  <select x-model="form.kategori" class="neu-input w-full mb-4">
+                    <option>Akademik</option>
+                    <option>Kemahasiswaan</option>
+                    <option>Penelitian</option>
+                    <option>Pengabdian</option>
+                    <option>Prestasi</option>
+                    <option>Seminar</option>
+                    <option>Kegiatan</option>
+                  </select>
+                  <label class="text-xs font-semibold text-text-muted mb-2 block">Status Publikasi</label>
+                  <select x-model="form.status" class="neu-input w-full">
+                    <option>Draft</option>
+                    <option>Review</option>
+                    <option>Published</option>
+                    <option>Scheduled</option>
+                  </select>
+                </div>
+                <button type="button" @click="saveBerita()" class="neu-btn-primary w-full py-3.5 rounded-xl text-sm"
+                  x-text="editing ? 'Perbarui Berita' : 'Simpan Berita'"></button>
+                <button type="button" @click="openList()"
+                  class="neu-btn w-full py-3.5 rounded-xl text-sm">Batal</button>
+              </div>
             </div>
-            <button type="button" @click="saveBerita()" class="neu-btn-primary w-full py-3.5 rounded-xl text-sm" x-text="editing ? 'Perbarui Berita' : 'Simpan Berita'"></button>
-            <button type="button" @click="openList()" class="neu-btn w-full py-3.5 rounded-xl text-sm">Batal</button>
           </div>
         </div>
-      </div>
-    </div>
 
-        </main>
-      </div>
+      </main>
     </div>
-    
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>
+
 </html>

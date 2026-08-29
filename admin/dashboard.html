@@ -107,10 +107,51 @@
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
               <input type="text" placeholder="Cari data..." class="bg-transparent text-sm outline-none w-full placeholder:text-text-muted">
             </div>
-            <button class="neu-btn w-10 h-10 flex items-center justify-center relative" aria-label="Notifikasi">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-              <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-gold rounded-full"></span>
-            </button>
+
+            <div class="relative">
+              <button @click="notifOpen = !notifOpen" class="neu-btn w-10 h-10 flex items-center justify-center relative" aria-label="Notifikasi">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                <span x-show="unreadNotifs > 0" class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-500 text-white rounded-full text-[10px] font-bold flex items-center justify-center" x-text="unreadNotifs"></span>
+              </button>
+              <div x-show="notifOpen" @click.outside="notifOpen = false" x-transition x-cloak
+                   class="notif-dropdown">
+                <!-- Header -->
+                <div class="flex items-center justify-between px-4 py-3 border-b border-black/10 dark:border-white/10 bg-[#d0d8e8] dark:bg-[#1e2d4a] rounded-t-2xl">
+                  <div class="flex items-center gap-2">
+                    <span class="font-display font-semibold text-sm text-navy dark:text-white">&#128276; Notifikasi</span>
+                    <span x-show="unreadNotifs > 0" class="px-2 py-0.5 rounded-full text-[10px] bg-royal text-white font-bold" x-text="unreadNotifs + ' Baru'"></span>
+                  </div>
+                  <div class="flex items-center gap-3 text-[11px]">
+                    <button @click="markAllRead()" class="text-royal hover:underline font-semibold">Baca Semua</button>
+                    <span class="text-black/20 dark:text-white/20">|</span>
+                    <button @click="clearNotifs()" class="text-red-500 hover:underline font-semibold">Hapus</button>
+                  </div>
+                </div>
+                <!-- Scrollable list — NO overflow-hidden on parent -->
+                <div class="notif-list">
+                  <template x-for="n in notifications" :key="n.id">
+                    <div class="flex items-start gap-3 px-3 py-2.5 rounded-xl mx-2 my-1 transition-all cursor-default"
+                         :class="n.read ? 'bg-white/30 dark:bg-white/5' : 'bg-white/90 dark:bg-white/10 border-l-2 border-royal shadow-sm'">
+                      <span class="text-xl shrink-0 mt-0.5" x-text="n.icon || '&#128276;'"></span>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-xs font-semibold text-navy dark:text-white leading-snug" x-text="n.judul"></p>
+                        <p class="text-[11px] text-text-muted mt-0.5 leading-snug line-clamp-2" x-text="n.pesan"></p>
+                        <p class="text-[10px] text-royal font-mono mt-1" x-text="n.waktu"></p>
+                      </div>
+                      <span x-show="!n.read" class="w-2 h-2 rounded-full bg-royal shrink-0 mt-1.5 flex-none"></span>
+                    </div>
+                  </template>
+                  <div x-show="notifications.length === 0" class="text-center py-8 text-xs text-text-muted">
+                    <span class="block text-2xl mb-2">&#128276;</span>
+                    Belum ada notifikasi.
+                  </div>
+                </div>
+                <!-- Footer -->
+                <div class="px-4 py-2.5 border-t border-black/10 dark:border-white/10 bg-[#d0d8e8] dark:bg-[#1e2d4a] text-center rounded-b-2xl">
+                  <a href="activity-log.html" class="text-[11px] text-royal hover:underline font-semibold">Lihat semua aktivitas &rarr;</a>
+                </div>
+              </div>
+            </div>
             <button @click="toggle()" class="neu-btn w-10 h-10 flex items-center justify-center">
               <svg x-show="!dark" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
               <svg x-show="dark" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
@@ -135,7 +176,7 @@
       <div class="flex items-center justify-between mb-3">
         <div class="w-11 h-11 neu-raised-sm flex items-center justify-center text-royal text-lg">&#127891;</div>
       </div>
-      <p class="font-display font-bold text-2xl text-navy dark:text-white" x-text="stats.mahasiswa.toLocaleString('id-ID')"></p>
+      <p class="font-display font-bold text-2xl text-navy dark:text-white" x-text="(stats.mahasiswa || 0).toLocaleString('id-ID')"></p>
       <p class="text-xs text-text-muted mt-1">Total Mahasiswa</p>
     </div>
     <div class="neu-raised p-5">
@@ -186,7 +227,7 @@
       <div class="lg:col-span-2 neu-raised p-6">
         <div class="flex items-center justify-between mb-4">
           <h2 class="font-display font-semibold text-navy dark:text-white text-sm">Statistik Konten (6 Bulan Terakhir)</h2>
-          <span class="text-[10px] text-text-muted italic">Data ilustrasi &mdash; terhubung ke analitik saat backend tersedia</span>
+          <span class="text-[10px] text-text-muted italic">Dihitung dari data Berita/Artikel/Kegiatan sesungguhnya</span>
         </div>
         <canvas id="chartKonten" height="140"></canvas>
       </div>
@@ -197,16 +238,16 @@
     </div>
 
     <div class="grid lg:grid-cols-3 gap-6">
-      <div class="lg:col-span-2 neu-raised p-6">
+      <div class="lg:col-span-2 neu-raised p-6" x-data="{ pv: pageViews }">
         <div class="flex items-center justify-between mb-4">
           <h2 class="font-display font-semibold text-navy dark:text-white text-sm">Statistik Pengunjung Website</h2>
-          <span class="text-[10px] text-text-muted italic">Data ilustrasi &mdash; terhubung ke analitik saat backend tersedia</span>
+          <span class="text-[10px] text-text-muted italic">Kunjungan riil pada perangkat/browser ini (prototipe front-end)</span>
         </div>
         <canvas id="chartPengunjung" height="140"></canvas>
         <div class="grid grid-cols-3 gap-4 mt-6 text-center">
-          <div><p class="font-display font-bold text-navy dark:text-white text-lg">125</p><p class="text-[11px] text-text-muted">Hari Ini</p></div>
-          <div><p class="font-display font-bold text-navy dark:text-white text-lg">3.250</p><p class="text-[11px] text-text-muted">Bulan Ini</p></div>
-          <div><p class="font-display font-bold text-navy dark:text-white text-lg">25.420</p><p class="text-[11px] text-text-muted">Total</p></div>
+          <div><p class="font-display font-bold text-navy dark:text-white text-lg" x-text="pv.today"></p><p class="text-[11px] text-text-muted">Hari Ini</p></div>
+          <div><p class="font-display font-bold text-navy dark:text-white text-lg" x-text="pv.thisMonth"></p><p class="text-[11px] text-text-muted">Bulan Ini</p></div>
+          <div><p class="font-display font-bold text-navy dark:text-white text-lg" x-text="pv.total"></p><p class="text-[11px] text-text-muted">Total</p></div>
         </div>
       </div>
       <div class="neu-raised p-6">
@@ -232,17 +273,20 @@
       const gridColor = 'rgba(91,100,114,0.12)';
       const txt = getComputedStyle(document.documentElement).getPropertyValue('color') || '#5B6472';
 
+      // Tren konten riil (bukan lagi data ilustrasi) — dihitung dari tanggal
+      // sesungguhnya di SAMPLE_BERITA/SAMPLE_ARTIKEL/SAMPLE_KEGIATAN.
+      const trend = monthlyContentTrend();
       new Chart(document.getElementById('chartKonten'), {
         type: 'line',
         data: {
-          labels: ['Mar','Apr','Mei','Jun','Jul','Agu'],
+          labels: trend.labels,
           datasets: [
-            { label:'Berita', data:[5,7,6,9,8,11], borderColor:'#2A4E9E', backgroundColor:'rgba(42,78,158,0.08)', tension:.4, fill:true },
-            { label:'Artikel', data:[2,3,4,3,5,6], borderColor:'#C9A227', backgroundColor:'rgba(201,162,39,0.08)', tension:.4, fill:true },
-            { label:'Kegiatan', data:[3,2,5,4,6,5], borderColor:'#10B981', backgroundColor:'rgba(16,185,129,0.08)', tension:.4, fill:true },
+            { label:'Berita', data:trend.datasets.Berita, borderColor:'#2A4E9E', backgroundColor:'rgba(42,78,158,0.08)', tension:.4, fill:true },
+            { label:'Artikel', data:trend.datasets.Artikel, borderColor:'#C9A227', backgroundColor:'rgba(201,162,39,0.08)', tension:.4, fill:true },
+            { label:'Kegiatan', data:trend.datasets.Kegiatan, borderColor:'#10B981', backgroundColor:'rgba(16,185,129,0.08)', tension:.4, fill:true },
           ]
         },
-        options: { plugins:{legend:{position:'bottom', labels:{boxWidth:10, font:{size:11}}}}, scales:{ y:{grid:{color:gridColor}}, x:{grid:{display:false}} } }
+        options: { plugins:{legend:{position:'bottom', labels:{boxWidth:10, font:{size:11}}}}, scales:{ y:{grid:{color:gridColor}, ticks:{precision:0}}, x:{grid:{display:false}} } }
       });
 
       // Dihitung langsung dari SAMPLE_ALUMNI (bukan angka statis) supaya konsisten dengan halaman Alumni publik.
@@ -259,13 +303,16 @@
         options: { plugins:{legend:{position:'bottom', labels:{boxWidth:10, font:{size:10}}}}, cutout:'65%' }
       });
 
+      // 7 hari terakhir, dihitung dari log kunjungan riil di localStorage
+      // (setiap kunjungan ke halaman publik dicatat oleh trackPageView()).
+      const pv = getPageViewStats();
       new Chart(document.getElementById('chartPengunjung'), {
         type: 'bar',
         data: {
-          labels: ['Sen','Sel','Rab','Kam','Jum','Sab','Min'],
-          datasets: [{ label:'Pengunjung', data:[320,410,380,450,500,290,210], backgroundColor:'#2A4E9E', borderRadius:8 }]
+          labels: pv.days.map(d => d.label),
+          datasets: [{ label:'Pengunjung', data: pv.days.map(d => d.count), backgroundColor:'#2A4E9E', borderRadius:8 }]
         },
-        options: { plugins:{legend:{display:false}}, scales:{ y:{grid:{color:gridColor}}, x:{grid:{display:false}} } }
+        options: { plugins:{legend:{display:false}}, scales:{ y:{grid:{color:gridColor}, ticks:{precision:0}}, x:{grid:{display:false}} } }
       });
     </script>
 

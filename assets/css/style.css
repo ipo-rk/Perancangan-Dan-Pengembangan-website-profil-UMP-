@@ -5,27 +5,27 @@
 
 :root {
   /* Background */
-  --bg: #E8ECF1;
-  --bg-alt: #EEF1F5;
-  --surface: #ECF0F4;
+  --bg: #e8ecf1;
+  --bg-alt: #eef1f5;
+  --surface: #ecf0f4;
 
   /* Brand */
-  --navy: #0B1F3A;
-  --navy-soft: #16305A;
-  --royal: #2A4E9E;
-  --royal-soft: #3D63BE;
-  --gold: #C9A227;
-  --gold-soft: #E1C158;
+  --navy: #0b1f3a;
+  --navy-soft: #16305a;
+  --royal: #2a4e9e;
+  --royal-soft: #3d63be;
+  --gold: #c9a227;
+  --gold-soft: #e1c158;
 
   /* Semantic */
-  --success: #10B981;
-  --danger: #DC2626;
-  --warning: #D97706;
+  --success: #10b981;
+  --danger: #dc2626;
+  --warning: #d97706;
 
   /* Text */
-  --text: #1B2430;
-  --text-muted: #5B6472;
-  --text-inverse: #F4F6F9;
+  --text: #1b2430;
+  --text-muted: #5b6472;
+  --text-inverse: #f4f6f9;
 
   /* Neumorphic shadow tokens (light) */
   --neu-light: rgba(255, 255, 255, 0.85);
@@ -40,43 +40,61 @@
 
 .dark {
   --bg: #101827;
-  --bg-alt: #131C2E;
-  --surface: #141D30;
+  --bg-alt: #131c2e;
+  --surface: #141d30;
 
-  --navy: #0B1F3A;
-  --royal: #3D63BE;
-  --gold: #E1C158;
+  --navy: #0b1f3a;
+  --royal: #3d63be;
+  --gold: #e1c158;
 
-  --text: #E7EBF2;
-  --text-muted: #97A2B4;
+  --text: #e7ebf2;
+  --text-muted: #97a2b4;
 
   --neu-light: rgba(255, 255, 255, 0.035);
   --neu-dark: rgba(0, 0, 0, 0.55);
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
-html { scroll-behavior: smooth; }
+html {
+  scroll-behavior: smooth;
+}
 
-[x-cloak] { display: none !important; }
+[x-cloak] {
+  display: none !important;
+}
 
-.text-text-muted { color: var(--text-muted); }
+.text-text-muted {
+  color: var(--text-muted);
+}
 
 body {
   background: var(--bg);
   color: var(--text);
-  font-family: 'Inter', system-ui, sans-serif;
-  transition: background .3s ease, color .3s ease;
+  font-family: "Inter", system-ui, sans-serif;
+  transition:
+    background 0.3s ease,
+    color 0.3s ease;
   -webkit-font-smoothing: antialiased;
 }
 
-h1, h2, h3, h4, .font-display {
-  font-family: 'Poppins', 'Inter', sans-serif;
+h1,
+h2,
+h3,
+h4,
+.font-display {
+  font-family: "Poppins", "Inter", sans-serif;
   color: var(--navy);
   letter-spacing: -0.01em;
 }
 
-.dark h1, .dark h2, .dark h3, .dark h4, .dark .font-display {
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark .font-display {
   color: var(--text-inverse);
 }
 
@@ -85,21 +103,37 @@ h1, h2, h3, h4, .font-display {
    underline, untuk semua tautan. Aturan ini mengunci perilaku tersebut agar
    konsisten di seluruh state (default/hover/focus/active/visited) dan kebal
    terhadap default browser atau konten yang dirender secara dinamis. */
-a, a:link, a:visited, a:hover, a:focus, a:active {
+a,
+a:link,
+a:visited,
+a:hover,
+a:focus,
+a:active {
   text-decoration: none;
 }
 
-
-a, button, input, select, textarea, [tabindex] {
+a,
+button,
+input,
+select,
+textarea,
+[tabindex] {
   outline-offset: 2px;
 }
-a:focus-visible, button:focus-visible, input:focus-visible,
-select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
   outline: 2px solid var(--royal);
   outline-offset: 3px;
 }
 @media (prefers-reduced-motion: reduce) {
-  * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  * {
+    animation-duration: 0.001ms !important;
+    transition-duration: 0.001ms !important;
+  }
 }
 
 /* =========================================================
@@ -110,20 +144,26 @@ select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
 .neu-raised {
   background: var(--bg);
   border-radius: var(--r-lg);
-  box-shadow: 9px 9px 18px var(--neu-dark), -9px -9px 18px var(--neu-light);
+  box-shadow:
+    9px 9px 18px var(--neu-dark),
+    -9px -9px 18px var(--neu-light);
 }
 
 .neu-raised-sm {
   background: var(--bg);
   border-radius: var(--r-md);
-  box-shadow: 6px 6px 12px var(--neu-dark), -6px -6px 12px var(--neu-light);
+  box-shadow:
+    6px 6px 12px var(--neu-dark),
+    -6px -6px 12px var(--neu-light);
 }
 
 /* Pressed / inset surface (inputs, active states) */
 .neu-pressed {
   background: var(--bg);
   border-radius: var(--r-md);
-  box-shadow: inset 5px 5px 10px var(--neu-dark), inset -5px -5px 10px var(--neu-light);
+  box-shadow:
+    inset 5px 5px 10px var(--neu-dark),
+    inset -5px -5px 10px var(--neu-light);
 }
 
 /* Flat neumorphic (subtle, for nav bars / topbars) */
@@ -131,22 +171,34 @@ select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
   background: var(--bg);
   box-shadow: 0 6px 16px rgba(17, 24, 39, 0.06);
 }
-.dark .neu-flat { box-shadow: 0 6px 16px rgba(0,0,0,0.35); }
+.dark .neu-flat {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.35);
+}
 
 /* Buttons */
 .neu-btn {
   background: var(--bg);
   color: var(--navy);
   border-radius: var(--r-md);
-  box-shadow: 6px 6px 12px var(--neu-dark), -6px -6px 12px var(--neu-light);
-  transition: box-shadow .15s ease, transform .15s ease;
+  box-shadow:
+    6px 6px 12px var(--neu-dark),
+    -6px -6px 12px var(--neu-light);
+  transition:
+    box-shadow 0.15s ease,
+    transform 0.15s ease;
   font-weight: 600;
 }
-.dark .neu-btn { color: var(--text-inverse); }
-.neu-btn:hover { transform: translateY(-1px); }
+.dark .neu-btn {
+  color: var(--text-inverse);
+}
+.neu-btn:hover {
+  transform: translateY(-1px);
+}
 .neu-btn:active,
 .neu-btn.is-pressed {
-  box-shadow: inset 4px 4px 8px var(--neu-dark), inset -4px -4px 8px var(--neu-light);
+  box-shadow:
+    inset 4px 4px 8px var(--neu-dark),
+    inset -4px -4px 8px var(--neu-light);
   transform: translateY(0);
 }
 /* Active/pressed state needs a visible color change too, not just shadow,
@@ -157,7 +209,9 @@ select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
 .dark .neu-btn.is-pressed {
   color: var(--gold-soft);
 }
-.neu-btn.is-pressed svg { stroke: currentColor; }
+.neu-btn.is-pressed svg {
+  stroke: currentColor;
+}
 
 /* Horizontal filter-chip row: no visible scrollbar, momentum scroll on touch,
    snaps a little so a partially visible chip doesn't look "cut off". */
@@ -167,26 +221,45 @@ select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
   scrollbar-width: none;
   scroll-snap-type: x proximity;
 }
-.filter-scroll::-webkit-scrollbar { display: none; }
-.filter-scroll > * { scroll-snap-align: start; }
+.filter-scroll::-webkit-scrollbar {
+  display: none;
+}
+.filter-scroll > * {
+  scroll-snap-align: start;
+}
 
 .neu-btn-primary {
   background: linear-gradient(145deg, var(--royal-soft), var(--royal));
   color: #fff;
   border-radius: var(--r-md);
-  box-shadow: 6px 6px 14px rgba(42,78,158,0.35), -4px -4px 10px rgba(255,255,255,0.5);
+  box-shadow:
+    6px 6px 14px rgba(42, 78, 158, 0.35),
+    -4px -4px 10px rgba(255, 255, 255, 0.5);
   font-weight: 600;
-  transition: transform .15s ease, box-shadow .15s ease;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
 }
-.dark .neu-btn-primary { box-shadow: 6px 6px 14px rgba(0,0,0,0.5), -4px -4px 10px rgba(61,99,190,0.15); }
-.neu-btn-primary:hover { transform: translateY(-1px); }
-.neu-btn-primary:active { transform: translateY(0); box-shadow: inset 3px 3px 8px rgba(0,0,0,0.25); }
+.dark .neu-btn-primary {
+  box-shadow:
+    6px 6px 14px rgba(0, 0, 0, 0.5),
+    -4px -4px 10px rgba(61, 99, 190, 0.15);
+}
+.neu-btn-primary:hover {
+  transform: translateY(-1px);
+}
+.neu-btn-primary:active {
+  transform: translateY(0);
+  box-shadow: inset 3px 3px 8px rgba(0, 0, 0, 0.25);
+}
 
 .neu-btn-gold {
   background: linear-gradient(145deg, var(--gold-soft), var(--gold));
   color: var(--navy);
   border-radius: var(--r-md);
-  box-shadow: 6px 6px 14px rgba(201,162,39,0.35), -4px -4px 10px rgba(255,255,255,0.5);
+  box-shadow:
+    6px 6px 14px rgba(201, 162, 39, 0.35),
+    -4px -4px 10px rgba(255, 255, 255, 0.5);
   font-weight: 600;
 }
 
@@ -195,63 +268,121 @@ select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
   background: var(--bg);
   border: none;
   border-radius: var(--r-md);
-  box-shadow: inset 4px 4px 8px var(--neu-dark), inset -4px -4px 8px var(--neu-light);
+  box-shadow:
+    inset 4px 4px 8px var(--neu-dark),
+    inset -4px -4px 8px var(--neu-light);
   color: var(--text);
   padding: 0.75rem 1rem;
 }
-.neu-input::placeholder { color: var(--text-muted); }
-.neu-input:focus { outline: 2px solid var(--royal); }
+.neu-input::placeholder {
+  color: var(--text-muted);
+}
+.neu-input:focus {
+  outline: 2px solid var(--royal);
+}
 
 /* Badges */
 .neu-badge {
-  display: inline-flex; align-items: center; gap: .35rem;
-  padding: .3rem .75rem; border-radius: 999px;
-  font-size: .75rem; font-weight: 600;
-  background: var(--bg); box-shadow: 3px 3px 7px var(--neu-dark), -3px -3px 7px var(--neu-light);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.3rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: var(--bg);
+  box-shadow:
+    3px 3px 7px var(--neu-dark),
+    -3px -3px 7px var(--neu-light);
 }
-.badge-new { color: var(--royal); }
-.badge-important { color: var(--danger); }
-.badge-active { color: var(--success); }
-.badge-ended { color: var(--text-muted); }
+.badge-new {
+  color: var(--royal);
+}
+.badge-important {
+  color: var(--danger);
+}
+.badge-active {
+  color: var(--success);
+}
+.badge-ended {
+  color: var(--text-muted);
+}
 
 /* Scrollbar (subtle) */
-::-webkit-scrollbar { width: 10px; height: 10px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--neu-dark); border-radius: 10px; }
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--neu-dark);
+  border-radius: 10px;
+}
 
 /* Skeleton loading */
 .skeleton {
-  background: linear-gradient(90deg, var(--bg-alt) 25%, var(--surface) 37%, var(--bg-alt) 63%);
+  background: linear-gradient(
+    90deg,
+    var(--bg-alt) 25%,
+    var(--surface) 37%,
+    var(--bg-alt) 63%
+  );
   background-size: 400% 100%;
   animation: skeleton-loading 1.4s ease infinite;
   border-radius: var(--r-md);
 }
 @keyframes skeleton-loading {
-  0% { background-position: 100% 50%; }
-  100% { background-position: 0 50%; }
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
 }
 
 /* Sticky navbar shrink-on-scroll helper class (toggled via Alpine) */
-.nav-shrink { padding-top: .5rem; padding-bottom: .5rem; }
+.nav-shrink {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
 
 /* Table wrapper for responsive scroll */
-.table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.table-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
 
 /* Line clamp utility (excerpt text) */
 .line-clamp-2 {
-  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 .line-clamp-3 {
-  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
-.break-inside-avoid { break-inside: avoid; }
+.break-inside-avoid {
+  break-inside: avoid;
+}
 
 /* Modal backdrop generik (detail dosen, dsb.) */
 .modal-backdrop-neu {
-  position: fixed; inset: 0; z-index: 50;
-  background: rgba(11,31,58,0.45); backdrop-filter: blur(3px);
-  display: flex; align-items: center; justify-content: center; padding: 1rem;
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(11, 31, 58, 0.45);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
   overflow-y: auto;
 }
 
@@ -259,43 +390,229 @@ select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
    tidak lagi bergantung pada window.innerWidth yang dibaca sekali saat load) */
 .admin-sidebar {
   transform: translateX(-120%);
-  transition: transform .3s ease;
+  transition: transform 0.3s ease;
 }
-.admin-sidebar.sidebar-open { transform: translateX(0); }
+.admin-sidebar.sidebar-open {
+  transform: translateX(0);
+}
 @media (min-width: 1024px) {
-  .admin-sidebar { transform: none !important; }
+  .admin-sidebar {
+    transform: none !important;
+  }
 }
 
 /* Thumbnail used in admin CRUD tables/modals so photo fields render
    consistently with the neumorphic image treatment used on the frontend. */
 .neu-thumb {
-  width: 2.75rem; height: 2.75rem; border-radius: var(--r-sm);
-  object-fit: cover; background: var(--bg);
-  box-shadow: 3px 3px 7px var(--neu-dark), -3px -3px 7px var(--neu-light);
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: var(--r-sm);
+  object-fit: cover;
+  background: var(--bg);
+  box-shadow:
+    3px 3px 7px var(--neu-dark),
+    -3px -3px 7px var(--neu-light);
   flex-shrink: 0;
 }
 .neu-thumb-lg {
-  width: 100%; aspect-ratio: 4 / 3; border-radius: var(--r-lg);
-  object-fit: cover; background: var(--bg);
-  box-shadow: 3px 3px 7px var(--neu-dark), -3px -3px 7px var(--neu-light);
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: var(--r-lg);
+  object-fit: cover;
+  background: var(--bg);
+  box-shadow:
+    3px 3px 7px var(--neu-dark),
+    -3px -3px 7px var(--neu-light);
 }
 /* Uniform "click to upload" dropzone used in every CRUD modal that has a photo field */
 .neu-dropzone {
   cursor: pointer;
-  transition: box-shadow .15s ease;
+  transition: box-shadow 0.15s ease;
 }
-.neu-dropzone:hover { box-shadow: inset 5px 5px 10px var(--neu-dark), inset -5px -5px 10px var(--neu-light), 0 0 0 2px var(--royal) inset; }
+.neu-dropzone:hover {
+  box-shadow:
+    inset 5px 5px 10px var(--neu-dark),
+    inset -5px -5px 10px var(--neu-light),
+    0 0 0 2px var(--royal) inset;
+}
 
 /* Sidebar item active state (admin) */
 .side-link {
-  display: flex; align-items: center; gap: .75rem;
-  padding: .65rem .9rem; border-radius: var(--r-md);
-  color: var(--text-muted); font-weight: 500; font-size: .92rem;
-  transition: box-shadow .15s ease, color .15s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: var(--r-md);
+  color: var(--text-muted);
+  font-weight: 500;
+  font-size: 0.92rem;
+  transition:
+    box-shadow 0.15s ease,
+    color 0.15s ease;
 }
-.side-link:hover { color: var(--navy); }
-.dark .side-link:hover { color: var(--text-inverse); }
+.side-link:hover {
+  color: var(--navy);
+}
+.dark .side-link:hover {
+  color: var(--text-inverse);
+}
 .side-link.active {
   color: var(--royal);
-  box-shadow: inset 4px 4px 8px var(--neu-dark), inset -4px -4px 8px var(--neu-light);
+  box-shadow:
+    inset 4px 4px 8px var(--neu-dark),
+    inset -4px -4px 8px var(--neu-light);
+}
+
+/* Topbar: allow notification dropdown to overflow visually */
+.neu-flat.sticky {
+  overflow: visible;
+}
+
+/* ── Notification dropdown ────────────────────────────────── */
+.notif-dropdown {
+  position: absolute;
+  right: 0;
+  top: 100%;
+  margin-top: 0.5rem;
+  z-index: 999;
+  width: 340px;
+  max-width: calc(100vw - 1.5rem);
+  border-radius: 1rem;
+  /* NO overflow:hidden here — it blocks inner scroll */
+  background: #e4eaf3;
+  border: 1px solid rgba(0, 0, 0, 0.09);
+  box-shadow:
+    0 20px 40px rgba(17, 24, 39, 0.18),
+    0 4px 12px rgba(17, 24, 39, 0.1);
+}
+.dark .notif-dropdown {
+  background: #111827;
+  border-color: rgba(255, 255, 255, 0.09);
+}
+
+/* Scrollable notif list */
+.notif-list {
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  padding: 0.5rem 0;
+}
+
+/* Thin scrollbar inside notif list */
+.notif-list::-webkit-scrollbar {
+  width: 4px;
+}
+.notif-list::-webkit-scrollbar-track {
+  background: transparent;
+}
+.notif-list::-webkit-scrollbar-thumb {
+  background: var(--royal);
+  border-radius: 99px;
+}
+.notif-list {
+  scrollbar-width: thin;
+  scrollbar-color: var(--royal) transparent;
+}
+
+/* ── Prestigious Law Faculty Visual Styles ────────────────── */
+.law-hero-bg {
+  position: relative;
+  background-image: url("../image/hero-law-bg.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+.law-hero-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(232, 236, 241, 0.94) 0%,
+    rgba(232, 236, 241, 0.88) 50%,
+    rgba(232, 236, 241, 0.78) 100%
+  );
+  pointer-events: none;
+}
+
+.dark .law-hero-bg::before {
+  background: linear-gradient(
+    135deg,
+    rgba(20, 29, 48, 0.96) 0%,
+    rgba(20, 29, 48, 0.9) 50%,
+    rgba(20, 29, 48, 0.82) 100%
+  );
+}
+
+.law-court-bg {
+  position: relative;
+  background-image: url("../image/law-court-bg.jpg");
+  background-size: cover;
+  background-position: center;
+}
+
+.law-court-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(11, 31, 58, 0.88) 0%,
+    rgba(20, 29, 48, 0.92) 100%
+  );
+  pointer-events: none;
+}
+
+/* ── Hero floating cards (logo & kegiatan terdekat) ───────────
+   Positioning/sizing is defined here in plain CSS rather than via
+   Tailwind utility classes, since production serves a pre-built
+   assets/css/tailwind.min.css that only contains the utility
+   classes present at build time. New/adjusted utilities added
+   later (arbitrary widths, -top-9, sm:-right-6, etc.) would be
+   silently ignored by that file. These custom classes always work
+   regardless of the Tailwind build state. */
+.hero-logo-card {
+  position: absolute;
+  top: -2.25rem;
+  right: -1rem;
+  z-index: 30;
+  width: 150px;
+  padding: 1.25rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.625rem;
+}
+.hero-logo-card img {
+  width: 5rem;
+  height: 5rem;
+}
+.hero-logo-card p {
+  font-size: 0.875rem;
+}
+@media (min-width: 640px) {
+  .hero-logo-card {
+    width: 172px;
+  }
+  .hero-logo-card img {
+    width: 6rem;
+    height: 6rem;
+  }
+  .hero-logo-card p {
+    font-size: 1rem;
+  }
+}
+
+.hero-event-card {
+  position: absolute;
+  bottom: -1.5rem;
+  left: -1rem;
+  z-index: 30;
+  max-width: 240px;
+}
+@media (min-width: 640px) {
+  .hero-event-card {
+    left: -1.5rem;
+  }
 }
