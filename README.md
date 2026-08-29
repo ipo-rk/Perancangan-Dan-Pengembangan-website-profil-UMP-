@@ -311,3 +311,29 @@ Mobile navigation: hamburger + offcanvas sidebar; bottom action bila diperlukan.
 - Prioritas: **Usability > Accessibility > Performance > Visual Effects.**
 
 **Keyword desain acuan:** Premium Neumorphism UI · Modern University Website · Law School Website · Academic Portal · Professional Education Platform · Soft UI · Clean Dashboard · Responsive Web Design · Glass-free Neumorphism · Accessible UI · Minimalist Academic Design.
+
+---
+
+## 13. Status Implementasi & Changelog Perbaikan
+
+Proyek ini sudah diimplementasikan penuh sebagai kode statis (HTML/CSS/JS berjalan tanpa backend, data memakai `SAMPLE_*` di `assets/js/app.js`). Struktur final:
+
+**Frontend (13 halaman + 5 halaman detail):** Beranda, Profil, Dosen, Kurikulum, Berita (+ detail), Pengumuman (+ detail), Kegiatan (+ detail), Prestasi, Artikel Hukum (+ detail), Galeri (+ detail), Dokumen, Alumni, Kontak.
+
+**Admin Panel (16 halaman):** Login, Dashboard, Profil Prodi, Dosen, Kurikulum, Berita, Pengumuman, Kegiatan, Prestasi, Artikel, Galeri, Dokumen, Alumni, Pengguna, Pengaturan, Activity Log.
+
+### Perbaikan pada audit terakhir
+- **Navbar/search tidak berfungsi** di 8 halaman (Beranda, Profil, Dosen, Kurikulum, Kontak, Prestasi, Dokumen, Alumni) — disamakan ke pola `siteHeader()` + `doSearch()` yang sudah benar di halaman lain.
+- **Bug nav-link aktif**: link "Beranda" pada navbar desktop (mega-menu dropdown) sebelumnya *selalu* tersorot aktif di semua halaman, sementara item di dalam dropdown (Dosen, Kurikulum, Berita, dst.) dan tombol trigger grup (Profil/Informasi/Mahasiswa) tidak pernah tersorot. Sudah diperbaiki: status aktif sekarang mengikuti halaman yang sedang dibuka, termasuk menyalakan trigger grup saat salah satu halaman di dalamnya aktif.
+- **Halaman Dosen**: kartu dan tombol "Lihat Profil" sebelumnya statis tanpa `@click`. Sekarang memakai `dosenPage()` — search & filter jabatan reaktif, dan modal detail dosen berfungsi penuh.
+- **Halaman Dokumen, Prestasi, Kurikulum, Alumni**: filter/tab semester sebelumnya dekoratif (tidak mengubah data). Sekarang tersambung ke `dokumenPage()`, `prestasiPage()`, `kurikulumPage()`, dan `alumniPage()` (baru ditambahkan) di `app.js`.
+- **`adminShell()`**: memperbaiki bug sidebar admin yang memakai `window.innerWidth` (dibaca sekali saat load, tidak reaktif saat resize) → diganti pendekatan CSS murni (`.admin-sidebar` + breakpoint 1024px).
+- **11 halaman admin yang hilang** (link mati di sidebar): Profil Prodi, Kurikulum, Pengumuman, Kegiatan, Prestasi, Artikel, Galeri, Dokumen, Alumni, Pengguna, Pengaturan — semua sudah dibangun dengan shell identik (sidebar/topbar) dan CRUD berfungsi (`adminCrudTable()`), plus halaman Activity Log yang sebelumnya belum ada.
+- **CSS pendukung** (`.modal-backdrop-neu`, `.admin-sidebar`) yang dipakai di markup tapi belum terdefinisikan sudah ditambahkan ke `style.css`.
+- Data kurikulum dilengkapi untuk Semester 6–8 (sebelumnya kosong sehingga tab tersebut tidak menampilkan apa pun).
+
+### Keterbatasan yang diketahui (bukan bug, keputusan desain)
+- Semua data bersumber dari array `SAMPLE_*` di `app.js` (tidak ada backend/database sungguhan) — perubahan lewat form admin tidak persisten setelah refresh halaman, sesuai sifat prototipe front-end.
+- Tombol Import/Export, Backup Database, dan upload berkas berjalan sebagai simulasi (menampilkan notifikasi SweetAlert2) karena tidak ada server penyimpanan.
+- Pencarian global (`doSearch()`) mencari lewat indeks statis dan berpindah halaman ke hasil pertama yang cocok saat menekan Enter — bukan dropdown saran langsung.
+

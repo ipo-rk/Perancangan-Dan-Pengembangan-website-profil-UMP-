@@ -80,7 +80,16 @@ h1, h2, h3, h4, .font-display {
   color: var(--text-inverse);
 }
 
-/* ---------- Focus & accessibility ---------- */
+/* ---------- Link underline lock ----------
+   Sistem desain ini memakai perubahan WARNA (hover:text-royal, dsb.), bukan
+   underline, untuk semua tautan. Aturan ini mengunci perilaku tersebut agar
+   konsisten di seluruh state (default/hover/focus/active/visited) dan kebal
+   terhadap default browser atau konten yang dirender secara dinamis. */
+a, a:link, a:visited, a:hover, a:focus, a:active {
+  text-decoration: none;
+}
+
+
 a, button, input, select, textarea, [tabindex] {
   outline-offset: 2px;
 }
@@ -140,6 +149,26 @@ select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
   box-shadow: inset 4px 4px 8px var(--neu-dark), inset -4px -4px 8px var(--neu-light);
   transform: translateY(0);
 }
+/* Active/pressed state needs a visible color change too, not just shadow,
+   so filter chips & tab buttons read clearly as "selected" (incl. keyboard/dark mode). */
+.neu-btn.is-pressed {
+  color: var(--royal);
+}
+.dark .neu-btn.is-pressed {
+  color: var(--gold-soft);
+}
+.neu-btn.is-pressed svg { stroke: currentColor; }
+
+/* Horizontal filter-chip row: no visible scrollbar, momentum scroll on touch,
+   snaps a little so a partially visible chip doesn't look "cut off". */
+.filter-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  scroll-snap-type: x proximity;
+}
+.filter-scroll::-webkit-scrollbar { display: none; }
+.filter-scroll > * { scroll-snap-align: start; }
 
 .neu-btn-primary {
   background: linear-gradient(145deg, var(--royal-soft), var(--royal));
@@ -217,6 +246,45 @@ select:focus-visible, textarea:focus-visible, [tabindex]:focus-visible {
 }
 
 .break-inside-avoid { break-inside: avoid; }
+
+/* Modal backdrop generik (detail dosen, dsb.) */
+.modal-backdrop-neu {
+  position: fixed; inset: 0; z-index: 50;
+  background: rgba(11,31,58,0.45); backdrop-filter: blur(3px);
+  display: flex; align-items: center; justify-content: center; padding: 1rem;
+  overflow-y: auto;
+}
+
+/* Admin sidebar: off-canvas di mobile, statis di desktop (CSS murni,
+   tidak lagi bergantung pada window.innerWidth yang dibaca sekali saat load) */
+.admin-sidebar {
+  transform: translateX(-120%);
+  transition: transform .3s ease;
+}
+.admin-sidebar.sidebar-open { transform: translateX(0); }
+@media (min-width: 1024px) {
+  .admin-sidebar { transform: none !important; }
+}
+
+/* Thumbnail used in admin CRUD tables/modals so photo fields render
+   consistently with the neumorphic image treatment used on the frontend. */
+.neu-thumb {
+  width: 2.75rem; height: 2.75rem; border-radius: var(--r-sm);
+  object-fit: cover; background: var(--bg);
+  box-shadow: 3px 3px 7px var(--neu-dark), -3px -3px 7px var(--neu-light);
+  flex-shrink: 0;
+}
+.neu-thumb-lg {
+  width: 100%; aspect-ratio: 4 / 3; border-radius: var(--r-lg);
+  object-fit: cover; background: var(--bg);
+  box-shadow: 3px 3px 7px var(--neu-dark), -3px -3px 7px var(--neu-light);
+}
+/* Uniform "click to upload" dropzone used in every CRUD modal that has a photo field */
+.neu-dropzone {
+  cursor: pointer;
+  transition: box-shadow .15s ease;
+}
+.neu-dropzone:hover { box-shadow: inset 5px 5px 10px var(--neu-dark), inset -5px -5px 10px var(--neu-light), 0 0 0 2px var(--royal) inset; }
 
 /* Sidebar item active state (admin) */
 .side-link {

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Manajemen Dosen | Program Studi Hukum — UMP</title>
+<title>Activity Log | Program Studi Hukum — UMP</title>
 <meta name="description" content="Website resmi Program Studi Hukum Universitas Muhammadiyah Papua.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
@@ -34,7 +34,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
           <span>Profil Prodi</span>
         </a>
-        <a href="dosen.html" class="side-link active">
+        <a href="dosen.html" class="side-link ">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-1.13a4 4 0 100-8 4 4 0 000 8zm6 0a4 4 0 10-3.87-5"/></svg>
           <span>Dosen</span>
         </a>
@@ -78,6 +78,10 @@
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
           <span>Pengguna</span>
         </a>
+        <a href="aktivitas.html" class="side-link active">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+          <span>Activity Log</span>
+        </a>
         <a href="pengaturan.html" class="side-link ">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/></svg>
           <span>Pengaturan</span>
@@ -98,8 +102,8 @@
               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
             </button>
             <div>
-              <p class="text-xs text-text-muted">Admin / Dosen</p>
-              <h1 class="font-display font-semibold text-lg text-navy dark:text-white">Manajemen Dosen</h1>
+              <p class="text-xs text-text-muted">Admin / Activity Log</p>
+              <h1 class="font-display font-semibold text-lg text-navy dark:text-white">Activity Log</h1>
             </div>
           </div>
           <div class="flex items-center gap-2">
@@ -122,153 +126,37 @@
     
         <main class="px-4 sm:px-6 pb-10">
           
-    <div x-data="{
-        showModal:false, editing:null,
-        // Sumber data sama dengan yang dipakai halaman publik dosen.html (SAMPLE_DOSEN di app.js,
-        // dimuat dari localStorage) supaya data dosen di admin & frontend selalu konsisten dan akurat.
-        dosen: [...SAMPLE_DOSEN],
-        persist() { SAMPLE_DOSEN = this.dosen; DB.save('dosen', this.dosen); },
-        emptyForm() { return {id:null, nama:'', nidn:'', jabatan:'Dosen', keahlian:'', pendidikan:'', email:'', profil:'', status:'Aktif', foto:''}; },
-        form: {id:null, nama:'', nidn:'', jabatan:'Dosen', keahlian:'', pendidikan:'', email:'', profil:'', status:'Aktif', foto:''},
-        q: '',
-        get filtered() {
-          return this.dosen.filter(d => d.nama.toLowerCase().includes(this.q.toLowerCase()) || d.keahlian.toLowerCase().includes(this.q.toLowerCase()));
-        },
-        openAdd() { this.editing=null; this.form=this.emptyForm(); this.showModal=true; },
-        openEdit(d) { this.editing=d.id; this.form={...d}; this.showModal=true; },
-        onFoto(e) {
-          const file = e.target.files && e.target.files[0];
-          if (!file) return;
-          // Base64 data URL dipakai (bukan URL.createObjectURL) supaya foto tetap
-          // valid setelah disimpan ke localStorage & halaman dimuat ulang/dibuka
-          // di tab/sesi baru — blob: URL akan mati begitu sesi berakhir.
-          const reader = new FileReader();
-          reader.onload = () => { this.form.foto = reader.result; };
-          reader.readAsDataURL(file);
-        },
-        save() {
-          if(!this.form.nama || !this.form.nidn){ NeuAlert.error('Nama dan NIDN wajib diisi.'); return; }
-          if(!this.form.foto){ this.form.foto = 'https://placehold.co/300x300/EEF1F5/0B1F3A?text=Foto+Dosen'; }
-          if(this.editing){
-            const idx = this.dosen.findIndex(x=>x.id===this.editing);
-            this.dosen[idx] = {...this.form};
-            this.persist();
-            logActivity(`Memperbarui data dosen: ${this.form.nama}`, '\u{270F}\u{FE0F}');
-            NeuAlert.updated('Data dosen berhasil diperbarui.');
-          } else {
-            this.form.id = Date.now();
-            this.dosen.unshift({...this.form});
-            this.persist();
-            logActivity(`Menambahkan dosen baru: ${this.form.nama}`, '\u{2795}');
-            NeuAlert.success('Data dosen berhasil disimpan.');
-          }
-          this.showModal=false;
-        },
-        async remove(d) {
-          const ok = await NeuAlert.confirmDelete('data dosen ini');
-          if(ok){
-            this.dosen = this.dosen.filter(x=>x.id!==d.id);
-            this.persist();
-            logActivity(`Menghapus data dosen: ${d.nama}`, '\u{1F5D1}\u{FE0F}');
-            NeuAlert.deleted('Data dosen berhasil dihapus.');
-          }
-        }
-      }">
-
-      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-        <div class="flex items-center neu-pressed px-4 py-3 gap-2 w-full sm:w-72">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-muted shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-          <input x-model="q" type="text" placeholder="Cari nama / keahlian..." class="bg-transparent text-sm outline-none w-full">
-        </div>
-        <div class="flex gap-2">
-          <button class="neu-btn px-4 py-2.5 rounded-xl text-xs">&#11015; Export</button>
-          <button @click="openAdd()" class="neu-btn-primary px-5 py-2.5 rounded-xl text-xs">+ Tambah Dosen</button>
-        </div>
-      </div>
-
-      <div class="neu-raised p-2 sm:p-4">
-        <div class="table-scroll">
-          <table class="w-full min-w-[820px]">
-            <thead>
-              <tr class="text-left text-xs text-text-muted uppercase tracking-wide">
-                <th class="py-3 px-4">Foto</th><th class="py-3 px-4">Nama</th><th class="py-3 px-4">NIDN</th><th class="py-3 px-4">Jabatan</th>
-                <th class="py-3 px-4">Keahlian</th><th class="py-3 px-4">Email</th><th class="py-3 px-4">Status</th>
-                <th class="py-3 px-4 text-right">Aksi</th>
-              </tr>
-            </thead>
-            <tbody>
-              <template x-for="d in filtered" :key="d.id">
-                <tr class="border-b border-black/5 dark:border-white/5">
-                  <td class="py-3 px-4"><img :src="d.foto" :alt="d.nama" class="neu-thumb"></td>
-                  <td class="py-3 px-4 text-sm font-medium text-navy dark:text-white" x-text="d.nama"></td>
-                  <td class="py-3 px-4 text-xs font-mono text-text-muted" x-text="d.nidn"></td>
-                  <td class="py-3 px-4 text-xs text-text-muted" x-text="d.jabatan"></td>
-                  <td class="py-3 px-4 text-xs text-text-muted" x-text="d.keahlian"></td>
-                  <td class="py-3 px-4 text-xs text-text-muted" x-text="d.email"></td>
-                  <td class="py-3 px-4">
-                    <span class="neu-badge" :class="d.status==='Aktif' ? 'badge-active' : 'badge-ended'" x-text="d.status"></span>
-                  </td>
-                  <td class="py-3 px-4">
-                    <div class="flex items-center justify-end gap-2">
-                      <button @click="openEdit(d)" class="neu-btn w-8 h-8 flex items-center justify-center" aria-label="Edit">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-royal" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                      </button>
-                      <button @click="remove(d)" class="neu-btn w-8 h-8 flex items-center justify-center" aria-label="Hapus">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              </template>
-              <tr x-show="filtered.length === 0">
-                <td colspan="8" class="py-10 text-center text-sm text-text-muted">Data yang Anda cari tidak ditemukan.</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Modal Tambah/Edit -->
-      <div x-show="showModal" x-cloak class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy/40 backdrop-blur-sm" x-transition>
-        <div class="neu-raised p-6 sm:p-8 w-full max-w-lg bg-bg" @click.outside="showModal=false">
-          <h3 class="font-display font-semibold text-lg text-navy dark:text-white mb-6" x-text="editing ? 'Edit Dosen' : 'Tambah Dosen'"></h3>
-          <div class="space-y-4">
-            <div class="flex items-center gap-4">
-              <label class="neu-dropzone neu-pressed w-20 h-20 rounded-2xl flex items-center justify-center text-center text-text-muted text-[10px] overflow-hidden relative shrink-0">
-                <img x-show="form.foto" :src="form.foto" class="absolute inset-0 w-full h-full object-cover" alt="Pratinjau foto dosen">
-                <span x-show="!form.foto">Unggah Foto</span>
-                <input type="file" accept="image/*" class="hidden" @change="onFoto($event)">
-              </label>
-              <p class="text-xs text-text-muted">Foto profil dosen. Format JPG/PNG, disarankan rasio 1:1.</p>
-            </div>
-            <input x-model="form.nama" type="text" placeholder="Nama Lengkap &amp; Gelar" class="neu-input w-full">
-            <div class="grid grid-cols-2 gap-4">
-              <input x-model="form.nidn" type="text" placeholder="NIDN" class="neu-input w-full">
-              <select x-model="form.jabatan" class="neu-input w-full">
-                <option>Profesor</option><option>Lektor Kepala</option><option>Lektor</option>
-                <option>Asisten Ahli</option><option>Dosen</option>
-              </select>
-            </div>
-            <input x-model="form.keahlian" type="text" placeholder="Bidang Keahlian" class="neu-input w-full">
-            <input x-model="form.email" type="email" placeholder="Email" class="neu-input w-full">
-            <select x-model="form.status" class="neu-input w-full">
-              <option>Aktif</option><option>Nonaktif</option>
-            </select>
-          </div>
-          <div class="flex gap-3 mt-6">
-            <button @click="showModal=false" class="neu-btn flex-1 py-3 rounded-xl text-sm">Batal</button>
-            <button @click="save()" class="neu-btn-primary flex-1 py-3 rounded-xl text-sm">Simpan</button>
-          </div>
-        </div>
-      </div>
-    </div>
+<div class="neu-raised p-2 sm:p-4">
+  <div class="table-scroll">
+    <table class="w-full min-w-[600px]">
+      <thead>
+        <tr class="text-left text-xs text-text-muted uppercase tracking-wide">
+          <th class="py-3 px-4">Pengguna</th><th class="py-3 px-4">Aktivitas</th><th class="py-3 px-4">Waktu</th>
+        </tr>
+      </thead>
+      <tbody>
+        <template x-for="a in activityLog" :key="a.id">
+          <tr class="border-b border-black/5 dark:border-white/5">
+            <td class="py-3 px-4 text-sm font-medium text-navy dark:text-white" x-text="a.user"></td>
+            <td class="py-3 px-4 text-sm text-text-muted" x-text="a.aksi"></td>
+            <td class="py-3 px-4 text-xs text-text-muted whitespace-nowrap" x-text="a.waktu"></td>
+          </tr>
+        </template>
+        <tr x-show="activityLog.length === 0">
+          <td colspan="3" class="py-10 text-center text-sm text-text-muted">Belum ada aktivitas.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<p class="text-xs text-text-muted mt-4">Log aktivitas disimpan otomatis oleh sistem dan tidak dapat diubah atau dihapus manual.</p>
 
         </main>
       </div>
     </div>
     
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
 </body>
 </html>

@@ -7,28 +7,16 @@
 <meta name="description" content="Website resmi Program Studi Hukum Universitas Muhammadiyah Papua.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  tailwind.config = {
-    darkMode: 'class',
-    theme: {
-      extend: {
-        colors: { navy: '#0B1F3A', royal: '#2A4E9E', gold: '#C9A227', bg: '#E8ECF1' },
-        fontFamily: { sans: ['Inter','sans-serif'], display: ['Poppins','sans-serif'] },
-      }
-    }
-  }
-</script>
+<link rel="stylesheet" href="../assets/css/tailwind.min.css">
+<script src="../assets/js/app.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
 <link rel="stylesheet" href="../assets/css/style.css">
 
 </head>
-<body x-data="{ sidebarOpen:false, alwaysOpen: window.innerWidth >= 1024, ...themeStore(),
-      logout() { NeuAlert.confirmLogout().then(ok => { if(ok) window.location.href = 'login.html'; }); }
-    }" class="font-sans">
+<body x-data="adminShell()" class="font-sans">
     <div class="flex min-h-screen">
       
-    <aside x-show="sidebarOpen || alwaysOpen" x-transition class="w-72 shrink-0 neu-raised m-4 mr-0 p-4 flex flex-col gap-1 fixed lg:sticky top-4 h-[calc(100vh-2rem)] overflow-y-auto z-40 bg-bg">
+    <aside class="admin-sidebar w-72 shrink-0 neu-raised m-4 lg:mr-0 p-4 flex flex-col gap-1 fixed lg:sticky top-4 h-[calc(100vh-2rem)] overflow-y-auto z-40 bg-bg" :class="sidebarOpen ? 'sidebar-open' : ''">
       <div class="flex items-center gap-3 px-2 pb-4 mb-2 border-b border-black/5 dark:border-white/5">
         <div class="w-10 h-10 neu-raised-sm flex items-center justify-center">
           <span class="font-display font-bold text-navy dark:text-white text-sm">UMP</span>
@@ -99,6 +87,7 @@
         <span>Logout</span>
       </button>
     </aside>
+    <div x-show="sidebarOpen" x-cloak x-transition @click="sidebarOpen=false" class="fixed inset-0 bg-navy/40 z-30 lg:hidden"></div>
     
       <div class="flex-1 min-w-0">
         
@@ -134,40 +123,80 @@
         <main class="px-4 sm:px-6 pb-10">
           
     <div x-data="{
-        tab: 'list', showDeleteModal:false, target:null,
-        berita: [
-          {id:1, judul:'Prodi Hukum Raih Akreditasi Unggul dari BAN-PT', kategori:'Akademik', penulis:'Humas Prodi', status:'Published', tanggal:'20 Agu 2026'},
-          {id:2, judul:'Seminar Nasional Hukum di Era Digital', kategori:'Seminar', penulis:'Panitia Seminar', status:'Published', tanggal:'18 Agu 2026'},
-          {id:3, judul:'Draft: Liputan Kunjungan ke Pengadilan Negeri', kategori:'Kegiatan', penulis:'Editor', status:'Draft', tanggal:'22 Agu 2026'},
-          {id:4, judul:'Mahasiswa Hukum Raih Juara Moot Court Nasional', kategori:'Kemahasiswaan', penulis:'Humas Prodi', status:'Review', tanggal:'12 Agu 2026'},
-          {id:5, judul:'Jadwal Wisuda Periode II Tahun 2026', kategori:'Akademik', penulis:'Admin', status:'Scheduled', tanggal:'01 Sep 2026'},
-        ],
+        tab: 'list', editing: null,
+        // Sumber data sama dengan yang dipakai halaman publik berita.html (SAMPLE_BERITA di app.js,
+        // dimuat dari localStorage) supaya berita di admin & frontend selalu konsisten dan akurat.
+        berita: [...SAMPLE_BERITA],
+        persist() { SAMPLE_BERITA = this.berita; DB.save('berita', this.berita); },
+        emptyForm() { return { judul:'', slug:'', kategori:'Akademik', excerpt:'', konten:'', status:'Draft', gambar:'' }; },
+        form: {},
+        openList() { this.tab = 'list'; },
+        openAdd() { this.editing = null; this.form = this.emptyForm(); this.tab = 'editor'; },
+        openEdit(b) { this.editing = b.id; this.form = { ...b }; this.tab = 'editor'; },
+        onPhoto(e) {
+          const file = e.target.files && e.target.files[0];
+          if (!file) return;
+          // Base64 data URL dipakai (bukan URL.createObjectURL) supaya gambar tetap
+          // valid setelah disimpan ke localStorage & halaman dimuat ulang/dibuka
+          // di tab/sesi baru — blob: URL akan mati begitu sesi berakhir.
+          const reader = new FileReader();
+          reader.onload = () => { this.form.gambar = reader.result; };
+          reader.readAsDataURL(file);
+        },
+        saveBerita() {
+          if (!this.form.judul) { NeuAlert.error('Judul berita wajib diisi.'); return; }
+          if (!this.form.gambar) { this.form.gambar = 'https://placehold.co/400x240/EEF1F5/0B1F3A?text=Berita'; }
+          if (this.editing) {
+            const idx = this.berita.findIndex(x => x.id === this.editing);
+            this.berita[idx] = { ...this.form, id: this.editing, tanggal: this.berita[idx].tanggal, penulis: this.berita[idx].penulis };
+            this.persist();
+            logActivity(`Memperbarui berita: ${this.form.judul}`, '\u{270F}\u{FE0F}');
+            NeuAlert.updated('Berita berhasil diperbarui.');
+          } else {
+            this.berita.unshift({ ...this.form, id: Date.now(), penulis: AUTH.current().nama, tanggal: new Date().toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' }) });
+            this.persist();
+            logActivity(`Menambahkan berita baru: ${this.form.judul}`, '\u{1F4C4}');
+            NeuAlert.success('Berita berhasil disimpan.');
+          }
+          this.tab = 'list';
+        },
         async remove(item) {
           const ok = await NeuAlert.confirmDelete('berita ini');
-          if(ok){ this.berita = this.berita.filter(b=>b.id!==item.id); NeuAlert.deleted('Berita berhasil dihapus.'); }
+          if(ok){
+            this.berita = this.berita.filter(b=>b.id!==item.id);
+            this.persist();
+            logActivity(`Menghapus berita: ${item.judul}`, '\u{1F5D1}\u{FE0F}');
+            NeuAlert.deleted('Berita berhasil dihapus.');
+          }
         },
-        publish(item){ item.status='Published'; NeuAlert.updated('Berita berhasil dipublikasikan.'); },
+        publish(item){
+          item.status='Published';
+          this.persist();
+          logActivity(`Mempublikasikan berita: ${item.judul}`, '\u{2705}');
+          NeuAlert.updated('Berita berhasil dipublikasikan.');
+        },
       }">
 
       <div class="flex items-center gap-2 mb-6">
-        <button @click="tab='list'" class="neu-btn px-5 py-2.5 rounded-xl text-xs" :class="tab==='list' ? 'is-pressed' : ''">Daftar Berita</button>
-        <button @click="tab='editor'" class="neu-btn px-5 py-2.5 rounded-xl text-xs" :class="tab==='editor' ? 'is-pressed' : ''">+ Tulis Berita Baru</button>
+        <button type="button" @click="openList()" class="neu-btn px-5 py-2.5 rounded-xl text-xs" :class="tab==='list' ? 'is-pressed' : ''">Daftar Berita</button>
+        <button type="button" @click="openAdd()" class="neu-btn px-5 py-2.5 rounded-xl text-xs" :class="tab==='editor' ? 'is-pressed' : ''">+ Tulis Berita Baru</button>
       </div>
 
       <!-- ===== TAB: DAFTAR ===== -->
       <div x-show="tab==='list'">
         <div class="neu-raised p-2 sm:p-4">
           <div class="table-scroll">
-            <table class="w-full min-w-[720px]">
+            <table class="w-full min-w-[760px]">
               <thead>
                 <tr class="text-left text-xs text-text-muted uppercase tracking-wide">
-                  <th class="py-3 px-4">Judul</th><th class="py-3 px-4">Kategori</th><th class="py-3 px-4">Penulis</th>
+                  <th class="py-3 px-4">Foto</th><th class="py-3 px-4">Judul</th><th class="py-3 px-4">Kategori</th><th class="py-3 px-4">Penulis</th>
                   <th class="py-3 px-4">Tanggal</th><th class="py-3 px-4">Status</th><th class="py-3 px-4 text-right">Aksi</th>
                 </tr>
               </thead>
               <tbody>
                 <template x-for="b in berita" :key="b.id">
                   <tr class="border-b border-black/5 dark:border-white/5">
+                    <td class="py-3 px-4"><img :src="b.gambar" :alt="b.judul" class="neu-thumb"></td>
                     <td class="py-3 px-4 text-sm font-medium text-navy dark:text-white max-w-xs" x-text="b.judul"></td>
                     <td class="py-3 px-4 text-xs text-text-muted" x-text="b.kategori"></td>
                     <td class="py-3 px-4 text-xs text-text-muted" x-text="b.penulis"></td>
@@ -179,19 +208,22 @@
                     </td>
                     <td class="py-3 px-4">
                       <div class="flex items-center justify-end gap-2">
-                        <button x-show="b.status!=='Published'" @click="publish(b)" class="neu-btn w-8 h-8 flex items-center justify-center" aria-label="Publikasikan" title="Publikasikan">
+                        <button type="button" x-show="b.status!=='Published'" @click="publish(b)" class="neu-btn w-8 h-8 flex items-center justify-center" aria-label="Publikasikan" title="Publikasikan">
                           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
                         </button>
-                        <button class="neu-btn w-8 h-8 flex items-center justify-center" aria-label="Edit">
+                        <button type="button" @click="openEdit(b)" class="neu-btn w-8 h-8 flex items-center justify-center" aria-label="Edit" title="Edit">
                           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-royal" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                         </button>
-                        <button @click="remove(b)" class="neu-btn w-8 h-8 flex items-center justify-center" aria-label="Hapus">
+                        <button type="button" @click="remove(b)" class="neu-btn w-8 h-8 flex items-center justify-center" aria-label="Hapus" title="Hapus">
                           <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
                         </button>
                       </div>
                     </td>
                   </tr>
                 </template>
+                <tr x-show="berita.length === 0">
+                  <td colspan="7" class="py-10 text-center text-sm text-text-muted">Belum ada berita.</td>
+                </tr>
               </tbody>
             </table>
           </div>
@@ -199,7 +231,7 @@
       </div>
 
       <!-- ===== TAB: EDITOR ===== -->
-      <div x-show="tab==='editor'" x-data="{ form:{judul:'', slug:'', kategori:'Akademik', excerpt:'', konten:'', status:'Draft'} }">
+      <div x-show="tab==='editor'">
         <div class="grid lg:grid-cols-3 gap-6">
           <div class="lg:col-span-2 space-y-4">
             <div class="neu-raised p-6">
@@ -216,7 +248,12 @@
           <div class="space-y-4">
             <div class="neu-raised p-6">
               <label class="text-xs font-semibold text-text-muted mb-2 block">Featured Image</label>
-              <div class="neu-pressed h-36 flex items-center justify-center text-text-muted text-xs mb-2">Klik untuk unggah gambar</div>
+              <label class="neu-dropzone neu-pressed h-36 flex items-center justify-center text-center text-text-muted text-xs mb-2 overflow-hidden relative">
+                <img x-show="form.gambar" :src="form.gambar" class="absolute inset-0 w-full h-full object-cover" alt="Pratinjau gambar berita">
+                <span x-show="!form.gambar">Klik untuk unggah gambar<br><span class="text-[10px]">JPG/PNG, maks 2MB</span></span>
+                <span x-show="form.gambar" class="absolute inset-0 bg-navy/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[11px] font-medium">Ganti gambar</span>
+                <input type="file" accept="image/*" class="hidden" @change="onPhoto($event)">
+              </label>
               <label class="text-xs font-semibold text-text-muted mb-2 block mt-4">Kategori</label>
               <select x-model="form.kategori" class="neu-input w-full mb-4">
                 <option>Akademik</option><option>Kemahasiswaan</option><option>Penelitian</option>
@@ -227,8 +264,8 @@
                 <option>Draft</option><option>Review</option><option>Published</option><option>Scheduled</option>
               </select>
             </div>
-            <button @click="NeuAlert.success('Berita berhasil disimpan.'); tab='list'" class="neu-btn-primary w-full py-3.5 rounded-xl text-sm">Simpan Berita</button>
-            <button @click="tab='list'" class="neu-btn w-full py-3.5 rounded-xl text-sm">Batal</button>
+            <button type="button" @click="saveBerita()" class="neu-btn-primary w-full py-3.5 rounded-xl text-sm" x-text="editing ? 'Perbarui Berita' : 'Simpan Berita'"></button>
+            <button type="button" @click="openList()" class="neu-btn w-full py-3.5 rounded-xl text-sm">Batal</button>
           </div>
         </div>
       </div>
@@ -239,8 +276,7 @@
     </div>
     
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="../assets/js/app.js"></script>
 </body>
 </html>

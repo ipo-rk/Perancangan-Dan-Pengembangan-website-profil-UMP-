@@ -10,18 +10,8 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap"
     rel="stylesheet">
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: { navy: '#0B1F3A', royal: '#2A4E9E', gold: '#C9A227', bg: '#E8ECF1' },
-          fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Poppins', 'sans-serif'] },
-        }
-      }
-    }
-  </script>
+  <link rel="stylesheet" href="assets/css/tailwind.min.css">
+<script src="assets/js/app.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="assets/css/style.css">
 
@@ -29,7 +19,7 @@
 
 <body x-data class="font-sans">
 
-  <header x-data="{ mobileOpen:false, ...themeStore() }" class="sticky top-0 z-50 neu-flat backdrop-blur">
+  <header x-data="siteHeader()" class="sticky top-0 z-50 neu-flat backdrop-blur">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="flex items-center justify-between py-3 gap-4">
         <a href="index.html" class="flex items-center gap-3 shrink-0">
@@ -45,14 +35,12 @@
 
         <nav class="hidden xl:flex items-center gap-1" x-data="{ openMenu: null }" @click.outside="openMenu = null"
           @keydown.escape.window="openMenu = null">
-          <a href="index.html"
-            class="px-3 py-2 rounded-xl text-sm text-royal font-semibold transition-colors whitespace-nowrap">Beranda</a>
+          <a href="index.html" class="px-3 py-2 rounded-xl text-sm text-navy/70 dark:text-slate-300 hover:text-royal transition-colors whitespace-nowrap">Beranda</a>
 
-          <!-- Profil dropdown -->
           <div class="relative">
             <button type="button" @click="openMenu = (openMenu === 'profil' ? null : 'profil')"
               :aria-expanded="openMenu === 'profil'"
-              class="px-3 py-2 rounded-xl text-sm text-navy/70 dark:text-slate-300 hover:text-royal transition-colors whitespace-nowrap inline-flex items-center gap-1">
+              class="px-3 py-2 rounded-xl text-sm text-royal font-semibold transition-colors whitespace-nowrap inline-flex items-center gap-1">
               Profil
               <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 transition-transform"
                 :class="openMenu === 'profil' && 'rotate-180'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -61,17 +49,12 @@
             </button>
             <div x-show="openMenu === 'profil'" x-transition x-cloak
               class="absolute left-0 top-full mt-2 w-48 neu-raised p-2 z-50">
-              <a href="profil.html"
-                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Profil
-                Prodi</a>
-              <a href="dosen.html"
-                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Dosen</a>
-              <a href="kurikulum.html"
-                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Kurikulum</a>
+              <a href="profil.html" class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Profil Prodi</a>
+              <a href="dosen.html" class="block px-3 py-2 rounded-lg text-sm text-royal font-semibold bg-black/5 dark:bg-white/5">Dosen</a>
+              <a href="kurikulum.html" class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Kurikulum</a>
             </div>
           </div>
 
-          <!-- Informasi dropdown -->
           <div class="relative">
             <button type="button" @click="openMenu = (openMenu === 'informasi' ? null : 'informasi')"
               :aria-expanded="openMenu === 'informasi'"
@@ -84,19 +67,13 @@
             </button>
             <div x-show="openMenu === 'informasi'" x-transition x-cloak
               class="absolute left-0 top-full mt-2 w-48 neu-raised p-2 z-50">
-              <a href="berita.html"
-                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Berita</a>
-              <a href="pengumuman.html"
-                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Pengumuman</a>
-              <a href="kegiatan.html"
-                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Kegiatan</a>
-              <a href="artikel.html"
-                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Artikel
-                Hukum</a>
+              <a href="berita.html" class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Berita</a>
+              <a href="pengumuman.html" class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Pengumuman</a>
+              <a href="kegiatan.html" class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Kegiatan</a>
+              <a href="artikel.html" class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Artikel Hukum</a>
             </div>
           </div>
 
-          <!-- Mahasiswa dropdown -->
           <div class="relative">
             <button type="button" @click="openMenu = (openMenu === 'mahasiswa' ? null : 'mahasiswa')"
               :aria-expanded="openMenu === 'mahasiswa'"
@@ -109,19 +86,14 @@
             </button>
             <div x-show="openMenu === 'mahasiswa'" x-transition x-cloak
               class="absolute left-0 top-full mt-2 w-48 neu-raised p-2 z-50">
-              <a href="prestasi.html"
-                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Prestasi</a>
-              <a href="alumni.html"
-                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Alumni</a>
-              <a href="galeri.html"
-                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Galeri</a>
+              <a href="prestasi.html" class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Prestasi</a>
+              <a href="alumni.html" class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Alumni</a>
+              <a href="galeri.html" class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Galeri</a>
             </div>
           </div>
 
-          <a href="dokumen.html"
-            class="px-3 py-2 rounded-xl text-sm text-navy/70 dark:text-slate-300 hover:text-royal transition-colors whitespace-nowrap">Dokumen</a>
-          <a href="kontak.html"
-            class="px-3 py-2 rounded-xl text-sm text-navy/70 dark:text-slate-300 hover:text-royal transition-colors whitespace-nowrap">Kontak</a>
+          <a href="dokumen.html" class="px-3 py-2 rounded-xl text-sm text-navy/70 dark:text-slate-300 hover:text-royal transition-colors whitespace-nowrap">Dokumen</a>
+          <a href="kontak.html" class="px-3 py-2 rounded-xl text-sm text-navy/70 dark:text-slate-300 hover:text-royal transition-colors whitespace-nowrap">Kontak</a>
         </nav>
 
         <div class="flex items-center gap-2 shrink-0">
@@ -131,7 +103,7 @@
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                 d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
-            <input type="text" placeholder="Cari informasi Prodi..."
+            <input x-model="searchQ" @keydown.enter="doSearch()" type="search" placeholder="Cari informasi Prodi..."
               class="bg-transparent text-sm outline-none w-full placeholder:text-text-muted">
           </div>
           <button @click="toggle()" class="neu-btn w-10 h-10 flex items-center justify-center"
@@ -159,33 +131,48 @@
         </div>
       </div>
 
-      <div x-show="mobileOpen" x-transition x-cloak class="xl:hidden pb-4 grid grid-cols-2 gap-2">
+      <div x-show="mobileOpen" x-transition x-cloak class="xl:hidden pb-4 space-y-4">
         <a href="index.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Beranda</a>
-        <a href="profil.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Profil</a>
-        <a href="dosen.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-royal font-semibold">Dosen</a>
-        <a href="kurikulum.html"
-          class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Kurikulum</a>
-        <a href="berita.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Berita</a>
-        <a href="pengumuman.html"
-          class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Pengumuman</a>
-        <a href="kegiatan.html"
-          class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Kegiatan</a>
-        <a href="prestasi.html"
-          class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Prestasi</a>
-        <a href="artikel.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Artikel
-          Hukum</a>
-        <a href="galeri.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Galeri</a>
-        <a href="dokumen.html"
-          class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Dokumen</a>
-        <a href="alumni.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Alumni</a>
-        <a href="kontak.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Kontak</a>
-        <a href="admin/login.html" class="col-span-2 text-center neu-btn-primary px-4 py-3 rounded-xl text-sm">Portal
-          Akademik</a>
+
+        <div>
+          <p class="text-[11px] font-semibold uppercase tracking-wide text-text-muted mb-2 px-1">Profil</p>
+          <div class="grid grid-cols-2 gap-2">
+            <a href="profil.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Profil</a>
+            <a href="dosen.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-royal font-semibold">Dosen</a>
+            <a href="kurikulum.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Kurikulum</a>
+          </div>
+        </div>
+
+        <div>
+          <p class="text-[11px] font-semibold uppercase tracking-wide text-text-muted mb-2 px-1">Informasi</p>
+          <div class="grid grid-cols-2 gap-2">
+            <a href="berita.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Berita</a>
+            <a href="pengumuman.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Pengumuman</a>
+            <a href="kegiatan.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Kegiatan</a>
+            <a href="artikel.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Artikel Hukum</a>
+          </div>
+        </div>
+
+        <div>
+          <p class="text-[11px] font-semibold uppercase tracking-wide text-text-muted mb-2 px-1">Mahasiswa</p>
+          <div class="grid grid-cols-2 gap-2">
+            <a href="prestasi.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Prestasi</a>
+            <a href="alumni.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Alumni</a>
+            <a href="galeri.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Galeri</a>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-2">
+          <a href="dokumen.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Dokumen</a>
+          <a href="kontak.html" class="block px-4 py-3 rounded-xl neu-raised-sm text-navy dark:text-slate-200">Kontak</a>
+        </div>
+
+        <a href="admin/login.html" class="block text-center neu-btn-primary px-4 py-3 rounded-xl text-sm">Portal Akademik</a>
       </div>
     </div>
   </header>
 
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14" x-data="dosenPage()">
     <div class="mb-8">
       <span class="neu-badge badge-new mb-3">Sumber Daya Manusia</span>
       <h1 class="font-display font-bold text-3xl sm:text-4xl text-navy dark:text-white mb-3">Dosen Program Studi Hukum
@@ -201,72 +188,53 @@
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
             d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
         </svg>
-        <input type="text" placeholder="Cari nama dosen..." class="bg-transparent text-sm outline-none w-full">
+        <input x-model="q" type="text" placeholder="Cari nama dosen..." class="bg-transparent text-sm outline-none w-full">
       </div>
-      <div class="flex gap-2 overflow-x-auto">
-        <button class="neu-btn px-4 py-2.5 rounded-xl text-xs whitespace-nowrap is-pressed">Semua</button><button
-          class="neu-btn px-4 py-2.5 rounded-xl text-xs whitespace-nowrap ">Profesor</button><button
-          class="neu-btn px-4 py-2.5 rounded-xl text-xs whitespace-nowrap ">Lektor Kepala</button><button
-          class="neu-btn px-4 py-2.5 rounded-xl text-xs whitespace-nowrap ">Lektor</button><button
-          class="neu-btn px-4 py-2.5 rounded-xl text-xs whitespace-nowrap ">Asisten Ahli</button><button
-          class="neu-btn px-4 py-2.5 rounded-xl text-xs whitespace-nowrap ">Dosen</button>
+      <div class="flex gap-2 filter-scroll pb-1">
+        <template x-for="f in filters" :key="f">
+          <button type="button" @click="setFilter(f)" class="neu-btn px-4 py-2.5 rounded-xl text-xs whitespace-nowrap"
+            :class="isActive(f) ? 'is-pressed' : ''" x-text="f"></button>
+        </template>
       </div>
     </div>
 
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <template x-for="d in results" :key="d.id">
+        <div class="neu-raised p-5 hover:-translate-y-1 transition-transform">
+          <img :src="d.foto" :alt="d.nama"
+            class="w-full aspect-square object-cover rounded-2xl mb-4">
+          <p class="font-display font-semibold text-navy dark:text-white text-sm mb-0.5" x-text="d.nama"></p>
+          <p class="text-xs text-royal mb-2" x-text="d.jabatan"></p>
+          <p class="text-xs text-text-muted mb-3">Keahlian: <span x-text="d.keahlian"></span><br>Pendidikan: <span x-text="d.pendidikan"></span></p>
+          <button @click="openDetail(d)" class="text-xs font-semibold text-royal">Lihat Profil &rarr;</button>
+        </div>
+      </template>
+    </div>
+    <p x-show="results.length === 0" class="text-center text-sm text-text-muted py-14">Data yang Anda cari tidak ditemukan.</p>
 
-      <div class="neu-raised p-5 hover:-translate-y-1 transition-transform">
-        <img src="https://placehold.co/300x300/EEF1F5/0B1F3A?text=Foto+Dosen"
-          class="w-full aspect-square object-cover rounded-2xl mb-4">
-        <p class="font-display font-semibold text-navy dark:text-white text-sm mb-0.5">Dr. Ahmad Fauzi, S.H., M.H.</p>
-        <p class="text-xs text-royal mb-2">Lektor Kepala</p>
-        <p class="text-xs text-text-muted mb-3">Keahlian: Hukum Pidana<br>Pendidikan: S3 Ilmu Hukum</p>
-        <button class="text-xs font-semibold text-royal">Lihat Profil &rarr;</button>
-      </div>
-      <div class="neu-raised p-5 hover:-translate-y-1 transition-transform">
-        <img src="https://placehold.co/300x300/EEF1F5/0B1F3A?text=Foto+Dosen"
-          class="w-full aspect-square object-cover rounded-2xl mb-4">
-        <p class="font-display font-semibold text-navy dark:text-white text-sm mb-0.5">Rina Marlina, S.H., M.H.</p>
-        <p class="text-xs text-royal mb-2">Lektor</p>
-        <p class="text-xs text-text-muted mb-3">Keahlian: Hukum Perdata<br>Pendidikan: S2 Kenotariatan</p>
-        <button class="text-xs font-semibold text-royal">Lihat Profil &rarr;</button>
-      </div>
-      <div class="neu-raised p-5 hover:-translate-y-1 transition-transform">
-        <img src="https://placehold.co/300x300/EEF1F5/0B1F3A?text=Foto+Dosen"
-          class="w-full aspect-square object-cover rounded-2xl mb-4">
-        <p class="font-display font-semibold text-navy dark:text-white text-sm mb-0.5">Yusuf Kamal, S.H., M.Kn.</p>
-        <p class="text-xs text-royal mb-2">Lektor</p>
-        <p class="text-xs text-text-muted mb-3">Keahlian: Hukum Tata Negara<br>Pendidikan: S2 Hukum</p>
-        <button class="text-xs font-semibold text-royal">Lihat Profil &rarr;</button>
-      </div>
-      <div class="neu-raised p-5 hover:-translate-y-1 transition-transform">
-        <img src="https://placehold.co/300x300/EEF1F5/0B1F3A?text=Foto+Dosen"
-          class="w-full aspect-square object-cover rounded-2xl mb-4">
-        <p class="font-display font-semibold text-navy dark:text-white text-sm mb-0.5">Dr. Siti Aminah, S.H., M.H.</p>
-        <p class="text-xs text-royal mb-2">Profesor</p>
-        <p class="text-xs text-text-muted mb-3">Keahlian: Hukum Internasional<br>Pendidikan: S3 Ilmu Hukum</p>
-        <button class="text-xs font-semibold text-royal">Lihat Profil &rarr;</button>
-      </div>
-      <div class="neu-raised p-5 hover:-translate-y-1 transition-transform">
-        <img src="https://placehold.co/300x300/EEF1F5/0B1F3A?text=Foto+Dosen"
-          class="w-full aspect-square object-cover rounded-2xl mb-4">
-        <p class="font-display font-semibold text-navy dark:text-white text-sm mb-0.5">Bayu Segara, S.H., M.H.</p>
-        <p class="text-xs text-royal mb-2">Asisten Ahli</p>
-        <p class="text-xs text-text-muted mb-3">Keahlian: Hukum Adat<br>Pendidikan: S2 Hukum</p>
-        <button class="text-xs font-semibold text-royal">Lihat Profil &rarr;</button>
-      </div>
-      <div class="neu-raised p-5 hover:-translate-y-1 transition-transform">
-        <img src="https://placehold.co/300x300/EEF1F5/0B1F3A?text=Foto+Dosen"
-          class="w-full aspect-square object-cover rounded-2xl mb-4">
-        <p class="font-display font-semibold text-navy dark:text-white text-sm mb-0.5">Maria Kabes, S.H., M.H.</p>
-        <p class="text-xs text-royal mb-2">Dosen</p>
-        <p class="text-xs text-text-muted mb-3">Keahlian: Hukum Administrasi Negara<br>Pendidikan: S2 Hukum</p>
-        <button class="text-xs font-semibold text-royal">Lihat Profil &rarr;</button>
+    <!-- Modal Detail Dosen (Alpine.js) -->
+    <div x-show="showDetail" x-cloak x-transition class="modal-backdrop-neu" @click.self="closeDetail()" @keydown.escape.window="closeDetail()">
+      <div class="neu-raised bg-bg p-6 sm:p-8 w-full max-w-lg" x-show="selected">
+        <template x-if="selected">
+          <div>
+            <img :src="selected.foto" :alt="selected.nama" class="w-28 h-28 rounded-2xl object-cover mb-4">
+            <h3 class="font-display font-semibold text-xl text-navy dark:text-white mb-1" x-text="selected.nama"></h3>
+            <p class="text-sm text-royal mb-4" x-text="selected.jabatan"></p>
+            <div class="space-y-2 text-sm text-text-muted">
+              <p><span class="font-medium text-navy dark:text-white">NIDN:</span> <span x-text="selected.nidn"></span></p>
+              <p><span class="font-medium text-navy dark:text-white">Keahlian:</span> <span x-text="selected.keahlian"></span></p>
+              <p><span class="font-medium text-navy dark:text-white">Pendidikan:</span> <span x-text="selected.pendidikan"></span></p>
+              <p><span class="font-medium text-navy dark:text-white">Email:</span> <span x-text="selected.email"></span></p>
+              <p class="pt-2" x-text="selected.profil"></p>
+            </div>
+            <button @click="closeDetail()" class="neu-btn w-full py-3 rounded-xl mt-6 text-sm">Tutup</button>
+          </div>
+        </template>
       </div>
     </div>
   </section>
 
-  <footer class="mt-20 neu-flat">
+  <footer class="mt-20 neu-flat" x-data="{ p: SAMPLE_PENGATURAN }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 grid grid-cols-2 md:grid-cols-4 gap-10">
       <div class="col-span-2 md:col-span-1">
         <div class="flex items-center gap-3 mb-4">
@@ -300,9 +268,9 @@
       <div>
         <p class="font-display font-semibold text-navy dark:text-white mb-3 text-sm">Kontak</p>
         <ul class="space-y-2 text-sm text-text-muted">
-          <li>Jl. Yap Thiam Hien, Kel. Yobe, Jayapura Utara</li>
-          <li>hukum@ump.ac.id</li>
-          <li>(0967) 123-456</li>
+          <li x-text="p.alamat"></li>
+          <li x-text="p.email"></li>
+          <li x-text="p.telepon"></li>
         </ul>
       </div>
     </div>
@@ -312,9 +280,8 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="assets/js/app.js"></script>
 </body>
 
 </html>
