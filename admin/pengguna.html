@@ -99,7 +99,7 @@
       <div class="neu-flat sticky top-0 z-30 mb-6">
         <div class="flex items-center justify-between px-4 sm:px-6 py-4 gap-4">
           <div class="flex items-center gap-3">
-            <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden neu-btn w-10 h-10 flex items-center justify-center">
+            <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden neu-btn w-10 h-10 flex items-center justify-center" aria-label="Buka menu sidebar" :aria-expanded="sidebarOpen">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
             </button>
             <div>
