@@ -563,7 +563,7 @@ textarea:focus-visible,
 
 .law-court-bg {
   position: relative;
-  background-image: url("../image/law-court-bg.jpg");
+  background-image: url("/assets/image/Gedung-UMP-thumbnail.jpg");
   background-size: cover;
   background-position: center;
 }

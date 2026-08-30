@@ -75,7 +75,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.42A12.083 12.083 0 0112 20.055 12.083 12.083 0 015.84 10.58L12 14z"/></svg>
           <span>Alumni</span>
         </a>
-        <a href="pengguna.html" class="side-link active">
+        <a href="pengguna.html" x-show="currentUser.role === 'Super Admin'" class="side-link active">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
           <span>Pengguna</span>
         </a>
@@ -83,7 +83,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           <span>Activity Log</span>
         </a>
-        <a href="pengaturan.html" class="side-link ">
+        <a href="pengaturan.html" x-show="currentUser.role === 'Super Admin'" class="side-link ">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/></svg>
           <span>Pengaturan</span>
         </a>
@@ -153,7 +153,7 @@
                 </div>
                 <!-- Footer -->
                 <div class="px-4 py-2.5 border-t border-black/10 dark:border-white/10 bg-[#d0d8e8] dark:bg-[#1e2d4a] text-center rounded-b-2xl">
-                  <a href="activity-log.html" class="text-[11px] text-royal hover:underline font-semibold">Lihat semua aktivitas &rarr;</a>
+                  <a href="aktivitas.html" class="text-[11px] text-royal hover:underline font-semibold">Lihat semua aktivitas &rarr;</a>
                 </div>
               </div>
             </div>
@@ -168,10 +168,9 @@
     
         <main class="px-4 sm:px-6 pb-10">
           
-<div x-data="adminCrudTable({
+<div x-data="adminPenggunaTable({
       rows: SAMPLE_PENGGUNA,
-      dbKey: 'pengguna',
-      emptyForm: { nama:'', email:'', role:'Editor', status:'Aktif' },
+      emptyForm: { nama:'', email:'', password:'', role:'Editor', status:'Aktif' },
       searchKeys: ['nama','email'],
       itemLabel: 'pengguna ini',
       validate(f) { if(!f.nama || !f.email){ NeuAlert.error('Nama dan Email wajib diisi.'); return false; } return true; }
@@ -225,10 +224,25 @@
   <div x-show="showModal" x-cloak class="modal-backdrop-neu" x-transition>
     <div class="neu-raised p-6 sm:p-8 w-full max-w-lg bg-bg max-h-[85vh] overflow-y-auto" @click.outside="showModal=false">
       <h3 class="font-display font-semibold text-lg text-navy dark:text-white mb-6" x-text="editing ? 'Edit Data' : 'Tambah Pengguna'"></h3>
+      <form @submit.prevent="save()">
       <div class="space-y-4">
         
         <input x-model="form.nama" type="text" placeholder="Nama Lengkap" class="neu-input w-full">
         <input x-model="form.email" type="email" placeholder="Email" class="neu-input w-full">
+        <div x-data="{ showPw: false }">
+          <div class="relative">
+            <input x-model="form.password" :type="showPw ? 'text' : 'password'"
+              :placeholder="editing ? 'Kosongkan jika tidak ingin mengubah kata sandi' : 'Kata Sandi'"
+              class="neu-input w-full pr-11 font-mono text-sm" autocomplete="new-password">
+            <button type="button" @click="showPw = !showPw"
+              class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-royal focus:outline-none p-1"
+              :aria-label="showPw ? 'Sembunyikan password' : 'Tampilkan password'">
+              <svg x-show="!showPw" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+              <svg x-show="showPw" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"/></svg>
+            </button>
+          </div>
+          <p class="text-[11px] text-text-muted mt-1.5" x-show="!editing">Wajib diisi. Akun tidak akan bisa login tanpa kata sandi.</p>
+        </div>
         <div class="grid grid-cols-2 gap-4">
           <select x-model="form.role" class="neu-input w-full">
             <option>Super Admin</option><option>Admin Prodi</option><option>Editor</option><option>Operator</option>
@@ -239,9 +253,10 @@
         </div>
       </div>
       <div class="flex gap-3 mt-6">
-        <button @click="showModal=false" class="neu-btn flex-1 py-3 rounded-xl text-sm">Batal</button>
-        <button @click="save()" class="neu-btn-primary flex-1 py-3 rounded-xl text-sm">Simpan</button>
+        <button type="button" @click="showModal=false" class="neu-btn flex-1 py-3 rounded-xl text-sm">Batal</button>
+        <button type="submit" class="neu-btn-primary flex-1 py-3 rounded-xl text-sm">Simpan</button>
       </div>
+      </form>
     </div>
   </div>
 </div>

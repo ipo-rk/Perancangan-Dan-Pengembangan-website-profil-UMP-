@@ -256,8 +256,8 @@
       <template x-for="item in items" :key="item.id">
         <div class="neu-raised p-5 sm:p-6 flex flex-col sm:flex-row gap-5">
           <div class="w-16 h-16 shrink-0 neu-pressed flex flex-col items-center justify-center">
-            <span class="font-display font-bold text-royal text-xl leading-none" x-text="item.hari"></span>
-            <span class="text-[10px] text-text-muted uppercase" x-text="item.bulan"></span>
+            <span class="font-display font-bold text-royal text-xl leading-none" x-text="item.hari || parseHari(item.tanggal)"></span>
+            <span class="text-[10px] text-text-muted uppercase" x-text="item.bulan || parseBulan(item.tanggal)"></span>
           </div>
           <div class="flex-1">
             <a :href="detailUrl(item.id)"
@@ -269,8 +269,7 @@
           </div>
           <div class="flex gap-2 h-fit self-start sm:self-center">
             <a :href="detailUrl(item.id)" class="neu-btn px-4 py-2.5 rounded-xl text-xs whitespace-nowrap">Detail</a>
-            <button type="button" @click="daftar()"
-              class="neu-btn-primary px-4 py-2.5 rounded-xl text-xs whitespace-nowrap">Daftar</button>
+            <a :href="daftarUrl(item.id)" class="neu-btn-primary px-4 py-2.5 rounded-xl text-xs whitespace-nowrap text-center">Daftar</a>
           </div>
         </div>
       </template>

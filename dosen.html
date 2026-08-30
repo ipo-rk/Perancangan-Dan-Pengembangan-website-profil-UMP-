@@ -276,7 +276,7 @@
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
       <template x-for="d in results" :key="d.id">
         <div class="neu-raised p-5 hover:-translate-y-1 transition-transform">
-          <img :src="d.foto" :alt="d.nama"
+          <img :src="assetPath(d.foto)" :alt="d.nama"
             class="w-full aspect-square object-cover rounded-2xl mb-4">
           <p class="font-display font-semibold text-navy dark:text-white text-sm mb-0.5" x-text="d.nama"></p>
           <p class="text-xs text-royal mb-2" x-text="d.jabatan"></p>
@@ -292,7 +292,7 @@
       <div class="neu-raised bg-bg p-6 sm:p-8 w-full max-w-lg" x-show="selected">
         <template x-if="selected">
           <div>
-            <img :src="selected.foto" :alt="selected.nama" class="w-28 h-28 rounded-2xl object-cover mb-4">
+            <img :src="assetPath(selected.foto)" :alt="selected.nama" class="w-28 h-28 rounded-2xl object-cover mb-4">
             <h3 class="font-display font-semibold text-xl text-navy dark:text-white mb-1" x-text="selected.nama"></h3>
             <p class="text-sm text-royal mb-4" x-text="selected.jabatan"></p>
             <div class="space-y-2 text-sm text-text-muted">

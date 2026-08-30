@@ -75,11 +75,11 @@
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.42A12.083 12.083 0 0112 20.055 12.083 12.083 0 015.84 10.58L12 14z"/></svg>
           <span>Alumni</span>
         </a>
-        <a href="pengguna.html" class="side-link ">
+        <a href="pengguna.html" x-show="currentUser.role === 'Super Admin'" class="side-link ">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
           <span>Pengguna</span>
         </a>
-        <a href="pengaturan.html" class="side-link ">
+        <a href="pengaturan.html" x-show="currentUser.role === 'Super Admin'" class="side-link ">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/></svg>
           <span>Pengaturan</span>
         </a>
@@ -149,7 +149,7 @@
                 </div>
                 <!-- Footer -->
                 <div class="px-4 py-2.5 border-t border-black/10 dark:border-white/10 bg-[#d0d8e8] dark:bg-[#1e2d4a] text-center rounded-b-2xl">
-                  <a href="activity-log.html" class="text-[11px] text-royal hover:underline font-semibold">Lihat semua aktivitas &rarr;</a>
+                  <a href="aktivitas.html" class="text-[11px] text-royal hover:underline font-semibold">Lihat semua aktivitas &rarr;</a>
                 </div>
               </div>
             </div>
@@ -164,63 +164,70 @@
     
         <main class="px-4 sm:px-6 pb-10">
           
-    <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
       
     <div class="neu-raised p-5">
       <div class="flex items-center justify-between mb-3">
         <div class="w-11 h-11 neu-raised-sm flex items-center justify-center text-royal text-lg">&#128100;</div>
       </div>
-      <p class="font-display font-bold text-2xl text-navy dark:text-white" x-text="stats.dosen"></p>
+      <p class="font-display font-bold text-2xl text-navy dark:text-white" x-countup="stats.dosen">0</p>
       <p class="text-xs text-text-muted mt-1">Total Dosen</p>
     </div>
     <div class="neu-raised p-5">
       <div class="flex items-center justify-between mb-3">
         <div class="w-11 h-11 neu-raised-sm flex items-center justify-center text-royal text-lg">&#127891;</div>
       </div>
-      <p class="font-display font-bold text-2xl text-navy dark:text-white" x-text="(stats.mahasiswa || 0).toLocaleString('id-ID')"></p>
+      <p class="font-display font-bold text-2xl text-navy dark:text-white" x-countup="stats.mahasiswa || 0">0</p>
       <p class="text-xs text-text-muted mt-1">Total Mahasiswa</p>
     </div>
     <div class="neu-raised p-5">
       <div class="flex items-center justify-between mb-3">
         <div class="w-11 h-11 neu-raised-sm flex items-center justify-center text-royal text-lg">&#127894;</div>
       </div>
-      <p class="font-display font-bold text-2xl text-navy dark:text-white" x-text="stats.alumni"></p>
+      <p class="font-display font-bold text-2xl text-navy dark:text-white" x-countup="stats.alumni">0</p>
       <p class="text-xs text-text-muted mt-1">Total Alumni</p>
     </div>
     <div class="neu-raised p-5">
       <div class="flex items-center justify-between mb-3">
         <div class="w-11 h-11 neu-raised-sm flex items-center justify-center text-royal text-lg">&#128240;</div>
       </div>
-      <p class="font-display font-bold text-2xl text-navy dark:text-white" x-text="stats.berita"></p>
+      <p class="font-display font-bold text-2xl text-navy dark:text-white" x-countup="stats.berita">0</p>
       <p class="text-xs text-text-muted mt-1">Total Berita</p>
     </div>
     <div class="neu-raised p-5">
       <div class="flex items-center justify-between mb-3">
         <div class="w-11 h-11 neu-raised-sm flex items-center justify-center text-royal text-lg">&#128197;</div>
       </div>
-      <p class="font-display font-bold text-2xl text-navy dark:text-white" x-text="stats.kegiatan"></p>
+      <p class="font-display font-bold text-2xl text-navy dark:text-white" x-countup="stats.kegiatan">0</p>
       <p class="text-xs text-text-muted mt-1">Total Kegiatan</p>
     </div>
     <div class="neu-raised p-5">
       <div class="flex items-center justify-between mb-3">
         <div class="w-11 h-11 neu-raised-sm flex items-center justify-center text-royal text-lg">&#128218;</div>
       </div>
-      <p class="font-display font-bold text-2xl text-navy dark:text-white" x-text="stats.artikel"></p>
+      <p class="font-display font-bold text-2xl text-navy dark:text-white" x-countup="stats.artikel">0</p>
       <p class="text-xs text-text-muted mt-1">Total Artikel</p>
     </div>
     <div class="neu-raised p-5">
       <div class="flex items-center justify-between mb-3">
         <div class="w-11 h-11 neu-raised-sm flex items-center justify-center text-royal text-lg">&#128193;</div>
       </div>
-      <p class="font-display font-bold text-2xl text-navy dark:text-white" x-text="stats.dokumen"></p>
+      <p class="font-display font-bold text-2xl text-navy dark:text-white" x-countup="stats.dokumen">0</p>
       <p class="text-xs text-text-muted mt-1">Total Dokumen</p>
     </div>
     <div class="neu-raised p-5">
       <div class="flex items-center justify-between mb-3">
         <div class="w-11 h-11 neu-raised-sm flex items-center justify-center text-royal text-lg">&#128247;</div>
       </div>
-      <p class="font-display font-bold text-2xl text-navy dark:text-white" x-text="stats.galeri"></p>
+      <p class="font-display font-bold text-2xl text-navy dark:text-white" x-countup="stats.galeri">0</p>
       <p class="text-xs text-text-muted mt-1">Total Galeri</p>
+    </div>
+    <div class="neu-raised p-5">
+      <div class="flex items-center justify-between mb-3">
+        <div class="w-11 h-11 neu-raised-sm flex items-center justify-center text-royal text-lg">&#128101;</div>
+      </div>
+      <p class="font-display font-bold text-2xl text-navy dark:text-white" x-countup="stats.pendaftar">0</p>
+      <p class="text-xs text-text-muted mt-1">Total Pendaftar Kegiatan</p>
     </div>
     </div>
 
@@ -246,9 +253,9 @@
         </div>
         <canvas id="chartPengunjung" height="140"></canvas>
         <div class="grid grid-cols-3 gap-4 mt-6 text-center">
-          <div><p class="font-display font-bold text-navy dark:text-white text-lg" x-text="pv.today"></p><p class="text-[11px] text-text-muted">Hari Ini</p></div>
-          <div><p class="font-display font-bold text-navy dark:text-white text-lg" x-text="pv.thisMonth"></p><p class="text-[11px] text-text-muted">Bulan Ini</p></div>
-          <div><p class="font-display font-bold text-navy dark:text-white text-lg" x-text="pv.total"></p><p class="text-[11px] text-text-muted">Total</p></div>
+          <div><p class="font-display font-bold text-navy dark:text-white text-lg" x-countup="pv.today">0</p><p class="text-[11px] text-text-muted">Hari Ini</p></div>
+          <div><p class="font-display font-bold text-navy dark:text-white text-lg" x-countup="pv.thisMonth">0</p><p class="text-[11px] text-text-muted">Bulan Ini</p></div>
+          <div><p class="font-display font-bold text-navy dark:text-white text-lg" x-countup="pv.total">0</p><p class="text-[11px] text-text-muted">Total</p></div>
         </div>
       </div>
       <div class="neu-raised p-6">

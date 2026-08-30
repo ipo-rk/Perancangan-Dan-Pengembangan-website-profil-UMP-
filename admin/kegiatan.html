@@ -75,7 +75,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.42A12.083 12.083 0 0112 20.055 12.083 12.083 0 015.84 10.58L12 14z"/></svg>
           <span>Alumni</span>
         </a>
-        <a href="pengguna.html" class="side-link ">
+        <a href="pengguna.html" x-show="currentUser.role === 'Super Admin'" class="side-link ">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
           <span>Pengguna</span>
         </a>
@@ -83,7 +83,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
           <span>Activity Log</span>
         </a>
-        <a href="pengaturan.html" class="side-link ">
+        <a href="pengaturan.html" x-show="currentUser.role === 'Super Admin'" class="side-link ">
           <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/></svg>
           <span>Pengaturan</span>
         </a>
@@ -153,7 +153,7 @@
                 </div>
                 <!-- Footer -->
                 <div class="px-4 py-2.5 border-t border-black/10 dark:border-white/10 bg-[#d0d8e8] dark:bg-[#1e2d4a] text-center rounded-b-2xl">
-                  <a href="activity-log.html" class="text-[11px] text-royal hover:underline font-semibold">Lihat semua aktivitas &rarr;</a>
+                  <a href="aktivitas.html" class="text-[11px] text-royal hover:underline font-semibold">Lihat semua aktivitas &rarr;</a>
                 </div>
               </div>
             </div>
@@ -168,14 +168,7 @@
     
         <main class="px-4 sm:px-6 pb-10">
           
-<div x-data="adminCrudTable({
-      rows: SAMPLE_KEGIATAN,
-      dbKey: 'kegiatan',
-      emptyForm: { nama:'', tanggal:'', waktu:'', lokasi:'', penyelenggara:'', deskripsi:'' },
-      searchKeys: ['nama','lokasi'],
-      itemLabel: 'kegiatan ini',
-      validate(f) { if(!f.nama || !f.tanggal){ NeuAlert.error('Nama dan Tanggal kegiatan wajib diisi.'); return false; } return true; }
-    })">
+<div x-data="kegiatanAdminPage()">
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
     <div class="flex items-center neu-pressed px-4 py-3 gap-2 w-full sm:w-72">
       <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-muted shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
@@ -192,7 +185,7 @@
       <table class="w-full min-w-[680px]">
         <thead>
           <tr class="text-left text-xs text-text-muted uppercase tracking-wide">
-            <th class="py-3 px-4">Nama Kegiatan</th><th class="py-3 px-4">Tanggal</th><th class="py-3 px-4">Lokasi</th><th class="py-3 px-4">Penyelenggara</th>
+            <th class="py-3 px-4">Nama Kegiatan</th><th class="py-3 px-4">Tanggal</th><th class="py-3 px-4">Lokasi</th><th class="py-3 px-4">Penyelenggara</th><th class="py-3 px-4 text-center">Pendaftar</th>
             <th class="py-3 px-4 text-right">Aksi</th>
           </tr>
         </thead>
@@ -204,6 +197,12 @@
               <td class="py-3 px-4 text-xs text-text-muted" x-text="r.tanggal"></td>
               <td class="py-3 px-4 text-xs text-text-muted" x-text="r.lokasi"></td>
               <td class="py-3 px-4 text-xs text-text-muted" x-text="r.penyelenggara"></td>
+              <td class="py-3 px-4 text-center">
+                <button @click="lihatPeserta(r)" class="neu-btn px-3 py-1.5 rounded-lg text-xs inline-flex items-center gap-1.5" aria-label="Lihat Pendaftar">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-royal" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-1.13a4 4 0 100-8 4 4 0 000 8zm6 0a4 4 0 10-3.87-5"/></svg>
+                  <span x-countup="jumlahPeserta(r)">0</span>
+                </button>
+              </td>
               <td class="py-3 px-4">
                 <div class="flex items-center justify-end gap-2">
                   <button @click="openEdit(r)" class="neu-btn w-8 h-8 flex items-center justify-center" aria-label="Edit">
@@ -216,9 +215,54 @@
               </td>
             </tr>
           </template>
-          <tr x-show="filtered.length === 0"><td colspan="8" class="py-10 text-center text-sm text-text-muted">Data yang Anda cari tidak ditemukan.</td></tr>
+          <tr x-show="filtered.length === 0"><td colspan="6" class="py-10 text-center text-sm text-text-muted">Data yang Anda cari tidak ditemukan.</td></tr>
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <!-- Modal: Daftar Pendaftar Kegiatan -->
+  <div x-show="showPeserta" x-cloak class="modal-backdrop-neu" x-transition>
+    <div class="neu-raised p-6 sm:p-8 w-full max-w-2xl bg-bg max-h-[85vh] overflow-y-auto" @click.outside="closePeserta()">
+      <div class="flex items-start justify-between gap-4 mb-6">
+        <div>
+          <h3 class="font-display font-semibold text-lg text-navy dark:text-white">Pendaftar Kegiatan</h3>
+          <p class="text-xs text-text-muted mt-1" x-text="pesertaOf ? pesertaOf.nama : ''"></p>
+        </div>
+        <span class="neu-badge badge-active shrink-0" x-text="pesertaList.length + ' Orang'"></span>
+      </div>
+      <div class="table-scroll">
+        <table class="w-full min-w-[560px]">
+          <thead>
+            <tr class="text-left text-xs text-text-muted uppercase tracking-wide">
+              <th class="py-2 px-3">Nama</th><th class="py-2 px-3">Kontak</th><th class="py-2 px-3">Asal/Instansi</th><th class="py-2 px-3">Waktu Daftar</th>
+              <th class="py-2 px-3 text-right">Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="p in pesertaList" :key="p.id">
+              <tr class="border-b border-black/5 dark:border-white/5">
+                <td class="py-2.5 px-3 text-sm font-medium text-navy dark:text-white" x-text="p.nama"></td>
+                <td class="py-2.5 px-3 text-xs text-text-muted">
+                  <p x-text="p.email"></p>
+                  <p x-text="p.whatsapp"></p>
+                </td>
+                <td class="py-2.5 px-3 text-xs text-text-muted" x-text="p.instansi"></td>
+                <td class="py-2.5 px-3 text-xs text-text-muted" x-text="p.waktuDaftar"></td>
+                <td class="py-2.5 px-3 text-right">
+                  <button @click="hapusPeserta(p)" class="neu-btn w-8 h-8 inline-flex items-center justify-center" aria-label="Hapus Pendaftar">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                  </button>
+                </td>
+              </tr>
+            </template>
+            <tr x-show="pesertaList.length === 0"><td colspan="5" class="py-10 text-center text-sm text-text-muted">Belum ada pendaftar untuk kegiatan ini.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="flex gap-3 mt-6">
+        <button @click="closePeserta()" class="neu-btn flex-1 py-3 rounded-xl text-sm">Tutup</button>
+      </div>
     </div>
   </div>
 

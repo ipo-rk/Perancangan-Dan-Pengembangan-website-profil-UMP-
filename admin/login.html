@@ -35,6 +35,11 @@
         this.form.email = savedEmail;
         this.form.remember = true;
       }
+      // Email dikirim balik dari halaman Lupa Sandi setelah reset berhasil,
+      // supaya admin tidak perlu mengetik ulang emailnya.
+      const params = new URLSearchParams(window.location.search);
+      const emailFromReset = params.get('email');
+      if (emailFromReset) this.form.email = emailFromReset;
     },
     fillDemo(email, pass) {
       this.form.email = email;
@@ -45,14 +50,6 @@
         text: `Email: ${email} dan password terisi otomatis. Silakan klik Masuk.`,
         timer: 1600,
         showConfirmButton: false
-      });
-    },
-    forgotPassword() {
-      NeuAlert.base({
-        icon: 'info',
-        title: 'Lupa Password?',
-        text: 'Untuk mereset kata sandi akun admin, silakan hubungi Administrator IT Kampus UMP atau Super Admin Program Studi.',
-        confirmButtonText: 'Mengerti'
       });
     },
     submit() {
@@ -67,7 +64,27 @@
       this.loading = true;
       setTimeout(() => {
         this.loading = false;
-        
+
+        // Cocokkan dengan database pengguna admin
+        const users = (typeof SAMPLE_PENGGUNA !== 'undefined') ? SAMPLE_PENGGUNA : [];
+        const matched = users.find(p => p.email && p.email.toLowerCase() === email.toLowerCase());
+
+        // 1) Email tidak terdaftar -> tolak (sebelumnya tetap login sebagai Super Admin)
+        if (!matched) {
+          NeuAlert.error('Email tidak terdaftar. Periksa kembali email Anda.');
+          return;
+        }
+        // 2) Akun nonaktif -> tolak (sebelumnya status tidak pernah diperiksa)
+        if (matched.status !== 'Aktif') {
+          NeuAlert.error('Akun ini nonaktif. Hubungi Super Admin untuk mengaktifkan kembali.');
+          return;
+        }
+        // 3) Password salah -> tolak (sebelumnya password tidak pernah dicek)
+        if (matched.password !== pass) {
+          NeuAlert.error('Password salah. Silakan coba lagi.');
+          return;
+        }
+
         // Simpan atau bersihkan remembered email
         if (this.form.remember) {
           localStorage.setItem('prodihukum_remembered_email', email);
@@ -75,16 +92,8 @@
           localStorage.removeItem('prodihukum_remembered_email');
         }
 
-        // Cocokkan dengan database pengguna admin
-        const users = (typeof SAMPLE_PENGGUNA !== 'undefined') ? SAMPLE_PENGGUNA : [];
-        const matched = users.find(p => p.email && p.email.toLowerCase() === email.toLowerCase());
-        
-        AUTH.login(matched || {
-          nama: 'Admin Prodi',
-          email: email,
-          role: 'Super Admin'
-        });
-        
+        AUTH.login(matched);
+
         logActivity('Login ke panel admin', '🔐');
         
         NeuAlert.base({
@@ -161,7 +170,7 @@
 
       <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-white tracking-tight">Program
         Studi Hukum</h1>
-      <p class="text-xs sm:text-sm text-white/70 mt-1 font-medium">Universitas Muhammadiyah Papua</p>
+      <p class="text-xs sm:text-sm text-white mt-1 font-medium">Universitas Muhammadiyah Papua</p>
     </div>
 
     <!-- Login Form Card -->
@@ -220,10 +229,10 @@
             class="rounded text-royal focus:ring-royal/30 transition-all cursor-pointer">
           <span>Ingat Saya</span>
         </label>
-        <button type="button" @click="forgotPassword()"
-          class="text-royal font-semibold hover:underline bg-transparent border-0 p-0 text-xs transition-colors">
+        <a :href="form.email ? ('lupa-sandi.html?email=' + encodeURIComponent(form.email)) : 'lupa-sandi.html'"
+          class="text-royal font-semibold hover:underline text-xs transition-colors">
           Lupa Password?
-        </button>
+        </a>
       </div>
 
       <button type="submit" :disabled="loading"
@@ -276,6 +285,10 @@
           <span>&larr;</span>
           <span>Kembali ke Beranda Website</span>
         </a>
+      </p>
+      <p class="text-[11px] text-white/60">
+        Butuh bantuan akses? Hubungi
+        <a href="mailto:it@ump.ac.id" class="text-gold hover:underline font-semibold">Administrator IT Kampus</a>.
       </p>
       <p class="text-[11px] text-white/70">
         &copy; 2026 Program Studi Hukum — Universitas Muhammadiyah Papua.

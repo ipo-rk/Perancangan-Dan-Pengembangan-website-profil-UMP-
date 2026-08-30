@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lupa Kata Sandi | Program Studi Hukum — UMP</title>
+  <meta name="description"
+    content="Reset kata sandi akun Panel Administrasi Program Studi Hukum Universitas Muhammadiyah Papua.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="../assets/css/tailwind.min.css">
+  <script src="../assets/js/app.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../assets/css/style.css">
+  <link rel="icon" type="image/png" href="../assets/image/logo-ump.png">
+</head>
+
+<body x-data="{
+    ...themeStore(),
+    step: 1,
+    loading: false,
+    showPass: false,
+    email: '',
+    matched: null,
+    newPass: '',
+    confirmPass: '',
+    init() {
+      if (typeof AUTH !== 'undefined' && AUTH.isLoggedIn()) {
+        window.location.href = 'dashboard.html';
+        return;
+      }
+      const params = new URLSearchParams(window.location.search);
+      const prefill = params.get('email');
+      if (prefill) this.email = prefill;
+    },
+    findAccount() {
+      const email = (this.email || '').trim();
+      if (!email) {
+        NeuAlert.error('Masukkan email akun Anda terlebih dahulu.');
+        return;
+      }
+      this.loading = true;
+      setTimeout(() => {
+        this.loading = false;
+        const users = (typeof SAMPLE_PENGGUNA !== 'undefined') ? SAMPLE_PENGGUNA : [];
+        const found = users.find(p => p.email && p.email.toLowerCase() === email.toLowerCase());
+
+        if (!found) {
+          NeuAlert.error('Email tidak terdaftar di sistem. Periksa kembali email Anda.');
+          return;
+        }
+        if (found.status !== 'Aktif') {
+          NeuAlert.error('Akun ini nonaktif. Hubungi Super Admin untuk mengaktifkan kembali sebelum mereset kata sandi.');
+          return;
+        }
+        this.matched = found;
+        this.step = 2;
+      }, 500);
+    },
+    resetPassword() {
+      const pass = (this.newPass || '').trim();
+      const confirm = (this.confirmPass || '').trim();
+
+      if (!pass || pass.length < 4) {
+        NeuAlert.error('Kata sandi baru minimal 4 karakter.');
+        return;
+      }
+      if (pass !== confirm) {
+        NeuAlert.error('Konfirmasi kata sandi tidak cocok.');
+        return;
+      }
+
+      this.loading = true;
+      setTimeout(() => {
+        this.loading = false;
+        const users = (typeof SAMPLE_PENGGUNA !== 'undefined') ? SAMPLE_PENGGUNA : [];
+        const idx = users.findIndex(p => p.id === this.matched.id);
+        if (idx === -1) {
+          NeuAlert.error('Akun tidak ditemukan. Silakan ulangi proses.');
+          this.step = 1;
+          return;
+        }
+        users[idx] = { ...users[idx], password: pass };
+        SAMPLE_PENGGUNA = users;
+        DB.save('pengguna', users);
+        logActivity('Mereset kata sandi akun: ' + users[idx].email, '\u{1F511}');
+
+        NeuAlert.base({
+          icon: 'success',
+          title: 'Kata Sandi Diperbarui',
+          text: 'Silakan masuk kembali menggunakan kata sandi baru Anda.',
+          timer: 1600,
+          showConfirmButton: false
+        }).then(() => {
+          window.location.href = 'login.html?email=' + encodeURIComponent(this.matched.email);
+        });
+      }, 500);
+    }
+  }" class="min-h-screen w-full flex items-center justify-center px-4 py-8 relative law-court-bg admin-login-body">
+
+  <div class="absolute inset-0 overflow-hidden pointer-events-none -z-10">
+    <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-royal/20 blur-3xl"></div>
+    <div class="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-gold/20 blur-3xl"></div>
+  </div>
+
+  <a href="../index.html"
+    class="neu-btn px-4 py-2.5 rounded-2xl text-xs font-semibold flex items-center gap-2 absolute top-6 left-6 z-20 hover:text-royal transition-all shadow-md">
+    <span>&larr;</span>
+    <span class="hidden sm:inline">Kembali ke</span> <span>Website</span>
+  </a>
+
+  <button @click="toggle()"
+    class="neu-btn w-11 h-11 rounded-2xl flex items-center justify-center absolute top-6 right-6 z-20 shadow-md hover:text-royal transition-all"
+    aria-label="Ganti mode gelap/terang">
+    <svg x-show="!dark" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+      stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+    </svg>
+    <svg x-show="dark" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+      stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+    </svg>
+  </button>
+
+  <div class="w-full max-w-md relative z-10 py-6">
+
+    <div class="text-center mb-7">
+      <div
+        class="w-20 h-20 neu-raised flex items-center justify-center mx-auto mb-4 overflow-hidden p-2.5 rounded-3xl shadow-2xl bg-bg/95 backdrop-blur-md">
+        <img src="../assets/image/logo-ump.png" alt="Logo Program Studi Hukum UMP"
+          class="w-full h-full object-contain drop-shadow-md">
+      </div>
+      <span
+        class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-royal/15 text-royal mb-2">
+        <span>&#128273;</span>
+        <span>Pemulihan Akun Admin</span>
+      </span>
+      <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-white tracking-tight">Lupa Kata Sandi</h1>
+      <p class="text-xs sm:text-sm text-white/70 mt-1 font-medium">Program Studi Hukum — Universitas Muhammadiyah Papua</p>
+    </div>
+
+    <!-- STEP 1: Verifikasi email -->
+    <form x-show="step === 1" x-cloak @submit.prevent="findAccount()"
+      class="neu-raised p-7 sm:p-9 space-y-5 rounded-3xl shadow-2xl border border-black/10 dark:border-white/10 bg-bg/95 backdrop-blur-md">
+
+      <p class="text-xs text-text-muted leading-relaxed">
+        Masukkan email akun admin Anda yang terdaftar. Kami akan memverifikasi akun tersebut sebelum
+        mengizinkan Anda mengatur kata sandi baru.
+      </p>
+
+      <div>
+        <label class="text-xs font-bold text-navy dark:text-white mb-2 flex items-center justify-between">
+          <span>Email Terdaftar</span>
+          <span class="text-[10px] text-text-muted font-normal">Wajib diisi</span>
+        </label>
+        <input x-model="email" type="email" placeholder="admin@ump.ac.id" class="neu-input w-full text-sm" required
+          autofocus>
+      </div>
+
+      <button type="submit" :disabled="loading"
+        class="neu-btn-primary w-full py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-xl hover:shadow-2xl transition-all disabled:opacity-75 disabled:cursor-not-allowed">
+        <span x-show="!loading">Verifikasi Akun &rarr;</span>
+        <span x-show="loading" class="flex items-center gap-2">
+          <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+            </path>
+          </svg>
+          <span>Memeriksa...</span>
+        </span>
+      </button>
+
+      <div class="neu-pressed p-3.5 text-xs text-text-muted rounded-2xl border border-black/5 dark:border-white/5 leading-relaxed">
+        <span class="font-bold text-navy dark:text-white">Catatan:</span>
+        Karena sistem ini berjalan sepenuhnya di sisi klien (tanpa server email), reset kata sandi
+        dilakukan langsung setelah email diverifikasi. Jika Anda tidak yakin dengan akses akun ini,
+        segera hubungi Super Admin Program Studi.
+      </div>
+    </form>
+
+    <!-- STEP 2: Set kata sandi baru -->
+    <form x-show="step === 2" x-cloak @submit.prevent="resetPassword()"
+      class="neu-raised p-7 sm:p-9 space-y-5 rounded-3xl shadow-2xl border border-black/10 dark:border-white/10 bg-bg/95 backdrop-blur-md">
+
+      <div class="flex items-center gap-2 text-xs font-semibold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-3 py-2 rounded-xl">
+        <span>&#9989;</span>
+        <span>Akun terverifikasi: <span x-text="matched && matched.email"></span></span>
+      </div>
+
+      <div>
+        <label class="text-xs font-bold text-navy dark:text-white mb-2 block">Kata Sandi Baru</label>
+        <div class="relative">
+          <input x-model="newPass" :type="showPass ? 'text' : 'password'" placeholder="Minimal 4 karakter"
+            class="neu-input w-full pr-11 text-sm font-mono" required>
+          <button type="button" @click="showPass = !showPass"
+            class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-royal focus:outline-none p-1">
+            <svg x-show="!showPass" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            <svg x-show="showPass" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <div>
+        <label class="text-xs font-bold text-navy dark:text-white mb-2 block">Konfirmasi Kata Sandi</label>
+        <input x-model="confirmPass" :type="showPass ? 'text' : 'password'" placeholder="Ulangi kata sandi baru"
+          class="neu-input w-full text-sm font-mono" required>
+      </div>
+
+      <button type="submit" :disabled="loading"
+        class="neu-btn-primary w-full py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-xl hover:shadow-2xl transition-all disabled:opacity-75 disabled:cursor-not-allowed">
+        <span x-show="!loading">Simpan Kata Sandi Baru</span>
+        <span x-show="loading" class="flex items-center gap-2">
+          <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none"
+            viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+            </path>
+          </svg>
+          <span>Menyimpan...</span>
+        </span>
+      </button>
+
+      <button type="button" @click="step = 1"
+        class="w-full text-center text-xs text-text-muted hover:text-royal transition-colors font-semibold">
+        &larr; Kembali, gunakan email lain
+      </button>
+    </form>
+
+    <div class="text-center mt-6 space-y-2">
+      <p class="text-xs text-text-muted">
+        <a href="login.html" class="text-royal font-semibold hover:underline inline-flex items-center gap-1">
+          <span>&larr;</span>
+          <span>Kembali ke Halaman Masuk</span>
+        </a>
+      </p>
+      <p class="text-[11px] text-white/70">
+        &copy; 2026 Program Studi Hukum — Universitas Muhammadiyah Papua.
+      </p>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</body>
+
+</html>

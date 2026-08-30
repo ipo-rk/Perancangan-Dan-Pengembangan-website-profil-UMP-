@@ -288,8 +288,8 @@
       <div class="p-6 sm:p-10">
         <div class="flex items-start gap-4 mb-6">
           <div class="w-16 h-16 shrink-0 neu-pressed flex flex-col items-center justify-center">
-            <span class="font-display font-bold text-royal text-xl leading-none" x-text="item.hari"></span>
-            <span class="text-[10px] text-text-muted uppercase" x-text="item.bulan"></span>
+            <span class="font-display font-bold text-royal text-xl leading-none" x-text="item.hari || parseHari(item.tanggal)"></span>
+            <span class="text-[10px] text-text-muted uppercase" x-text="item.bulan || parseBulan(item.tanggal)"></span>
           </div>
           <div>
             <h1 class="font-display font-bold text-2xl sm:text-3xl text-navy dark:text-white mb-2" x-text="item.nama">
@@ -335,13 +335,40 @@
         </div>
 
         <p class="text-text-muted leading-relaxed mb-8 whitespace-pre-line" x-text="item.deskripsi"></p>
-        <button type="button" @click="daftar()"
-          class="neu-btn-primary px-6 py-3.5 rounded-xl text-sm font-semibold inline-flex items-center gap-2">
-          <span>Daftar Kegiatan Sekarang</span> &rarr;
-        </button>
+        <div class="flex flex-wrap items-center gap-5">
+          <button type="button" @click="openDaftar()"
+            class="neu-btn-primary px-6 py-3.5 rounded-xl text-sm font-semibold inline-flex items-center gap-2">
+            <span>Daftar Kegiatan Sekarang</span> &rarr;
+          </button>
+          <div class="flex items-center gap-2 text-sm text-text-muted">
+            <span class="text-lg">&#128101;</span>
+            <span><span class="font-display font-bold text-navy dark:text-white" x-countup="jumlahPendaftar">0</span> orang telah mendaftar</span>
+          </div>
+        </div>
       </div>
     </article>
   </main>
+
+  <!-- Modal: Formulir Pendaftaran Kegiatan -->
+  <div x-show="daftarOpen" x-cloak class="modal-backdrop-neu" x-transition>
+    <div class="neu-raised p-6 sm:p-8 w-full max-w-md bg-bg max-h-[85vh] overflow-y-auto" @click.outside="closeDaftar()">
+      <h3 class="font-display font-semibold text-lg text-navy dark:text-white mb-1">Daftar Kegiatan</h3>
+      <p class="text-xs text-text-muted mb-6" x-text="item.nama"></p>
+      <div class="space-y-4">
+        <input x-model="form.nama" type="text" placeholder="Nama Lengkap" class="neu-input w-full">
+        <input x-model="form.email" type="email" placeholder="Email Aktif" class="neu-input w-full">
+        <input x-model="form.whatsapp" type="text" placeholder="No. WhatsApp" class="neu-input w-full">
+        <input x-model="form.instansi" type="text" placeholder="Status/Asal Instansi (opsional)" class="neu-input w-full">
+      </div>
+      <div class="flex gap-3 mt-6">
+        <button @click="closeDaftar()" class="neu-btn flex-1 py-3 rounded-xl text-sm">Batal</button>
+        <button @click="submitDaftar()" :disabled="submitting" class="neu-btn-primary flex-1 py-3 rounded-xl text-sm disabled:opacity-60">
+          <span x-show="!submitting">Kirim Pendaftaran</span>
+          <span x-show="submitting">Mengirim...</span>
+        </button>
+      </div>
+    </div>
+  </div>
 
   <footer class="mt-20 neu-flat" x-data="{ p: SAMPLE_PENGATURAN }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 grid grid-cols-2 md:grid-cols-4 gap-10">

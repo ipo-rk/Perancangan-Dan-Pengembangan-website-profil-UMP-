@@ -44,12 +44,12 @@ Website Program Studi Hukum Universitas Muhammadiyah Papua dirancang sebagai pla
 └─────────────────────────────────────────┘     └───────────────────┬────────────────────┘
                                                                     │
                                                                     ▼
-                                ┌────────────────────────────────────────────────────────┐
-                                │     PERSISTENCE & REACTION ENGINE (app.js DB Engine)   │
-                                │  • LocalStorage Namespace: DB.NS ('prodihukum_')       │
-                                │  • Resilient Recovery & Automatic Image Compression    │
-                                │  • Alpine.js Reactive State Sync & Event Bus           │
-                                └────────────────────────────────────────────────────────┘
+                                ┌──────────────────────────────────────────────────────────────┐
+                                │      PERSISTENCE & REACTION ENGINE (app.js DB Engine)         │
+                                │  • LocalStorage Namespace: DB.NS ('prodihukum_db_v1_')         │
+                                │  • Resilient Recovery & Automatic Image Compression            │
+                                │  • Alpine.js Reactive State Sync & Event Bus                   │
+                                └──────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -60,7 +60,7 @@ Website Program Studi Hukum Universitas Muhammadiyah Papua dirancang sebagai pla
 |---|---|---|
 | **Struktur Semantik** | HTML5 | Menggunakan tag HTML5 semantik (`header`, `nav`, `aside`, `main`, `section`, `article`, `footer`). |
 | **Grid & Komponen** | Bootstrap 5.3.3 | Menyediakan sistem grid responsif, modal backdrop, dan utilitas pendukung layout. |
-| **Styling & Neumorphism** | Tailwind CSS + Custom CSS (`style.css`) | Antarmuka Neumorphic modern (`neu-raised`, `neu-pressed`, `neu-flat`, `neu-btn`), warna *Royal Blue* (`#2A4E9E`), *Deep Navy* (`#0B1F3A`), dan *Gold Accent* (`#D4AF37`). |
+| **Styling & Neumorphism** | Tailwind CSS + Custom CSS (`style.css`) | Antarmuka Neumorphic modern (`neu-raised`, `neu-pressed`, `neu-flat`, `neu-btn`), warna *Royal Blue* (`#2A4E9E`), *Deep Navy* (`#0B1F3A`), dan *Gold Accent* (`#C9A227`). |
 | **Reaktivitas Engine** | Alpine.js 3.14.8 | Manajemen state reaktif tanpa halaman reload, filter langsung, modal state, binding data, serta integrasi hash URL. |
 | **Notifikasi Interaktif** | SweetAlert2 v11 | Alert konfirmasi penghapusan, notifikasi aksi sukses/gagal, dan alert aktivitas sistem. |
 | **Media & Peta** | Google Maps API Iframe | Peta lokasi kampus interaktif dengan fitur `touch-action: pan-y` pasif untuk kompatibilitas layar sentuh. |
@@ -69,7 +69,7 @@ Website Program Studi Hukum Universitas Muhammadiyah Papua dirancang sebagai pla
 
 ## 3. 📁 STRUKTUR BERKAS PROYEK
 
-Proyek ini terdiri dari **35 halaman HTML utama** yang terbagi atas 18 Halaman Publik dan 17 Halaman Admin:
+Proyek ini terdiri dari **34 halaman HTML utama** yang terbagi atas 18 Halaman Publik dan 16 Halaman Admin:
 
 ```
 Perancangan-Dan-Pengembangan-website-profil-UMP-/
@@ -154,7 +154,7 @@ Sistem menggunakan **16 Entitas Data Utama** yang terintegrasi secara relational
 
 #### 1. Entitas `PENGGUNA` (Admin & User Accounts)
 * **Deskripsi**: Menyimpan data akun pengelola dan hak akses admin.
-* **Tabel Name**: `prodihukum_pengguna`
+* **Tabel Name**: `prodihukum_db_v1_pengguna`
 
 | Field | Tipe Data | Constraint | Keterangan |
 |---|---|---|---|
@@ -167,7 +167,7 @@ Sistem menggunakan **16 Entitas Data Utama** yang terintegrasi secara relational
 
 #### 2. Entitas `BERITA` (News & Articles)
 * **Deskripsi**: Menyimpan warta berita prodi.
-* **Tabel Name**: `prodihukum_berita`
+* **Tabel Name**: `prodihukum_db_v1_berita`
 
 | Field | Tipe Data | Constraint | Keterangan |
 |---|---|---|---|
@@ -183,7 +183,7 @@ Sistem menggunakan **16 Entitas Data Utama** yang terintegrasi secara relational
 
 #### 3. Entitas `DOSEN` (Faculty Lecturers)
 * **Deskripsi**: Menyimpan data tenaga pengajar dan staf dosen.
-* **Tabel Name**: `prodihukum_dosen`
+* **Tabel Name**: `prodihukum_db_v1_dosen`
 
 | Field | Tipe Data | Constraint | Keterangan |
 |---|---|---|---|
@@ -197,7 +197,7 @@ Sistem menggunakan **16 Entitas Data Utama** yang terintegrasi secara relational
 
 #### 4. Entitas `KURIKULUM` (Academic Courses)
 * **Deskripsi**: Data mata kuliah prodi per semester.
-* **Tabel Name**: `prodihukum_kurikulum`
+* **Tabel Name**: `prodihukum_db_v1_kurikulum`
 
 | Field | Tipe Data | Constraint | Keterangan |
 |---|---|---|---|
@@ -210,51 +210,51 @@ Sistem menggunakan **16 Entitas Data Utama** yang terintegrasi secara relational
 | `deskripsi` | TEXT | NULLABLE | Silabus singkat mata kuliah |
 
 #### 5. Entitas `PENGUMUMAN` (Announcements)
-* **Tabel Name**: `prodihukum_pengumuman`
+* **Tabel Name**: `prodihukum_db_v1_pengumuman`
 * **Fields**: `id` (PK), `judul`, `tanggal`, `kategori`, `konten`, `lampiran` (File Name), `penting` (Boolean).
 
 #### 6. Entitas `KEGIATAN` (Events & Seminars)
-* **Tabel Name**: `prodihukum_kegiatan`
+* **Tabel Name**: `prodihukum_db_v1_kegiatan`
 * **Fields**: `id` (PK), `nama`, `tanggal`, `waktu`, `lokasi`, `penyelenggara`, `deskripsi`, `gambar`.
 
 #### 7. Entitas `PRESTASI` (Achievements)
-* **Tabel Name**: `prodihukum_prestasi`
+* **Tabel Name**: `prodihukum_db_v1_prestasi`
 * **Fields**: `id` (PK), `nama`, `kategori` ('Mahasiswa', 'Dosen', 'Alumni'), `peringkat`, `tingkat` ('Nasional', 'Internasional'), `tahun`, `deskripsi`, `foto`.
 
 #### 8. Entitas `ARTIKEL` (Legal Publications & Journals)
-* **Tabel Name**: `prodihukum_artikel`
+* **Tabel Name**: `prodihukum_db_v1_artikel`
 * **Fields**: `id` (PK), `judul`, `penulis`, `tanggal`, `kategori`, `excerpt`, `konten`, `dibaca` (Integer Counter).
 
 #### 9. Entitas `GALERI` (Photo Gallery)
-* **Tabel Name**: `prodihukum_galeri`
+* **Tabel Name**: `prodihukum_db_v1_galeri`
 * **Fields**: `id` (PK), `judul`, `album` ('Seminar', 'Wisuda', 'Praktikum', dll), `src` (Base64 Image).
 
 #### 10. Entitas `DOKUMEN` (Academic Files)
-* **Tabel Name**: `prodihukum_dokumen`
+* **Tabel Name**: `prodihukum_db_v1_dokumen`
 * **Fields**: `id` (PK), `nama`, `kategori` ('Pedoman', 'Formulir', 'SK'), `ukuran`, `tanggal`, `fileUrl`.
 
 #### 11. Entitas `ALUMNI` (Alumni Directory)
-* **Tabel Name**: `prodihukum_alumni`
+* **Tabel Name**: `prodihukum_db_v1_alumni`
 * **Fields**: `id` (PK), `nama`, `angkatan`, `tahunLulus`, `pekerjaan`, `instansi`, `testimoni`, `foto`.
 
 #### 12. Entitas `ACTIVITY_LOG` (Audit Trail)
-* **Tabel Name**: `prodihukum_aktivitas`
+* **Tabel Name**: `prodihukum_db_v1_aktivitas`
 * **Fields**: `id` (PK), `user` ('Admin Prodi'), `aksi`, `waktu` (Timestamp), `icon`.
 
 #### 13. Entitas `NOTIFIKASI` (System Notifications)
-* **Tabel Name**: `prodihukum_notifikasi`
+* **Tabel Name**: `prodihukum_db_v1_notifikasi`
 * **Fields**: `id` (PK), `judul`, `pesan`, `waktu`, `read` (Boolean), `icon`.
 
 #### 14. Entitas `PENGATURAN` (Website Configuration)
-* **Tabel Name**: `prodihukum_pengaturan`
+* **Tabel Name**: `prodihukum_db_v1_pengaturan`
 * **Fields**: `namaWebsite`, `deskripsi`, `email`, `telepon`, `alamat`, `mapEmbed`, `mapLink`, `koordinat`, `mahasiswaAktif`.
 
 #### 15. Entitas `PROFIL` (Program Study Profile)
-* **Tabel Name**: `prodihukum_profil`
+* **Tabel Name**: `prodihukum_db_v1_profil`
 * **Fields**: `namaProdi`, `akreditasi`, `skAkreditasi`, `visi`, `misi` (Array), `sejarah`, `tujuan` (Array).
 
 #### 16. Entitas `STRUKTUR` (Organization Structure)
-* **Tabel Name**: `prodihukum_struktur`
+* **Tabel Name**: `prodihukum_db_v1_struktur`
 * **Fields**: `id` (PK), `nama`, `jabatan`, `foto`.
 
 ---

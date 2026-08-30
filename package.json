@@ -2,7 +2,6 @@
   "name": "project",
   "version": "1.0.0",
   "description": "> Dokumen ini menggabungkan **daftar fitur sistem** (dokumen 1) dan **master prompt desain UI** (dokumen 2) menjadi satu spesifikasi tunggal yang konsisten, tanpa duplikasi, siap dipakai sebagai acuan pengembangan (skripsi/prototipe/produksi).",
-  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

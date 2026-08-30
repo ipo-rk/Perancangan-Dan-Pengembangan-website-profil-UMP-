@@ -129,7 +129,7 @@
         </svg>
         <span>Alumni</span>
       </a>
-      <a href="pengguna.html" class="side-link ">
+      <a href="pengguna.html" x-show="currentUser.role === 'Super Admin'" class="side-link ">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
           stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
@@ -145,7 +145,7 @@
         </svg>
         <span>Activity Log</span>
       </a>
-      <a href="pengaturan.html" class="side-link ">
+      <a href="pengaturan.html" x-show="currentUser.role === 'Super Admin'" class="side-link ">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
           stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
@@ -233,7 +233,7 @@
                 </div>
                 <!-- Footer -->
                 <div class="px-4 py-2.5 border-t border-black/10 dark:border-white/10 bg-[#d0d8e8] dark:bg-[#1e2d4a] text-center rounded-b-2xl">
-                  <a href="activity-log.html" class="text-[11px] text-royal hover:underline font-semibold">Lihat semua aktivitas &rarr;</a>
+                  <a href="aktivitas.html" class="text-[11px] text-royal hover:underline font-semibold">Lihat semua aktivitas &rarr;</a>
                 </div>
               </div>
             </div>
@@ -353,7 +353,7 @@
                 <tbody>
                   <template x-for="d in filtered" :key="d.id">
                     <tr class="border-b border-black/5 dark:border-white/5">
-                      <td class="py-3 px-4"><img :src="d.foto" :alt="d.nama" class="neu-thumb"></td>
+                      <td class="py-3 px-4"><img :src="assetPath(d.foto)" :alt="d.nama" class="neu-thumb"></td>
                       <td class="py-3 px-4 text-sm font-medium text-navy dark:text-white" x-text="d.nama"></td>
                       <td class="py-3 px-4 text-xs font-mono text-text-muted" x-text="d.nidn"></td>
                       <td class="py-3 px-4 text-xs text-text-muted" x-text="d.jabatan"></td>

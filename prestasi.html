@@ -266,7 +266,7 @@
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
       <template x-for="p in results" :key="p.id">
         <div class="neu-raised p-5 hover:-translate-y-1 transition-transform">
-          <img src="https://placehold.co/320x200/EEF1F5/0B1F3A?text=Sertifikat" class="w-full h-32 object-cover rounded-xl mb-4">
+          <img :src="assetPath(p.foto) || 'https://placehold.co/320x200/EEF1F5/0B1F3A?text=Prestasi'" :alt="p.nama" class="w-full h-32 object-cover rounded-xl mb-4">
           <span class="neu-badge badge-new mb-2" x-text="p.kategori"></span>
           <p class="font-semibold text-navy dark:text-white text-sm mb-2 line-clamp-2" x-text="p.nama"></p>
           <p class="text-xs text-text-muted">Tingkat <span x-text="p.tingkat"></span> &middot; <span x-text="p.tahun"></span></p>

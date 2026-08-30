@@ -129,7 +129,7 @@
         </svg>
         <span>Alumni</span>
       </a>
-      <a href="pengguna.html" class="side-link ">
+      <a href="pengguna.html" x-show="currentUser.role === 'Super Admin'" class="side-link ">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
           stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
@@ -145,7 +145,7 @@
         </svg>
         <span>Activity Log</span>
       </a>
-      <a href="pengaturan.html" class="side-link ">
+      <a href="pengaturan.html" x-show="currentUser.role === 'Super Admin'" class="side-link ">
         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24"
           stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8"
@@ -233,7 +233,7 @@
                 </div>
                 <!-- Footer -->
                 <div class="px-4 py-2.5 border-t border-black/10 dark:border-white/10 bg-[#d0d8e8] dark:bg-[#1e2d4a] text-center rounded-b-2xl">
-                  <a href="activity-log.html" class="text-[11px] text-royal hover:underline font-semibold">Lihat semua aktivitas &rarr;</a>
+                  <a href="aktivitas.html" class="text-[11px] text-royal hover:underline font-semibold">Lihat semua aktivitas &rarr;</a>
                 </div>
               </div>
             </div>
@@ -262,7 +262,7 @@
     tab: 'list', editing: null,
     artikel: [...SAMPLE_ARTIKEL],
     persist() { SAMPLE_ARTIKEL = this.artikel; return DB.save('artikel', this.artikel); },
-    emptyForm() { return { judul:'', penulis:'', kategori:'Hukum Pidana', thumbnail:'', isi:'', tags:'', status:'Draft', tanggal:'' }; },
+    emptyForm() { return { judul:'', penulis:'', kategori:'Hukum Pidana', thumbnail:'', isi:'', referensi:'', tags:'', status:'Draft', tanggal:'' }; },
     form: {},
     uploadingThumb: false,
     openList() { this.tab = 'list'; },
@@ -304,7 +304,7 @@
         logActivity(`Mengedit artikel: ${this.form.judul}`, '\u{270F}\u{FE0F}');
         NeuAlert.updated('Artikel berhasil diperbarui.');
       } else {
-        this.artikel.unshift({ id: Date.now(), ...this.form, penulis: this.form.penulis || AUTH.current().nama, tanggal: this.form.tanggal || new Date().toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' }), referensi: this.form.referensi || '' });
+        this.artikel.unshift({ id: Date.now(), ...this.form, penulis: this.form.penulis || AUTH.current().nama, tanggal: this.form.tanggal || new Date().toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' }) });
         if(!this.persist()){ this.artikel.shift(); return; }
         logActivity(`Menambahkan artikel baru: ${this.form.judul}`, '\u{1F4C4}');
         NeuAlert.success('Artikel berhasil disimpan.');
@@ -331,6 +331,7 @@
                       <th class="py-3 px-4">Judul</th>
                       <th class="py-3 px-4">Penulis</th>
                       <th class="py-3 px-4">Kategori</th>
+                      <th class="py-3 px-4">Status</th>
                       <th class="py-3 px-4">Tanggal</th>
                       <th class="py-3 px-4 text-right">Aksi</th>
                     </tr>
@@ -343,6 +344,9 @@
                         </td>
                         <td class="py-3 px-4 text-xs text-text-muted" x-text="a.penulis"></td>
                         <td class="py-3 px-4"><span class="neu-badge badge-active" x-text="a.kategori"></span></td>
+                        <td class="py-3 px-4"><span class="neu-badge"
+                            :class="{'badge-ended': a.status==='Draft', 'badge-new': a.status==='Review', 'badge-active': a.status==='Published'}"
+                            x-text="a.status"></span></td>
                         <td class="py-3 px-4 text-xs text-text-muted" x-text="a.tanggal"></td>
                         <td class="py-3 px-4">
                           <div class="flex items-center justify-end gap-2">
@@ -367,7 +371,7 @@
                       </tr>
                     </template>
                     <tr x-show="artikel.length === 0">
-                      <td colspan="6" class="py-10 text-center text-sm text-text-muted">Belum ada data.</td>
+                      <td colspan="7" class="py-10 text-center text-sm text-text-muted">Belum ada data.</td>
                     </tr>
                   </tbody>
                 </table>
@@ -386,6 +390,9 @@
                   <input x-model="form.penulis" type="text" placeholder="Nama penulis" class="neu-input w-full mb-4">
                   <label class="text-xs font-semibold text-text-muted mb-2 block">Isi Artikel</label>
                   <textarea x-model="form.isi" rows="12" placeholder="Tulis isi artikel / kajian hukum..."
+                    class="neu-input w-full mb-4"></textarea>
+                  <label class="text-xs font-semibold text-text-muted mb-2 block">Referensi (rujukan hukum/UU)</label>
+                  <textarea x-model="form.referensi" rows="3" placeholder="mis. UU No. 27 Tahun 2022 tentang Pelindungan Data Pribadi."
                     class="neu-input w-full"></textarea>
                 </div>
               </div>

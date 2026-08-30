@@ -279,22 +279,22 @@
 
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-12">
       <div class="neu-raised p-6 text-center">
-        <p class="font-display font-bold text-navy dark:text-white text-2xl" x-text="totalAlumni"></p>
+        <p class="font-display font-bold text-navy dark:text-white text-2xl" x-countup="totalAlumni">0</p>
         <p class="text-xs text-text-muted mt-1">Total Alumni</p>
       </div>
       <div class="neu-raised p-6 text-center">
-        <p class="font-display font-bold text-navy dark:text-white text-2xl" x-text="pctByKategori('Bekerja') + '%'">
+        <p class="font-display font-bold text-navy dark:text-white text-2xl"><span x-countup="pctByKategori('Bekerja')">0</span>%
         </p>
         <p class="text-xs text-text-muted mt-1">Alumni Bekerja</p>
       </div>
       <div class="neu-raised p-6 text-center">
-        <p class="font-display font-bold text-navy dark:text-white text-2xl" x-text="pctByKategori('Wirausaha') + '%'">
+        <p class="font-display font-bold text-navy dark:text-white text-2xl"><span x-countup="pctByKategori('Wirausaha')">0</span>%
         </p>
         <p class="text-xs text-text-muted mt-1">Alumni Wirausaha</p>
       </div>
       <div class="neu-raised p-6 text-center">
         <p class="font-display font-bold text-navy dark:text-white text-2xl"
-          x-text="pctByKategori('Studi Lanjut') + '%'"></p>
+          ><span x-countup="pctByKategori('Studi Lanjut')">0</span>%</p>
         <p class="text-xs text-text-muted mt-1">Studi Lanjut</p>
       </div>
     </div>
@@ -303,7 +303,7 @@
       <template x-for="a in results" :key="a.id">
         <div class="neu-raised p-5 text-center flex flex-col items-center">
           <img
-            :src="a.foto || 'https://placehold.co/200x200/EEF1F5/0B1F3A?text=' + encodeURIComponent(a.nama.split(' ')[0])"
+            :src="assetPath(a.foto) || 'https://placehold.co/200x200/EEF1F5/0B1F3A?text=' + encodeURIComponent(a.nama.split(' ')[0])"
             :alt="a.nama" class="w-20 h-20 rounded-2xl mx-auto mb-3 object-cover neu-raised-sm p-1">
           <p class="font-semibold text-navy dark:text-white text-sm" x-text="a.nama"></p>
           <p class="text-xs text-royal mb-1" x-text="'Angkatan ' + a.angkatan"></p>

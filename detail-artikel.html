@@ -254,9 +254,14 @@
         <p class="text-xs text-text-muted mb-8">Oleh <span x-text="item.penulis"></span> &middot; <span
             x-text="item.tanggal"></span></p>
         <p class="text-text-muted leading-relaxed mb-8" x-text="item.isi"></p>
-        <div class="neu-pressed p-5 mb-8">
+        <div class="neu-pressed p-5 mb-8" x-show="item.referensi">
           <p class="text-xs text-text-muted mb-1">Referensi</p>
           <p class="text-sm text-navy dark:text-white" x-text="item.referensi"></p>
+        </div>
+        <div class="flex flex-wrap gap-2 mb-8" x-show="item.tags">
+          <template x-for="tag in (item.tags || '').split(',').map(t => t.trim()).filter(Boolean)" :key="tag">
+            <span class="neu-badge badge-new text-[11px]" x-text="tag"></span>
+          </template>
         </div>
         <button type="button" @click="share()" class="neu-btn px-5 py-3 rounded-xl text-sm">Bagikan Artikel</button>
       </div>

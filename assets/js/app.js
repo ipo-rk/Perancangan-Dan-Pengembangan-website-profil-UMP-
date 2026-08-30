@@ -23,6 +23,70 @@ function themeStore() {
 }
 
 /* =========================================================
+   ANIMASI ANGKA (COUNT-UP) — Alpine custom directive
+   ---------------------------------------------------------
+   Dipakai lewat atribut `x-countup="expression"` menggantikan
+   `x-text` pada elemen yang menampilkan angka statistik (jumlah
+   dosen, mahasiswa, alumni, dsb) di Frontend maupun Admin Panel.
+   Setiap kali nilai berubah (pertama kali render ATAU data di
+   localStorage berubah lewat CRUD Admin), angka akan dianimasikan
+   naik dari 0 (atau dari nilai sebelumnya) menuju nilai baru,
+   memakai easing halus + format ribuan gaya Indonesia (mis. 1.250).
+   ========================================================= */
+document.addEventListener('alpine:init', () => {
+  if (typeof Alpine === 'undefined' || !Alpine.directive) return;
+  Alpine.directive('countup', (el, { expression }, { evaluateLater, effect, cleanup }) => {
+    const getValue = evaluateLater(expression);
+    let frame = null;
+    let current = 0;
+    let hasRendered = false;
+
+    function format(n) {
+      const rounded = Math.round(n);
+      return isFinite(rounded) ? rounded.toLocaleString('id-ID') : '0';
+    }
+
+    function animateTo(target) {
+      if (frame) cancelAnimationFrame(frame);
+      const from = hasRendered ? current : 0;
+      const diff = target - from;
+      // Angka kecil/tanpa perubahan cukup tampil langsung tanpa animasi.
+      if (diff === 0) {
+        current = target;
+        el.textContent = format(current);
+        hasRendered = true;
+        return;
+      }
+      const duration = 900;
+      const startTime = performance.now();
+      const step = (now) => {
+        const progress = Math.min(1, (now - startTime) / duration);
+        const eased = 1 - Math.pow(1 - progress, 3); // ease-out-cubic
+        current = from + diff * eased;
+        el.textContent = format(current);
+        if (progress < 1) {
+          frame = requestAnimationFrame(step);
+        } else {
+          current = target;
+          el.textContent = format(target);
+        }
+      };
+      frame = requestAnimationFrame(step);
+      hasRendered = true;
+    }
+
+    effect(() => {
+      getValue((value) => {
+        const num = Number(value);
+        animateTo(isFinite(num) ? num : 0);
+      });
+    });
+
+    cleanup(() => { if (frame) cancelAnimationFrame(frame); });
+  });
+});
+
+/* =========================================================
    DATA LAYER (DB) — localStorage-backed "backend"
    ---------------------------------------------------------
    Semua entitas (berita, dosen, dokumen, dst) disimpan di
@@ -281,10 +345,26 @@ const AUTH = (() => {
   function logout() {
     localStorage.removeItem(KEY);
   }
+  // Halaman admin yang hanya boleh diakses role 'Super Admin' (manajemen akun
+  // pengguna & pengaturan/backup-restore database). Sebelumnya AUTH.guard()
+  // hanya memeriksa isLoggedIn() dan field `role` di sesi tidak pernah dibaca
+  // ulang untuk pembatasan akses, sehingga Editor/Operator tetap bisa membuka
+  // halaman ini secara langsung lewat URL.
+  const SUPER_ADMIN_ONLY_PAGES = ['pengguna.html', 'pengaturan.html'];
   function guard() {
-    const isLoginPage = /login\.html$/.test(window.location.pathname);
+    const path = window.location.pathname;
+    const page = path.substring(path.lastIndexOf('/') + 1);
+    const isLoginPage = page === 'login.html';
     if (!isLoginPage && !isLoggedIn()) {
       window.location.href = 'login.html';
+      return;
+    }
+    if (isLoginPage) return;
+    if (SUPER_ADMIN_ONLY_PAGES.includes(page) && current().role !== 'Super Admin') {
+      if (typeof NeuAlert !== 'undefined') {
+        NeuAlert.error('Halaman ini khusus untuk Super Admin.');
+      }
+      window.location.href = 'dashboard.html';
     }
   }
   return { login, current, isLoggedIn, logout, guard };
@@ -321,6 +401,51 @@ function compressImageFile(file, { maxWidth = 480, maxHeight = 480, quality = 0.
         resolve(canvas.toDataURL('image/jpeg', quality));
       };
       img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+/* =========================================================
+   BERKAS DOKUMEN (PDF/DOC/DOCX) — Pembacaan & Validasi File
+   ---------------------------------------------------------
+   Dipakai oleh admin/dokumen.html. Berbeda dari compressImageFile karena
+   dokumen tidak bisa dikompres begitu saja, jadi batas ukuran diterapkan
+   agar localStorage (kuota ~5MB) tidak cepat penuh oleh berkas biner.
+   ========================================================= */
+function formatFileSize(bytes) {
+  if (!bytes && bytes !== 0) return '';
+  if (bytes >= 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  if (bytes >= 1024) return Math.round(bytes / 1024) + ' KB';
+  return bytes + ' B';
+}
+
+const DOKUMEN_MAX_SIZE_MB = 5;
+const DOKUMEN_ALLOWED_EXT = { pdf: 'PDF', doc: 'DOC', docx: 'DOCX' };
+
+function readDocumentFile(file) {
+  return new Promise((resolve, reject) => {
+    if (!file) { reject(new Error('Tidak ada file yang dipilih.')); return; }
+    const ext = (file.name.split('.').pop() || '').toLowerCase();
+    const format = DOKUMEN_ALLOWED_EXT[ext];
+    if (!format) {
+      reject(new Error('Format tidak didukung. Hanya file PDF, DOC, atau DOCX yang bisa diunggah.'));
+      return;
+    }
+    const maxBytes = DOKUMEN_MAX_SIZE_MB * 1024 * 1024;
+    if (file.size > maxBytes) {
+      reject(new Error(`Ukuran file terlalu besar (maks. ${DOKUMEN_MAX_SIZE_MB} MB). Pilih berkas yang lebih kecil.`));
+      return;
+    }
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Gagal membaca file. Coba unggah ulang.'));
+    reader.onload = () => {
+      resolve({
+        fileName: file.name,
+        fileData: reader.result,
+        format,
+        ukuran: formatFileSize(file.size)
+      });
     };
     reader.readAsDataURL(file);
   });
@@ -471,12 +596,16 @@ const SEED_BERITA = [
 let SAMPLE_BERITA = DB.load('berita', SEED_BERITA);
 
 const SEED_DOSEN = [
-  { id: 1, nama: 'Dr. Ahmad Fauzi, S.H., M.H.', jabatan: 'Lektor Kepala', keahlian: 'Hukum Pidana', pendidikan: 'S3 Ilmu Hukum', email: 'ahmad.fauzi@ump.ac.id', nidn: '1234567890', profil: 'Dosen dengan pengalaman praktik hukum pidana dan penelitian sistem peradilan.', status: 'Aktif', foto: 'https://placehold.co/300x300/EEF1F5/0B1F3A?text=Foto+Dosen' },
-  { id: 2, nama: 'Rina Marlina, S.H., M.H.', jabatan: 'Lektor', keahlian: 'Hukum Perdata', pendidikan: 'S2 Kenotariatan', email: 'rina.marlina@ump.ac.id', nidn: '1234567891', profil: 'Spesialis hukum kontrak dan praktik kenotariatan.', status: 'Aktif', foto: 'https://placehold.co/300x300/EEF1F5/0B1F3A?text=Foto+Dosen' },
-  { id: 3, nama: 'Yusuf Kamal, S.H., M.Kn.', jabatan: 'Lektor', keahlian: 'Hukum Tata Negara', pendidikan: 'S2 Hukum', email: 'yusuf.kamal@ump.ac.id', nidn: '1234567892', profil: 'Fokus pada studi konstitusi dan otonomi daerah.', status: 'Aktif', foto: 'https://placehold.co/300x300/EEF1F5/0B1F3A?text=Foto+Dosen' },
-  { id: 4, nama: 'Dr. Siti Aminah, S.H., M.H.', jabatan: 'Profesor', keahlian: 'Hukum Internasional', pendidikan: 'S3 Ilmu Hukum', email: 'siti.aminah@ump.ac.id', nidn: '1234567893', profil: 'Peneliti hukum internasional dan hubungan bilateral.', status: 'Aktif', foto: 'https://placehold.co/300x300/EEF1F5/0B1F3A?text=Foto+Dosen' },
-  { id: 5, nama: 'Bayu Segara, S.H., M.H.', jabatan: 'Asisten Ahli', keahlian: 'Hukum Adat', pendidikan: 'S2 Hukum', email: 'bayu.segara@ump.ac.id', nidn: '1234567894', profil: 'Mengkaji hukum adat Papua dan resolusi konflik lokal.', status: 'Nonaktif', foto: 'https://placehold.co/300x300/EEF1F5/0B1F3A?text=Foto+Dosen' },
-  { id: 6, nama: 'Maria Kabes, S.H., M.H.', jabatan: 'Dosen', keahlian: 'Hukum Administrasi Negara', pendidikan: 'S2 Hukum', email: 'maria.kabes@ump.ac.id', nidn: '1234567895', profil: 'Praktisi dan pengajar hukum administrasi pemerintahan.', status: 'Aktif', foto: 'https://placehold.co/300x300/EEF1F5/0B1F3A?text=Foto+Dosen' }
+  { id: 1, nama: 'Dr. Ahmad Fauzi, S.H., M.H.', jabatan: 'Lektor Kepala', keahlian: 'Hukum Pidana', pendidikan: 'S3 Ilmu Hukum', email: 'ahmad.fauzi@ump.ac.id', nidn: '1234567890', profil: 'Dosen dengan pengalaman praktik hukum pidana dan penelitian sistem peradilan.', status: 'Aktif', foto: 'assets/image/dosen/Dosen 1.png' },
+  { id: 2, nama: 'Rina Marlina, S.H., M.H.', jabatan: 'Lektor', keahlian: 'Hukum Perdata', pendidikan: 'S2 Kenotariatan', email: 'rina.marlina@ump.ac.id', nidn: '1234567891', profil: 'Spesialis hukum kontrak dan praktik kenotariatan.', status: 'Aktif', foto: 'assets/image/dosen/Dosen 2.png' },
+  { id: 3, nama: 'Yusuf Kamal, S.H., M.Kn.', jabatan: 'Lektor', keahlian: 'Hukum Tata Negara', pendidikan: 'S2 Hukum', email: 'yusuf.kamal@ump.ac.id', nidn: '1234567892', profil: 'Fokus pada studi konstitusi dan otonomi daerah.', status: 'Aktif', foto: 'assets/image/dosen/Dosen 3.png' },
+  { id: 4, nama: 'Dr. Siti Aminah, S.H., M.H.', jabatan: 'Profesor', keahlian: 'Hukum Internasional', pendidikan: 'S3 Ilmu Hukum', email: 'siti.aminah@ump.ac.id', nidn: '1234567893', profil: 'Peneliti hukum internasional dan hubungan bilateral.', status: 'Aktif', foto: 'assets/image/dosen/Dosen 4.png' },
+  { id: 5, nama: 'Bayu Segara, S.H., M.H.', jabatan: 'Asisten Ahli', keahlian: 'Hukum Adat', pendidikan: 'S2 Hukum', email: 'bayu.segara@ump.ac.id', nidn: '1234567894', profil: 'Mengkaji hukum adat Papua dan resolusi konflik lokal.', status: 'Nonaktif', foto: 'assets/image/dosen/Dosen 5.png' },
+  { id: 6, nama: 'Maria Kabes, S.H., M.H.', jabatan: 'Dosen', keahlian: 'Hukum Administrasi Negara', pendidikan: 'S2 Hukum', email: 'maria.kabes@ump.ac.id', nidn: '1234567895', profil: 'Praktisi dan pengajar hukum administrasi pemerintahan.', status: 'Aktif', foto: 'assets/image/dosen/Dosen 6.png' },
+  { id: 7, nama: 'Dr. Petrus Womsiwor, S.H., M.H.', jabatan: 'Lektor', keahlian: 'Hukum Lingkungan', pendidikan: 'S3 Ilmu Hukum', email: 'petrus.womsiwor@ump.ac.id', nidn: '1234567896', profil: 'Meneliti hukum lingkungan dan pengelolaan sumber daya alam di Papua.', status: 'Aktif', foto: 'assets/image/dosen/Dosen 7.png' },
+  { id: 8, nama: 'Fransiska Mote, S.H., M.Kn.', jabatan: 'Asisten Ahli', keahlian: 'Hukum Agraria', pendidikan: 'S2 Kenotariatan', email: 'fransiska.mote@ump.ac.id', nidn: '1234567897', profil: 'Fokus pada sengketa tanah adat dan hukum pertanahan.', status: 'Aktif', foto: 'assets/image/dosen/Dosen 8.png' },
+  { id: 9, nama: 'Yohanes Sroyer, S.H., M.H.', jabatan: 'Dosen', keahlian: 'Hukum Acara', pendidikan: 'S2 Hukum', email: 'yohanes.sroyer@ump.ac.id', nidn: '1234567898', profil: 'Mengajar hukum acara pidana dan perdata praktik peradilan.', status: 'Aktif', foto: 'assets/image/dosen/Dosen 9.png' },
+  { id: 10, nama: 'Dr. Herlina Yaung, S.H., M.H.', jabatan: 'Lektor Kepala', keahlian: 'Hukum Ketenagakerjaan', pendidikan: 'S3 Ilmu Hukum', email: 'herlina.yaung@ump.ac.id', nidn: '1234567899', profil: 'Peneliti hubungan industrial dan perlindungan tenaga kerja.', status: 'Aktif', foto: 'assets/image/dosen/Dosen 10.png' }
 ];
 let SAMPLE_DOSEN = DB.load('dosen', SEED_DOSEN);
 
@@ -504,16 +633,27 @@ let SAMPLE_GALERI = DB.load('galeri', SEED_GALERI);
 
 function getSearchIndex() {
   return [
-    ...SAMPLE_BERITA.map(b => ({ title: b.judul, url: `detail-berita.html?id=${b.id}`, type: 'Berita', keywords: `${b.judul} ${b.kategori} ${b.penulis || ''}` })),
+    ...SAMPLE_BERITA.filter(b => b.status === 'Published').map(b => ({ title: b.judul, url: `detail-berita.html?id=${b.id}`, type: 'Berita', keywords: `${b.judul} ${b.kategori} ${b.penulis || ''}` })),
     ...SAMPLE_DOSEN.map(d => ({ title: d.nama, url: 'dosen.html', type: 'Dosen', keywords: `${d.nama} ${d.keahlian} ${d.jabatan}` })),
     ...SAMPLE_DOKUMEN.map(d => ({ title: d.nama, url: 'dokumen.html', type: 'Dokumen', keywords: `${d.nama} ${d.kategori}` })),
     ...SAMPLE_KEGIATAN.map(k => ({ title: k.nama, url: `detail-kegiatan.html?id=${k.id}`, type: 'Kegiatan', keywords: `${k.nama} ${k.lokasi} ${k.deskripsi || ''}` })),
     ...SAMPLE_PENGUMUMAN.map(p => ({ title: p.judul, url: `detail-pengumuman.html?id=${p.id}`, type: 'Pengumuman', keywords: `${p.judul} ${p.status} ${p.isi || ''}` })),
-    ...SAMPLE_ARTIKEL.map(a => ({ title: a.judul, url: `detail-artikel.html?id=${a.id}`, type: 'Artikel', keywords: `${a.judul} ${a.kategori} ${a.penulis || ''}` })),
+    ...SAMPLE_ARTIKEL.filter(a => a.status === 'Published').map(a => ({ title: a.judul, url: `detail-artikel.html?id=${a.id}`, type: 'Artikel', keywords: `${a.judul} ${a.kategori} ${a.penulis || ''} ${a.tags || ''}` })),
     ...SAMPLE_ALUMNI.map(a => ({ title: a.nama, url: 'alumni.html', type: 'Alumni', keywords: `${a.nama} ${a.pekerjaan} ${a.instansi}` })),
     ...SAMPLE_PRESTASI.map(p => ({ title: p.nama, url: 'prestasi.html', type: 'Prestasi', keywords: `${p.nama} ${p.kategori} ${p.tingkat}` })),
     ...SAMPLE_KURIKULUM.map(k => ({ title: k.nama, url: 'kurikulum.html', type: 'Kurikulum', keywords: `${k.kode} ${k.nama}` }))
   ];
+}
+
+// Mengubah path aset lokal (mis. 'assets/image/dosen/Dosen 1.png') menjadi path
+// yang valid baik saat dibuka dari halaman publik (root proyek) maupun dari
+// halaman admin (subfolder /admin/). URL eksternal (http/https, mis. placeholder)
+// dikembalikan apa adanya.
+function assetPath(path) {
+  if (!path) return path;
+  if (/^(https?:)?\/\//i.test(path) || /^data:/i.test(path)) return path;
+  const inAdmin = /\/admin\//.test(window.location.pathname);
+  return inAdmin ? '../' + path : path;
 }
 
 function parseHari(str) {
@@ -581,7 +721,10 @@ function homeStats() {
     get alumni() { return SAMPLE_ALUMNI.length; },
     get prestasi() { return SAMPLE_PRESTASI.length; },
     get latestBerita() {
-      return SAMPLE_BERITA.find(b => b.featured) || SAMPLE_BERITA[0] || null;
+      // Hanya berita berstatus 'Published' yang boleh tampil di sisi publik —
+      // sebelumnya status Draft/Review ikut tampil karena tidak difilter.
+      const published = SAMPLE_BERITA.filter(b => b.status === 'Published');
+      return published.find(b => b.featured) || published[0] || null;
     },
     get upcomingKegiatan() {
       return SAMPLE_KEGIATAN.slice(0, 3);
@@ -647,7 +790,8 @@ function adminShell() {
         kegiatan: SAMPLE_KEGIATAN.length,
         artikel: SAMPLE_ARTIKEL.length,
         dokumen: SAMPLE_DOKUMEN.length,
-        galeri: SAMPLE_GALERI.length
+        galeri: SAMPLE_GALERI.length,
+        pendaftar: SAMPLE_PENDAFTAR.length
       };
     },
     get recentActivity() {
@@ -772,10 +916,13 @@ function dosenPage() {
 
 function beritaPage() {
   const kategoriFilters = ['Semua', 'Akademik', 'Kemahasiswaan', 'Penelitian', 'Pengabdian', 'Prestasi', 'Seminar', 'Kegiatan'];
-  const base = filterableGrid(SAMPLE_BERITA, { searchKeys: ['judul', 'kategori'], filterKey: 'kategori', filters: kategoriFilters });
+  // Halaman publik hanya menampilkan berita berstatus 'Published' — berita
+  // berstatus 'Draft'/'Review' hanya boleh terlihat dari panel admin.
+  const publishedBerita = SAMPLE_BERITA.filter(b => b.status === 'Published');
+  const base = filterableGrid(publishedBerita, { searchKeys: ['judul', 'kategori'], filterKey: 'kategori', filters: kategoriFilters });
   return mergeReactive(base, {
     get featured() {
-      return SAMPLE_BERITA.find(b => b.featured) || SAMPLE_BERITA[0];
+      return publishedBerita.find(b => b.featured) || publishedBerita[0];
     },
     detailUrl(id) {
       return `detail-berita.html?id=${id}`;
@@ -789,7 +936,20 @@ function dokumenPage() {
     filterableGrid(SAMPLE_DOKUMEN, { searchKeys: ['nama', 'kategori'], filterKey: 'kategori', filters: kategoriFilters }),
     {
       download(doc) {
-        NeuAlert.success(`Unduhan "${doc.nama}" dimulai (simulasi).`);
+        // Dokumen yang diunggah lewat panel admin (punya fileData asli) diunduh
+        // sungguhan. Dokumen contoh/bawaan (tanpa file asli) tetap memakai
+        // simulasi seperti sebelumnya supaya tidak menampilkan file kosong/error.
+        if (doc.fileData) {
+          const a = document.createElement('a');
+          a.href = doc.fileData;
+          a.download = doc.fileName || (doc.nama + '.' + (doc.format || 'pdf').toLowerCase());
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          NeuAlert.success(`Mengunduh "${doc.nama}".`);
+        } else {
+          NeuAlert.success(`Unduhan "${doc.nama}" dimulai (simulasi).`);
+        }
       }
     }
   );
@@ -847,10 +1007,13 @@ function detailFromQuery(items, param = 'id') {
 }
 
 function detailBeritaPage() {
-  const item = detailFromQuery(SAMPLE_BERITA);
+  // Sama seperti beritaPage(): hanya berita 'Published' yang boleh diakses
+  // langsung lewat halaman detail publik, meski id-nya ditebak lewat URL.
+  const publishedBerita = SAMPLE_BERITA.filter(b => b.status === 'Published');
+  const item = detailFromQuery(publishedBerita);
   return {
     item,
-    related: SAMPLE_BERITA.filter(b => b.id !== item.id).slice(0, 3)
+    related: publishedBerita.filter(b => b.id !== item.id).slice(0, 3)
   };
 }
 
@@ -881,21 +1044,113 @@ const SEED_KEGIATAN = [
 ];
 let SAMPLE_KEGIATAN = DB.load('kegiatan', SEED_KEGIATAN);
 
+/* ---- Pendaftar Kegiatan (fitur "Daftar" pada detail-kegiatan.html) ----
+   Sebelumnya tombol "Daftar Kegiatan Sekarang" hanya memicu alert simulasi
+   tanpa benar-benar menyimpan data siapa pun yang mendaftar, sehingga Admin
+   Panel tidak pernah bisa melihat daftar pesertanya. Sekarang setiap
+   pendaftaran disimpan sungguhan ke DB (localStorage) dan dapat dilihat/
+   dihapus dari Admin Panel > Kegiatan. */
+const SEED_PENDAFTAR = [
+  { id: 1, kegiatanId: 1, kegiatanNama: 'Seminar Nasional Hukum Digital', nama: 'Yohanes Rumbrar', email: 'yohanes.rumbrar@mhs.ump.ac.id', whatsapp: '081234567801', instansi: 'Mahasiswa Semester 5', waktuDaftar: '26 Agu 2026, 09.12' },
+  { id: 2, kegiatanId: 1, kegiatanNama: 'Seminar Nasional Hukum Digital', nama: 'Fransiska Ayamiseba', email: 'fransiska.a@mhs.ump.ac.id', whatsapp: '081234567802', instansi: 'Mahasiswa Semester 3', waktuDaftar: '26 Agu 2026, 14.40' },
+  { id: 3, kegiatanId: 2, kegiatanNama: 'Kuliah Umum Hukum Adat Papua', nama: 'Petrus Kareth', email: 'petrus.kareth@mhs.ump.ac.id', whatsapp: '081234567803', instansi: 'Mahasiswa Semester 7', waktuDaftar: '27 Agu 2026, 10.05' }
+];
+let SAMPLE_PENDAFTAR = DB.load('pendaftar', SEED_PENDAFTAR);
+
+/* Log aktivitas dari halaman PUBLIK (bukan Admin) — dipisah dari
+   logActivity() karena logActivity mengasumsikan ada admin yang sedang
+   login (AUTH.current()). Notifikasi tetap masuk ke Admin Panel supaya
+   pendaftaran baru langsung terlihat oleh admin. */
+function logPublicEvent(aksi, icon) {
+  const entry = {
+    id: Date.now(),
+    user: 'Pengunjung Website',
+    aksi,
+    waktu: 'Baru saja',
+    tanggalIso: new Date().toISOString(),
+    icon: icon || '\u{1F4DD}'
+  };
+  SAMPLE_AKTIVITAS = [entry, ...SAMPLE_AKTIVITAS].slice(0, 25);
+  DB.save('aktivitas', SAMPLE_AKTIVITAS);
+
+  const notif = {
+    id: Date.now() + 1,
+    judul: aksi,
+    pesan: 'Dikirim melalui formulir pendaftaran di halaman publik.',
+    waktu: 'Baru saja',
+    read: false,
+    icon: icon || '\u{1F514}'
+  };
+  SAMPLE_NOTIFIKASI = [notif, ...SAMPLE_NOTIFIKASI].slice(0, 30);
+  DB.save('notifikasi', SAMPLE_NOTIFIKASI);
+  window.dispatchEvent(new CustomEvent('notif-update'));
+}
+
+// Mengambil daftar pendaftar untuk satu kegiatan tertentu.
+function pesertaKegiatan(kegiatanId) {
+  return SAMPLE_PENDAFTAR.filter(p => p.kegiatanId === kegiatanId);
+}
+
+// Memproses pendaftaran kegiatan dari halaman publik. Melakukan validasi,
+// mencegah pendaftaran ganda (email sama pada kegiatan sama), lalu
+// menyimpan data ke DB supaya bisa dipantau dari Admin Panel.
+function daftarKegiatan(kegiatanId, kegiatanNama, form) {
+  const nama = String(form.nama || '').trim();
+  const email = String(form.email || '').trim();
+  const whatsapp = String(form.whatsapp || '').trim();
+  const instansi = String(form.instansi || '').trim();
+
+  if (!nama || !email || !whatsapp) {
+    return { ok: false, message: 'Nama, Email, dan No. WhatsApp wajib diisi.' };
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return { ok: false, message: 'Format email tidak valid.' };
+  }
+  if (whatsapp.replace(/\D/g, '').length < 9) {
+    return { ok: false, message: 'Nomor WhatsApp tidak valid.' };
+  }
+  const sudahDaftar = SAMPLE_PENDAFTAR.some(p =>
+    p.kegiatanId === kegiatanId && p.email.toLowerCase() === email.toLowerCase()
+  );
+  if (sudahDaftar) {
+    return { ok: false, message: 'Email ini sudah terdaftar pada kegiatan tersebut.' };
+  }
+
+  const entry = {
+    id: Date.now(),
+    kegiatanId,
+    kegiatanNama,
+    nama,
+    email,
+    whatsapp,
+    instansi: instansi || '-',
+    waktuDaftar: new Date().toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })
+  };
+  SAMPLE_PENDAFTAR = [entry, ...SAMPLE_PENDAFTAR];
+  const savedOk = DB.save('pendaftar', SAMPLE_PENDAFTAR);
+  if (!savedOk) {
+    SAMPLE_PENDAFTAR = SAMPLE_PENDAFTAR.filter(p => p.id !== entry.id);
+    return { ok: false, message: 'Gagal menyimpan pendaftaran. Silakan coba lagi.' };
+  }
+  logPublicEvent(`Pendaftaran baru kegiatan "${kegiatanNama}" oleh ${nama}`, '\u{1F4DD}');
+  return { ok: true };
+}
+
 const SEED_ARTIKEL = [
-  { id: 1, judul: 'Restorative Justice dalam Sistem Peradilan Pidana Indonesia', penulis: 'Dr. Ahmad Fauzi, S.H., M.H.', kategori: 'Hukum Pidana', tanggal: '15 Agu 2026', isi: 'Kajian ini menelaah penerapan restorative justice dalam sistem peradilan pidana Indonesia serta implikasinya bagi korban dan pelaku.', referensi: 'KUHP; UU No. 11 Tahun 2012 tentang Sistem Peradilan Pidana Anak.', thumbnail: 'https://placehold.co/400x220/EEF1F5/0B1F3A?text=Artikel+Hukum' },
-  { id: 2, judul: 'Eksistensi Hukum Adat Papua dalam Sistem Hukum Nasional', penulis: 'Bayu Segara, S.H., M.H.', kategori: 'Hukum Adat', tanggal: '12 Agu 2026', isi: 'Artikel membahas kedudukan hukum adat Papua dalam kerangka hukum nasional dan praktik penyelesaian sengketa adat.', referensi: 'UUD 1945 Pasal 18B ayat (2).', thumbnail: 'https://placehold.co/400x220/EEF1F5/0B1F3A?text=Artikel+Hukum' },
-  { id: 3, judul: 'Perlindungan Hukum bagi UMKM di Era Ekonomi Digital', penulis: 'Rina Marlina, S.H., M.H.', kategori: 'Hukum Bisnis', tanggal: '10 Agu 2026', isi: 'Studi perlindungan pelaku UMKM pada transaksi digital, termasuk kontrak elektronik dan perlindungan konsumen.', referensi: 'UU No. 27 Tahun 2022 tentang Pelindungan Data Pribadi.', thumbnail: 'https://placehold.co/400x220/EEF1F5/0B1F3A?text=Artikel+Hukum' },
-  { id: 4, judul: 'Dinamika Otonomi Khusus Papua Pasca Revisi UU', penulis: 'Yusuf Kamal, S.H., M.Kn.', kategori: 'Hukum Tata Negara', tanggal: '05 Agu 2026', isi: 'Analisis implikasi revisi undang-undang otonomi khusus terhadap tata kelola pemerintahan daerah di Papua.', referensi: 'UU Otonomi Khusus Papua beserta perubahannya.', thumbnail: 'https://placehold.co/400x220/EEF1F5/0B1F3A?text=Artikel+Hukum' }
+  { id: 1, judul: 'Restorative Justice dalam Sistem Peradilan Pidana Indonesia', penulis: 'Dr. Ahmad Fauzi, S.H., M.H.', kategori: 'Hukum Pidana', tanggal: '15 Agu 2026', isi: 'Kajian ini menelaah penerapan restorative justice dalam sistem peradilan pidana Indonesia serta implikasinya bagi korban dan pelaku.', referensi: 'KUHP; UU No. 11 Tahun 2012 tentang Sistem Peradilan Pidana Anak.', tags: 'restorative justice, pidana, KUHP', status: 'Published', thumbnail: 'https://placehold.co/400x220/EEF1F5/0B1F3A?text=Artikel+Hukum' },
+  { id: 2, judul: 'Eksistensi Hukum Adat Papua dalam Sistem Hukum Nasional', penulis: 'Bayu Segara, S.H., M.H.', kategori: 'Hukum Adat', tanggal: '12 Agu 2026', isi: 'Artikel membahas kedudukan hukum adat Papua dalam kerangka hukum nasional dan praktik penyelesaian sengketa adat.', referensi: 'UUD 1945 Pasal 18B ayat (2).', tags: 'hukum adat, Papua, otonomi khusus', status: 'Published', thumbnail: 'https://placehold.co/400x220/EEF1F5/0B1F3A?text=Artikel+Hukum' },
+  { id: 3, judul: 'Perlindungan Hukum bagi UMKM di Era Ekonomi Digital', penulis: 'Rina Marlina, S.H., M.H.', kategori: 'Hukum Bisnis', tanggal: '10 Agu 2026', isi: 'Studi perlindungan pelaku UMKM pada transaksi digital, termasuk kontrak elektronik dan perlindungan konsumen.', referensi: 'UU No. 27 Tahun 2022 tentang Pelindungan Data Pribadi.', tags: 'UMKM, ekonomi digital, konsumen', status: 'Published', thumbnail: 'https://placehold.co/400x220/EEF1F5/0B1F3A?text=Artikel+Hukum' },
+  { id: 4, judul: 'Dinamika Otonomi Khusus Papua Pasca Revisi UU', penulis: 'Yusuf Kamal, S.H., M.Kn.', kategori: 'Hukum Tata Negara', tanggal: '05 Agu 2026', isi: 'Analisis implikasi revisi undang-undang otonomi khusus terhadap tata kelola pemerintahan daerah di Papua.', referensi: 'UU Otonomi Khusus Papua beserta perubahannya.', tags: 'otonomi khusus, tata negara, Papua', status: 'Published', thumbnail: 'https://placehold.co/400x220/EEF1F5/0B1F3A?text=Artikel+Hukum' }
 ];
 let SAMPLE_ARTIKEL = DB.load('artikel', SEED_ARTIKEL);
 
 const SEED_PRESTASI = [
-  { id: 1, nama: 'Juara 1 Moot Court Competition Nasional 2026', kategori: 'Mahasiswa', tingkat: 'Nasional', tahun: '2026' },
-  { id: 2, nama: 'Juara 2 Debat Konstitusi Wilayah Papua', kategori: 'Mahasiswa', tingkat: 'Regional', tahun: '2026' },
-  { id: 3, nama: 'Best Paper Award, Konferensi Hukum Internasional', kategori: 'Dosen', tingkat: 'Internasional', tahun: '2025' },
-  { id: 4, nama: 'Terpilih sebagai Hakim Ad Hoc Pengadilan Tipikor', kategori: 'Alumni', tingkat: 'Nasional', tahun: '2025' },
-  { id: 5, nama: 'Peringkat Terbaik Prodi Hukum se-Papua', kategori: 'Program Studi', tingkat: 'Provinsi', tahun: '2025' },
-  { id: 6, nama: 'Juara 3 Lomba Karya Tulis Ilmiah Hukum', kategori: 'Mahasiswa', tingkat: 'Nasional', tahun: '2024' }
+  { id: 1, nama: 'Juara 1 Moot Court Competition Nasional 2026', kategori: 'Mahasiswa', tingkat: 'Nasional', tahun: '2026', foto: 'https://placehold.co/320x200/EEF1F5/0B1F3A?text=Moot+Court' },
+  { id: 2, nama: 'Juara 2 Debat Konstitusi Wilayah Papua', kategori: 'Mahasiswa', tingkat: 'Regional', tahun: '2026', foto: 'https://placehold.co/320x200/EEF1F5/0B1F3A?text=Debat+Konstitusi' },
+  { id: 3, nama: 'Best Paper Award, Konferensi Hukum Internasional', kategori: 'Dosen', tingkat: 'Internasional', tahun: '2025', foto: 'https://placehold.co/320x200/EEF1F5/0B1F3A?text=Best+Paper' },
+  { id: 4, nama: 'Terpilih sebagai Hakim Ad Hoc Pengadilan Tipikor', kategori: 'Alumni', tingkat: 'Nasional', tahun: '2025', foto: 'https://placehold.co/320x200/EEF1F5/0B1F3A?text=Hakim+Ad+Hoc' },
+  { id: 5, nama: 'Peringkat Terbaik Prodi Hukum se-Papua', kategori: 'Program Studi', tingkat: 'Provinsi', tahun: '2025', foto: 'https://placehold.co/320x200/EEF1F5/0B1F3A?text=Peringkat+Terbaik' },
+  { id: 6, nama: 'Juara 3 Lomba Karya Tulis Ilmiah Hukum', kategori: 'Mahasiswa', tingkat: 'Nasional', tahun: '2024', foto: 'https://placehold.co/320x200/EEF1F5/0B1F3A?text=Karya+Tulis+Ilmiah' }
 ];
 let SAMPLE_PRESTASI = DB.load('prestasi', SEED_PRESTASI);
 
@@ -940,21 +1195,75 @@ const SEED_NOTIFIKASI = [
 let SAMPLE_NOTIFIKASI = DB.load('notifikasi', SEED_NOTIFIKASI);
 
 const SEED_ALUMNI = [
-  { id: 1, nama: 'Fadli Ramadhan, S.H.', angkatan: '2020', pekerjaan: 'Advokat', instansi: 'Kantor Hukum Fadli & Rekan', kategori: 'Bekerja', email: 'fadli@example.com', linkedin: 'https://linkedin.com', status: 'Aktif', foto: 'https://placehold.co/200x200/EEF1F5/0B1F3A?text=Fadli' },
-  { id: 2, nama: 'Melinda Kogoya, S.H.', angkatan: '2019', pekerjaan: 'Legal Officer', instansi: 'PT Papua Sejahtera', kategori: 'Bekerja', email: 'melinda@example.com', linkedin: 'https://linkedin.com', status: 'Aktif', foto: 'https://placehold.co/200x200/EEF1F5/0B1F3A?text=Melinda' },
-  { id: 3, nama: 'Yohanes Sroyer, S.H.', angkatan: '2018', pekerjaan: 'Aparatur Sipil Negara', instansi: 'Kejaksaan Negeri Jayapura', kategori: 'Bekerja', email: 'yohanes@example.com', linkedin: 'https://linkedin.com', status: 'Aktif', foto: 'https://placehold.co/200x200/EEF1F5/0B1F3A?text=Yohanes' },
-  { id: 4, nama: 'Sari Wulandari, S.H.', angkatan: '2021', pekerjaan: 'Magister Hukum', instansi: 'Universitas Gadjah Mada', kategori: 'Studi Lanjut', email: 'sari@example.com', linkedin: 'https://linkedin.com', status: 'Aktif', foto: 'https://placehold.co/200x200/EEF1F5/0B1F3A?text=Sari' },
-  { id: 5, nama: 'Hendra Wijaya, S.H.', angkatan: '2022', pekerjaan: 'Founder Legal Startup', instansi: 'Papua Legal Hub', kategori: 'Wirausaha', email: 'hendra@example.com', linkedin: 'https://linkedin.com', status: 'Aktif', foto: 'https://placehold.co/200x200/EEF1F5/0B1F3A?text=Hendra' }
+  { id: 1, nama: 'Fadli Ramadhan, S.H.', angkatan: '2020', pekerjaan: 'Advokat', instansi: 'Kantor Hukum Fadli & Rekan', kategori: 'Bekerja', email: 'fadli@example.com', linkedin: 'https://linkedin.com', status: 'Aktif', foto: 'assets/image/alumni/alumni 1.png' },
+  { id: 2, nama: 'Melinda Kogoya, S.H.', angkatan: '2019', pekerjaan: 'Legal Officer', instansi: 'PT Papua Sejahtera', kategori: 'Bekerja', email: 'melinda@example.com', linkedin: 'https://linkedin.com', status: 'Aktif', foto: 'assets/image/alumni/alumni 2.png' },
+  { id: 3, nama: 'Yohanes Sroyer, S.H.', angkatan: '2018', pekerjaan: 'Aparatur Sipil Negara', instansi: 'Kejaksaan Negeri Jayapura', kategori: 'Bekerja', email: 'yohanes@example.com', linkedin: 'https://linkedin.com', status: 'Aktif', foto: 'assets/image/alumni/alumni 3.png' },
+  { id: 4, nama: 'Sari Wulandari, S.H.', angkatan: '2021', pekerjaan: 'Magister Hukum', instansi: 'Universitas Gadjah Mada', kategori: 'Studi Lanjut', email: 'sari@example.com', linkedin: 'https://linkedin.com', status: 'Aktif', foto: 'assets/image/alumni/alumni 4.png' },
+  { id: 5, nama: 'Hendra Wijaya, S.H.', angkatan: '2022', pekerjaan: 'Founder Legal Startup', instansi: 'Papua Legal Hub', kategori: 'Wirausaha', email: 'hendra@example.com', linkedin: 'https://linkedin.com', status: 'Aktif', foto: 'assets/image/alumni/alumni 5.png' },
+  { id: 6, nama: 'Gloria Numberi, S.H.', angkatan: '2020', pekerjaan: 'Staf Legal', instansi: 'Bank Papua', kategori: 'Bekerja', email: 'gloria@example.com', linkedin: 'https://linkedin.com', status: 'Aktif', foto: 'assets/image/alumni/alumni 6.png' }
 ];
 let SAMPLE_ALUMNI = DB.load('alumni', SEED_ALUMNI);
 
 // Pengguna Admin Panel (Super Admin, Admin Prodi, Editor, Operator)
+// Catatan: `password` di sini disimpan polos hanya karena seluruh proyek adalah
+// prototipe front-end tanpa backend (data hidup di localStorage). Ini BUKAN
+// pola yang aman untuk produksi sungguhan — pada implementasi nyata, password
+// wajib di-hash di server dan tidak pernah dikirim/disimpan di sisi klien.
 const SEED_PENGGUNA = [
-  { id: 1, nama: 'Admin Prodi', email: 'admin@ump.ac.id', role: 'Super Admin', status: 'Aktif' },
-  { id: 2, nama: 'Rina Marlina', email: 'editor.rina@ump.ac.id', role: 'Editor', status: 'Aktif' },
-  { id: 3, nama: 'Yusuf Kamal', email: 'operator.yusuf@ump.ac.id', role: 'Operator', status: 'Nonaktif' }
+  { id: 1, nama: 'Admin Prodi', email: 'admin@ump.ac.id', password: 'admin', role: 'Super Admin', status: 'Aktif' },
+  { id: 2, nama: 'Rina Marlina', email: 'editor.rina@ump.ac.id', password: 'editor123', role: 'Editor', status: 'Aktif' },
+  { id: 3, nama: 'Yusuf Kamal', email: 'operator.yusuf@ump.ac.id', password: 'operator123', role: 'Operator', status: 'Nonaktif' }
 ];
 let SAMPLE_PENGGUNA = DB.load('pengguna', SEED_PENGGUNA);
+
+// --- PERBAIKAN BUG "LOGIN TERUS GAGAL" -----------------------------------
+// Akar masalah: form "Tambah/Edit Pengguna" di admin/pengguna.html versi
+// sebelumnya TIDAK memiliki field password sama sekali. Akibatnya, setiap
+// akun baru yang dibuat lewat panel admin tersimpan TANPA field `password`
+// (undefined) — sehingga saat login, `matched.password !== pass` selalu
+// bernilai true (password dianggap salah) berapa pun password yang diketik.
+// Data pengguna yang sudah telanjur tersimpan di localStorage pengguna juga
+// bisa "basi" (field password/status hilang) dari sesi-sesi sebelumnya.
+// Migrasi berikut memperbaiki data yang sudah ada secara otomatis, sekali
+// saat aplikasi dimuat, tanpa menghapus akun kustom yang sudah dibuat admin.
+(function migratePenggunaPasswords() {
+  if (!Array.isArray(SAMPLE_PENGGUNA)) return;
+  let changed = false;
+
+  SAMPLE_PENGGUNA = SAMPLE_PENGGUNA.map(u => {
+    const fixed = { ...u };
+    // Field password hilang/kosong -> tidak bisa dipakai login sama sekali.
+    // Kalau akun ini cocok dengan salah satu akun bawaan (SEED_PENGGUNA),
+    // pulihkan password bawaannya. Jika bukan akun bawaan (dibuat admin
+    // lewat panel sebelum field password ada di form), beri password
+    // sementara berbasis id akun supaya akun tidak terkunci permanen, dan
+    // catat di console agar admin tahu perlu mengganti password tersebut
+    // lewat menu Pengguna.
+    if (!fixed.password) {
+      const seedMatch = SEED_PENGGUNA.find(s => s.email && fixed.email &&
+        s.email.toLowerCase() === fixed.email.toLowerCase());
+      if (seedMatch) {
+        fixed.password = seedMatch.password;
+      } else {
+        fixed.password = 'ubah' + (fixed.id || Date.now());
+        console.warn('DB: akun pengguna "' + fixed.email + '" tidak memiliki password tersimpan. ' +
+          'Password sementara dibuat otomatis: ' + fixed.password + '. Segera ubah lewat menu Pengguna.');
+      }
+      changed = true;
+    }
+    if (!fixed.status) { fixed.status = 'Aktif'; changed = true; }
+    return fixed;
+  });
+
+  // Jika akun Super Admin bawaan (admin@ump.ac.id) sampai hilang/terhapus,
+  // kembalikan agar panel admin tidak pernah terkunci total dari semua sisi.
+  if (!SAMPLE_PENGGUNA.some(u => u.email && u.email.toLowerCase() === 'admin@ump.ac.id')) {
+    SAMPLE_PENGGUNA.unshift({ ...SEED_PENGGUNA[0] });
+    changed = true;
+  }
+
+  if (changed) DB.save('pengguna', SAMPLE_PENGGUNA);
+})();
 
 // Profil Program Studi — konten satu-record (bukan daftar), dipakai bersama oleh
 // admin/profil-prodi.html (form edit) dan profil.html publik (tampilan), supaya
@@ -1060,10 +1369,6 @@ const SEARCH_INDEX = [
   ...SAMPLE_ARTIKEL.map(a => ({ title: a.judul, url: `detail-artikel.html?id=${a.id}`, type: 'Artikel', keywords: `${a.judul} ${a.kategori} ${a.penulis}` }))
 ];
 
-function registerKegiatan() {
-  NeuAlert.sent('Pendaftaran kegiatan berhasil dikirim (simulasi).');
-}
-
 function pengumumanPage() {
   return {
     items: SAMPLE_PENGUMUMAN,
@@ -1079,16 +1384,24 @@ function kegiatanPage() {
     detailUrl(id) {
       return `detail-kegiatan.html?id=${id}`;
     },
-    daftar() {
-      registerKegiatan();
+    // Tombol "Daftar" pada kartu daftar kegiatan sebelumnya memanggil
+    // fungsi generik tanpa tahu kegiatan mana yang dipilih (selalu memicu
+    // alert simulasi yang sama). Sekarang tombol tersebut mengarah langsung
+    // ke halaman detail kegiatan yang benar dengan tautan `#daftar`, yang
+    // otomatis membuka formulir pendaftaran kegiatan tersebut.
+    daftarUrl(id) {
+      return `detail-kegiatan.html?id=${id}#daftar`;
     }
   };
 }
 
 function artikelPage() {
   const filters = ['Semua', 'Hukum Pidana', 'Hukum Perdata', 'Hukum Tata Negara', 'Hukum Administrasi Negara', 'Hukum Internasional', 'Hukum Bisnis', 'Hukum Adat', 'Hukum Teknologi'];
+  // Sama seperti berita: hanya artikel berstatus 'Published' yang tampil di
+  // publik. Sebelumnya field `status` di form admin tidak pernah dipakai.
+  const publishedArtikel = SAMPLE_ARTIKEL.filter(a => a.status === 'Published');
   return mergeReactive(
-    filterableGrid(SAMPLE_ARTIKEL, { searchKeys: ['judul', 'kategori', 'penulis'], filterKey: 'kategori', filters }),
+    filterableGrid(publishedArtikel, { searchKeys: ['judul', 'kategori', 'penulis'], filterKey: 'kategori', filters }),
     {
       detailUrl(id) {
         return `detail-artikel.html?id=${id}`;
@@ -1131,17 +1444,48 @@ function detailPengumumanPage() {
 function detailKegiatanPage() {
   return {
     item: detailFromQuery(SAMPLE_KEGIATAN),
-    daftar() {
-      registerKegiatan();
+    daftarOpen: false,
+    submitting: false,
+    form: { nama: '', email: '', whatsapp: '', instansi: '' },
+    init() {
+      // Dukungan tautan langsung `detail-kegiatan.html?id=..#daftar` dari
+      // halaman kegiatan.html supaya formulir pendaftaran otomatis terbuka.
+      if (window.location.hash === '#daftar') {
+        this.openDaftar();
+      }
+    },
+    // Jumlah pendaftar dihitung langsung dari data sungguhan (bukan angka
+    // statis) supaya selalu konsisten dengan yang tercatat di Admin Panel.
+    get jumlahPendaftar() {
+      return pesertaKegiatan(this.item.id).length;
+    },
+    openDaftar() {
+      this.form = { nama: '', email: '', whatsapp: '', instansi: '' };
+      this.daftarOpen = true;
+    },
+    closeDaftar() {
+      this.daftarOpen = false;
+    },
+    submitDaftar() {
+      this.submitting = true;
+      const res = daftarKegiatan(this.item.id, this.item.nama, this.form);
+      this.submitting = false;
+      if (!res.ok) {
+        NeuAlert.error(res.message);
+        return;
+      }
+      this.daftarOpen = false;
+      NeuAlert.sent('Pendaftaran kegiatan berhasil dikirim. Panitia akan menghubungi Anda melalui email/WhatsApp.');
     }
   };
 }
 
 function detailArtikelPage() {
-  const item = detailFromQuery(SAMPLE_ARTIKEL);
+  const publishedArtikel = SAMPLE_ARTIKEL.filter(a => a.status === 'Published');
+  const item = detailFromQuery(publishedArtikel);
   return {
     item,
-    related: SAMPLE_ARTIKEL.filter(a => a.id !== item.id).slice(0, 3),
+    related: publishedArtikel.filter(a => a.id !== item.id).slice(0, 3),
     share() {
       NeuAlert.success('Tautan artikel disalin (simulasi).');
     }
@@ -1238,6 +1582,193 @@ function adminGaleriPage() {
   };
 }
 
+/* =========================================================
+   MANAJEMEN DOKUMEN — CRUD dengan unggah berkas sungguhan
+   ---------------------------------------------------------
+   Dipakai oleh admin/dokumen.html. Sebelumnya kotak "unggah berkas" di
+   modal Tambah/Edit hanyalah <div> statis tanpa <input type="file">,
+   tanpa @click, dan tanpa binding apa pun — jadi tidak melakukan apa-apa
+   sama sekali saat diklik. Fungsi ini menggantinya dengan alur unggah
+   nyata: memilih file PDF/DOC/DOCX, memvalidasi tipe & ukuran, lalu
+   otomatis mengisi Nama (jika kosong), Format, dan Ukuran dari file asli.
+   ========================================================= */
+function adminDokumenTable() {
+  const emptyForm = { nama: '', kategori: 'Dokumen Publik', format: 'PDF', ukuran: '', fileName: '', fileData: '' };
+  return {
+    rows: [...SAMPLE_DOKUMEN],
+    showModal: false,
+    editing: null,
+    uploading: false,
+    q: '',
+    form: { ...emptyForm },
+    get filtered() {
+      return this.rows.filter(r => (r.nama || '').toLowerCase().includes(this.q.toLowerCase()));
+    },
+    persist() {
+      SAMPLE_DOKUMEN = this.rows;
+      return DB.save('dokumen', this.rows);
+    },
+    async onFile(e) {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      this.uploading = true;
+      try {
+        const result = await readDocumentFile(file);
+        this.form.fileName = result.fileName;
+        this.form.fileData = result.fileData;
+        this.form.format = result.format;
+        this.form.ukuran = result.ukuran;
+        // Isi nama dokumen otomatis dari nama file (tanpa ekstensi) hanya
+        // jika admin belum mengetik nama sendiri, supaya tidak menimpa
+        // judul yang sudah disusun rapi.
+        if (!this.form.nama.trim()) {
+          this.form.nama = result.fileName.replace(/\.[^/.]+$/, '');
+        }
+      } catch (err) {
+        NeuAlert.error(err.message || 'Gagal memproses berkas.');
+      } finally {
+        this.uploading = false;
+        e.target.value = '';
+      }
+    },
+    clearFile() {
+      this.form.fileName = '';
+      this.form.fileData = '';
+      this.form.ukuran = '';
+    },
+    downloadRow(row) {
+      if (!row.fileData) return;
+      const a = document.createElement('a');
+      a.href = row.fileData;
+      a.download = row.fileName || (row.nama + '.' + (row.format || 'pdf').toLowerCase());
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+    },
+    openAdd() {
+      this.editing = null;
+      this.form = { ...emptyForm };
+      this.showModal = true;
+    },
+    openEdit(row) {
+      this.editing = row.id;
+      this.form = { ...emptyForm, ...row };
+      this.showModal = true;
+    },
+    save() {
+      if (!this.form.nama.trim()) { NeuAlert.error('Nama dokumen wajib diisi.'); return; }
+      if (!this.editing && !this.form.fileData) { NeuAlert.error('Silakan unggah berkas PDF/DOC/DOCX terlebih dahulu.'); return; }
+
+      if (this.editing) {
+        const idx = this.rows.findIndex(x => x.id === this.editing);
+        const prev = this.rows[idx];
+        this.rows[idx] = { ...this.form };
+        if (!this.persist()) { this.rows[idx] = prev; return; }
+        logActivity('Memperbarui dokumen: ' + this.form.nama, '\u{270F}\u{FE0F}');
+        NeuAlert.updated();
+      } else {
+        this.form.id = Date.now();
+        this.rows.unshift({ ...this.form });
+        if (!this.persist()) { this.rows.shift(); return; }
+        logActivity('Mengunggah dokumen baru: ' + this.form.nama, '\u{1F4C1}');
+        NeuAlert.success('Dokumen berhasil diunggah.');
+      }
+      this.showModal = false;
+    },
+    async remove(row) {
+      const ok = await NeuAlert.confirmDelete('dokumen "' + row.nama + '"');
+      if (ok) {
+        const prevList = this.rows;
+        this.rows = this.rows.filter(x => x.id !== row.id);
+        if (!this.persist()) { this.rows = prevList; return; }
+        logActivity('Menghapus dokumen: ' + row.nama, '\u{1F5D1}\u{FE0F}');
+        NeuAlert.deleted();
+      }
+    }
+  };
+}
+
+/* =========================================================
+   MANAJEMEN PENGGUNA — CRUD khusus dengan penanganan password
+   ---------------------------------------------------------
+   Dipakai oleh admin/pengguna.html. Berbeda dari adminCrudTable generik
+   karena field `password` butuh perlakuan khusus:
+   - WAJIB diisi saat menambah akun baru (mencegah akun tak bisa login).
+   - TIDAK ditampilkan apa adanya saat edit (dikosongkan di form) demi
+     keamanan, dan hanya menimpa password lama jika admin benar-benar
+     mengisi field tersebut. Field kosong saat edit = password tidak
+     berubah.
+   ========================================================= */
+function adminPenggunaTable(config) {
+  return {
+    showModal: false,
+    editing: null,
+    q: '',
+    rows: [...config.rows],
+    form: { ...config.emptyForm },
+    get filtered() {
+      const keys = config.searchKeys || ['nama', 'email'];
+      return this.rows.filter(row =>
+        keys.some(k => String(row[k] || '').toLowerCase().includes(this.q.toLowerCase()))
+      );
+    },
+    persist() {
+      SAMPLE_PENGGUNA = this.rows;
+      return DB.save('pengguna', this.rows);
+    },
+    openAdd() {
+      this.editing = null;
+      this.form = { ...config.emptyForm };
+      this.showModal = true;
+    },
+    openEdit(row) {
+      this.editing = row.id;
+      // Password lama sengaja TIDAK dimuat ke form (dikosongkan) supaya
+      // tidak terpampang begitu saja di layar. Isi field ini hanya jika
+      // admin ingin mengganti password akun tersebut.
+      this.form = { ...row, password: '' };
+      this.showModal = true;
+    },
+    save() {
+      if (config.validate && !config.validate(this.form, !!this.editing)) return;
+
+      if (!this.editing && !(this.form.password || '').trim()) {
+        NeuAlert.error('Kata sandi wajib diisi untuk akun baru.');
+        return;
+      }
+
+      if (this.editing) {
+        const idx = this.rows.findIndex(x => x.id === this.editing);
+        const prev = this.rows[idx];
+        // Field password dikosongkan di form -> pertahankan password lama.
+        const password = (this.form.password || '').trim() ? this.form.password.trim() : prev.password;
+        this.rows[idx] = { ...this.form, password };
+        if (!this.persist()) { this.rows[idx] = prev; return; }
+        logActivity(`Memperbarui pengguna: ${this.form.nama || ''}`.trim(), '\u{270F}\u{FE0F}');
+        NeuAlert.updated();
+      } else {
+        this.form.id = Date.now();
+        this.form.password = this.form.password.trim();
+        this.rows.unshift({ ...this.form });
+        if (!this.persist()) { this.rows.shift(); return; }
+        logActivity(`Menambahkan pengguna baru: ${this.form.nama || ''}`.trim(), '\u{2795}');
+        NeuAlert.success();
+      }
+      this.showModal = false;
+    },
+    async remove(row) {
+      const ok = await NeuAlert.confirmDelete(config.itemLabel || 'data ini');
+      if (ok) {
+        const prevList = this.rows;
+        this.rows = this.rows.filter(x => x.id !== row.id);
+        if (!this.persist()) { this.rows = prevList; return; }
+        logActivity(`Menghapus pengguna: ${row.nama || ''}`.trim(), '\u{1F5D1}\u{FE0F}');
+        NeuAlert.deleted();
+      }
+    }
+  };
+}
+
 function adminCrudTable(config) {
   return {
     showModal: false,
@@ -1323,4 +1854,52 @@ function adminCrudTable(config) {
       }
     }
   };
+}
+
+/* ---- Admin > Kegiatan: CRUD kegiatan + manajemen Pendaftar ----
+   Melengkapi adminCrudTable biasa dengan fitur untuk melihat & mengelola
+   siapa saja yang mendaftar (fitur "Daftar" di halaman publik) pada
+   setiap kegiatan, supaya panitia/admin bisa menindaklanjuti pendaftar. */
+function kegiatanAdminPage() {
+  const base = adminCrudTable({
+    rows: SAMPLE_KEGIATAN,
+    dbKey: 'kegiatan',
+    emptyForm: { nama: '', tanggal: '', waktu: '', lokasi: '', penyelenggara: '', deskripsi: '' },
+    searchKeys: ['nama', 'lokasi'],
+    itemLabel: 'kegiatan ini',
+    validate(f) { if (!f.nama || !f.tanggal) { NeuAlert.error('Nama dan Tanggal kegiatan wajib diisi.'); return false; } return true; }
+  });
+  return mergeReactive(base, {
+    showPeserta: false,
+    pesertaOf: null, // kegiatan yang sedang dilihat daftar pesertanya
+    // Dipanggil dari template lewat `jumlahPeserta(r)` — dihitung langsung
+    // dari data pendaftar sungguhan (bukan angka statis).
+    jumlahPeserta(row) {
+      return pesertaKegiatan(row.id).length;
+    },
+    get pesertaList() {
+      return this.pesertaOf ? pesertaKegiatan(this.pesertaOf.id) : [];
+    },
+    lihatPeserta(row) {
+      this.pesertaOf = row;
+      this.showPeserta = true;
+    },
+    closePeserta() {
+      this.showPeserta = false;
+      this.pesertaOf = null;
+    },
+    async hapusPeserta(p) {
+      const ok = await NeuAlert.confirmDelete('pendaftar ini');
+      if (!ok) return;
+      const prev = SAMPLE_PENDAFTAR;
+      SAMPLE_PENDAFTAR = SAMPLE_PENDAFTAR.filter(x => x.id !== p.id);
+      if (!DB.save('pendaftar', SAMPLE_PENDAFTAR)) {
+        SAMPLE_PENDAFTAR = prev;
+        NeuAlert.error('Gagal menghapus data pendaftar.');
+        return;
+      }
+      logActivity(`Menghapus pendaftar kegiatan "${p.kegiatanNama}": ${p.nama}`, '\u{1F5D1}\u{FE0F}');
+      NeuAlert.deleted('Data pendaftar berhasil dihapus.');
+    }
+  });
 }
