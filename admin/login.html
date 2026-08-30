@@ -98,11 +98,21 @@
         });
       }, 650);
     }
-  }" class="font-sans min-h-screen flex items-center justify-center px-4 py-8 relative overflow-hidden law-court-bg">
+  }" class="min-h-screen w-full flex items-center justify-center px-4 py-8 relative law-court-bg admin-login-body">
 
-  <!-- Ambient Decorative Lighting -->
-  <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-royal/20 blur-3xl pointer-events-none"></div>
-  <div class="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-gold/20 blur-3xl pointer-events-none"></div>
+  <!-- Ambient Decorative Lighting
+       Dibungkus dalam wrapper inset-0 + overflow-hidden yang mengikuti kotak
+       body (sama seperti area yang dicakup .law-court-bg::before). Sebelumnya
+       kedua lingkaran blur ini adalah child body langsung dengan offset
+       negatif (-top-24, -bottom-24), sehingga ikut dihitung browser sebagai
+       scrollable overflow halaman meski berada di luar kotak body — akibatnya
+       muncul area scroll tambahan yang transparan (tidak tertutup background)
+       di bawah konten. Wrapper ini mengklip keduanya pas di batas body agar
+       halaman tidak bisa discroll melebihi area yang benar-benar tertutup bg. -->
+  <div class="absolute inset-0 overflow-hidden pointer-events-none">
+    <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-royal/20 blur-3xl"></div>
+    <div class="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-gold/20 blur-3xl"></div>
+  </div>
 
   <!-- Top Bar Navigation Actions -->
   <a href="../index.html"
@@ -149,9 +159,9 @@
         </span>
       </div>
 
-      <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-navy dark:text-white tracking-tight">Program
+      <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-white tracking-tight">Program
         Studi Hukum</h1>
-      <p class="text-xs sm:text-sm text-text-muted mt-1 font-medium">Universitas Muhammadiyah Papua</p>
+      <p class="text-xs sm:text-sm text-white/70 mt-1 font-medium">Universitas Muhammadiyah Papua</p>
     </div>
 
     <!-- Login Form Card -->
@@ -267,7 +277,7 @@
           <span>Kembali ke Beranda Website</span>
         </a>
       </p>
-      <p class="text-[11px] text-text-muted">
+      <p class="text-[11px] text-white/70">
         &copy; 2026 Program Studi Hukum — Universitas Muhammadiyah Papua.
       </p>
     </div>

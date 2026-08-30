@@ -490,6 +490,22 @@ textarea:focus-visible,
   border-color: rgba(255, 255, 255, 0.09);
 }
 
+/* Mobile phone: anchor the dropdown to the viewport instead of the bell
+   button so its horizontal position is always the same — centered — no
+   matter which admin page it opens on or how far right the button sits. */
+@media (max-width: 640px) {
+  .notif-dropdown {
+    position: fixed;
+    top: 4.75rem;
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    margin-top: 0;
+    width: calc(100vw - 2rem);
+    max-width: 360px;
+  }
+}
+
 /* Scrollable notif list */
 .notif-list {
   max-height: 300px;
@@ -562,6 +578,20 @@ textarea:focus-visible,
     rgba(20, 29, 48, 0.92) 100%
   );
   pointer-events: none;
+}
+
+/* Admin login page: previously had `overflow-hidden` directly on <body>,
+   which (per the CSS overflow-propagation rule) made the whole viewport
+   non-scrollable — the page could never be scrolled up/down to reveal
+   content taller than the screen (common on short mobile viewports or
+   with the on-screen keyboard open). We removed that utility and clip
+   only the horizontal axis here instead, so the decorative blurred
+   circles (`-top-24 -right-24`, `-bottom-24 -left-24`) that intentionally
+   bleed past the viewport edges stay contained without ever blocking
+   vertical scroll. (Tailwind's compiled build has no `overflow-x-hidden`
+   utility, so this is defined by hand like the other custom tokens above.) */
+.admin-login-body {
+  overflow-x: hidden;
 }
 
 /* `royal-soft` and `text-muted` are CSS-variable tokens, not entries in the
