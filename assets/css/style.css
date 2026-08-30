@@ -564,6 +564,19 @@ textarea:focus-visible,
   pointer-events: none;
 }
 
+/* `royal-soft` and `text-muted` are CSS-variable tokens, not entries in the
+   Tailwind color palette, so Tailwind can't generate variant-prefixed
+   utilities for them (e.g. `hover:text-royal-soft`, `placeholder:text-text-muted`)
+   no matter how the build is run. Defined by hand here, same as the other
+   custom design tokens above, so both variants actually work everywhere
+   they're used across the site. */
+.hover\:text-royal-soft:hover {
+  color: var(--royal-soft);
+}
+.placeholder\:text-text-muted::placeholder {
+  color: var(--text-muted);
+}
+
 /* ── Hero floating cards (logo & kegiatan terdekat) ───────────
    Positioning/sizing is defined here in plain CSS rather than via
    Tailwind utility classes, since production serves a pre-built
@@ -574,33 +587,27 @@ textarea:focus-visible,
    regardless of the Tailwind build state. */
 .hero-logo-card {
   position: absolute;
-  top: -2.25rem;
-  right: -1rem;
+  top: -2.75rem;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 30;
-  width: 150px;
-  padding: 1.25rem 1rem;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.625rem;
 }
 .hero-logo-card img {
   width: 5rem;
   height: 5rem;
-}
-.hero-logo-card p {
-  font-size: 0.875rem;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.45));
 }
 @media (min-width: 640px) {
   .hero-logo-card {
-    width: 172px;
+    top: -3.25rem;
   }
   .hero-logo-card img {
     width: 6rem;
     height: 6rem;
-  }
-  .hero-logo-card p {
-    font-size: 1rem;
   }
 }
 

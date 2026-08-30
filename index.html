@@ -339,17 +339,22 @@
 
       <!-- Hero Right Column - Image + Floating Cards -->
       <div class="relative mt-6 lg:mt-0">
-        <!-- Floating University Logo Card - Pojok Kanan Atas Melayang di Luar Bingkai -->
-        <div class="hero-logo-card neu-raised rounded-3xl bg-bg shadow-2xl border border-black/5 dark:border-white/5">
+        <!-- Floating University Logo - Posisi Tengah Atas Melayang Sesuai Gambar Mockup -->
+        <div class="hero-logo-card">
           <img src="assets/image/logo-ump.png" alt="Logo Universitas Muhammadiyah Papua"
-            class="object-contain drop-shadow-lg">
-          <p class="font-bold tracking-tight leading-none text-center text-navy dark:text-white">
-            <span class="font-light">um</span><span class="font-extrabold">PAPUA</span>
-          </p>
+            class="object-contain">
+          <div
+            class="bg-navy/90 dark:bg-navy/95 text-white px-3.5 py-1 rounded-md border border-white/20 shadow-xl -mt-1 flex flex-col items-center text-center whitespace-nowrap">
+            <span class="font-bold text-xs tracking-tight leading-tight">
+              <span class="font-normal text-amber-300">um</span>PAPUA
+            </span>
+            <span class="text-[8px] text-slate-200 tracking-wider uppercase leading-none mt-0.5">Universitas Muhammadiyah
+              Papua</span>
+          </div>
         </div>
 
         <!-- Main Image Container Frame -->
-        <div class="neu-raised p-3.5 sm:p-4 rounded-3xl overflow-hidden shadow-2xl mt-2">
+        <div class="neu-raised p-3.5 sm:p-4 rounded-3xl overflow-hidden shadow-2xl mt-4">
           <img src="assets/image/Gedung-UMP-thumbnail.jpg" alt="Gedung Kampus Utama Program Studi Hukum UMP"
             class="rounded-2xl w-full h-80 sm:h-[400px] lg:h-[440px] object-cover object-center transition-transform duration-500 hover:scale-105">
         </div>
@@ -575,9 +580,18 @@
       <div>
         <p class="font-display font-semibold text-navy dark:text-white mb-3 text-sm">Kontak</p>
         <ul class="space-y-2 text-sm text-text-muted">
-          <li x-text="p.alamat"></li>
-          <li x-text="p.email"></li>
-          <li x-text="p.telepon"></li>
+          <li class="flex items-start gap-2">
+            <span class="shrink-0 text-royal mt-0.5">&#128205;</span>
+            <span x-text="p.alamat">Jl. Yap Thiam Hien, Kel. Yobe, Jayapura Utara</span>
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="shrink-0 text-royal">&#9993;&#65039;</span>
+            <span x-text="p.email">hukum@ump.ac.id</span>
+          </li>
+          <li class="flex items-center gap-2">
+            <span class="shrink-0 text-royal">&#128222;</span>
+            <span x-text="p.telepon">(0967) 123-456</span>
+          </li>
           <li class="pt-1">
             <a href="kontak.html"
               class="text-royal font-semibold hover:underline inline-flex items-center gap-1.5 text-xs">
@@ -589,7 +603,7 @@
       </div>
     </div>
     <div class="border-t border-black/5 dark:border-white/5 py-5 text-center text-xs text-text-muted">
-      © 2026 Program Studi Hukum — Universitas Muhammadiyah Papua. All Rights Reserved.
+      &copy; 2026 Program Studi Hukum — Universitas Muhammadiyah Papua. All Rights Reserved.
     </div>
   </footer>
 
