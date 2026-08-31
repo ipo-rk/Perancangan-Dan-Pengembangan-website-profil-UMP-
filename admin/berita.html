@@ -275,9 +275,13 @@
           if (!file) return;
           // Gambar dikompres (diperkecil & di-JPEG-kan) sebelum diubah ke base64
           // supaya tidak lagi menyebabkan localStorage QuotaExceededError.
+          // Resolusi & kualitas dijaga cukup tinggi (1000x640, q0.82) karena gambar
+          // ini ditampilkan PENUH SELEBAR HALAMAN di detail-berita.html — kalau
+          // sumbernya terlalu kecil, gambar akan di-upscale browser dan terlihat
+          // pecah/blur.
           this.uploadingGambar = true;
           try {
-            this.form.gambar = await compressImageFile(file, { maxWidth: 500, maxHeight: 320, quality: 0.62 });
+            this.form.gambar = await compressImageFile(file, { maxWidth: 1000, maxHeight: 640, quality: 0.82 });
           } catch (err) {
             NeuAlert.error(err.message || 'Gagal memproses gambar.');
           } finally {

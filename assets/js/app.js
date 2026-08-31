@@ -1527,7 +1527,10 @@ function adminGaleriPage() {
       if (!file) return;
       this.uploading = true;
       try {
-        this.form.src = await compressImageFile(file, { maxWidth: 600, maxHeight: 420, quality: 0.65 });
+        // Foto galeri ditampilkan penuh selebar halaman di detail-galeri.html
+        // (max-h-480), jadi resolusi & kualitas kompresi disamakan dengan
+        // berita/artikel/kegiatan (1000x640, q0.82) supaya tidak pecah/blur.
+        this.form.src = await compressImageFile(file, { maxWidth: 1000, maxHeight: 640, quality: 0.82 });
       } catch (err) {
         NeuAlert.error(err.message || 'Gagal memproses foto.');
       } finally {
@@ -1875,9 +1878,10 @@ function kegiatanAdminPage() {
     // dan halaman publik detail-kegiatan.html supaya poster selalu sinkron.
     emptyForm: { nama: '', tanggal: '', waktu: '', lokasi: '', penyelenggara: '', deskripsi: '', gambar: '' },
     // Poster kegiatan berbentuk infografis landscape (lebar), berbeda dari foto
-    // profil persegi (dosen/alumni/prestasi) — resolusi kompresi dibuat lebih
-    // besar supaya tidak buram/pecah saat ditampilkan penuh di detail-kegiatan.html.
-    fotoOptions: { maxWidth: 960, maxHeight: 640, quality: 0.65 },
+    // profil persegi (dosen/alumni/prestasi) — resolusi & kualitas kompresi dibuat
+    // lebih besar (1100x700, q0.82) supaya tidak buram/pecah saat ditampilkan
+    // penuh selebar halaman di detail-kegiatan.html.
+    fotoOptions: { maxWidth: 1100, maxHeight: 700, quality: 0.82 },
     searchKeys: ['nama', 'lokasi'],
     itemLabel: 'kegiatan ini',
     validate(f) {

@@ -246,8 +246,13 @@
   <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
     <a href="artikel.html" class="text-sm text-royal font-medium mb-6 inline-block">&larr; Kembali ke Artikel</a>
     <article class="neu-raised overflow-hidden">
-      <img :src="item.thumbnail" class="w-full h-56 sm:h-72 object-cover"
-        :alt="item.judul">
+      <!-- Gambar ditampilkan utuh (object-contain) di dalam kotak abu-abu netral agar
+           seluruh konten poster/infografis terlihat, tidak terpotong seperti saat
+           memakai object-cover pada kotak pendek (yang membuat gambar tampak "pecah"). -->
+      <div class="w-full bg-[#EEF1F5] dark:bg-white/5 flex items-center justify-center">
+        <img :src="item.thumbnail" class="w-full max-h-[440px] object-contain"
+          :alt="item.judul">
+      </div>
       <div class="p-6 sm:p-10">
         <span class="neu-badge badge-active mb-4" x-text="item.kategori"></span>
         <h1 class="font-display font-bold text-2xl sm:text-3xl text-navy dark:text-white mb-3" x-text="item.judul"></h1>
