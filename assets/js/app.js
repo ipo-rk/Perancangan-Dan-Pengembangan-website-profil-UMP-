@@ -3,12 +3,28 @@
    Dark mode, SweetAlert2, Alpine.js modules, sample data
    ========================================================= */
 
+// Warna address-bar mobile (meta[name=theme-color]) HARUS mengikuti mode
+// yang benar-benar aktif di situs (toggle manual + localStorage), BUKAN
+// preferensi OS (prefers-color-scheme) — supaya saat pengunjung menekan
+// tombol dark/light di header, warna chrome browser di HP ikut berubah
+// secara akurat, bukan tetap mengikuti tema OS yang mungkin berbeda.
+const THEME_COLOR_LIGHT = '#e8ecf1';
+const THEME_COLOR_DARK = '#101827';
+function syncThemeColorMeta(isDark) {
+  const meta = document.getElementById('theme-color-meta');
+  if (meta) meta.setAttribute('content', isDark ? THEME_COLOR_DARK : THEME_COLOR_LIGHT);
+}
+
 (function initTheme() {
   const saved = localStorage.getItem('theme');
   const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  if (saved === 'dark' || (!saved && prefersDark)) {
+  const isDark = saved === 'dark' || (!saved && prefersDark);
+  if (isDark) {
     document.documentElement.classList.add('dark');
   }
+  // Dijalankan sebelum body dirender (script tanpa defer di <head>), jadi
+  // tidak ada "flash" warna address-bar yang salah saat halaman dibuka.
+  syncThemeColorMeta(isDark);
 })();
 
 function themeStore() {
@@ -18,6 +34,7 @@ function themeStore() {
       this.dark = !this.dark;
       document.documentElement.classList.toggle('dark', this.dark);
       localStorage.setItem('theme', this.dark ? 'dark' : 'light');
+      syncThemeColorMeta(this.dark);
     }
   };
 }
@@ -956,9 +973,14 @@ function dokumenPage() {
 }
 
 function galeriPage() {
+  // 7 album/kategori galeri (di luar "Semua") — jumlah ini HARUS selalu
+  // sinkron dengan opsi "Kategori Album" pada form admin/galeri.html supaya
+  // setiap foto yang diunggah admin pasti punya folder tempat "mendarat"
+  // di halaman publik.
   const albumFilters = ['Semua', 'Seminar', 'Kuliah Umum', 'Praktikum', 'Kegiatan Mahasiswa', 'Wisuda', 'Pengabdian', 'Penelitian'];
+  const base = filterableGrid(SAMPLE_GALERI, { searchKeys: ['judul', 'album'], filterKey: 'album', filters: albumFilters });
   return mergeReactive(
-    filterableGrid(SAMPLE_GALERI, { searchKeys: ['judul', 'album'], filterKey: 'album', filters: albumFilters }),
+    base,
     {
       lightbox: null,
       detailUrl(id) {
@@ -969,6 +991,41 @@ function galeriPage() {
       },
       closeLightbox() {
         this.lightbox = null;
+      },
+      // ---------------------------------------------------------------
+      // TAMPILAN "FOLDER ALBUM" saat filter aktif = "Semua"
+      // ---------------------------------------------------------------
+      // Dibaca ulang setiap kali diakses (getter), jadi selalu sinkron
+      // dengan SAMPLE_GALERI terbaru (mis. setelah admin upload/hapus foto
+      // di tab lain lalu localStorage disegarkan). Setiap folder mewakili
+      // 1 album/kategori (total 7) dan memakai foto PALING BARU pada album
+      // tsb sebagai sampul, plus jumlah total foto di album itu.
+      get albumFolders() {
+        return albumFilters
+          .filter(f => f !== 'Semua')
+          .map(album => {
+            const items = SAMPLE_GALERI.filter(g => g.album === album);
+            return {
+              album,
+              cover: items[0] ? items[0].src : 'https://placehold.co/360x280/EEF1F5/0B1F3A?text=' + encodeURIComponent(album),
+              total: items.length
+            };
+          });
+      },
+      // Folder hanya ditampilkan saat filter = "Semua" DAN tidak sedang
+      // mencari (pencarian tetap harus menampilkan foto individual, bukan
+      // folder, sesuai perilaku pencarian di halaman lain).
+      get showFolders() {
+        return this.activeFilter === 'Semua' && this.q.trim() === '';
+      },
+      // Klik folder = pindah filter ke album tsb (TIDAK pindah halaman),
+      // sehingga tidak menyentuh/menggunakan detail-galeri.html sama sekali.
+      openAlbum(album) {
+        this.setFilter(album);
+        this.q = '';
+      },
+      backToAlbums() {
+        this.setFilter('Semua');
       }
     }
   );
@@ -1500,9 +1557,24 @@ function detailGaleriPage() {
   };
 }
 
+// Ikon per kategori album — dipakai di admin/galeri.html supaya kategori
+// tiap foto langsung "kentara" terlihat pada card tanpa harus membaca teks.
+const ALBUM_ICONS = {
+  'Seminar': '\u{1F399}\uFE0F',
+  'Kuliah Umum': '\u{1F3EB}',
+  'Praktikum': '\u2696\uFE0F',
+  'Kegiatan Mahasiswa': '\u{1F393}',
+  'Wisuda': '\u{1F393}',
+  'Pengabdian': '\u{1F91D}',
+  'Penelitian': '\u{1F52C}'
+};
+
 function adminGaleriPage() {
   return {
     foto: [...SAMPLE_GALERI],
+    albumIcon(album) {
+      return ALBUM_ICONS[album] || '\u{1F5BC}\uFE0F';
+    },
     showModal: false,
     editing: null,
     uploading: false,

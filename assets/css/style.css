@@ -36,6 +36,17 @@
   --r-md: 16px;
   --r-lg: 20px;
   --r-xl: 24px;
+
+  /* Scrollbar thumb (lihat penjelasan token yang sama di blok .dark) */
+  --scrollbar-thumb: var(--neu-dark);
+  --scrollbar-thumb-hover: rgba(163, 177, 198, 0.85);
+
+  /* Memberi tahu browser tema native (scrollbar, checkbox, dropdown
+     <select>/<option>, date/time picker, dst.) bahwa halaman ini terang,
+     supaya elemen bawaan browser ikut berubah warna sesuai mode, bukan
+     selalu memakai skema OS. Nilai ini diganti ke "dark" oleh aturan
+     `.dark` di bawah saat mode gelap aktif. */
+  color-scheme: light;
 }
 
 .dark {
@@ -52,6 +63,19 @@
 
   --neu-light: rgba(255, 255, 255, 0.035);
   --neu-dark: rgba(0, 0, 0, 0.55);
+
+  /* Scrollbar thumb khusus dark mode: var(--neu-dark) di atas sengaja gelap
+     agar cekung neumorphic tetap terlihat, tapi kalau dipakai untuk warna
+     scrollbar thumb hasilnya nyaris tak terlihat (hitam di atas latar
+     hampir-hitam). Token terpisah ini menjaga scrollbar tetap kontras &
+     terlihat jelas tanpa mengubah tampilan neumorphic lainnya. */
+  --scrollbar-thumb: rgba(255, 255, 255, 0.16);
+  --scrollbar-thumb-hover: rgba(255, 255, 255, 0.26);
+
+  /* Lihat penjelasan `color-scheme` di :root — di sini nilainya "dark"
+     supaya scrollbar/select/checkbox/date-picker bawaan browser ikut
+     bertema gelap saat pengunjung mengaktifkan dark mode. */
+  color-scheme: dark;
 }
 
 * {
@@ -60,6 +84,11 @@
 
 html {
   scroll-behavior: smooth;
+  /* Firefox/Safari: warnai scrollbar bawaan browser sesuai mode aktif
+     (lihat token --scrollbar-thumb di :root / .dark). Chromium memakai
+     aturan ::-webkit-scrollbar-* di bawah. */
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb) var(--bg);
 }
 
 [x-cloak] {
@@ -308,7 +337,8 @@ textarea:focus-visible,
   color: var(--text-muted);
 }
 
-/* Scrollbar (subtle) */
+/* Scrollbar (subtle) — dipisah dari var(--neu-dark) supaya thumb tetap
+   kontras & terlihat jelas di dark mode (lihat token --scrollbar-thumb). */
 ::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -317,8 +347,11 @@ textarea:focus-visible,
   background: var(--bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--neu-dark);
+  background: var(--scrollbar-thumb);
   border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
 }
 
 /* Skeleton loading */

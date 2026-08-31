@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#e8ecf1" id="theme-color-meta">
   <title>Galeri | Program Studi Hukum — UMP</title>
   <meta name="description" content="Website resmi Program Studi Hukum Universitas Muhammadiyah Papua.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -251,29 +252,80 @@
     <div class="mb-8">
       <span class="neu-badge badge-new mb-3">Dokumentasi</span>
       <h1 class="font-display font-bold text-3xl sm:text-4xl text-navy dark:text-white">Galeri Kegiatan</h1>
+      <p class="text-sm text-text-muted mt-2 max-w-2xl" x-show="showFolders" x-cloak>
+        Jelajahi dokumentasi kegiatan Program Studi Hukum berdasarkan album di bawah ini, atau gunakan filter untuk
+        melihat album tertentu secara langsung.
+      </p>
     </div>
-    <div class="flex gap-2 filter-scroll mb-8 pb-1">
+
+    <!-- Filter Album (juga berfungsi sebagai penanda folder yang sedang aktif) -->
+    <div class="flex gap-2 filter-scroll mb-6 pb-1">
       <template x-for="f in filters" :key="f">
         <button type="button" @click="setFilter(f)" class="neu-btn px-4 py-2.5 rounded-xl text-xs whitespace-nowrap"
           :class="isActive(f) ? 'is-pressed' : ''" x-text="f"></button>
       </template>
     </div>
-    <p x-show="results.length === 0" class="text-sm text-text-muted mb-6">Data yang Anda cari tidak ditemukan.</p>
-    <div class="columns-2 sm:columns-3 lg:columns-4 gap-4 space-y-4">
-      <template x-for="item in results" :key="item.id">
-        <a :href="detailUrl(item.id)"
-          class="neu-raised-sm overflow-hidden group cursor-pointer break-inside-avoid mb-4 block">
-          <div class="relative">
-            <img :src="item.src" :alt="item.judul"
+
+    <!-- Breadcrumb kembali ke seluruh album -->
+    <button type="button" @click="backToAlbums()" x-show="!showFolders" x-cloak
+      class="inline-flex items-center gap-1.5 text-sm text-royal font-medium mb-6 hover:underline">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+      </svg>
+      <span>Kembali ke semua album</span>
+    </button>
+
+    <!-- ============================================================
+         TAMPILAN FOLDER ALBUM (aktif saat filter "Semua" & tanpa pencarian)
+         7 folder = 7 kategori album galeri. Klik folder akan mengganti
+         filter aktif ke album tsb (TIDAK berpindah ke detail-galeri.html),
+         sehingga halaman detail sama sekali tidak terpengaruh.
+         ============================================================ -->
+    <div x-show="showFolders" x-cloak class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+      <template x-for="folder in albumFolders" :key="folder.album">
+        <button type="button" @click="openAlbum(folder.album)"
+          class="neu-raised-sm overflow-hidden group cursor-pointer text-left block">
+          <div class="relative aspect-[4/3]">
+            <img :src="folder.cover" :alt="'Album ' + folder.album"
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-            <div
-              class="absolute inset-0 bg-navy/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
-              <p class="text-white text-xs font-semibold" x-text="item.judul"></p>
+            <div class="absolute inset-0 bg-gradient-to-t from-navy/80 via-navy/10 to-transparent"></div>
+            <span
+              class="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-white/90 text-navy backdrop-blur"
+              x-text="folder.total + ' foto'"></span>
+            <div class="absolute inset-x-0 bottom-0 p-3.5 flex items-center gap-2">
+              <span class="text-lg leading-none">&#128193;</span>
+              <p class="text-white text-sm font-semibold leading-tight" x-text="folder.album"></p>
             </div>
           </div>
-        </a>
+        </button>
       </template>
     </div>
+
+    <!-- ============================================================
+         TAMPILAN GRID FOTO (aktif saat filter spesifik dipilih, atau
+         sedang mencari). Klik foto tetap mengarahkan ke detail-galeri.html
+         seperti sebelumnya — perilaku ini TIDAK diubah.
+         ============================================================ -->
+    <template x-if="!showFolders">
+      <div>
+        <p x-show="results.length === 0" class="text-sm text-text-muted mb-6">Data yang Anda cari tidak ditemukan.</p>
+        <div class="columns-2 sm:columns-3 lg:columns-4 gap-4 space-y-4">
+          <template x-for="item in results" :key="item.id">
+            <a :href="detailUrl(item.id)"
+              class="neu-raised-sm overflow-hidden group cursor-pointer break-inside-avoid mb-4 block">
+              <div class="relative">
+                <img :src="item.src" :alt="item.judul"
+                  class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                <div
+                  class="absolute inset-0 bg-navy/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                  <p class="text-white text-xs font-semibold" x-text="item.judul"></p>
+                </div>
+              </div>
+            </a>
+          </template>
+        </div>
+      </div>
+    </template>
   </section>
 
   <footer class="mt-20 neu-flat" x-data="{ p: SAMPLE_PENGATURAN }">

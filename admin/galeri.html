@@ -4,6 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#e8ecf1" id="theme-color-meta">
   <title>Manajemen Galeri | Program Studi Hukum — UMP</title>
   <meta name="description" content="Website resmi Program Studi Hukum Universitas Muhammadiyah Papua.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -310,48 +311,40 @@
                 <div class="relative overflow-hidden bg-slate-200 dark:bg-slate-800 h-44">
                   <img :src="f.src"
                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                  <!-- Badge kategori album: ikon + teks, selalu terlihat jelas -->
                   <span
-                    class="absolute top-2.5 left-2.5 px-2 py-0.5 rounded-md text-[10px] font-semibold bg-navy/80 text-white backdrop-blur"
-                    x-text="f.album"></span>
-                  <div
-                    class="absolute inset-0 bg-navy/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
-                    <button @click="openEdit(f)"
-                      class="w-9 h-9 rounded-xl bg-white/95 text-royal hover:bg-white flex items-center justify-center shadow-lg transition-transform hover:scale-110"
-                      aria-label="Edit foto" title="Edit Foto">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                      </svg>
-                    </button>
-                    <button @click="remove(f)"
-                      class="w-9 h-9 rounded-xl bg-white/95 text-red-500 hover:bg-white flex items-center justify-center shadow-lg transition-transform hover:scale-110"
-                      aria-label="Hapus foto" title="Hapus Foto">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                          d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg>
-                    </button>
-                  </div>
+                    class="absolute top-2.5 left-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-semibold bg-navy/85 text-white backdrop-blur shadow-sm">
+                    <span class="text-sm leading-none" x-text="albumIcon(f.album)"></span>
+                    <span x-text="f.album"></span>
+                  </span>
                 </div>
-                <div class="p-3.5 flex items-center justify-between gap-2">
-                  <p class="text-xs font-semibold text-navy dark:text-white line-clamp-1 flex-1" x-text="f.judul"></p>
-                  <div class="flex items-center gap-1 sm:hidden">
+
+                <!-- Judul + aksi CRUD: SELALU tampil jelas (ikon + label), tidak
+                     lagi disembunyikan di balik hover, supaya jelas kentara
+                     di desktop maupun mobile/touch. -->
+                <div class="p-3.5 flex flex-col gap-3">
+                  <p class="text-xs font-semibold text-navy dark:text-white line-clamp-1" x-text="f.judul"></p>
+                  <div class="flex items-center gap-2 pt-3 border-t border-black/5 dark:border-white/5">
                     <button @click="openEdit(f)"
-                      class="neu-btn w-7 h-7 flex items-center justify-center text-royal"><svg
-                        xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
+                      class="flex-1 neu-btn py-2 rounded-xl text-[11px] font-semibold text-royal flex items-center justify-center gap-1.5"
+                      aria-label="Edit foto" title="Edit Foto">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 shrink-0" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                      </svg></button>
+                      </svg>
+                      <span>Edit</span>
+                    </button>
                     <button @click="remove(f)"
-                      class="neu-btn w-7 h-7 flex items-center justify-center text-red-500"><svg
-                        xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor">
+                      class="flex-1 neu-btn py-2 rounded-xl text-[11px] font-semibold text-red-500 flex items-center justify-center gap-1.5"
+                      aria-label="Hapus foto" title="Hapus Foto">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 shrink-0" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                           d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                      </svg></button>
+                      </svg>
+                      <span>Hapus</span>
+                    </button>
                   </div>
                 </div>
               </div>
