@@ -1037,10 +1037,10 @@ const SEED_PENGUMUMAN = [
 let SAMPLE_PENGUMUMAN = DB.load('pengumuman', SEED_PENGUMUMAN);
 
 const SEED_KEGIATAN = [
-  { id: 1, nama: 'Seminar Nasional Hukum Digital', tanggal: '28 Agu 2026', hari: '28', bulan: 'Agu', waktu: '09.00 – 12.00', lokasi: 'Aula Fakultas Hukum', penyelenggara: 'Program Studi Hukum UMP', deskripsi: 'Membahas transformasi hukum di era digital bersama praktisi dan akademisi nasional.', gambar: 'assets/image/kegiatan/4 (1).png' },
-  { id: 2, nama: 'Kuliah Umum Hukum Adat Papua', tanggal: '30 Agu 2026', hari: '30', bulan: 'Agu', waktu: '13.00 – 15.00', lokasi: 'Ruang Sidang Utama', penyelenggara: 'Program Studi Hukum UMP', deskripsi: 'Menghadirkan tokoh adat dan akademisi hukum adat sebagai narasumber.', gambar: 'assets/image/kegiatan/4 (2).png' },
-  { id: 3, nama: 'Workshop Legal Drafting', tanggal: '05 Sep 2026', hari: '05', bulan: 'Sep', waktu: '09.00 – 16.00', lokasi: 'Laboratorium Hukum', penyelenggara: 'Laboratorium Hukum', deskripsi: 'Pelatihan penyusunan dokumen hukum untuk mahasiswa semester akhir.', gambar: 'assets/image/kegiatan/4 (3).png' },
-  { id: 4, nama: 'Pengabdian Masyarakat: Penyuluhan Hukum', tanggal: '12 Sep 2026', hari: '12', bulan: 'Sep', waktu: '08.00 – selesai', lokasi: 'Kampung Yobe, Jayapura', penyelenggara: 'Tim PKM Prodi Hukum', deskripsi: 'Penyuluhan hukum dasar bagi masyarakat sekitar kampus.', gambar: 'assets/image/kegiatan/4 (4).png' }
+  { id: 1, nama: 'Seminar Nasional Hukum Digital', tanggal: '28 Agu 2026', hari: '28', bulan: 'Agu', waktu: '09.00 – 12.00', lokasi: 'Aula Fakultas Hukum', penyelenggara: 'Program Studi Hukum UMP', deskripsi: 'Membahas transformasi hukum di era digital bersama praktisi dan akademisi nasional.', gambar: 'assets/image/kegiatan/4 (4).png' },
+  { id: 2, nama: 'Kuliah Umum Hukum Adat Papua', tanggal: '30 Agu 2026', hari: '30', bulan: 'Agu', waktu: '13.00 – 15.00', lokasi: 'Ruang Sidang Utama', penyelenggara: 'Program Studi Hukum UMP', deskripsi: 'Menghadirkan tokoh adat dan akademisi hukum adat sebagai narasumber.', gambar: 'assets/image/kegiatan/4 (3).png' },
+  { id: 3, nama: 'Workshop Legal Drafting', tanggal: '05 Sep 2026', hari: '05', bulan: 'Sep', waktu: '09.00 – 16.00', lokasi: 'Laboratorium Hukum', penyelenggara: 'Laboratorium Hukum', deskripsi: 'Pelatihan penyusunan dokumen hukum untuk mahasiswa semester akhir.', gambar: 'assets/image/kegiatan/4 (2).png' },
+  { id: 4, nama: 'Pengabdian Masyarakat: Penyuluhan Hukum', tanggal: '12 Sep 2026', hari: '12', bulan: 'Sep', waktu: '08.00 – selesai', lokasi: 'Kampung Yobe, Jayapura', penyelenggara: 'Tim PKM Prodi Hukum', deskripsi: 'Penyuluhan hukum dasar bagi masyarakat sekitar kampus.', gambar: 'assets/image/kegiatan/4 (1).png' }
 ];
 let SAMPLE_KEGIATAN = DB.load('kegiatan', SEED_KEGIATAN);
 
@@ -1788,7 +1788,13 @@ function adminCrudTable(config) {
       if (!file) return;
       this.uploadingFoto = true;
       try {
-        this.form[field] = await compressImageFile(file, { maxWidth: 300, maxHeight: 300, quality: 0.60 });
+        // Beberapa modul (mis. poster kegiatan) berupa infografis landscape yang
+        // butuh resolusi lebih besar dari foto profil persegi (dosen/alumni/prestasi)
+        // supaya tidak buram/pecah saat ditampilkan penuh di halaman detail publik.
+        // `config.fotoOptions` opsional memungkinkan tiap halaman admin menyesuaikan
+        // ukuran kompresi tanpa mengubah perilaku default modul lain.
+        const opts = (config.fotoOptions && config.fotoOptions[field]) || config.fotoOptions || { maxWidth: 300, maxHeight: 300, quality: 0.60 };
+        this.form[field] = await compressImageFile(file, opts);
       } catch (err) {
         NeuAlert.error(err.message || 'Gagal memproses foto.');
       } finally {
@@ -1868,6 +1874,10 @@ function kegiatanAdminPage() {
     // via onFoto) — dipakai bersama oleh admin (kolom Thumbnail & pratinjau modal)
     // dan halaman publik detail-kegiatan.html supaya poster selalu sinkron.
     emptyForm: { nama: '', tanggal: '', waktu: '', lokasi: '', penyelenggara: '', deskripsi: '', gambar: '' },
+    // Poster kegiatan berbentuk infografis landscape (lebar), berbeda dari foto
+    // profil persegi (dosen/alumni/prestasi) — resolusi kompresi dibuat lebih
+    // besar supaya tidak buram/pecah saat ditampilkan penuh di detail-kegiatan.html.
+    fotoOptions: { maxWidth: 960, maxHeight: 640, quality: 0.65 },
     searchKeys: ['nama', 'lokasi'],
     itemLabel: 'kegiatan ini',
     validate(f) {

@@ -273,9 +273,9 @@
       <div class="space-y-4">
         
         <label
-          class="neu-dropzone neu-pressed h-32 flex items-center justify-center text-center text-text-muted text-xs overflow-hidden relative rounded-2xl">
+          class="neu-dropzone neu-pressed h-40 flex items-center justify-center text-center text-text-muted text-xs overflow-hidden relative rounded-2xl">
           <img x-show="form.gambar && !uploadingFoto" :src="form.gambar"
-            class="absolute inset-0 w-full h-full object-cover" alt="Pratinjau thumbnail/poster kegiatan">
+            class="absolute inset-0 w-full h-full object-contain p-1" alt="Pratinjau thumbnail/poster kegiatan">
           <span x-show="!form.gambar && !uploadingFoto">Klik untuk unggah thumbnail/poster kegiatan<br><span
               class="text-[10px]">JPG/PNG &mdash; otomatis dikompres</span></span>
           <span x-show="uploadingFoto">Memproses gambar&hellip;</span>
