@@ -283,7 +283,7 @@
   <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
     <a href="kegiatan.html" class="text-sm text-royal font-medium mb-6 inline-block">&larr; Kembali ke Kegiatan</a>
     <article class="neu-raised overflow-hidden">
-      <img src="https://placehold.co/900x380/EEF1F5/0B1F3A?text=Poster+Kegiatan"
+      <img :src="assetPath(item.gambar) || 'https://placehold.co/900x380/EEF1F5/0B1F3A?text=Poster+Kegiatan'"
         class="w-full h-56 sm:h-72 object-cover" :alt="item.nama">
       <div class="p-6 sm:p-10">
         <div class="flex items-start gap-4 mb-6">

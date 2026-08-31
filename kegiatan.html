@@ -255,6 +255,8 @@
     <div class="space-y-5">
       <template x-for="item in items" :key="item.id">
         <div class="neu-raised p-5 sm:p-6 flex flex-col sm:flex-row gap-5">
+          <img :src="assetPath(item.gambar) || 'https://placehold.co/160x160/EEF1F5/0B1F3A?text=Kegiatan'" :alt="item.nama"
+            class="w-full h-40 sm:w-20 sm:h-20 rounded-2xl object-cover shrink-0 neu-raised-sm">
           <div class="w-16 h-16 shrink-0 neu-pressed flex flex-col items-center justify-center">
             <span class="font-display font-bold text-royal text-xl leading-none" x-text="item.hari || parseHari(item.tanggal)"></span>
             <span class="text-[10px] text-text-muted uppercase" x-text="item.bulan || parseBulan(item.tanggal)"></span>

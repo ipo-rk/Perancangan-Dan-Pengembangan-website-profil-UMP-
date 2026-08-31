@@ -185,7 +185,7 @@
       <table class="w-full min-w-[680px]">
         <thead>
           <tr class="text-left text-xs text-text-muted uppercase tracking-wide">
-            <th class="py-3 px-4">Nama Kegiatan</th><th class="py-3 px-4">Tanggal</th><th class="py-3 px-4">Lokasi</th><th class="py-3 px-4">Penyelenggara</th><th class="py-3 px-4 text-center">Pendaftar</th>
+            <th class="py-3 px-4">Thumbnail</th><th class="py-3 px-4">Nama Kegiatan</th><th class="py-3 px-4">Tanggal</th><th class="py-3 px-4">Lokasi</th><th class="py-3 px-4">Penyelenggara</th><th class="py-3 px-4 text-center">Pendaftar</th>
             <th class="py-3 px-4 text-right">Aksi</th>
           </tr>
         </thead>
@@ -193,6 +193,7 @@
           <template x-for="r in filtered" :key="r.id">
             <tr class="border-b border-black/5 dark:border-white/5">
               
+              <td class="py-3 px-4"><img :src="assetPath(r.gambar) || 'https://placehold.co/120x80/EEF1F5/0B1F3A?text=Kegiatan'" :alt="r.nama" class="neu-thumb"></td>
               <td class="py-3 px-4 text-sm font-medium text-navy dark:text-white max-w-xs" x-text="r.nama"></td>
               <td class="py-3 px-4 text-xs text-text-muted" x-text="r.tanggal"></td>
               <td class="py-3 px-4 text-xs text-text-muted" x-text="r.lokasi"></td>
@@ -215,7 +216,7 @@
               </td>
             </tr>
           </template>
-          <tr x-show="filtered.length === 0"><td colspan="6" class="py-10 text-center text-sm text-text-muted">Data yang Anda cari tidak ditemukan.</td></tr>
+          <tr x-show="filtered.length === 0"><td colspan="7" class="py-10 text-center text-sm text-text-muted">Data yang Anda cari tidak ditemukan.</td></tr>
         </tbody>
       </table>
     </div>
@@ -271,6 +272,18 @@
       <h3 class="font-display font-semibold text-lg text-navy dark:text-white mb-6" x-text="editing ? 'Edit Data' : 'Tambah Kegiatan'"></h3>
       <div class="space-y-4">
         
+        <label
+          class="neu-dropzone neu-pressed h-32 flex items-center justify-center text-center text-text-muted text-xs overflow-hidden relative rounded-2xl">
+          <img x-show="form.gambar && !uploadingFoto" :src="form.gambar"
+            class="absolute inset-0 w-full h-full object-cover" alt="Pratinjau thumbnail/poster kegiatan">
+          <span x-show="!form.gambar && !uploadingFoto">Klik untuk unggah thumbnail/poster kegiatan<br><span
+              class="text-[10px]">JPG/PNG &mdash; otomatis dikompres</span></span>
+          <span x-show="uploadingFoto">Memproses gambar&hellip;</span>
+          <span x-show="form.gambar && !uploadingFoto"
+            class="absolute inset-0 bg-navy/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center text-white text-[11px] font-medium">Ganti
+            gambar</span>
+          <input type="file" accept="image/*" class="hidden" @change="onFoto($event, 'gambar')">
+        </label>
         <input x-model="form.nama" type="text" placeholder="Nama Kegiatan" class="neu-input w-full">
         <div class="grid grid-cols-2 gap-4">
           <input x-model="form.tanggal" type="text" placeholder="Tanggal (mis. 28 Agu 2026)" class="neu-input w-full">

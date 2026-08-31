@@ -1037,10 +1037,10 @@ const SEED_PENGUMUMAN = [
 let SAMPLE_PENGUMUMAN = DB.load('pengumuman', SEED_PENGUMUMAN);
 
 const SEED_KEGIATAN = [
-  { id: 1, nama: 'Seminar Nasional Hukum Digital', tanggal: '28 Agu 2026', hari: '28', bulan: 'Agu', waktu: '09.00 – 12.00', lokasi: 'Aula Fakultas Hukum', penyelenggara: 'Program Studi Hukum UMP', deskripsi: 'Membahas transformasi hukum di era digital bersama praktisi dan akademisi nasional.' },
-  { id: 2, nama: 'Kuliah Umum Hukum Adat Papua', tanggal: '30 Agu 2026', hari: '30', bulan: 'Agu', waktu: '13.00 – 15.00', lokasi: 'Ruang Sidang Utama', penyelenggara: 'Program Studi Hukum UMP', deskripsi: 'Menghadirkan tokoh adat dan akademisi hukum adat sebagai narasumber.' },
-  { id: 3, nama: 'Workshop Legal Drafting', tanggal: '05 Sep 2026', hari: '05', bulan: 'Sep', waktu: '09.00 – 16.00', lokasi: 'Laboratorium Hukum', penyelenggara: 'Laboratorium Hukum', deskripsi: 'Pelatihan penyusunan dokumen hukum untuk mahasiswa semester akhir.' },
-  { id: 4, nama: 'Pengabdian Masyarakat: Penyuluhan Hukum', tanggal: '12 Sep 2026', hari: '12', bulan: 'Sep', waktu: '08.00 – selesai', lokasi: 'Kampung Yobe, Jayapura', penyelenggara: 'Tim PKM Prodi Hukum', deskripsi: 'Penyuluhan hukum dasar bagi masyarakat sekitar kampus.' }
+  { id: 1, nama: 'Seminar Nasional Hukum Digital', tanggal: '28 Agu 2026', hari: '28', bulan: 'Agu', waktu: '09.00 – 12.00', lokasi: 'Aula Fakultas Hukum', penyelenggara: 'Program Studi Hukum UMP', deskripsi: 'Membahas transformasi hukum di era digital bersama praktisi dan akademisi nasional.', gambar: 'assets/image/kegiatan/4 (1).png' },
+  { id: 2, nama: 'Kuliah Umum Hukum Adat Papua', tanggal: '30 Agu 2026', hari: '30', bulan: 'Agu', waktu: '13.00 – 15.00', lokasi: 'Ruang Sidang Utama', penyelenggara: 'Program Studi Hukum UMP', deskripsi: 'Menghadirkan tokoh adat dan akademisi hukum adat sebagai narasumber.', gambar: 'assets/image/kegiatan/4 (2).png' },
+  { id: 3, nama: 'Workshop Legal Drafting', tanggal: '05 Sep 2026', hari: '05', bulan: 'Sep', waktu: '09.00 – 16.00', lokasi: 'Laboratorium Hukum', penyelenggara: 'Laboratorium Hukum', deskripsi: 'Pelatihan penyusunan dokumen hukum untuk mahasiswa semester akhir.', gambar: 'assets/image/kegiatan/4 (3).png' },
+  { id: 4, nama: 'Pengabdian Masyarakat: Penyuluhan Hukum', tanggal: '12 Sep 2026', hari: '12', bulan: 'Sep', waktu: '08.00 – selesai', lokasi: 'Kampung Yobe, Jayapura', penyelenggara: 'Tim PKM Prodi Hukum', deskripsi: 'Penyuluhan hukum dasar bagi masyarakat sekitar kampus.', gambar: 'assets/image/kegiatan/4 (4).png' }
 ];
 let SAMPLE_KEGIATAN = DB.load('kegiatan', SEED_KEGIATAN);
 
@@ -1864,10 +1864,17 @@ function kegiatanAdminPage() {
   const base = adminCrudTable({
     rows: SAMPLE_KEGIATAN,
     dbKey: 'kegiatan',
-    emptyForm: { nama: '', tanggal: '', waktu: '', lokasi: '', penyelenggara: '', deskripsi: '' },
+    // Field `gambar` menyimpan thumbnail/poster kegiatan (base64 hasil kompresi
+    // via onFoto) — dipakai bersama oleh admin (kolom Thumbnail & pratinjau modal)
+    // dan halaman publik detail-kegiatan.html supaya poster selalu sinkron.
+    emptyForm: { nama: '', tanggal: '', waktu: '', lokasi: '', penyelenggara: '', deskripsi: '', gambar: '' },
     searchKeys: ['nama', 'lokasi'],
     itemLabel: 'kegiatan ini',
-    validate(f) { if (!f.nama || !f.tanggal) { NeuAlert.error('Nama dan Tanggal kegiatan wajib diisi.'); return false; } return true; }
+    validate(f) {
+      if (!f.nama || !f.tanggal) { NeuAlert.error('Nama dan Tanggal kegiatan wajib diisi.'); return false; }
+      if (!f.gambar) { f.gambar = 'https://placehold.co/900x380/EEF1F5/0B1F3A?text=Poster+Kegiatan'; }
+      return true;
+    }
   });
   return mergeReactive(base, {
     showPeserta: false,
