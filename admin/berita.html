@@ -297,12 +297,12 @@
             const idx = this.berita.findIndex(x => x.id === this.editing);
             const prev = this.berita[idx];
             this.berita[idx] = { ...this.form, id: this.editing, tanggal: this.berita[idx].tanggal, penulis: this.berita[idx].penulis };
-            if(!this.persist()){ this.berita[idx] = prev; return; }
+            if(!this.persist()){ this.berita[idx] = prev; NeuAlert.storageFull(); return; }
             logActivity(`Memperbarui berita: ${this.form.judul}`, '\u{270F}\u{FE0F}');
             NeuAlert.updated('Berita berhasil diperbarui.');
           } else {
             this.berita.unshift({ ...this.form, id: Date.now(), penulis: AUTH.current().nama, tanggal: new Date().toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' }) });
-            if(!this.persist()){ this.berita.shift(); return; }
+            if(!this.persist()){ this.berita.shift(); NeuAlert.storageFull(); return; }
             logActivity(`Menambahkan berita baru: ${this.form.judul}`, '\u{1F4C4}');
             NeuAlert.success('Berita berhasil disimpan.');
           }
@@ -313,14 +313,14 @@
           if(ok){
             const prevList = this.berita;
             this.berita = this.berita.filter(b=>b.id!==item.id);
-            if(!this.persist()){ this.berita = prevList; return; }
+            if(!this.persist()){ this.berita = prevList; NeuAlert.storageFull(); return; }
             logActivity(`Menghapus berita: ${item.judul}`, '\u{1F5D1}\u{FE0F}');
             NeuAlert.deleted('Berita berhasil dihapus.');
           }
         },
         publish(item){
           item.status='Published';
-          if(!this.persist()) return;
+          if(!this.persist()){ NeuAlert.storageFull(); return; }
           logActivity(`Mempublikasikan berita: ${item.judul}`, '\u{2705}');
           NeuAlert.updated('Berita berhasil dipublikasikan.');
         },

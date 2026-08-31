@@ -310,7 +310,7 @@
     save() {
       const prev = SAMPLE_PENGATURAN;
       SAMPLE_PENGATURAN = { ...this.form };
-      if(!DB.save('pengaturan', SAMPLE_PENGATURAN)){ SAMPLE_PENGATURAN = prev; return; }
+      if(!DB.save('pengaturan', SAMPLE_PENGATURAN)){ SAMPLE_PENGATURAN = prev; NeuAlert.storageFull(); return; }
       logActivity('Memperbarui Pengaturan Website & Branding', '\u{2699}\u{FE0F}');
       NeuAlert.updated('Pengaturan & branding berhasil disimpan.');
     },

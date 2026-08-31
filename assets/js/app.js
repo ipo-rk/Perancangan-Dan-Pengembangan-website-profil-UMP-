@@ -260,41 +260,50 @@ const DB = (() => {
     return copy;
   }
 
+  // PENTING: save() HANYA boleh menulis/menghapus key milik modul yang
+  // sedang disimpan (NS + key) itu sendiri. Modul lain (mis. Dosen, Galeri,
+  // Prestasi) TIDAK PERNAH boleh disentuh di sini — sebelumnya, saat
+  // localStorage penuh, kode ini menghapus localStorage key modul LAIN
+  // secara acak untuk memberi ruang. Efeknya: aksi CRUD di satu halaman
+  // admin bisa membuat data di halaman admin lain "hilang" (balik ke data
+  // bawaan) walau admin tidak menyentuh halaman itu sama sekali. Fungsi ini
+  // juga sebelumnya SELALU `return true` walau localStorage sebenarnya gagal
+  // ditulis, sehingga admin melihat notifikasi "berhasil" padahal data tidak
+  // benar-benar tersimpan. Sekarang fungsi ini jujur: mengembalikan `false`
+  // jika localStorage benar-benar gagal ditulis, supaya kode pemanggil bisa
+  // membatalkan perubahan di memori dan memberi tahu admin alasannya.
   function save(key, data) {
-    // 1. Cadangkan ke IndexedDB di latar belakang (kapasitas ratusan MB)
+    // 1. Cadangkan ke IndexedDB di latar belakang (kapasitas ratusan MB).
+    //    Ini murni cadangan tambahan (best-effort) — TIDAK PERNAH menghapus
+    //    apa pun, jadi tidak berisiko menyebabkan kehilangan data modul lain.
     if (typeof IDB !== 'undefined' && IDB.set) {
       IDB.set(NS + key, data).catch(() => { });
     }
 
-    // 2. Simpan ke localStorage
+    const serialized = JSON.stringify(data);
+
+    // 2. Simpan ke localStorage.
     try {
-      localStorage.setItem(NS + key, JSON.stringify(data));
+      localStorage.setItem(NS + key, serialized);
       return true;
     } catch (e) {
+      // 3. localStorage penuh. Satu-satunya pembersihan otomatis yang aman
+      //    dilakukan di sini adalah memangkas LOG internal aplikasi sendiri
+      //    (riwayat aktivitas & statistik kunjungan) yang memang didesain
+      //    untuk dibatasi jumlahnya dan bukan konten yang dikelola admin di
+      //    modul lain — bukan menghapus data CRUD modul lain.
       pruneStorage();
       try {
-        localStorage.setItem(NS + key, JSON.stringify(data));
+        localStorage.setItem(NS + key, serialized);
         return true;
       } catch (e2) {
-        for (let i = 0; i < localStorage.length; i++) {
-          const otherKey = localStorage.key(i);
-          if (otherKey && otherKey.startsWith(NS) && otherKey !== (NS + key)) {
-            try {
-              const otherVal = localStorage.getItem(otherKey);
-              if (otherVal && otherVal.length > 30000) {
-                if (typeof IDB !== 'undefined') IDB.set(otherKey, JSON.parse(otherVal));
-                localStorage.removeItem(otherKey);
-              }
-            } catch (err) { }
-          }
-        }
-        try {
-          localStorage.setItem(NS + key, JSON.stringify(data));
-          return true;
-        } catch (e3) {
-          // Data tetap aman di IndexedDB dan memori Alpine
-          return true;
-        }
+        // Tetap gagal setelah pruning. JANGAN menghapus data key modul lain.
+        // Data yang sedang disimpan hanya ada di memori (Alpine) & cadangan
+        // IndexedDB kali ini — beri tahu pemanggil bahwa localStorage GAGAL
+        // ditulis supaya perubahan di memori dibatalkan (rollback) dan admin
+        // diberi pesan yang jelas, alih-alih diam-diam "mengaku berhasil".
+        console.warn('DB: localStorage penuh, gagal menyimpan "' + key + '".', e2);
+        return false;
       }
     }
   }
@@ -308,7 +317,20 @@ const DB = (() => {
     Object.keys(seeds).forEach(key => reset(key, seeds[key]));
   }
 
-  return { load, save, reset, resetAll, getStorageUsage, NS };
+  // Dipakai oleh tombol "Optimalkan Penyimpanan" di admin/pengaturan.html.
+  // HANYA memangkas log internal (aktivitas & statistik kunjungan) lewat
+  // pruneStorage() yang sama dipakai saat localStorage penuh — TIDAK PERNAH
+  // menyentuh data CRUD modul lain (artikel, berita, galeri, dst.), sesuai
+  // aturan yang sama dengan save(). Mengembalikan jumlah byte yang berhasil
+  // dibebaskan supaya UI bisa menampilkan hasil nyata ke admin.
+  function optimizeStorage() {
+    const before = getStorageUsage().bytes;
+    pruneStorage();
+    const after = getStorageUsage().bytes;
+    return Math.max(0, before - after);
+  }
+
+  return { load, save, reset, resetAll, getStorageUsage, optimizeStorage, NS };
 })();
 
 /* ---- Log aktivitas & notifikasi real-time: dicatat otomatis setiap ada aksi CRUD ---- */
@@ -571,6 +593,12 @@ const NeuAlert = {
   },
   error(msg = 'Terjadi kesalahan. Silakan coba lagi.') {
     return this.base({ icon: 'error', title: 'Gagal', text: msg });
+  },
+  // Dipakai setiap kali DB.save()/persist() gagal (biasanya localStorage
+  // penuh) supaya admin SELALU tahu kenapa perubahannya tidak tersimpan,
+  // alih-alih perubahan dibatalkan diam-diam tanpa penjelasan.
+  storageFull(msg = 'Penyimpanan browser sudah penuh sehingga data tidak dapat disimpan. Perubahan Anda TIDAK jadi disimpan (dibatalkan). Hapus beberapa foto/data lama (mis. di menu Galeri, Berita, atau Kegiatan) untuk mengosongkan ruang, lalu coba lagi.') {
+    return this.base({ icon: 'error', title: 'Penyimpanan Penuh', text: msg });
   },
   async confirmDelete(itemLabel = 'data ini') {
     const res = await this.base({
@@ -1628,7 +1656,7 @@ function adminGaleriPage() {
         if (idx !== -1) {
           const prev = this.foto[idx];
           this.foto[idx] = { ...this.form };
-          if (!this.persist()) { this.foto[idx] = prev; return; }
+          if (!this.persist()) { this.foto[idx] = prev; NeuAlert.storageFull(); return; }
           logActivity('Memperbarui foto: ' + this.form.judul, '\u270F\uFE0F');
           NeuAlert.updated('Foto galeri berhasil diperbarui.');
         }
@@ -1636,7 +1664,7 @@ function adminGaleriPage() {
         const prevList = this.foto;
         const newItem = { id: Date.now(), judul: this.form.judul, album: this.form.album, src: this.form.src };
         this.foto = [newItem, ...this.foto];
-        if (!this.persist()) { this.foto = prevList; return; }
+        if (!this.persist()) { this.foto = prevList; NeuAlert.storageFull(); return; }
         logActivity('Mengunggah foto baru: ' + this.form.judul, '\uD83D\uDDBC\uFE0F');
         NeuAlert.success('Foto berhasil diunggah.');
       }
@@ -1649,7 +1677,7 @@ function adminGaleriPage() {
       if (ok) {
         const prevList = this.foto;
         this.foto = this.foto.filter(f => f.id !== item.id);
-        if (!this.persist()) { this.foto = prevList; return; }
+        if (!this.persist()) { this.foto = prevList; NeuAlert.storageFull(); return; }
         logActivity('Menghapus foto: ' + item.judul, '\uD83D\uDDD1\uFE0F');
         NeuAlert.deleted('Foto berhasil dihapus.');
       }
@@ -1738,13 +1766,13 @@ function adminDokumenTable() {
         const idx = this.rows.findIndex(x => x.id === this.editing);
         const prev = this.rows[idx];
         this.rows[idx] = { ...this.form };
-        if (!this.persist()) { this.rows[idx] = prev; return; }
+        if (!this.persist()) { this.rows[idx] = prev; NeuAlert.storageFull(); return; }
         logActivity('Memperbarui dokumen: ' + this.form.nama, '\u{270F}\u{FE0F}');
         NeuAlert.updated();
       } else {
         this.form.id = Date.now();
         this.rows.unshift({ ...this.form });
-        if (!this.persist()) { this.rows.shift(); return; }
+        if (!this.persist()) { this.rows.shift(); NeuAlert.storageFull(); return; }
         logActivity('Mengunggah dokumen baru: ' + this.form.nama, '\u{1F4C1}');
         NeuAlert.success('Dokumen berhasil diunggah.');
       }
@@ -1755,7 +1783,7 @@ function adminDokumenTable() {
       if (ok) {
         const prevList = this.rows;
         this.rows = this.rows.filter(x => x.id !== row.id);
-        if (!this.persist()) { this.rows = prevList; return; }
+        if (!this.persist()) { this.rows = prevList; NeuAlert.storageFull(); return; }
         logActivity('Menghapus dokumen: ' + row.nama, '\u{1F5D1}\u{FE0F}');
         NeuAlert.deleted();
       }
@@ -1818,14 +1846,14 @@ function adminPenggunaTable(config) {
         // Field password dikosongkan di form -> pertahankan password lama.
         const password = (this.form.password || '').trim() ? this.form.password.trim() : prev.password;
         this.rows[idx] = { ...this.form, password };
-        if (!this.persist()) { this.rows[idx] = prev; return; }
+        if (!this.persist()) { this.rows[idx] = prev; NeuAlert.storageFull(); return; }
         logActivity(`Memperbarui pengguna: ${this.form.nama || ''}`.trim(), '\u{270F}\u{FE0F}');
         NeuAlert.updated();
       } else {
         this.form.id = Date.now();
         this.form.password = this.form.password.trim();
         this.rows.unshift({ ...this.form });
-        if (!this.persist()) { this.rows.shift(); return; }
+        if (!this.persist()) { this.rows.shift(); NeuAlert.storageFull(); return; }
         logActivity(`Menambahkan pengguna baru: ${this.form.nama || ''}`.trim(), '\u{2795}');
         NeuAlert.success();
       }
@@ -1836,7 +1864,7 @@ function adminPenggunaTable(config) {
       if (ok) {
         const prevList = this.rows;
         this.rows = this.rows.filter(x => x.id !== row.id);
-        if (!this.persist()) { this.rows = prevList; return; }
+        if (!this.persist()) { this.rows = prevList; NeuAlert.storageFull(); return; }
         logActivity(`Menghapus pengguna: ${row.nama || ''}`.trim(), '\u{1F5D1}\u{FE0F}');
         NeuAlert.deleted();
       }
@@ -1911,13 +1939,13 @@ function adminCrudTable(config) {
         const idx = this.rows.findIndex(x => x.id === this.editing);
         const prev = this.rows[idx];
         this.rows[idx] = { ...this.form };
-        if (!this.persist()) { this.rows[idx] = prev; return; }
+        if (!this.persist()) { this.rows[idx] = prev; NeuAlert.storageFull(); return; }
         logActivity(`Memperbarui ${label}: ${this.form[config.labelKey || 'nama'] || ''}`.trim(), '\u{270F}\u{FE0F}');
         NeuAlert.updated();
       } else {
         this.form.id = Date.now();
         this.rows.unshift({ ...this.form });
-        if (!this.persist()) { this.rows.shift(); return; }
+        if (!this.persist()) { this.rows.shift(); NeuAlert.storageFull(); return; }
         logActivity(`Menambahkan ${label} baru: ${this.form[config.labelKey || 'nama'] || ''}`.trim(), '\u{2795}');
         NeuAlert.success();
       }
@@ -1929,7 +1957,7 @@ function adminCrudTable(config) {
         const label = config.itemLabel ? config.itemLabel.replace(/ ini$/, '') : 'data';
         const prevList = this.rows;
         this.rows = this.rows.filter(x => x.id !== row.id);
-        if (!this.persist()) { this.rows = prevList; return; }
+        if (!this.persist()) { this.rows = prevList; NeuAlert.storageFull(); return; }
         logActivity(`Menghapus ${label}: ${row[config.labelKey || 'nama'] || ''}`.trim(), '\u{1F5D1}\u{FE0F}');
         NeuAlert.deleted();
       }
@@ -1988,7 +2016,7 @@ function kegiatanAdminPage() {
       SAMPLE_PENDAFTAR = SAMPLE_PENDAFTAR.filter(x => x.id !== p.id);
       if (!DB.save('pendaftar', SAMPLE_PENDAFTAR)) {
         SAMPLE_PENDAFTAR = prev;
-        NeuAlert.error('Gagal menghapus data pendaftar.');
+        NeuAlert.storageFull();
         return;
       }
       logActivity(`Menghapus pendaftar kegiatan "${p.kegiatanNama}": ${p.nama}`, '\u{1F5D1}\u{FE0F}');

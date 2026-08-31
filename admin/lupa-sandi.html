@@ -86,7 +86,11 @@
         }
         users[idx] = { ...users[idx], password: pass };
         SAMPLE_PENGGUNA = users;
-        DB.save('pengguna', users);
+        if (!DB.save('pengguna', users)) {
+          this.loading = false;
+          NeuAlert.storageFull();
+          return;
+        }
         logActivity('Mereset kata sandi akun: ' + users[idx].email, '\u{1F511}');
 
         NeuAlert.base({

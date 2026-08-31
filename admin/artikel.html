@@ -293,7 +293,7 @@
       if(ok){
         const prevList = this.artikel;
         this.artikel = this.artikel.filter(a=>a.id!==item.id);
-        if(!this.persist()){ this.artikel = prevList; return; }
+        if(!this.persist()){ this.artikel = prevList; NeuAlert.storageFull(); return; }
         logActivity(`Menghapus artikel: ${item.judul}`, '\u{1F5D1}\u{FE0F}');
         NeuAlert.deleted('Artikel berhasil dihapus.');
       }
@@ -305,12 +305,12 @@
         const idx = this.artikel.findIndex(x=>x.id===this.editing);
         const prev = this.artikel[idx];
         this.artikel[idx] = { ...this.form, id: this.editing };
-        if(!this.persist()){ this.artikel[idx] = prev; return; }
+        if(!this.persist()){ this.artikel[idx] = prev; NeuAlert.storageFull(); return; }
         logActivity(`Mengedit artikel: ${this.form.judul}`, '\u{270F}\u{FE0F}');
         NeuAlert.updated('Artikel berhasil diperbarui.');
       } else {
         this.artikel.unshift({ id: Date.now(), ...this.form, penulis: this.form.penulis || AUTH.current().nama, tanggal: this.form.tanggal || new Date().toLocaleDateString('id-ID', { day:'2-digit', month:'short', year:'numeric' }) });
-        if(!this.persist()){ this.artikel.shift(); return; }
+        if(!this.persist()){ this.artikel.shift(); NeuAlert.storageFull(); return; }
         logActivity(`Menambahkan artikel baru: ${this.form.judul}`, '\u{1F4C4}');
         NeuAlert.success('Artikel berhasil disimpan.');
       }

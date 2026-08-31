@@ -265,7 +265,7 @@
       if(!this.form.nama){ NeuAlert.error('Nama Program Studi wajib diisi.'); return; }
       const prev = SAMPLE_PROFIL;
       SAMPLE_PROFIL = { ...this.form };
-      if(!DB.save('profil', SAMPLE_PROFIL)){ SAMPLE_PROFIL = prev; return; }
+      if(!DB.save('profil', SAMPLE_PROFIL)){ SAMPLE_PROFIL = prev; NeuAlert.storageFull(); return; }
       logActivity('Memperbarui Profil Program Studi', '\u{1F3DB}\u{FE0F}');
       NeuAlert.updated('Profil Program Studi berhasil diperbarui.');
     }
@@ -363,13 +363,13 @@
         const idx = this.rows.findIndex(x=>x.id===this.editing);
         const prev = this.rows[idx];
         this.rows[idx] = { ...this.form };
-        if(!this.persist()){ this.rows[idx] = prev; return; }
+        if(!this.persist()){ this.rows[idx] = prev; NeuAlert.storageFull(); return; }
         logActivity(`Memperbarui struktur organisasi: ${this.form.nama}`, '\u{270F}\u{FE0F}');
         NeuAlert.updated();
       } else {
         this.form.id = Date.now();
         this.rows.push({ ...this.form });
-        if(!this.persist()){ this.rows.pop(); return; }
+        if(!this.persist()){ this.rows.pop(); NeuAlert.storageFull(); return; }
         logActivity(`Menambahkan struktur organisasi: ${this.form.nama}`, '\u{2795}');
         NeuAlert.success();
       }
@@ -380,7 +380,7 @@
       if(ok){
         const prevList = this.rows;
         this.rows = this.rows.filter(x=>x.id!==r.id);
-        if(!this.persist()){ this.rows = prevList; return; }
+        if(!this.persist()){ this.rows = prevList; NeuAlert.storageFull(); return; }
         logActivity(`Menghapus struktur organisasi: ${r.nama}`, '\u{1F5D1}\u{FE0F}');
         NeuAlert.deleted();
       }

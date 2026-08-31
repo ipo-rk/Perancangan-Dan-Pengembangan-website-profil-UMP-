@@ -296,13 +296,13 @@
             const idx = this.dosen.findIndex(x=>x.id===this.editing);
             const prev = this.dosen[idx];
             this.dosen[idx] = {...this.form};
-            if(!this.persist()){ this.dosen[idx] = prev; return; }
+            if(!this.persist()){ this.dosen[idx] = prev; NeuAlert.storageFull(); return; }
             logActivity(`Memperbarui data dosen: ${this.form.nama}`, '\u{270F}\u{FE0F}');
             NeuAlert.updated('Data dosen berhasil diperbarui.');
           } else {
             this.form.id = Date.now();
             this.dosen.unshift({...this.form});
-            if(!this.persist()){ this.dosen.shift(); return; }
+            if(!this.persist()){ this.dosen.shift(); NeuAlert.storageFull(); return; }
             logActivity(`Menambahkan dosen baru: ${this.form.nama}`, '\u{2795}');
             NeuAlert.success('Data dosen berhasil disimpan.');
           }
@@ -313,7 +313,7 @@
           if(ok){
             const prevList = this.dosen;
             this.dosen = this.dosen.filter(x=>x.id!==d.id);
-            if(!this.persist()){ this.dosen = prevList; return; }
+            if(!this.persist()){ this.dosen = prevList; NeuAlert.storageFull(); return; }
             logActivity(`Menghapus data dosen: ${d.nama}`, '\u{1F5D1}\u{FE0F}');
             NeuAlert.deleted('Data dosen berhasil dihapus.');
           }
