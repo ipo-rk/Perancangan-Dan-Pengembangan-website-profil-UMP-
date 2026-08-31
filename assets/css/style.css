@@ -648,29 +648,126 @@ textarea:focus-visible,
    later (arbitrary widths, -top-9, sm:-right-6, etc.) would be
    silently ignored by that file. These custom classes always work
    regardless of the Tailwind build state. */
+@keyframes hero-logo-float {
+  0%,
+  100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  50% {
+    transform: translateX(-50%) translateY(-0.6rem);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-logo-card {
+    animation: none !important;
+  }
+}
 .hero-logo-card {
   position: absolute;
-  top: -2.75rem;
+  top: -2.85rem;
   left: 50%;
   transform: translateX(-50%);
   z-index: 30;
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: 0;
+  animation: hero-logo-float 4.5s ease-in-out infinite;
+  will-change: transform;
+  width: max-content;
+  max-width: 90%;
 }
 .hero-logo-card img {
-  width: 5rem;
-  height: 5rem;
+  display: block;
+  width: 4.75rem;
+  height: 4.75rem;
   object-fit: contain;
   filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.45));
 }
-@media (min-width: 640px) {
+.hero-logo-card .hero-logo-badge {
+  margin: 0;
+  padding: 0.4rem 0.9rem;
+  border-radius: 0.6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  white-space: nowrap;
+  line-height: 1.1;
+}
+.hero-logo-card .hero-logo-title {
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+}
+.hero-logo-card .hero-logo-subtitle {
+  font-size: 0.6rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  line-height: 1.2;
+  margin-top: 0.2rem;
+  opacity: 0.9;
+}
+
+@media (min-width: 480px) {
   .hero-logo-card {
-    top: -3.25rem;
+    top: -2.65rem;
   }
   .hero-logo-card img {
-    width: 6rem;
-    height: 6rem;
+    width: 5.25rem;
+    height: 5.25rem;
+  }
+  .hero-logo-card .hero-logo-title {
+    font-size: 0.95rem;
+  }
+  .hero-logo-card .hero-logo-subtitle {
+    font-size: 0.65rem;
+  }
+}
+
+@media (min-width: 640px) {
+  .hero-logo-card {
+    top: -3.1rem;
+  }
+  .hero-logo-card img {
+    width: 6.25rem;
+    height: 6.25rem;
+  }
+  .hero-logo-card .hero-logo-badge {
+    padding: 0.5rem 1.1rem;
+  }
+  .hero-logo-card .hero-logo-title {
+    font-size: 1.05rem;
+  }
+  .hero-logo-card .hero-logo-subtitle {
+    font-size: 0.7rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-logo-card {
+    top: -3.75rem;
+  }
+  .hero-logo-card img {
+    width: 8.5rem;
+    height: 8.5rem;
+  }
+  .hero-logo-card .hero-logo-title {
+    font-size: 1.15rem;
+  }
+  .hero-logo-card .hero-logo-subtitle {
+    font-size: 0.75rem;
+  }
+}
+
+@media (min-width: 1280px) {
+  .hero-logo-card {
+    top: -4rem;
+  }
+  .hero-logo-card img {
+    width: 9.5rem;
+    height: 9.5rem;
   }
 }
 
