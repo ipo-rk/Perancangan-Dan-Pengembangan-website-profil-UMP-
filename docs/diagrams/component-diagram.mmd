@@ -1,0 +1,122 @@
+flowchart TB
+    %% ==========================================
+    %% 1. PRESENTATION & UI LAYER
+    %% ==========================================
+    subgraph PRESENTATION["🌐 1. Presentation & Styling Layer (Client Browser)"]
+        subgraph PUB_VIEWS["📄 Public View Components (18 Halaman HTML)"]
+            PUB_PAGES["<b>Public Pages</b><br/>• index.html, profil.html, dosen.html<br/>• kurikulum.html, berita.html, pengumuman.html<br/>• kegiatan.html, artikel.html, prestasi.html<br/>• alumni.html, galeri.html, dokumen.html, kontak.html"]
+            PUB_DETAIL["<b>Detail Views</b><br/>• detail-berita.html, detail-artikel.html<br/>• detail-pengumuman.html, detail-kegiatan.html<br/>• detail-galeri.html"]
+        end
+
+        subgraph ADM_VIEWS["🔐 Admin View Components (18 Halaman HTML)"]
+            ADM_AUTH["<b>Auth Views</b><br/>• login.html, lupa-sandi.html"]
+            ADM_DASH["<b>Dashboard & Config</b><br/>• dashboard.html, pengaturan.html<br/>• profil-prodi.html, aktivitas.html"]
+            ADM_CRUD["<b>CRUD Management Views</b><br/>• berita.html, pengumuman.html, kegiatan.html<br/>• artikel.html, prestasi.html, dosen.html<br/>• kurikulum.html, alumni.html, galeri.html<br/>• dokumen.html, pengguna.html"]
+        end
+
+        subgraph DESIGN_SYSTEM["🎨 Neumorphism Design System"]
+            CSS_TOKENS["<b>style.css</b><br/>• Neumorphic Tokens (--neu-light, --neu-dark)<br/>• Theme Tokens (Light & Dark Mode)<br/>• Component Classes (.neu-raised, .neu-pressed, .neu-btn)"]
+            TW_ENGINE["<b>Tailwind CSS 3.4 & Bootstrap 5.3</b><br/>• tailwind.min.css (Utility Classes)<br/>• Responsive Grid Subsystem"]
+        end
+    end
+
+    %% ==========================================
+    %% 2. CONTROLLER & REACTIVE LOGIC LAYER
+    %% ==========================================
+    subgraph CONTROLLER["⚡ 2. Reactive Controller Layer (Alpine.js Components)"]
+        HEADER_CTRL["<b>siteHeader & themeStore</b><br/>• Dark/Light Mode Switcher<br/>• Mobile Drawer Navigation<br/>• syncThemeColorMeta()"]
+        SEARCH_CTRL["<b>globalSearch Controller</b><br/>• Realtime Query Filter<br/>• getSearchIndex() Connector"]
+        DETAIL_CTRL["<b>Public Detail Controllers</b><br/>• detailBeritaPage(), detailKegiatanPage()<br/>• daftarKegiatan() & Form Pendaftaran<br/>• contactForm() & detailContentPage()"]
+        
+        ADM_SHELL_CTRL["<b>adminShell Controller</b><br/>• Sesi State & Logout Trigger<br/>• Sidebar Responsive Toggle<br/>• Notifikasi Polling & Badge Counter"]
+        ADM_CRUD_CTRL["<b>adminCrudTable & Data Controllers</b><br/>• Generic CRUD Manager (rows, filter, paginate)<br/>• Image Compression Trigger<br/>• adminPenggunaTable() & adminDokumenTable()"]
+        ALERT_WRAPPER["<b>NeuAlert (SweetAlert2 Wrapper)</b><br/>• Modal Konfirmasi Hapus & Dialog Sukses<br/>• Alert Quota Storage Penuh (storageFull)"]
+    end
+
+    %% ==========================================
+    %% 3. BUSINESS LOGIC & PERSISTENCE ENGINE
+    %% ==========================================
+    subgraph CORE_ENGINE["⚙️ 3. Core Logic & Persistence Engine (assets/js/app.js)"]
+        subgraph AUTH_MODULE["🔑 Authentication & Access Control Subsystem"]
+            AUTH_CORE["<b>AUTH Engine</b><br/>• AUTH.login(matchedUser)<br/>• AUTH.logout()<br/>• AUTH.current() & AUTH.isLoggedIn()<br/>• AUTH.guard(requiredRole)"]
+            RBAC_RULES["<b>Role-Based Access Control (RBAC)</b><br/>• Super Admin: Akses Penuh<br/>• Editor: Kelola Konten & Publikasi<br/>• Operator: Entri Data Terbatas"]
+        end
+
+        subgraph DB_ENGINE["🗄️ Database Management Subsystem (DB Engine)"]
+            DB_CORE["<b>DB Interface</b><br/>• DB.load(entityKey, seedFallback)<br/>• DB.save(entityKey, payload)<br/>• DB.reset(entityKey) & DB.resetAll()<br/>• DB.optimizeStorage()"]
+            PRUNE_SYS["<b>Storage Optimization & Pruning</b><br/>• QuotaExceededError Handler<br/>• pruneStorage() (Pangkas Pageview & Log Lama)<br/>• compressImageFile() (Otomatis Kompres Gambar)"]
+            AUDIT_SYS["<b>Audit Trail & Activity Logger</b><br/>• logActivity(aksi, icon)<br/>• logPublicEvent(aksi, icon)"]
+        end
+
+        subgraph IDB_MODULE["📦 Unlimited Media Backing Store (IDB Engine)"]
+            IDB_CORE["<b>IndexedDB Connector (ProdiHukumDB)</b><br/>• IDB.get(key)<br/>• IDB.set(key, val)<br/>• IDB.clear()"]
+        end
+
+        subgraph SEED_REPO["🌱 Seed Fixtures Repository"]
+            SEED_DATA["<b>Default Fixtures (16 Entitas)</b><br/>• SEED_BERITA, SEED_DOSEN, SEED_PENGUMUMAN<br/>• SEED_KEGIATAN, SEED_KURIKULUM, SEED_ALUMNI<br/>• SEED_PENGGUNA, SEED_PROFIL, SEED_PENGATURAN, dll."]
+        end
+    end
+
+    %% ==========================================
+    %% 4. STORAGE & EXTERNAL SERVICES LAYER
+    %% ==========================================
+    subgraph STORAGE_EXT["💾 4. Client Storage & External Integrations"]
+        subgraph BROWSER_STORAGE["💽 Local Client Storage Subsystem"]
+            LOCAL_STORAGE[("<b>Web Storage API (localStorage)</b><br/>• prodihukum_db_v1_&lt;entity&gt;<br/>• prodihukum_admin_session<br/>• prodihukum_pageviews_v1<br/>• theme (light/dark)")]
+            INDEXED_DB[("<b>IndexedDB Storage</b><br/>• DB Name: ProdiHukumDB<br/>• ObjectStore: entities<br/>• Unlimited Media & Blob Storage")]
+        end
+
+        subgraph EXT_SERVICES["☁️ External CDN & Web Services"]
+            MAPS_API["<b>Google Maps Embed Service</b><br/>• Iframe Peta Lokasi Kampus / Kegiatan"]
+            CDN_FONTS["<b>Google Fonts API</b><br/>• Inter (Sans-serif) & Poppins (Display)"]
+            CDN_LIBS["<b>JavaScript CDN Providers</b><br/>• Alpine.js 3.14.8, SweetAlert2 v11, Bootstrap 5.3.3"]
+        end
+    end
+
+    %% ==========================================
+    %% INTER-COMPONENT RELATIONSHIPS & DEPENDENCIES
+    %% ==========================================
+    
+    %% Styling Dependencies
+    PUB_VIEWS -.-> DESIGN_SYSTEM
+    ADM_VIEWS -.-> DESIGN_SYSTEM
+    DESIGN_SYSTEM -.-> CDN_FONTS
+    DESIGN_SYSTEM -.-> CDN_LIBS
+
+    %% View -> Controller Bindings
+    PUB_PAGES --> HEADER_CTRL
+    PUB_PAGES --> SEARCH_CTRL
+    PUB_DETAIL --> DETAIL_CTRL
+    PUB_PAGES -. "Embeds iframe" .-> MAPS_API
+    
+    ADM_AUTH --> AUTH_CORE
+    ADM_DASH --> ADM_SHELL_CTRL
+    ADM_CRUD --> ADM_CRUD_CTRL
+    ADM_CRUD_CTRL --> ALERT_WRAPPER
+    ADM_SHELL_CTRL --> ALERT_WRAPPER
+
+    %% Controller -> Core Logic Dependencies
+    HEADER_CTRL -- "Write theme preference" --> LOCAL_STORAGE
+    SEARCH_CTRL -- "Request aggregate index" --> DB_CORE
+    DETAIL_CTRL -- "Load/Save Data (Pendaftar, dll.)" --> DB_CORE
+    DETAIL_CTRL -- "Trigger logPublicEvent()" --> AUDIT_SYS
+
+    ADM_SHELL_CTRL -- "Check session status" --> AUTH_CORE
+    ADM_CRUD_CTRL -- "Read / Write Data" --> DB_CORE
+    ADM_CRUD_CTRL -- "Trigger logActivity()" --> AUDIT_SYS
+    ADM_CRUD_CTRL -- "Request image compression" --> PRUNE_SYS
+    ADM_AUTH -- "Submit credentials" --> AUTH_CORE
+
+    %% Core Logic Internal Interactions
+    AUTH_CORE -- "Verify role permissions" --> RBAC_RULES
+    AUTH_CORE -- "Read user list ('pengguna')" --> DB_CORE
+    AUTH_CORE -- "Write/Delete prodihukum_admin_session" --> LOCAL_STORAGE
+    
+    DB_CORE -- "Initial load if store empty" --> SEED_DATA
+    DB_CORE -- "Auto-invoke on QuotaExceeded" --> PRUNE_SYS
+    DB_CORE -- "Primary synchronous I/O (prodihukum_db_v1_*)" --> LOCAL_STORAGE
+    DB_CORE -- "Async backup storage" --> IDB_CORE
+    IDB_CORE -- "Store heavy media / base64" --> INDEXED_DB
+
+    AUDIT_SYS -- "Persist audit trail ('aktivitas' & 'notifikasi')" --> DB_CORE
+    PRUNE_SYS -- "Prune old logs & pageviews" --> LOCAL_STORAGE

@@ -1,0 +1,58 @@
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0">
+  <diagram id="deployment_diagram___client___cdn" name="Deployment Diagram - Client &amp; CDN">
+    <mxGraphModel dx="1071" dy="678" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2000" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="node_client" parent="1" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=15;spacingTop=10;fillColor=#e0f2fe;strokeColor=#0284c7;strokeWidth=2;fontStyle=1;fontSize=12;dashed=1;" value="«device»&lt;br&gt;&lt;b&gt;User / Admin Client Workstation&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;(Chrome, Edge, Safari, Firefox)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="400" width="420" x="40" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="art_browser" parent="1" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=8;fillColor=#ffffff;strokeColor=#0284c7;strokeWidth=1.5;" value="«execution environment»&lt;br&gt;&lt;b&gt;Modern Web Browser Engine&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;(JavaScript V8 / SpiderMonkey)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="295" width="360" x="70" y="95" as="geometry" />
+        </mxCell>
+        <mxCell id="art_dom" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#475569;strokeWidth=1.5;shadow=1;" value="&lt;b&gt;HTML5 DOM &amp;amp; Tailwind CSS Engine&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;(36 Halaman Web Profil &amp;amp; Admin)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="55" width="320" x="90" y="145" as="geometry" />
+        </mxCell>
+        <mxCell id="art_runtime" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;strokeWidth=1.5;shadow=1;" value="&lt;b&gt;Alpine.js 3.14.8 &amp;amp; App Core (app.js)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;(Reactivity, AUTH guard, DB Engine)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="55" width="320" x="90" y="215" as="geometry" />
+        </mxCell>
+        <mxCell id="art_store_client" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dcfce7;strokeColor=#16a34a;strokeWidth=1.5;shadow=1;" value="&lt;b&gt;LocalStorage SSOT &amp;amp; IndexedDB Mirror&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;(17 prodihukum_* collections &amp;amp; base64 media)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="85" width="320" x="90" y="285" as="geometry" />
+        </mxCell>
+        <mxCell id="node_server" parent="1" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=15;spacingTop=10;fillColor=#fef3c7;strokeColor=#d97706;strokeWidth=2;fontStyle=1;fontSize=12;dashed=1;" value="«device / cloud»&lt;br&gt;&lt;b&gt;Static Web Hosting Server&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;(GitHub Pages / Cloudflare Pages / Vercel)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="400" width="380" x="580" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="art_static" parent="1" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=10;spacingTop=8;fillColor=#ffffff;strokeColor=#d97706;strokeWidth=1.5;" value="«execution environment»&lt;br&gt;&lt;b&gt;Static HTTP Server (HTTPS/2)&lt;/b&gt;" vertex="1">
+          <mxGeometry height="295" width="320" x="610" y="95" as="geometry" />
+        </mxCell>
+        <mxCell id="art_html_dist" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#475569;strokeWidth=1.5;shadow=1;" value="&lt;b&gt;Static Web Assets (36 *.html)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;(/index.html, /profil.html, /admin/*)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="280" x="630" y="150" as="geometry" />
+        </mxCell>
+        <mxCell id="art_css_js" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#475569;strokeWidth=1.5;shadow=1;" value="&lt;b&gt;Scripts &amp;amp; Stylesheets&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;(/assets/css/style.css, /assets/js/app.js)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="280" x="630" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="art_media" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#475569;strokeWidth=1.5;shadow=1;" value="&lt;b&gt;Image &amp;amp; Icon Assets&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;(/assets/image/*, logo, favicon)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="60" width="280" x="630" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="node_cloud" parent="1" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=15;spacingTop=10;fillColor=#fee2e2;strokeColor=#dc2626;strokeWidth=2;fontStyle=1;fontSize=12;dashed=1;" value="«cloud services»&lt;br&gt;&lt;b&gt;Third-Party CDN &amp;amp; Web APIs&lt;/b&gt;" vertex="1">
+          <mxGeometry height="400" width="380" x="1080" y="20" as="geometry" />
+        </mxCell>
+        <mxCell id="art_cdn_libs" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dc2626;strokeWidth=1.5;shadow=1;" value="&lt;b&gt;External JavaScript CDN&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;(Alpine.js 3.14.8, SweetAlert2 v11, Bootstrap)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="65" width="320" x="1110" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="art_cdn_fonts" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dc2626;strokeWidth=1.5;shadow=1;" value="&lt;b&gt;Google Fonts &amp;amp; FontAwesome CDN&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;(Inter, Poppins, FontAwesome 6.5.1)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="65" width="320" x="1110" y="210" as="geometry" />
+        </mxCell>
+        <mxCell id="art_gmaps" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dc2626;strokeWidth=1.5;shadow=1;" value="&lt;b&gt;Google Maps Embed API&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;(Iframe Peta Lokasi Kampus UMP)&lt;/font&gt;" vertex="1">
+          <mxGeometry height="65" width="320" x="1110" y="300" as="geometry" />
+        </mxCell>
+        <mxCell id="net_1" edge="1" parent="1" source="node_client" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#16a34a;strokeWidth=2.5;fontStyle=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="node_server" value="«protocol»&lt;br&gt;&lt;b&gt;HTTPS / HTTP/2&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;Zero Backend Architecture&lt;/font&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="net_2" edge="1" parent="1" source="node_server" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#dc2626;strokeWidth=2;dashed=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;" target="node_cloud" value="«protocol»&lt;br&gt;&lt;b&gt;Async CDN Request&lt;/b&gt;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

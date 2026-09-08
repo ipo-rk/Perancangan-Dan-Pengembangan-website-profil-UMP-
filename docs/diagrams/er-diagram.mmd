@@ -1,0 +1,211 @@
+erDiagram
+    KEGIATAN ||--o{ PENDAFTAR : "memiliki pendaftar (kegiatanId)"
+    KEGIATAN ||--o{ GALERI : "dokumentasi kegiatan"
+    PENGGUNA ||--o{ AKTIVITAS : "mencatat log aktivitas (user)"
+    PENGGUNA ||--o{ NOTIFIKASI : "menerima notifikasi"
+    PENGGUNA ||--o{ BERITA : "menerbitkan warta (penulis)"
+    PENGGUNA ||--o{ ARTIKEL : "membuat publikasi (penulis)"
+    PENGGUNA ||--o{ PENGUMUMAN : "merilis pengumuman"
+    PENGGUNA ||--o{ DOKUMEN : "mengunggah dokumen"
+    PROFIL ||--|{ STRUKTUR : "memiliki struktur organisasi"
+    DOSEN ||--o| STRUKTUR : "penugasan jabatan struktural"
+    DOSEN ||--o{ KURIKULUM : "dosen pengampu matakuliah"
+    DOSEN ||--o{ PRESTASI : "penghargaan dosen"
+    ALUMNI ||--o{ PRESTASI : "rekam jejak prestasi"
+    PROFIL ||--|| PENGATURAN : "konfigurasi situs & prodi"
+    PROFIL ||--|{ DOKUMEN : "dokumen SK & akreditasi"
+    PROFIL ||--|{ KURIKULUM : "struktur kurikulum prodi"
+
+    BERITA {
+        int id PK
+        string slug
+        string judul
+        string kategori
+        string tanggal
+        string penulis FK "Mereferensi PENGGUNA.nama"
+        string excerpt
+        string konten
+        string status "Draft | Review | Published"
+        bool featured
+        string gambar "Path / Base64"
+    }
+
+    DOSEN {
+        int id PK
+        string nama
+        string jabatan
+        string keahlian
+        string pendidikan
+        string email
+        string nidn
+        string profil
+        string status "Aktif | Cuti | Tugas Belajar"
+        string foto "Path / Base64"
+    }
+
+    DOKUMEN {
+        int id PK
+        string nama
+        string kategori "Kurikulum | Panduan | SK | Formulir"
+        string format "PDF | DOCX | XLS"
+        string ukuran
+        int tahun
+        string fileUrl
+        int downloads
+    }
+
+    GALERI {
+        int id PK
+        string judul
+        string album "Seminar | Kuliah Umum | Praktikum | Wisuda | dll"
+        string src "Path / Base64"
+        string tanggal
+    }
+
+    PENGUMUMAN {
+        int id PK
+        string judul
+        string status "Penting | Baru | Aktif | Berakhir"
+        string badge "badge-important | badge-new | badge-active"
+        string tanggal
+        string isi
+        string lampiran
+    }
+
+    KEGIATAN {
+        int id PK
+        string nama
+        string tanggal
+        string hari
+        string bulan
+        string waktu
+        string lokasi
+        string penyelenggara
+        string deskripsi
+        string gambar "Path / Base64"
+    }
+
+    PENDAFTAR {
+        int id PK
+        int kegiatanId FK "Mereferensi KEGIATAN.id"
+        string kegiatanNama
+        string nama
+        string email
+        string whatsapp
+        string instansi
+        string waktuDaftar
+    }
+
+    ARTIKEL {
+        int id PK
+        string judul
+        string penulis FK "Mereferensi PENGGUNA / DOSEN"
+        string kategori "Hukum Pidana | Tata Negara | Adat | Bisnis"
+        string tanggal
+        string isi
+        string referensi
+        string tags
+        string status "Draft | Review | Published"
+        string thumbnail "Path / Base64"
+    }
+
+    PRESTASI {
+        int id PK
+        string nama
+        string kategori "Mahasiswa | Dosen | Alumni | Program Studi"
+        string tingkat "Provinsi | Regional | Nasional | Internasional"
+        string tahun
+        string foto "Path / Base64"
+    }
+
+    KURIKULUM {
+        int id PK
+        string kode
+        string nama
+        int sks
+        string jenis "Wajib | Pilihan"
+        int semester
+        string silabusUrl
+        string deskripsi
+    }
+
+    ALUMNI {
+        int id PK
+        string nama
+        string angkatan
+        string pekerjaan
+        string instansi
+        string kategori "Bekerja | Studi Lanjut | Wirausaha"
+        string email
+        string linkedin
+        string status "Terverifikasi | Menunggu"
+        string foto "Path / Base64"
+    }
+
+    PENGGUNA {
+        int id PK
+        string nama
+        string email
+        string password
+        string role "Super Admin | Editor | Operator"
+        string status "Aktif | Nonaktif"
+    }
+
+    AKTIVITAS {
+        int id PK
+        string user FK "Mereferensi PENGGUNA.nama"
+        string aksi
+        string waktu
+        string tanggalIso
+        string icon
+    }
+
+    NOTIFIKASI {
+        int id PK
+        string judul
+        string pesan
+        string waktu
+        bool read
+        string icon
+    }
+
+    PROFIL {
+        string nama
+        string kode
+        string fakultas
+        string universitas
+        string akreditasi
+        string deskripsi
+        string sejarah
+        string visi
+        string misi
+        string tujuan
+        string lulusan
+    }
+
+    STRUKTUR {
+        int id PK
+        string nama
+        string jabatan
+        string foto
+    }
+
+    PENGATURAN {
+        string namaWebsite
+        string deskripsi
+        string logo
+        string favicon
+        string theme
+        string primaryColor
+        bool darkMode
+        string metaTitle
+        string metaDesc
+        string keywords
+        string email
+        string telepon
+        string alamat
+        string mapEmbed
+        string mapLink
+        string koordinat
+        int mahasiswaAktif
+    }

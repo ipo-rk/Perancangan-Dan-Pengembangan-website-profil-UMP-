@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mxfile host="app.diagrams.net" modified="2026-09-08T08:55:34.180Z" agent="Mozilla/5.0" version="21.0.0" type="device">
+  <diagram id="sequence_diagram___pendaftaran___ssot" name="Sequence Diagram - Pendaftaran & SSOT">
+    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2000" pageHeight="1400" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <!-- Lifelines (Actors / Objects) -->
+        <mxCell id="actor_user" value="&lt;b&gt;Pengunjung / Admin&lt;/b&gt;" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#e0f2fe;strokeColor=#0284c7;strokeWidth=2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="40" width="140" height="780" as="geometry" />
+        </mxCell>
+        <mxCell id="page_ui" value="&lt;b&gt;Web Browser View&lt;/b&gt;" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#f8fafc;strokeColor=#475569;strokeWidth=2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="240" y="40" width="140" height="780" as="geometry" />
+        </mxCell>
+        <mxCell id="app_alpine" value="&lt;b&gt;Alpine.js Controller&lt;/b&gt;" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#fef3c7;strokeColor=#d97706;strokeWidth=2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="440" y="40" width="140" height="780" as="geometry" />
+        </mxCell>
+        <mxCell id="app_auth" value="&lt;b&gt;AUTH Module&lt;/b&gt;" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#fee2e2;strokeColor=#dc2626;strokeWidth=2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="640" y="40" width="140" height="780" as="geometry" />
+        </mxCell>
+        <mxCell id="app_db" value="&lt;b&gt;DB Engine (app.js)&lt;/b&gt;" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#fef3c7;strokeColor=#d97706;strokeWidth=2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="840" y="40" width="140" height="780" as="geometry" />
+        </mxCell>
+        <mxCell id="storage_db" value="&lt;b&gt;LocalStorage SSOT&lt;/b&gt;" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#dcfce7;strokeColor=#16a34a;strokeWidth=2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1040" y="40" width="150" height="780" as="geometry" />
+        </mxCell>
+        <mxCell id="alert_ui" value="&lt;b&gt;NeuAlert (SweetAlert)&lt;/b&gt;" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=0;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#f1f5f9;strokeColor=#64748b;strokeWidth=2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="1260" y="40" width="140" height="780" as="geometry" />
+        </mxCell>
+
+        <!-- Scenario 1: Pendaftaran Kegiatan -->
+        <mxCell id="box_scen1" value="&lt;b&gt;SKENARIO 1: Pendaftaran Kegiatan Publik&lt;/b&gt;" style="shape=rect;fillColor=#e0f2fe;strokeColor=#0284c7;opacity=20;verticalAlign=top;align=left;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="110" width="1380" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="m1" value="1. Akses detail-kegiatan.html?id=1" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#0284c7;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="110" y="140" as="sourcePoint" />
+            <mxPoint x="310" y="140" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m2" value="2. DB.load(&apos;kegiatan&apos;)" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#475569;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="510" y="170" as="sourcePoint" />
+            <mxPoint x="910" y="170" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m3" value="3. getItem(&apos;prodihukum_db_v1_kegiatan&apos;)" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#16a34a;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="910" y="200" as="sourcePoint" />
+            <mxPoint x="1115" y="200" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m4" value="4. Submit Form Pendaftaran" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#0284c7;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="110" y="240" as="sourcePoint" />
+            <mxPoint x="510" y="240" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m5" value="5. DB.save(&apos;pendaftar&apos;, payload)" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#d97706;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="510" y="270" as="sourcePoint" />
+            <mxPoint x="910" y="270" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m6" value="6. NeuAlert.success(&apos;Pendaftaran Berhasil&apos;)" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#16a34a;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="510" y="310" as="sourcePoint" />
+            <mxPoint x="1330" y="310" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Scenario 2: Autentikasi & Guard RBAC -->
+        <mxCell id="box_scen2" value="&lt;b&gt;SKENARIO 2: Autentikasi Login &amp;amp; Guard RBAC Admin&lt;/b&gt;" style="shape=rect;fillColor=#fef3c7;strokeColor=#d97706;opacity=20;verticalAlign=top;align=left;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="370" width="1380" height="230" as="geometry" />
+        </mxCell>
+        <mxCell id="m7" value="7. Submit Kredensial (email, password)" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#d97706;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="110" y="400" as="sourcePoint" />
+            <mxPoint x="710" y="400" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m8" value="8. AUTH.login() &amp;amp; Verifikasi Kredensial" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#dc2626;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="710" y="430" as="sourcePoint" />
+            <mxPoint x="910" y="430" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m9" value="9. setItem(&apos;prodihukum_admin_session&apos;)" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#16a34a;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="710" y="460" as="sourcePoint" />
+            <mxPoint x="1115" y="460" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m10" value="10. Akses Modul Admin (AUTH.guard())" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#0284c7;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="110" y="500" as="sourcePoint" />
+            <mxPoint x="710" y="500" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m11" value="11. Cek Hak Akses Role (Super Admin / Editor / Operator)" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#dc2626;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="710" y="530" as="sourcePoint" />
+            <mxPoint x="310" y="530" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m12" value="12. Access Granted -> Render Dashboard" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#16a34a;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="310" y="570" as="sourcePoint" />
+            <mxPoint x="110" y="570" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Scenario 3: CRUD & Pruning -->
+        <mxCell id="box_scen3" value="&lt;b&gt;SKENARIO 3: Simpan Data CRUD &amp;amp; Sinkronisasi SSOT&lt;/b&gt;" style="shape=rect;fillColor=#dcfce7;strokeColor=#16a34a;opacity=20;verticalAlign=top;align=left;spacingLeft=10;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="30" y="630" width="1380" height="170" as="geometry" />
+        </mxCell>
+        <mxCell id="m13" value="13. Submit Form CRUD (Upload/Edit Data)" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#d97706;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="110" y="660" as="sourcePoint" />
+            <mxPoint x="510" y="660" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m14" value="14. DB.save(entity, payload)" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#d97706;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="510" y="690" as="sourcePoint" />
+            <mxPoint x="910" y="690" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m15" value="15. setItem(&apos;prodihukum_db_v1_*&apos;) &amp;amp; logActivity()" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#16a34a;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="910" y="720" as="sourcePoint" />
+            <mxPoint x="1115" y="720" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="m16" value="16. NeuAlert.success(&apos;Data Berhasil Disimpan&apos;)" style="edgeStyle=orthogonalEdgeStyle;html=1;strokeColor=#16a34a;strokeWidth=1.5;" edge="1" parent="1">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="510" y="760" as="sourcePoint" />
+            <mxPoint x="1330" y="760" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

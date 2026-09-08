@@ -1,0 +1,104 @@
+sequenceDiagram
+    autonumber
+    actor User as Pengunjung Publik / Admin
+    participant UI as Web Browser View
+    participant Alpine as Alpine.js Controller
+    participant AUTH as AUTH Module
+    participant DB as DB Engine (app.js)
+    participant LS as LocalStorage (prodihukum_db_v1_*)
+    participant IDB as IndexedDB (ProdiHukumDB)
+    participant Alert as NeuAlert (SweetAlert2)
+
+    %% ----------------------------------------------------
+    %% SKENARIO 1: PENDAFTARAN KEGIATAN OLEH PUBLIK
+    %% ----------------------------------------------------
+    rect rgb(240, 248, 255)
+        Note over User, Alert: SKENARIO 1: Pendaftaran Kegiatan Akademik (Publik)
+        User->>UI: Akses detail-kegiatan.html?id=1
+        UI->>Alpine: Inisialisasi detailKegiatanPage()
+        Alpine->>DB: DB.load('kegiatan') & DB.load('pendaftar')
+        DB->>LS: getItem('prodihukum_db_v1_kegiatan')
+        LS-->>DB: Data Koleksi Kegiatan
+        DB-->>Alpine: Objek Detail Kegiatan (id: 1)
+        Alpine-->>UI: Render Detail & Form Pendaftaran
+
+        User->>UI: Input Formulir & Submit
+        UI->>Alpine: Trigger daftarKegiatan()
+        Alpine->>Alpine: Validasi Duplikasi Email pada Kegiatan Ini
+        alt Email Sudah Terdaftar
+            Alpine->>Alert: NeuAlert.error('Email sudah terdaftar')
+            Alert-->>User: Tampilkan Modal Peringatan
+        else Validasi Berhasil
+            Alpine->>DB: DB.save('pendaftar', dataPendaftar)
+            DB->>LS: setItem('prodihukum_db_v1_pendaftar', JSON)
+            Alpine->>DB: logPublicEvent('Pendaftaran Baru...', '📝')
+            DB->>LS: setItem('prodihukum_db_v1_aktivitas', JSON)
+            Alpine->>Alert: NeuAlert.success('Pendaftaran Berhasil')
+            Alert-->>User: Tampilkan Modal Sukses
+        end
+    end
+
+    %% ----------------------------------------------------
+    %% SKENARIO 2: AUTENTIKASI & GUARD RBAC ADMIN
+    %% ----------------------------------------------------
+    rect rgb(255, 250, 240)
+        Note over User, Alert: SKENARIO 2: Autentikasi Login & Guard RBAC Admin
+        User->>UI: Akses admin/login.html & Submit Kredensial
+        UI->>AUTH: AUTH.login({ email, password })
+        AUTH->>DB: DB.load('pengguna')
+        DB->>LS: getItem('prodihukum_db_v1_pengguna')
+        LS-->>DB: Data Akun Admin
+        DB-->>AUTH: List Akun
+        AUTH->>AUTH: Verifikasi Email, Status, & Password
+        alt Kredensial Tidak Cocok
+            AUTH-->>UI: false
+            UI->>Alert: NeuAlert.error('Kredensial tidak valid')
+        else Kredensial Cocok
+            AUTH->>LS: setItem('prodihukum_admin_session', Sesi)
+            AUTH-->>UI: true
+            UI->>Alert: NeuAlert.success('Login Berhasil')
+            UI-->>User: Redirect ke admin/dashboard.html
+        end
+
+        User->>UI: Navigasi ke admin/pengguna.html (Khusus Super Admin)
+        UI->>AUTH: AUTH.guard('Super Admin')
+        AUTH->>LS: getItem('prodihukum_admin_session')
+        alt Sesi Tidak Memenuhi Syarat
+            AUTH-->>UI: Access Denied
+            UI-->>User: Redirect ke dashboard.html / login.html
+        else Sesi Super Admin Valid
+            AUTH-->>UI: Access Granted
+            UI-->>User: Tampilkan Antarmuka Pengguna
+        end
+    end
+
+    %% ----------------------------------------------------
+    %% SKENARIO 3: CRUD & AUTO-PRUNING STORAGE
+    %% ----------------------------------------------------
+    rect rgb(245, 255, 250)
+        Note over User, Alert: SKENARIO 3: Simpan Data CRUD & Fallback Auto-Pruning
+        User->>UI: Submit Form CRUD (Upload Gambar)
+        UI->>Alpine: adminCrudTable.saveForm()
+        Alpine->>DB: DB.save(entity, newArray)
+        DB->>LS: setItem('prodihukum_db_v1_' + entity, payload)
+        alt Normal (Kapasitas Cukup)
+            LS-->>DB: Sukses
+            DB->>IDB: set(entity, payload) [Cadangan Asinkron]
+            DB-->>Alpine: true
+            Alpine->>Alert: NeuAlert.success('Data tersimpan')
+        else Kuota Penuh (QuotaExceededError)
+            LS-->>DB: Error Kuota
+            Note over DB: Jalankan pruneStorage():<br/>Hapus log & pageview lama
+            DB->>LS: Pangkas key internal
+            DB->>LS: Retry setItem(...)
+            alt Retry Berhasil
+                DB->>IDB: set(entity, payload)
+                DB-->>Alpine: true
+                Alpine->>Alert: NeuAlert.success('Data tersimpan setelah optimasi ruang')
+            else Tetap Gagal
+                DB-->>Alpine: false (Rollback State)
+                Alpine->>Alert: NeuAlert.storageFull()
+            end
+        end
+    end
+

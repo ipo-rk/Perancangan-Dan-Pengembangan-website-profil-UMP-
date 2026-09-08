@@ -1,0 +1,81 @@
+flowchart TB
+    subgraph ENTITAS["👥 Entitas Eksternal"]
+        P["👤 Pengunjung Publik"]
+        A["🔐 Admin (Super Admin / Editor / Operator)"]
+    end
+
+    subgraph PROSES["⚙️ Proses Sistem (Level 1)"]
+        P1["1.0<br/>Manajemen Tampilan Konten Publik"]
+        P2["2.0<br/>Pencarian Global Realtime"]
+        P3["3.0<br/>Pendaftaran Kegiatan Akademik"]
+        P4["4.0<br/>Pengiriman Formulir Kontak"]
+        P5["5.0<br/>Autentikasi & Guard RBAC"]
+        P6["6.0<br/>Manajemen Konten CRUD (11 Modul)"]
+        P7["7.0<br/>Manajemen Akun Pengguna & Peran"]
+        P8["8.0<br/>Pencatatan Audit Trail & Notifikasi"]
+        P9["9.0<br/>Pengaturan Situs & Backup / Restore"]
+        P10["10.0<br/>Agregasi Statistik & Tren Dashboard"]
+    end
+
+    subgraph DATASTORES["🗄️ Data Store (localStorage & IndexedDB)"]
+        DS1[("D1 · berita")]
+        DS2[("D2 · dosen")]
+        DS3[("D3 · dokumen")]
+        DS4[("D4 · galeri")]
+        DS5[("D5 · pengumuman")]
+        DS6[("D6 · kegiatan")]
+        DS7[("D7 · pendaftar")]
+        DS8[("D8 · artikel")]
+        DS9[("D9 · prestasi")]
+        DS10[("D10 · kurikulum")]
+        DS11[("D11 · alumni")]
+        DS12[("D12 · pengguna")]
+        DS13[("D13 · aktivitas")]
+        DS14[("D14 · notifikasi")]
+        DS15[("D15 · profil & struktur")]
+        DS16[("D16 · pengaturan")]
+        DSPV[("PV · prodihukum_pageviews_v1")]
+    end
+
+    %% Aliran Pengunjung
+    P -- "Akses Halaman & Filter Kategori" --> P1
+    P1 -- "Read Data" --> DS1 & DS2 & DS3 & DS4 & DS5 & DS6 & DS8 & DS9 & DS10 & DS11 & DS15 & DS16
+    P1 -- "Write Hit (trackPageView)" --> DSPV
+    P1 -- "Render Halaman / Detail" --> P
+
+    P -- "Input Kueri Pencarian" --> P2
+    P2 -- "Read Index Gabungan" --> DS1 & DS2 & DS3 & DS5 & DS6 & DS8 & DS9 & DS10 & DS11
+    P2 -- "Daftar Hasil Pencarian" --> P
+
+    P -- "Submit Data Pendaftar" --> P3
+    P3 -- "Write Data Peserta" --> DS7
+    P3 -- "Trigger Log Publik" --> P8
+    P3 -- "Konfirmasi Sukses" --> P
+
+    P -- "Submit Pesan" --> P4
+    P4 -- "Validasi & Feedback" --> P
+
+    %% Aliran Admin
+    A -- "Input Email & Password" --> P5
+    P5 -- "Read Kredensial" --> DS12
+    P5 -- "Set Sesi Admin & Guard" --> A
+
+    A -- "Create / Update / Delete" --> P6
+    P6 -- "Write Data Koleksi" --> DS1 & DS2 & DS3 & DS4 & DS5 & DS6 & DS8 & DS9 & DS10 & DS11 & DS15
+    P6 -- "Catat Aksi Admin" --> P8
+
+    A -- "Kelola Akun (Super Admin)" --> P7
+    P7 -- "Write Akun Admin" --> DS12
+    P7 -- "Catat Aksi Admin" --> P8
+
+    P8 -- "Write Log" --> DS13
+    P8 -- "Write Notif" --> DS14
+
+    A -- "Ubah Identitas / Backup / Reset" --> P9
+    P9 -- "Write Pengaturan" --> DS15 & DS16
+    P9 -- "Catat Aksi Admin" --> P8
+
+    A -- "Akses Dashboard" --> P10
+    P10 -- "Hitung Metrik & Tren" --> DS1 & DS2 & DS11 & DS12 & DSPV & DS13
+    P10 -- "Render Widget Statistik" --> A
+

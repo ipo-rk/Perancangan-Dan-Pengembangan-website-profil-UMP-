@@ -1,0 +1,33 @@
+flowchart TB
+    subgraph CLIENT_NODE["💻 Client Node (User / Admin Workstation)"]
+        subgraph BROWSER_ENV["🌐 Modern Web Browser (Chrome, Edge, Firefox, Safari)"]
+            DOM["<b>HTML5 DOM Engine</b><br/>• 36 Halaman Web Profil & Admin"]
+            CSS_ENGINE["<b>Rendering Engine</b><br/>• Tailwind Utility + Neumorphism style.css"]
+            JS_RUNTIME["<b>JavaScript V8 / SpiderMonkey Engine</b><br/>• Alpine.js 3.14.8 Runtime<br/>• Core DB Engine & AUTH (app.js)"]
+            
+            subgraph LOCAL_DATA["🗄️ Client-Side Storage Subsystem"]
+                LS_STORE[("<b>Web Storage API (localStorage)</b><br/>• Quota: ~5MB<br/>• Primary Source of Truth")]
+                IDB_STORE[("<b>IndexedDB Engine (ProdiHukumDB)</b><br/>• Quota: Unlimited / Storage Quota<br/>• Heavy Media Base64 Store")]
+            end
+        end
+    end
+
+    subgraph WEB_SERVER["☁️ Web Hosting / Static File Server (GitHub Pages / Nginx / Apache)"]
+        STATIC_FILES["<b>Static Web Assets</b><br/>• *.html (36 files)<br/>• assets/css/*.css<br/>• assets/js/*.js<br/>• assets/image/* (Media Files)"]
+    end
+
+    subgraph CLOUD_SERVICES["🌍 Third-Party Cloud CDN & API Services"]
+        MAPS_SRV["<b>Google Maps Embed Service</b><br/>• Iframe Map Rendering"]
+        FONTS_SRV["<b>Google Fonts CDN</b><br/>• Inter & Poppins Fonts"]
+        CDN_SRV["<b>jsDelivr / cdnjs CDN</b><br/>• Bootstrap 5.3.3<br/>• SweetAlert2 v11<br/>• Alpine.js 3.14.8"]
+    end
+
+    STATIC_FILES -- "HTTP/HTTPS GET (Statis)" --> BROWSER_ENV
+    JS_RUNTIME <--> LOCAL_DATA
+    DOM <--> JS_RUNTIME
+    DOM <--> CSS_ENGINE
+    
+    BROWSER_ENV -- "Async Request" --> MAPS_SRV
+    BROWSER_ENV -- "Fetch Stylesheet" --> FONTS_SRV
+    BROWSER_ENV -- "Fetch Script/CSS" --> CDN_SRV
+
