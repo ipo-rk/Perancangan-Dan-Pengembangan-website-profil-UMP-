@@ -16,9 +16,10 @@ module.exports = {
     extend: {
       colors: {
         navy: '#0B1F3A',
-        royal: '#2A4E9E',
-        gold: '#C9A227',
-        bg: '#E8ECF1'
+        royal: '#1D4ED8',
+        gold: '#D97706',
+        red: '#B91C1C',
+        bg: '#F4F6F9'
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],

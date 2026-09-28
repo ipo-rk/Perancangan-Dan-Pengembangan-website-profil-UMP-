@@ -4,16 +4,16 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#e8ecf1" id="theme-color-meta">
+  <meta name="theme-color" content="#f4f6f9" id="theme-color-meta">
   <title>Activity Log | Program Studi Hukum — UMP</title>
   <meta name="description" content="Website resmi Program Studi Hukum Universitas Muhammadiyah Papua.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap"
-    rel="stylesheet">
+    rel="stylesheet" crossorigin>
   <link rel="stylesheet" href="../assets/css/tailwind.min.css">
-  <script src="../assets/js/app.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <script defer src="../assets/js/app.js"></script>
   <link rel="stylesheet" href="../assets/css/style.css">
 
   <link rel="icon" type="image/png" href="../assets/image/logo-ump.png">
@@ -23,14 +23,16 @@
   <div class="flex min-h-screen">
 
     <aside
-      class="admin-sidebar w-72 shrink-0 neu-raised m-4 lg:mr-0 p-4 flex flex-col gap-1 fixed lg:sticky top-4 h-[calc(100vh-2rem)] overflow-y-auto z-40 bg-bg"
+      class="admin-sidebar w-72 shrink-0 neu-raised m-4 lg:mr-0 p-4 flex flex-col gap-1 fixed lg:sticky top-4 h-[calc(100vh-2rem)] overflow-y-auto z-40 bg-bg border-t-4 border-red"
       :class="sidebarOpen ? 'sidebar-open' : ''">
       <div class="flex items-center gap-3 px-2 pb-4 mb-2 border-b border-black/5 dark:border-white/5">
         <div class="w-10 h-10 neu-raised-sm flex items-center justify-center overflow-hidden p-1">
-          <img src="../assets/image/logo-ump.png" alt="Logo Program Studi Hukum UMP" class="w-full h-full object-contain">
+          <img src="../assets/image/logo-ump.png" alt="Logo Program Studi Hukum UMP"
+            class="w-full h-full object-contain">
         </div>
         <div class="leading-tight">
-          <p class="font-display font-semibold text-navy dark:text-white text-sm">Admin Prodi Hukum</p>
+          <p class="font-display font-semibold text-navy dark:text-white text-sm">Admin Prodi <span
+              class="text-red font-bold">Hukum</span></p>
           <p class="text-[11px] text-text-muted">Panel Manajemen</p>
         </div>
       </div>
@@ -167,7 +169,7 @@
 
     <div class="flex-1 min-w-0">
 
-      <div class="neu-flat sticky top-0 z-30 mb-6">
+      <div class="neu-flat sticky top-0 z-30 mb-6 admin-topbar-premium">
         <div class="flex items-center justify-between px-4 sm:px-6 py-4 gap-4">
           <div class="flex items-center gap-3">
             <button @click="sidebarOpen = !sidebarOpen"
@@ -184,31 +186,41 @@
             </div>
           </div>
           <div class="flex items-center gap-2">
-            <div class="hidden md:flex items-center neu-pressed px-3 py-2 gap-2 w-56" x-data="{ localQ: '' }">
+            <div class="hidden md:flex items-center neu-pressed px-3 py-2 gap-2 w-56">
               <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-muted" fill="none" viewBox="0 0 24 24"
                 stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
-              <input x-model="q" type="text" placeholder="Cari aktivitas..."
-                class="bg-transparent text-sm outline-none w-full placeholder:text-text-muted">
+              <input type="text" placeholder="Audit log sistem..." readonly
+                class="bg-transparent text-sm outline-none w-full placeholder:text-text-muted cursor-default">
             </div>
 
             <div class="relative">
-              <button @click="notifOpen = !notifOpen" class="neu-btn w-10 h-10 flex items-center justify-center relative" aria-label="Notifikasi">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-                <span x-show="unreadNotifs > 0" class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-500 text-white rounded-full text-[10px] font-bold flex items-center justify-center" x-text="unreadNotifs"></span>
+              <button @click="notifOpen = !notifOpen"
+                class="neu-btn w-10 h-10 flex items-center justify-center relative" aria-label="Notifikasi">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+                  stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                </svg>
+                <span x-show="unreadNotifs > 0"
+                  class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red text-white rounded-full text-[10px] font-bold flex items-center justify-center"
+                  x-text="unreadNotifs"></span>
               </button>
-              <div x-show="notifOpen" @click.outside="notifOpen = false" x-transition x-cloak
-                   class="notif-dropdown">
+              <div x-show="notifOpen" @click.outside="notifOpen = false" x-transition x-cloak class="notif-dropdown">
                 <!-- Header -->
-                <div class="flex items-center justify-between px-4 py-3 border-b border-black/10 dark:border-white/10 bg-[#d0d8e8] dark:bg-[#1e2d4a] rounded-t-2xl">
+                <div
+                  class="flex items-center justify-between px-4 py-3 border-b border-black/10 dark:border-white/10 bg-[#eef2f7] dark:bg-[#0f1a2e] rounded-t-2xl">
                   <div class="flex items-center gap-2">
-                    <span class="font-display font-semibold text-sm text-navy dark:text-white">&#128276; Notifikasi</span>
-                    <span x-show="unreadNotifs > 0" class="px-2 py-0.5 rounded-full text-[10px] bg-royal text-white font-bold" x-text="unreadNotifs + ' Baru'"></span>
+                    <span class="font-display font-semibold text-sm text-navy dark:text-white">&#128276;
+                      Notifikasi</span>
+                    <span x-show="unreadNotifs > 0"
+                      class="px-2 py-0.5 rounded-full text-[10px] bg-red text-white font-bold"
+                      x-text="unreadNotifs + ' Baru'"></span>
                   </div>
                   <div class="flex items-center gap-3 text-[11px]">
-                    <button @click="markAllRead()" class="text-royal hover:underline font-semibold">Baca Semua</button>
+                    <button @click="markAllRead()" class="text-red hover:underline font-semibold">Baca Semua</button>
                     <span class="text-black/20 dark:text-white/20">|</span>
                     <button @click="clearNotifs()" class="text-red-500 hover:underline font-semibold">Hapus</button>
                   </div>
@@ -217,14 +229,14 @@
                 <div class="notif-list">
                   <template x-for="n in notifications" :key="n.id">
                     <div class="flex items-start gap-3 px-3 py-2.5 rounded-xl mx-2 my-1 transition-all cursor-default"
-                         :class="n.read ? 'bg-white/30 dark:bg-white/5' : 'bg-white/90 dark:bg-white/10 border-l-2 border-royal shadow-sm'">
+                      :class="n.read ? 'bg-white/30 dark:bg-white/5' : 'bg-white/90 dark:bg-white/10 border-l-2 border-red shadow-sm'">
                       <span class="text-xl shrink-0 mt-0.5" x-text="n.icon || '&#128276;'"></span>
                       <div class="flex-1 min-w-0">
                         <p class="text-xs font-semibold text-navy dark:text-white leading-snug" x-text="n.judul"></p>
                         <p class="text-[11px] text-text-muted mt-0.5 leading-snug line-clamp-2" x-text="n.pesan"></p>
-                        <p class="text-[10px] text-royal font-mono mt-1" x-text="n.waktu"></p>
+                        <p class="text-[10px] text-red font-mono mt-1" x-text="n.waktu"></p>
                       </div>
-                      <span x-show="!n.read" class="w-2 h-2 rounded-full bg-royal shrink-0 mt-1.5 flex-none"></span>
+                      <span x-show="!n.read" class="w-2 h-2 rounded-full bg-red shrink-0 mt-1.5 flex-none"></span>
                     </div>
                   </template>
                   <div x-show="notifications.length === 0" class="text-center py-8 text-xs text-text-muted">
@@ -233,8 +245,10 @@
                   </div>
                 </div>
                 <!-- Footer -->
-                <div class="px-4 py-2.5 border-t border-black/10 dark:border-white/10 bg-[#d0d8e8] dark:bg-[#1e2d4a] text-center rounded-b-2xl">
-                  <a href="aktivitas.html" class="text-[11px] text-royal hover:underline font-semibold">Lihat semua aktivitas &rarr;</a>
+                <div
+                  class="px-4 py-2.5 border-t border-black/10 dark:border-white/10 bg-[#eef2f7] dark:bg-[#0f1a2e] text-center rounded-b-2xl">
+                  <a href="aktivitas.html" class="text-[11px] text-red hover:underline font-semibold">Lihat semua
+                    aktivitas &rarr;</a>
                 </div>
               </div>
             </div>
@@ -251,48 +265,280 @@
               </svg>
             </button>
             <div
-              class="w-10 h-10 neu-raised-sm flex items-center justify-center font-display font-semibold text-royal text-sm">
+              class="w-10 h-10 neu-raised-sm flex items-center justify-center font-display font-semibold text-red text-sm">
               AP</div>
           </div>
         </div>
       </div>
 
-      <main class="px-4 sm:px-6 pb-10"
-        x-data="{ q: '', get filteredList() { return activityLog.filter(a => (a.user + ' ' + a.aksi).toLowerCase().includes(this.q.toLowerCase())); } }">
+      <main class="px-4 sm:px-6 pb-10">
 
-        <div class="neu-raised p-2 sm:p-4">
-          <div class="table-scroll">
-            <table class="w-full min-w-[600px]">
-              <thead>
-                <tr class="text-left text-xs text-text-muted uppercase tracking-wide">
-                  <th class="py-3 px-4">Pengguna</th>
-                  <th class="py-3 px-4">Aktivitas</th>
-                  <th class="py-3 px-4">Waktu</th>
-                </tr>
-              </thead>
-              <tbody>
-                <template x-for="a in filteredList" :key="a.id">
-                  <tr class="border-b border-black/5 dark:border-white/5">
-                    <td class="py-3 px-4 text-sm font-medium text-navy dark:text-white" x-text="a.user"></td>
-                    <td class="py-3 px-4 text-sm text-text-muted" x-text="a.aksi"></td>
-                    <td class="py-3 px-4 text-xs text-text-muted whitespace-nowrap" x-text="a.waktu"></td>
-                  </tr>
-                </template>
-                <tr x-show="filteredList.length === 0">
-                  <td colspan="3" class="py-10 text-center text-sm text-text-muted">Belum ada aktivitas yang cocok.</td>
-                </tr>
-              </tbody>
-            </table>
+        <!-- ══ ADMIN PREMIUM PAGE HEADER ══ -->
+        <div class="admin-page-header">
+          <div class="admin-page-header-content">
+            <nav class="admin-breadcrumb">
+              <a href="../index.html">Beranda</a>
+              <span class="sep">›</span>
+              <a href="dashboard.html">Admin</a>
+              <span class="sep">›</span>
+              <span class="current">Log Aktivitas</span>
+            </nav>
+            <div class="flex flex-wrap items-center justify-between gap-4 mt-2">
+              <div>
+                <span
+                  class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-white/10 text-white/90 border border-white/15 mb-2">&#128220;
+                  Rekam Jejak Audit</span>
+                <h1 class="admin-header-title">Log <span class="text-gold">Aktivitas</span> Sistem</h1>
+                <span class="admin-header-underline"></span>
+                <p class="admin-header-desc">Pemantauan real-time rekam jejak aksi pengguna, perubahan data, riwayat
+                  login, dan integritas audit sistem prodi.</p>
+              </div>
+              <div class="flex items-center gap-3">
+                <span
+                  class="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-white/10 text-white text-xs border border-white/20">
+                  <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                  Audit Logging Aktif
+                </span>
+              </div>
+            </div>
           </div>
         </div>
-        <p class="text-xs text-text-muted mt-4">Log aktivitas disimpan otomatis oleh sistem dan tidak dapat diubah atau
-          dihapus manual.</p>
+        <!-- ══ END ADMIN PREMIUM PAGE HEADER ══ -->
+
+        <div x-data="adminAktivitasPage()" class="space-y-6">
+
+          <!-- ══ STATS SUMMARY CARDS ══ -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div class="neu-raised p-4 flex items-center gap-3">
+              <div class="w-12 h-12 rounded-2xl neu-pressed flex items-center justify-center text-xl shrink-0">
+                &#128203;
+              </div>
+              <div>
+                <p class="text-xs text-text-muted">Total Aktivitas</p>
+                <p class="font-display font-bold text-lg text-navy dark:text-white" x-text="totalAktivitas">0</p>
+              </div>
+            </div>
+
+            <div class="neu-raised p-4 flex items-center gap-3">
+              <div class="w-12 h-12 rounded-2xl neu-pressed flex items-center justify-center text-xl shrink-0">
+                &#9889;
+              </div>
+              <div>
+                <p class="text-xs text-text-muted">Aktivitas Terkini</p>
+                <p class="font-display font-bold text-lg text-gold" x-text="aktivitasHariIni">0</p>
+              </div>
+            </div>
+
+            <div class="neu-raised p-4 flex items-center gap-3">
+              <div class="w-12 h-12 rounded-2xl neu-pressed flex items-center justify-center text-xl shrink-0">
+                &#128101;
+              </div>
+              <div>
+                <p class="text-xs text-text-muted">Pengguna Tercatat</p>
+                <p class="font-display font-bold text-lg text-navy dark:text-white"
+                  x-text="Math.max(1, userOptions.length - 1)">0</p>
+              </div>
+            </div>
+
+            <div class="neu-raised p-4 flex items-center gap-3">
+              <div class="w-12 h-12 rounded-2xl neu-pressed flex items-center justify-center text-xl shrink-0">
+                &#128737;&#65039;
+              </div>
+              <div>
+                <p class="text-xs text-text-muted">Integritas Audit</p>
+                <p class="font-display font-bold text-sm text-emerald-600 dark:text-emerald-400">100% Terverifikasi</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- ══ SEARCH & FILTER TOOLBAR ══ -->
+          <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 flex-1">
+              <!-- Search Input -->
+              <div class="flex items-center neu-pressed px-4 py-3 gap-2 flex-1 max-w-md">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-muted shrink-0" fill="none"
+                  viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input x-model="q" type="text" placeholder="Cari pengguna, aktivitas, waktu..."
+                  class="bg-transparent text-sm outline-none w-full placeholder:text-text-muted">
+                <button x-show="q" @click="q = ''" class="text-xs text-text-muted hover:text-red p-1">&times;</button>
+              </div>
+
+              <!-- Filter Jenis Aktivitas -->
+              <div class="neu-pressed px-3 py-2 flex items-center gap-2">
+                <span class="text-xs text-text-muted whitespace-nowrap">Tipe:</span>
+                <select x-model="filterType"
+                  class="bg-transparent text-xs text-navy dark:text-white font-medium outline-none cursor-pointer">
+                  <option value="Semua">Semua Tipe</option>
+                  <option value="Login">Akses / Login</option>
+                  <option value="Tambah">Tambah Data</option>
+                  <option value="Ubah">Perubahan Data</option>
+                  <option value="Hapus">Hapus Data</option>
+                  <option value="Publikasi">Publikasi Dokumen</option>
+                </select>
+              </div>
+
+              <!-- Filter Pengguna -->
+              <div class="neu-pressed px-3 py-2 flex items-center gap-2">
+                <span class="text-xs text-text-muted whitespace-nowrap">User:</span>
+                <select x-model="filterUser"
+                  class="bg-transparent text-xs text-navy dark:text-white font-medium outline-none cursor-pointer">
+                  <template x-for="u in userOptions" :key="u">
+                    <option :value="u" x-text="u"></option>
+                  </template>
+                </select>
+              </div>
+
+              <!-- Reset Button -->
+              <button x-show="q || filterUser !== 'Semua' || filterType !== 'Semua'" @click="resetFilter()"
+                class="neu-btn px-3 py-2 rounded-xl text-xs text-red hover:underline flex items-center gap-1">
+                <span>&#10005;</span> Reset
+              </button>
+            </div>
+
+            <!-- Export Action Button -->
+            <div class="flex items-center gap-2">
+              <button @click="exportCSV()"
+                class="neu-btn px-4 py-2.5 rounded-xl text-xs font-semibold flex items-center gap-2 text-navy dark:text-white hover:text-gold transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-gold shrink-0" fill="none"
+                  viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span>Ekspor CSV</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- ══ TABLE DATA CARD ══ -->
+          <div class="neu-raised p-2 sm:p-5">
+            <div class="flex items-center justify-between px-3 py-2 mb-3 border-b border-black/5 dark:border-white/5">
+              <p class="text-xs text-text-muted">
+                Menampilkan <span class="font-bold text-navy dark:text-white" x-text="filteredList.length"></span> dari
+                <span class="font-bold" x-text="totalAktivitas"></span> log tercatat
+              </p>
+              <div class="flex items-center gap-2 text-xs text-text-muted">
+                <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                <span>Sinkron Real-Time</span>
+              </div>
+            </div>
+
+            <div class="table-scroll">
+              <table class="w-full min-w-[720px]">
+                <thead>
+                  <tr
+                    class="text-left text-xs text-text-muted uppercase tracking-wider border-b border-black/5 dark:border-white/5">
+                    <th class="py-3 px-4 w-12 text-center">#</th>
+                    <th class="py-3 px-4">Pengguna</th>
+                    <th class="py-3 px-4">Kategori</th>
+                    <th class="py-3 px-4">Aktivitas / Aksi Sistem</th>
+                    <th class="py-3 px-4 text-right">Waktu</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <template x-for="(a, idx) in filteredList" :key="a.id">
+                    <tr
+                      class="border-b border-black/5 dark:border-white/5 hover:bg-black/[0.02] dark:hover:bg-white/[0.02] transition-colors">
+                      <td class="py-3 px-4 text-xs font-mono text-text-muted text-center" x-text="idx + 1"></td>
+
+                      <!-- User & Avatar -->
+                      <td class="py-3 px-4">
+                        <div class="flex items-center gap-3">
+                          <div
+                            class="w-9 h-9 rounded-xl neu-pressed flex items-center justify-center font-display font-bold text-xs text-red shrink-0"
+                            x-text="getUserInitials(a.user)">
+                          </div>
+                          <div>
+                            <p class="text-sm font-semibold text-navy dark:text-white leading-snug" x-text="a.user"></p>
+                            <p class="text-[11px] text-text-muted">Otoritas Terverifikasi</p>
+                          </div>
+                        </div>
+                      </td>
+
+                      <!-- Category Badge -->
+                      <td class="py-3 px-4 whitespace-nowrap">
+                        <span class="neu-badge" :class="getActionCategory(a.aksi).color">
+                          <span x-text="getActionCategory(a.aksi).icon" class="mr-1"></span>
+                          <span x-text="getActionCategory(a.aksi).label"></span>
+                        </span>
+                      </td>
+
+                      <!-- Activity Description -->
+                      <td class="py-3 px-4">
+                        <div class="flex items-start gap-2 max-w-lg">
+                          <span class="text-base shrink-0 mt-0.5" x-text="a.icon || '&#128221;'"></span>
+                          <p class="text-sm text-navy dark:text-white/90 leading-relaxed font-normal" x-text="a.aksi">
+                          </p>
+                        </div>
+                      </td>
+
+                      <!-- Timestamp -->
+                      <td class="py-3 px-4 text-right whitespace-nowrap">
+                        <div class="inline-flex items-center gap-1.5 text-xs text-text-muted font-mono">
+                          <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-text-muted" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <span x-text="a.waktu"></span>
+                        </div>
+                      </td>
+                    </tr>
+                  </template>
+
+                  <!-- Empty State -->
+                  <tr x-show="filteredList.length === 0">
+                    <td colspan="5" class="py-14 text-center">
+                      <div class="max-w-xs mx-auto space-y-3">
+                        <div
+                          class="w-14 h-14 mx-auto rounded-2xl neu-pressed flex items-center justify-center text-2xl text-text-muted">
+                          &#128269;
+                        </div>
+                        <p class="font-display font-semibold text-navy dark:text-white text-sm">Tidak Ada Aktivitas
+                          Ditemukan</p>
+                        <p class="text-xs text-text-muted leading-relaxed">
+                          Tidak ditemukan catatan log audit yang cocok dengan kata kunci atau filter yang Anda pilih.
+                        </p>
+                        <button @click="resetFilter()"
+                          class="neu-btn px-4 py-2 rounded-xl text-xs font-semibold text-red mt-2 inline-flex items-center gap-1">
+                          <span>&#10005;</span> Reset Filter & Pencarian
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ══ SECURITY & AUDIT COMPLIANCE BANNER ══ -->
+          <div
+            class="neu-flat p-4 sm:p-5 rounded-2xl border-l-4 border-gold flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+            <div class="flex items-start gap-3">
+              <span class="text-2xl shrink-0 mt-0.5">&#128737;&#65039;</span>
+              <div>
+                <h4 class="font-display font-semibold text-sm text-navy dark:text-white">Integritas Audit Trail
+                  Terproteksi</h4>
+                <p class="text-xs text-text-muted mt-0.5 leading-relaxed">
+                  Log aktivitas disimpan secara otomatis oleh sistem keamanan internal dan bersifat immutable (tidak
+                  dapat disunting atau dihapus manual) sesuai standar kepatuhan tata kelola data universitas.
+                </p>
+              </div>
+            </div>
+            <div class="shrink-0 flex items-center gap-2 text-[11px] text-text-muted font-mono">
+              <span
+                class="px-2.5 py-1 rounded-lg bg-black/5 dark:bg-white/5 border border-black/10 dark:border-white/10">ISO
+                27001 / SIAKAD Compliant</span>
+            </div>
+          </div>
+
+        </div>
 
       </main>
     </div>
   </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
 </body>

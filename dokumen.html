@@ -1,25 +1,25 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#e8ecf1" id="theme-color-meta">
+  <meta name="theme-color" content="#f4f6f9" id="theme-color-meta">
   <title>Dokumen | Program Studi Hukum — UMP</title>
   <meta name="description" content="Website resmi Program Studi Hukum Universitas Muhammadiyah Papua.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap"
-    rel="stylesheet">
+    rel="stylesheet" crossorigin>
   <link rel="stylesheet" href="assets/css/tailwind.min.css">
-<script src="assets/js/app.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <script defer src="assets/js/app.js"></script>
   <link rel="stylesheet" href="assets/css/style.css">
 
   <link rel="icon" type="image/png" href="assets/image/logo-ump.png">
 </head>
 
-<body x-data class="font-sans">
+<body x-data="dokumenPage()" class="font-sans">
 
   <header x-data="siteHeader()" class="sticky top-0 z-50 neu-flat backdrop-blur">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -30,14 +30,15 @@
               class="w-full h-full object-contain">
           </div>
           <div class="leading-tight hidden sm:block">
-            <p class="font-display font-semibold text-navy dark:text-white text-sm">Program Studi Hukum</p>
+            <p class="font-display font-semibold text-navy dark:text-white text-sm">Program Studi <span class="text-red font-bold">Hukum</span></p>
             <p class="text-[11px] text-text-muted">Universitas Muhammadiyah Papua</p>
           </div>
         </a>
 
         <nav class="hidden xl:flex items-center gap-1" x-data="{ openMenu: null }" @click.outside="openMenu = null"
           @keydown.escape.window="openMenu = null">
-          <a href="index.html" class="px-3 py-2 rounded-xl text-sm text-navy/70 dark:text-slate-300 hover:text-royal transition-colors whitespace-nowrap">Beranda</a>
+          <a href="index.html"
+            class="px-3 py-2 rounded-xl text-sm text-navy/70 dark:text-slate-300 hover:text-royal transition-colors whitespace-nowrap">Beranda</a>
 
           <div class="relative">
             <button type="button" @click="openMenu = (openMenu === 'profil' ? null : 'profil')"
@@ -51,9 +52,13 @@
             </button>
             <div x-show="openMenu === 'profil'" x-transition x-cloak
               class="absolute left-0 top-full mt-2 w-48 neu-raised p-2 z-50">
-              <a href="profil.html" class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Profil Prodi</a>
-              <a href="dosen.html" class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Dosen</a>
-              <a href="kurikulum.html" class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Kurikulum</a>
+              <a href="profil.html"
+                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Profil
+                Prodi</a>
+              <a href="dosen.html"
+                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Dosen</a>
+              <a href="kurikulum.html"
+                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Kurikulum</a>
             </div>
           </div>
 
@@ -69,10 +74,15 @@
             </button>
             <div x-show="openMenu === 'informasi'" x-transition x-cloak
               class="absolute left-0 top-full mt-2 w-48 neu-raised p-2 z-50">
-              <a href="berita.html" class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Berita</a>
-              <a href="pengumuman.html" class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Pengumuman</a>
-              <a href="kegiatan.html" class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Kegiatan</a>
-              <a href="artikel.html" class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Artikel Hukum</a>
+              <a href="berita.html"
+                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Berita</a>
+              <a href="pengumuman.html"
+                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Pengumuman</a>
+              <a href="kegiatan.html"
+                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Kegiatan</a>
+              <a href="artikel.html"
+                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Artikel
+                Hukum</a>
             </div>
           </div>
 
@@ -88,14 +98,19 @@
             </button>
             <div x-show="openMenu === 'mahasiswa'" x-transition x-cloak
               class="absolute left-0 top-full mt-2 w-48 neu-raised p-2 z-50">
-              <a href="prestasi.html" class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Prestasi</a>
-              <a href="alumni.html" class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Alumni</a>
-              <a href="galeri.html" class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Galeri</a>
+              <a href="prestasi.html"
+                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Prestasi</a>
+              <a href="alumni.html"
+                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Alumni</a>
+              <a href="galeri.html"
+                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Galeri</a>
             </div>
           </div>
 
-          <a href="dokumen.html" class="px-3 py-2 rounded-xl text-sm text-royal font-semibold transition-colors whitespace-nowrap">Dokumen</a>
-          <a href="kontak.html" class="px-3 py-2 rounded-xl text-sm text-navy/70 dark:text-slate-300 hover:text-royal transition-colors whitespace-nowrap">Kontak</a>
+          <a href="dokumen.html"
+            class="px-3 py-2 rounded-xl text-sm text-red font-semibold transition-colors whitespace-nowrap">Dokumen</a>
+          <a href="kontak.html"
+            class="px-3 py-2 rounded-xl text-sm text-navy/70 dark:text-slate-300 hover:text-royal transition-colors whitespace-nowrap">Kontak</a>
         </nav>
 
         <div class="flex items-center gap-2 shrink-0">
@@ -123,42 +138,48 @@
           </button>
           <a href="admin/login.html" class="hidden md:inline-flex neu-btn-primary px-4 py-2.5 rounded-xl text-sm">Portal
             Akademik</a>
-          <button @click="mobileOpen = !mobileOpen" class="xl:hidden neu-btn w-10 h-10 flex items-center justify-center transition-transform active:scale-95"
+          <button @click="mobileOpen = !mobileOpen"
+            class="xl:hidden neu-btn w-10 h-10 flex items-center justify-center transition-transform active:scale-95"
             aria-label="Buka menu navigasi" :aria-expanded="mobileOpen">
-            <svg x-show="!mobileOpen" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg x-show="!mobileOpen" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
-            <svg x-show="mobileOpen" x-cloak xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-royal" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg x-show="mobileOpen" x-cloak xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red" fill="none"
+              viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
       </div>
 
-            <!-- Mobile Navigation Menu -->
-      <div x-show="mobileOpen" 
-        x-transition:enter="transition ease-out duration-250 transform"
+      <!-- Mobile Navigation Menu -->
+      <div x-show="mobileOpen" x-transition:enter="transition ease-out duration-250 transform"
         x-transition:enter-start="opacity-0 -translate-y-3 scale-98"
         x-transition:enter-end="opacity-100 translate-y-0 scale-100"
         x-transition:leave="transition ease-in duration-150 transform"
         x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-        x-transition:leave-end="opacity-0 -translate-y-3 scale-98"
-        x-cloak 
-        class="xl:hidden pb-6 pt-2">
-        <div class="neu-raised p-4 sm:p-5 rounded-3xl border border-black/5 dark:border-white/5 space-y-4 max-h-[80vh] overflow-y-auto">
-          
+        x-transition:leave-end="opacity-0 -translate-y-3 scale-98" x-cloak class="xl:hidden pb-6 pt-2">
+        <div
+          class="neu-raised p-4 sm:p-5 rounded-3xl border border-black/5 dark:border-white/5 space-y-4 max-h-[80vh] overflow-y-auto">
+
           <!-- Mobile Search Bar -->
           <div class="flex items-center neu-pressed px-3.5 py-2.5 gap-2.5 rounded-2xl">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-muted shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-muted shrink-0" fill="none"
+              viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
-            <input x-model="searchQ" @keydown.enter="doSearch()" type="search" placeholder="Cari informasi prodi..." class="bg-transparent text-xs sm:text-sm outline-none w-full placeholder:text-text-muted">
-            <button @click="doSearch()" class="px-2.5 py-1 rounded-xl bg-royal/10 text-royal text-xs font-semibold hover:bg-royal hover:text-white transition-colors">Cari</button>
+            <input x-model="searchQ" @keydown.enter="doSearch()" type="search" placeholder="Cari informasi prodi..."
+              class="bg-transparent text-xs sm:text-sm outline-none w-full placeholder:text-text-muted">
+            <button @click="doSearch()"
+              class="px-2.5 py-1 rounded-xl bg-red/10 text-red text-xs font-semibold hover:bg-red hover:text-white transition-colors">Cari</button>
           </div>
 
           <!-- Menu Section: Utama -->
           <div>
-            <a href="index.html" class="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
+            <a href="index.html"
+              class="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
               <span class="text-base">&#127968;</span>
               <span class="text-sm font-medium">Beranda</span>
             </a>
@@ -168,15 +189,18 @@
           <div class="space-y-1.5 pt-2 border-t border-black/5 dark:border-white/5">
             <p class="text-[11px] font-bold uppercase tracking-wider text-text-muted px-2">Profil &amp; Akademik</p>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <a href="profil.html" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
+              <a href="profil.html"
+                class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
                 <span>&#127963;</span>
                 <span>Profil Prodi</span>
               </a>
-              <a href="dosen.html" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
+              <a href="dosen.html"
+                class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
                 <span>&#128104;&#8205;&#127979;</span>
                 <span>Dosen</span>
               </a>
-              <a href="kurikulum.html" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
+              <a href="kurikulum.html"
+                class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
                 <span>&#128218;</span>
                 <span>Kurikulum</span>
               </a>
@@ -187,19 +211,23 @@
           <div class="space-y-1.5 pt-2 border-t border-black/5 dark:border-white/5">
             <p class="text-[11px] font-bold uppercase tracking-wider text-text-muted px-2">Informasi &amp; Publikasi</p>
             <div class="grid grid-cols-2 gap-2">
-              <a href="berita.html" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
+              <a href="berita.html"
+                class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
                 <span>&#128240;</span>
                 <span>Berita</span>
               </a>
-              <a href="pengumuman.html" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
+              <a href="pengumuman.html"
+                class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
                 <span>&#128227;</span>
                 <span>Pengumuman</span>
               </a>
-              <a href="kegiatan.html" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
+              <a href="kegiatan.html"
+                class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
                 <span>&#128197;</span>
                 <span>Kegiatan</span>
               </a>
-              <a href="artikel.html" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
+              <a href="artikel.html"
+                class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
                 <span>&#9878;&#65039;</span>
                 <span>Artikel Hukum</span>
               </a>
@@ -208,25 +236,31 @@
 
           <!-- Menu Section: Kemahasiswaan & Layanan -->
           <div class="space-y-1.5 pt-2 border-t border-black/5 dark:border-white/5">
-            <p class="text-[11px] font-bold uppercase tracking-wider text-text-muted px-2">Kemahasiswaan &amp; Layanan</p>
+            <p class="text-[11px] font-bold uppercase tracking-wider text-text-muted px-2">Kemahasiswaan &amp; Layanan
+            </p>
             <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              <a href="prestasi.html" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
+              <a href="prestasi.html"
+                class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
                 <span>&#127942;</span>
                 <span>Prestasi</span>
               </a>
-              <a href="alumni.html" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
+              <a href="alumni.html"
+                class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
                 <span>&#127891;</span>
                 <span>Alumni</span>
               </a>
-              <a href="galeri.html" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
+              <a href="galeri.html"
+                class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
                 <span>&#128444;&#65039;</span>
                 <span>Galeri</span>
               </a>
-              <a href="dokumen.html" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all bg-royal text-white font-semibold shadow-sm">
+              <a href="dokumen.html"
+                class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all bg-red text-white font-semibold shadow-sm">
                 <span>&#128196;</span>
                 <span>Dokumen</span>
               </a>
-              <a href="kontak.html" class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal sm:col-span-2">
+              <a href="kontak.html"
+                class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal sm:col-span-2">
                 <span>&#128222;</span>
                 <span>Kontak &amp; Lokasi</span>
               </a>
@@ -235,9 +269,12 @@
 
           <!-- Portal Akademik Button -->
           <div class="pt-3 border-t border-black/5 dark:border-white/5">
-            <a href="admin/login.html" class="w-full text-center neu-btn-primary px-4 py-3 rounded-2xl text-sm font-semibold flex items-center justify-center gap-2 shadow-md">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+            <a href="admin/login.html"
+              class="w-full text-center neu-btn-primary px-4 py-3 rounded-2xl text-sm font-semibold flex items-center justify-center gap-2 shadow-md">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
               </svg>
               <span>Portal Akademik (Login Admin)</span>
             </a>
@@ -248,13 +285,45 @@
     </div>
   </header>
 
-  <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14" x-data="dokumenPage()">
+  <!-- ══ PREMIUM PAGE HERO BANNER ══ -->
+  <section class="page-hero-bg hero-blue">
+    <div class="hero-blob-red w-72 h-72" style="top:-2rem;right:-2rem;"></div>
+    <div class="hero-blob-gold w-56 h-56" style="bottom:-1rem;left:10%;"></div>
+    <div class="page-hero-content">
+      <nav class="hero-breadcrumb">
+        <a href="index.html">Beranda</a>
+        <span class="sep">›</span>
+        <span class="current">Dokumen</span>
+      </nav>
+      <div>
+        <span class="hero-badge-pill">&#128196; Dokumen &amp; Regulasi</span>
+      </div>
+      <h1 class="page-hero-title">
+        Dokumen &amp; <span class="accent-gold">Regulasi Akademik</span>
+      </h1>
+      <span class="hero-title-underline"></span>
+      <p class="page-hero-desc">Akses berbagai dokumen resmi, regulasi, panduan akademik, dan berkas penting Program Studi Hukum UMP dalam satu pusat unduhan yang terorganisir.</p>
+      <div class="scroll-indicator mt-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" style="color:rgba(255,255,255,0.5)" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
+    </div>
+  </section>
+  <!-- ══ END PREMIUM PAGE HERO BANNER ══ -->
+
+  <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
     <div class="mb-8">
       <span class="neu-badge badge-new mb-3">Publik</span>
-      <h1 class="font-display font-bold text-3xl sm:text-4xl text-navy dark:text-white mb-3">Pusat Dokumen</h1>
+      <h2 class="font-display font-bold text-3xl sm:text-4xl text-navy dark:text-white mb-3">Pusat Dokumen</h2>
       <div class="flex items-center neu-pressed px-4 py-3 gap-2 max-w-sm">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-muted" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
-        <input x-model="q" type="text" placeholder="Cari nama dokumen..." class="bg-transparent text-sm outline-none w-full">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-muted" fill="none" viewBox="0 0 24 24"
+          stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
+        </svg>
+        <input x-model="q" type="text" placeholder="Cari nama dokumen..."
+          class="bg-transparent text-sm outline-none w-full">
       </div>
     </div>
     <div class="flex gap-2 filter-scroll mb-8 pb-1">
@@ -266,21 +335,30 @@
     <div class="grid sm:grid-cols-2 gap-4">
       <template x-for="doc in results" :key="doc.id">
         <div class="neu-raised p-5 flex items-center gap-4">
-          <div class="w-12 h-12 shrink-0 neu-raised-sm flex items-center justify-center text-royal font-bold text-[11px]" x-text="doc.format"></div>
+          <div
+            class="w-12 h-12 shrink-0 neu-raised-sm flex items-center justify-center text-red font-bold text-[11px]"
+            x-text="doc.format"></div>
           <div class="flex-1 min-w-0">
             <p class="font-semibold text-navy dark:text-white text-sm truncate" x-text="doc.nama"></p>
-            <p class="text-xs text-text-muted"><span x-text="doc.kategori"></span> &middot; <span x-text="doc.ukuran"></span></p>
+            <p class="text-xs text-text-muted"><span x-text="doc.kategori"></span> &middot; <span
+                x-text="doc.ukuran"></span></p>
           </div>
-          <button @click="download(doc)" class="neu-btn w-10 h-10 shrink-0 flex items-center justify-center" :aria-label="'Download ' + doc.nama">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-royal" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3"/></svg>
+          <button @click="download(doc)" class="neu-btn w-10 h-10 shrink-0 flex items-center justify-center"
+            :aria-label="'Download ' + doc.nama">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-gold" fill="none" viewBox="0 0 24 24"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 16v2a2 2 0 002 2h12a2 2 0 002-2v-2M7 10l5 5 5-5M12 15V3" />
+            </svg>
           </button>
         </div>
       </template>
     </div>
-    <p x-show="results.length === 0" class="text-center text-sm text-text-muted py-14">Data yang Anda cari tidak ditemukan.</p>
+    <p x-show="results.length === 0" class="text-center text-sm text-text-muted py-14">Data yang Anda cari tidak
+      ditemukan.</p>
   </section>
 
-  <footer class="mt-20 neu-flat" x-data="{ p: SAMPLE_PENGATURAN }">
+  <footer class="footer-premium" x-data="{ p: SAMPLE_PENGATURAN }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 grid grid-cols-2 md:grid-cols-4 gap-10">
       <div class="col-span-2 md:col-span-1">
         <div class="flex items-center gap-3 mb-4">
@@ -288,8 +366,7 @@
             <img src="assets/image/logo-ump.png" alt="Logo Program Studi Hukum UMP"
               class="w-full h-full object-contain">
           </div>
-          <p class="font-display font-semibold text-navy dark:text-white text-sm leading-tight">Program Studi<br>Hukum
-          </p>
+          <p class="font-display font-semibold text-navy dark:text-white text-sm leading-tight">Program Studi<br><span class="text-red font-bold">Hukum</span></p>
         </div>
         <p class="text-sm text-text-muted">Mencetak sarjana hukum yang berintegritas, profesional, dan berkeadilan.</p>
       </div>
@@ -315,20 +392,20 @@
         <p class="font-display font-semibold text-navy dark:text-white mb-3 text-sm">Kontak</p>
         <ul class="space-y-2 text-sm text-text-muted">
           <li class="flex items-start gap-2">
-            <span class="shrink-0 text-royal mt-0.5">&#128205;</span>
+            <span class="shrink-0 text-red mt-0.5">&#128205;</span>
             <span x-text="p.alamat">Jl. Yap Thiam Hien, Kel. Yobe, Jayapura Utara</span>
           </li>
           <li class="flex items-center gap-2">
-            <span class="shrink-0 text-royal">&#9993;&#65039;</span>
+            <span class="shrink-0 text-red">&#9993;&#65039;</span>
             <span x-text="p.email">hukum@ump.ac.id</span>
           </li>
           <li class="flex items-center gap-2">
-            <span class="shrink-0 text-royal">&#128222;</span>
+            <span class="shrink-0 text-red">&#128222;</span>
             <span x-text="p.telepon">(0967) 123-456</span>
           </li>
           <li class="pt-1">
             <a href="kontak.html"
-              class="text-royal font-semibold hover:underline inline-flex items-center gap-1.5 text-xs">
+              class="text-red font-semibold hover:underline inline-flex items-center gap-1.5 text-xs">
               <span>&#128506;&#65039;</span>
               <span>Peta &amp; Petunjuk Lokasi &rarr;</span>
             </a>
@@ -340,8 +417,6 @@
       &copy; 2026 Program Studi Hukum — Universitas Muhammadiyah Papua. All Rights Reserved.
     </div>
   </footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>

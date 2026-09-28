@@ -1,19 +1,19 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#e8ecf1" id="theme-color-meta">
+  <meta name="theme-color" content="#f4f6f9" id="theme-color-meta">
   <title>Beranda | Program Studi Hukum — UMP</title>
   <meta name="description" content="Website resmi Program Studi Hukum Universitas Muhammadiyah Papua.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap"
-    rel="stylesheet">
+    rel="stylesheet" crossorigin>
   <link rel="stylesheet" href="assets/css/tailwind.min.css">
-  <script src="assets/js/app.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <script defer src="assets/js/app.js"></script>
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="icon" type="image/png" href="assets/image/logo-ump.png">
 
@@ -30,7 +30,8 @@
               class="w-full h-full object-contain">
           </div>
           <div class="leading-tight hidden sm:block">
-            <p class="font-display font-semibold text-navy dark:text-white text-sm">Program Studi Hukum</p>
+            <p class="font-display font-semibold text-navy dark:text-white text-sm">Program Studi <span
+                class="text-red font-bold">Hukum</span></p>
             <p class="text-[11px] text-text-muted">Universitas Muhammadiyah Papua</p>
           </div>
         </a>
@@ -173,13 +174,13 @@
             <input x-model="searchQ" @keydown.enter="doSearch()" type="search" placeholder="Cari informasi prodi..."
               class="bg-transparent text-xs sm:text-sm outline-none w-full placeholder:text-text-muted">
             <button @click="doSearch()"
-              class="px-2.5 py-1 rounded-xl bg-royal/10 text-royal text-xs font-semibold hover:bg-royal hover:text-white transition-colors">Cari</button>
+              class="px-2.5 py-1 rounded-xl bg-red/10 text-royal text-xs font-semibold hover:bg-red hover:text-white transition-colors">Cari</button>
           </div>
 
           <!-- Menu Section: Utama -->
           <div>
             <a href="index.html"
-              class="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all bg-royal text-white font-semibold shadow-sm">
+              class="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all bg-red text-white font-semibold shadow-sm">
               <span class="text-base">&#127968;</span>
               <span class="text-sm font-medium">Beranda</span>
             </a>
@@ -285,126 +286,164 @@
     </div>
   </header>
 
+  <!-- ══════════════════════════════════════════════════════════
+       PREMIUM HERO SECTION — Program Studi S1 Hukum UMP
+       Konsisten, Akurat, Elegan & Modern Neumorphic
+       ══════════════════════════════════════════════════════════ -->
   <section class="law-hero-bg relative overflow-hidden border-b border-black/5 dark:border-white/5">
-    <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-royal/15 blur-3xl pointer-events-none"></div>
-    <div class="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-gold/15 blur-3xl pointer-events-none"></div>
+    <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-red/15 blur-3xl pointer-events-none z-10"></div>
+    <div class="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-gold/15 blur-3xl pointer-events-none z-10"></div>
+    <div
+      class="absolute top-1/3 left-1/3 -translate-y-1/2 w-80 h-80 rounded-full bg-red/10 blur-3xl pointer-events-none z-10">
+    </div>
+
     <div
       class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24 grid lg:grid-cols-2 gap-12 items-center relative z-10 overflow-visible">
+
+      <!-- ══ LEFT COLUMN: Text Editorial & Brand Identity ══ -->
       <div>
         <div class="flex flex-wrap items-center gap-2 mb-5">
-          <span class="neu-badge badge-active flex items-center gap-1.5 font-semibold">
+          <span class="neu-badge badge-red flex items-center gap-1.5 font-semibold shadow-sm">
             <span>&#9878;&#65039;</span>
             <span>Program Studi Hukum &middot; UMP</span>
           </span>
           <span
-            class="px-3 py-1 rounded-full text-xs font-serif italic bg-gold/15 text-amber-700 dark:text-amber-300 font-medium">
+            class="px-3.5 py-1 rounded-full text-xs font-serif italic bg-gold/15 text-gold dark:text-gold-soft border border-gold/30 font-medium">
             &ldquo;Fiat Justitia Ruat Caelum&rdquo;
           </span>
         </div>
+
         <h1
-          class="font-display font-bold text-navy dark:text-white text-4xl sm:text-5xl lg:text-6xl leading-[1.15] mb-6 tracking-tight">
-          Mencetak Sarjana Hukum Berintegritas, Unggul &amp; Berkeadilan.
+          class="font-display font-extrabold text-navy dark:text-white text-4xl sm:text-5xl lg:text-6xl leading-[1.15] mb-6 tracking-tight">
+          Mencetak Sarjana <span class="text-gold font-extrabold">Hukum</span> <span
+            class="text-red font-extrabold">Berintegritas</span>, Unggul &amp; <span
+            class="text-gold font-extrabold">Berkeadilan</span>.
         </h1>
-        <p class="text-text-muted text-base sm:text-lg mb-8 max-w-xl leading-relaxed">
+
+        <p class="text-text-muted dark:text-slate-300 text-base sm:text-lg mb-8 max-w-xl leading-relaxed font-normal">
           Program Studi Hukum Universitas Muhammadiyah Papua menyelenggarakan pendidikan hukum berkualitas tinggi yang
           memadukan keilmuan yuridis modern, kemahiran praktisi, dan nilai-nilai moral luhur.
         </p>
+
         <div class="flex flex-wrap gap-3.5">
           <a href="profil.html"
-            class="neu-btn-primary px-7 py-3.5 rounded-2xl text-sm font-semibold inline-flex items-center gap-2 shadow-md">
+            class="neu-btn-primary px-7 py-3.5 rounded-2xl text-sm font-semibold inline-flex items-center gap-2 shadow-md hover:scale-105 transition-all">
             <span>Jelajahi Profil Prodi</span> &rarr;
           </a>
-          <a href="kurikulum.html" class="neu-btn px-6 py-3.5 rounded-2xl text-sm font-semibold hover:text-royal">
+          <a href="kurikulum.html"
+            class="neu-btn px-6 py-3.5 rounded-2xl text-sm font-semibold hover:text-red transition-all inline-flex items-center justify-center">
             Lihat Struktur Kurikulum
           </a>
         </div>
-        <div class="flex items-center gap-6 sm:gap-8 mt-12 pt-8 border-t border-black/10 dark:border-white/10">
+
+        <!-- Dynamic Counter Stats Strip -->
+        <div class="flex items-center gap-6 sm:gap-8 mt-12 pt-8 border-t border-black/10 dark:border-white/15">
           <div>
             <p class="font-display font-bold text-2xl sm:text-3xl text-navy dark:text-white"><span
                 x-countup="mahasiswa">0</span>+</p>
-            <p class="text-xs text-text-muted mt-0.5">Mahasiswa Aktif</p>
+            <p class="text-xs text-text-muted dark:text-slate-300 mt-0.5 font-medium">Mahasiswa Aktif</p>
           </div>
           <div class="w-px h-10 bg-black/15 dark:bg-white/15"></div>
           <div>
             <p class="font-display font-bold text-2xl sm:text-3xl text-navy dark:text-white"><span
                 x-countup="dosen">0</span>+</p>
-            <p class="text-xs text-text-muted mt-0.5">Dosen Tetap</p>
+            <p class="text-xs text-text-muted dark:text-slate-300 mt-0.5 font-medium">Dosen Tetap</p>
           </div>
           <div class="w-px h-10 bg-black/15 dark:bg-white/15"></div>
           <div>
-            <p class="font-display font-bold text-2xl sm:text-3xl text-royal" x-text="akreditasi">B</p>
-            <p class="text-xs text-text-muted mt-0.5">Akreditasi BAN-PT</p>
+            <p class="font-display font-bold text-2xl sm:text-3xl text-gold" x-text="akreditasi">B</p>
+            <p class="text-xs text-text-muted dark:text-slate-300 mt-0.5 font-medium">Akreditasi BAN-PT</p>
+          </div>
+          <div class="w-px h-10 bg-black/15 dark:bg-white/15"></div>
+          <div>
+            <p class="font-display font-bold text-2xl sm:text-3xl text-navy dark:text-white"><span
+                x-countup="alumni">0</span>+</p>
+            <p class="text-xs text-text-muted dark:text-slate-300 mt-0.5 font-medium">Alumni</p>
           </div>
         </div>
       </div>
 
-      <!-- Hero Right Column - Image + Floating Cards -->
+      <!-- ══ RIGHT COLUMN: University Logo + Image Frame + Floating Event Card ══ -->
       <div class="relative mt-6 lg:mt-0">
         <!-- Floating University Logo - Posisi Tengah Atas Melayang Sesuai Gambar Mockup -->
         <div class="hero-logo-card">
           <img src="assets/image/logo-ump.png" alt="Logo Universitas Muhammadiyah Papua" class="object-contain">
           <div class="hero-logo-badge bg-navy/90 dark:bg-navy/95 text-white border border-white/20 shadow-xl">
             <span class="hero-logo-title">
-              <span class="font-normal text-amber-300">um</span>PAPUA
+              <span class="font-normal text-gold">um</span>PAPUA
             </span>
-            <span class="hero-logo-subtitle text-slate-200">Universitas Muhammadiyah
-              Papua</span>
+            <span class="hero-logo-subtitle text-slate-200">Universitas Muhammadiyah Papua</span>
           </div>
         </div>
 
         <!-- Main Image Container Frame -->
         <div class="neu-raised p-3.5 sm:p-4 rounded-3xl overflow-hidden shadow-2xl mt-4">
           <img src="assets/image/Gedung-UMP-thumbnail.jpg" alt="Gedung Kampus Utama Program Studi Hukum UMP"
-            class="rounded-2xl w-full h-80 sm:h-[400px] lg:h-[440px] object-cover object-center transition-transform duration-500 hover:scale-105">
+            class="rounded-2xl w-full h-80 sm:h-[400px] lg:h-[440px] object-cover object-center transition-transform duration-500 hover:scale-105"
+            loading="eager" fetchpriority="high">
         </div>
 
         <!-- Floating Next Event Card - Pojok Kiri Bawah Melayang di Luar Bingkai -->
-        <div
-          class="hero-event-card neu-raised px-5 sm:px-6 py-4 sm:py-5 rounded-3xl hidden sm:block shadow-2xl border border-black/5 dark:border-white/5 bg-bg"
-          x-show="nextEvent">
+        <a href="kegiatan.html"
+          class="hero-event-card neu-raised px-5 sm:px-6 py-4 sm:py-5 rounded-3xl hidden sm:block shadow-2xl border border-black/5 dark:border-white/5 border-l-4"
+          x-show="nextEvent" title="Klik untuk melihat agenda kegiatan">
           <p class="text-[11px] text-text-muted mb-1.5 font-medium flex items-center gap-1.5">
             <span>&#128197;</span>
-            <span>Kegiatan Terdekat</span>
+            <span class="text-gold font-semibold uppercase tracking-wider">Kegiatan Terdekat</span>
           </p>
-          <p class="font-bold text-navy dark:text-white text-sm sm:text-base leading-snug"
-            x-text="nextEvent ? nextEvent.nama : 'Agenda Mendatang'">Seminar Nasional Hukum Digital</p>
-          <p class="text-xs text-royal font-mono mt-2 font-bold tracking-wide"
-            x-text="nextEvent ? nextEvent.tanggal : 'Segera Hadir'">28 Agu 2026</p>
-        </div>
+          <p class="font-bold text-navy dark:text-white text-sm sm:text-base leading-snug hover:text-red transition-colors"
+            x-text="nextEvent ? nextEvent.nama : 'Seminar Nasional Hukum Digital'">Seminar Nasional Hukum Digital</p>
+          <div class="flex items-center justify-between gap-2 mt-2">
+            <span class="text-xs text-red font-mono font-bold tracking-wide"
+              x-text="nextEvent ? nextEvent.tanggal : '28 Agu 2026'">28 Agu 2026</span>
+            <span
+              class="text-[11px] font-semibold text-text-muted hover:text-red transition-colors inline-flex items-center gap-1">
+              <span>Detail</span> &rarr;
+            </span>
+          </div>
+        </a>
       </div>
+
     </div>
   </section>
+
 
   <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
     <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
 
-      <div class="neu-raised p-5 text-center hover:-translate-y-1 transition-transform">
-        <div class="w-12 h-12 mx-auto neu-raised-sm flex items-center justify-center mb-3 text-royal">&#127942;</div>
+      <div
+        class="neu-raised p-5 text-center hover:-translate-y-1 transition-transform border-t-4 border-gold rounded-b-2xl">
+        <div class="w-12 h-12 mx-auto neu-raised-sm flex items-center justify-center mb-3 text-gold">&#127942;</div>
         <p class="font-display font-bold text-navy dark:text-white text-xl" x-text="akreditasi"></p>
         <p class="text-xs text-text-muted mt-1">Akreditasi</p>
       </div>
-      <div class="neu-raised p-5 text-center hover:-translate-y-1 transition-transform">
-        <div class="w-12 h-12 mx-auto neu-raised-sm flex items-center justify-center mb-3 text-royal">&#128218;</div>
+      <div
+        class="neu-raised p-5 text-center hover:-translate-y-1 transition-transform border-t-4 border-red rounded-b-2xl">
+        <div class="w-12 h-12 mx-auto neu-raised-sm flex items-center justify-center mb-3 text-red">&#128218;</div>
         <p class="font-display font-bold text-navy dark:text-white text-xl"><span x-countup="kurikulum">0</span>+</p>
         <p class="text-xs text-text-muted mt-1">Mata Kuliah</p>
       </div>
-      <div class="neu-raised p-5 text-center hover:-translate-y-1 transition-transform">
-        <div class="w-12 h-12 mx-auto neu-raised-sm flex items-center justify-center mb-3 text-royal">&#128100;</div>
+      <div
+        class="neu-raised p-5 text-center hover:-translate-y-1 transition-transform border-t-4 border-gold rounded-b-2xl">
+        <div class="w-12 h-12 mx-auto neu-raised-sm flex items-center justify-center mb-3 text-gold">&#128100;</div>
         <p class="font-display font-bold text-navy dark:text-white text-xl"><span x-countup="dosen">0</span>+</p>
         <p class="text-xs text-text-muted mt-1">Dosen</p>
       </div>
-      <div class="neu-raised p-5 text-center hover:-translate-y-1 transition-transform">
-        <div class="w-12 h-12 mx-auto neu-raised-sm flex items-center justify-center mb-3 text-royal">&#127891;</div>
+      <div
+        class="neu-raised p-5 text-center hover:-translate-y-1 transition-transform border-t-4 border-red rounded-b-2xl">
+        <div class="w-12 h-12 mx-auto neu-raised-sm flex items-center justify-center mb-3 text-red">&#127891;</div>
         <p class="font-display font-bold text-navy dark:text-white text-xl"><span x-countup="mahasiswa">0</span>+</p>
         <p class="text-xs text-text-muted mt-1">Mahasiswa</p>
       </div>
-      <div class="neu-raised p-5 text-center hover:-translate-y-1 transition-transform">
-        <div class="w-12 h-12 mx-auto neu-raised-sm flex items-center justify-center mb-3 text-royal">&#127894;</div>
+      <div
+        class="neu-raised p-5 text-center hover:-translate-y-1 transition-transform border-t-4 border-gold rounded-b-2xl">
+        <div class="w-12 h-12 mx-auto neu-raised-sm flex items-center justify-center mb-3 text-gold">&#127894;</div>
         <p class="font-display font-bold text-navy dark:text-white text-xl"><span x-countup="alumni">0</span>+</p>
         <p class="text-xs text-text-muted mt-1">Alumni</p>
       </div>
-      <div class="neu-raised p-5 text-center hover:-translate-y-1 transition-transform">
-        <div class="w-12 h-12 mx-auto neu-raised-sm flex items-center justify-center mb-3 text-royal">&#11088;</div>
+      <div
+        class="neu-raised p-5 text-center hover:-translate-y-1 transition-transform border-t-4 border-red rounded-b-2xl">
+        <div class="w-12 h-12 mx-auto neu-raised-sm flex items-center justify-center mb-3 text-red">&#11088;</div>
         <p class="font-display font-bold text-navy dark:text-white text-xl"><span x-countup="prestasi">0</span>+</p>
         <p class="text-xs text-text-muted mt-1">Prestasi</p>
       </div>
@@ -415,19 +454,21 @@
     <div class="lg:col-span-2">
       <div class="flex items-center justify-between mb-6">
         <h2 class="font-display font-semibold text-2xl text-navy dark:text-white">Berita Terbaru</h2>
-        <a href="berita.html" class="text-sm text-royal font-medium">Lihat semua &rarr;</a>
+        <a href="berita.html" class="text-sm text-red hover:text-gold font-medium transition-colors">Lihat semua
+          &rarr;</a>
       </div>
       <template x-if="latestBerita">
-        <div class="neu-raised overflow-hidden grid md:grid-cols-2">
+        <div class="neu-raised overflow-hidden grid md:grid-cols-2 border-t-4 border-red">
           <img :src="latestBerita.gambar || 'https://placehold.co/500x360/EEF1F5/0B1F3A?text=Berita+Utama'"
             class="w-full h-56 md:h-full object-cover" :alt="latestBerita.judul">
           <div class="p-6">
-            <span class="neu-badge badge-new mb-3" x-text="latestBerita.kategori"></span>
+            <span class="neu-badge badge-red mb-3" x-text="latestBerita.kategori"></span>
             <h3 class="font-display font-semibold text-lg text-navy dark:text-white mb-2" x-text="latestBerita.judul">
             </h3>
             <p class="text-sm text-text-muted line-clamp-3 mb-4"
               x-text="latestBerita.excerpt || latestBerita.konten || latestBerita.judul"></p>
-            <a :href="'detail-berita.html?id=' + latestBerita.id" class="text-sm font-semibold text-royal">Baca
+            <a :href="'detail-berita.html?id=' + latestBerita.id"
+              class="text-sm font-semibold text-red hover:text-gold transition-colors">Baca
               selengkapnya &rarr;</a>
           </div>
         </div>
@@ -439,14 +480,14 @@
     <div>
       <div class="flex items-center justify-between mb-6">
         <h2 class="font-display font-semibold text-2xl text-navy dark:text-white">Agenda</h2>
-        <a href="kegiatan.html" class="text-sm text-royal font-medium">Semua &rarr;</a>
+        <a href="kegiatan.html" class="text-sm text-red hover:text-gold font-medium transition-colors">Semua &rarr;</a>
       </div>
       <div class="space-y-4">
         <template x-for="item in upcomingKegiatan" :key="item.id">
           <a :href="'detail-kegiatan.html?id=' + item.id"
-            class="neu-raised-sm p-4 flex gap-4 items-center block hover:-translate-y-0.5 transition-transform">
+            class="neu-raised-sm p-4 flex gap-4 items-center hover:-translate-y-0.5 transition-transform border-l-4 border-gold">
             <div class="w-14 h-14 shrink-0 neu-pressed flex flex-col items-center justify-center">
-              <span class="font-display font-bold text-royal text-lg leading-none"
+              <span class="font-display font-bold text-red text-lg leading-none"
                 x-text="item.hari || parseHari(item.tanggal)"></span>
               <span class="text-[10px] text-text-muted uppercase"
                 x-text="item.bulan || parseBulan(item.tanggal)"></span>
@@ -471,7 +512,7 @@
       <div
         class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-black/5 dark:border-white/5">
         <div>
-          <span class="neu-badge badge-new mb-2">Lokasi &amp; Kunjungan</span>
+          <span class="neu-badge badge-gold mb-2">Lokasi &amp; Kunjungan</span>
           <h2 class="font-display font-bold text-2xl sm:text-3xl text-navy dark:text-white">Kunjungi Kampus Kami</h2>
           <p class="text-xs sm:text-sm text-text-muted mt-1" x-text="p.alamat + ', Jayapura, Papua'"></p>
         </div>
@@ -496,9 +537,8 @@
 
         <!-- Campus Quick Info -->
         <div class="space-y-3.5">
-          <div class="neu-flat p-4 rounded-2xl flex items-start gap-3.5">
-            <div
-              class="w-10 h-10 neu-raised-sm rounded-xl flex items-center justify-center text-royal text-lg shrink-0">
+          <div class="neu-flat p-4 rounded-2xl flex items-start gap-3.5 border-l-4 border-red">
+            <div class="w-10 h-10 neu-raised-sm rounded-xl flex items-center justify-center text-red text-lg shrink-0">
               &#127979;</div>
             <div>
               <p class="text-[11px] text-text-muted font-medium">Kampus Utama</p>
@@ -506,9 +546,8 @@
               <p class="text-[11px] text-text-muted mt-0.5">Fakultas Ilmu Sosial &amp; Hukum</p>
             </div>
           </div>
-          <div class="neu-flat p-4 rounded-2xl flex items-start gap-3.5">
-            <div
-              class="w-10 h-10 neu-raised-sm rounded-xl flex items-center justify-center text-emerald-600 text-lg shrink-0">
+          <div class="neu-flat p-4 rounded-2xl flex items-start gap-3.5 border-l-4 border-gold">
+            <div class="w-10 h-10 neu-raised-sm rounded-xl flex items-center justify-center text-gold text-lg shrink-0">
               &#128337;</div>
             <div>
               <p class="text-[11px] text-text-muted font-medium">Layanan Akademik</p>
@@ -516,14 +555,13 @@
               <p class="text-[11px] text-text-muted mt-0.5">08.00 &ndash; 16.00 WIT</p>
             </div>
           </div>
-          <div class="neu-flat p-4 rounded-2xl flex items-start gap-3.5">
-            <div
-              class="w-10 h-10 neu-raised-sm rounded-xl flex items-center justify-center text-royal text-lg shrink-0">
+          <div class="neu-flat p-4 rounded-2xl flex items-start gap-3.5 border-l-4 border-red">
+            <div class="w-10 h-10 neu-raised-sm rounded-xl flex items-center justify-center text-red text-lg shrink-0">
               &#128222;</div>
             <div>
               <p class="text-[11px] text-text-muted font-medium">Kontak Langsung</p>
               <p class="font-semibold text-xs sm:text-sm text-navy dark:text-white" x-text="p.telepon"></p>
-              <p class="text-[11px] text-royal font-mono mt-0.5" x-text="p.email"></p>
+              <p class="text-[11px] text-red font-mono mt-0.5 font-semibold" x-text="p.email"></p>
             </div>
           </div>
         </div>
@@ -532,20 +570,25 @@
   </section>
 
   <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-    <div class="neu-raised p-8 sm:p-12 grid md:grid-cols-3 gap-8 items-center">
+    <div class="cta-section-premium p-8 sm:p-12 grid md:grid-cols-3 gap-8 items-center rounded-3xl shadow-xl">
       <div class="md:col-span-2">
-        <h2 class="font-display font-semibold text-2xl text-navy dark:text-white mb-3">Siap bergabung dengan Program
-          Studi Hukum?</h2>
-        <p class="text-text-muted text-sm sm:text-base">Jelajahi kurikulum, kenali dosen pengampu, dan lihat prestasi
-          mahasiswa serta alumni kami sebelum menentukan pilihan.</p>
+        <span class="hero-badge-pill pill-red mb-3 inline-block">&#127979; Penerimaan Mahasiswa Baru</span>
+        <h2 class="font-display font-bold text-2xl sm:text-3xl mb-3" style="color:#ffffff !important">Siap Bergabung
+          dengan Program Studi <span class="accent-gold">Hukum</span> UMP?</h2>
+        <p class="text-sm sm:text-base mt-2" style="color:rgba(255,255,255,0.85)">Jelajahi kurikulum, kenali dosen
+          pengampu, dan lihat prestasi mahasiswa serta alumni kami sebelum menentukan pilihan.</p>
       </div>
-      <div class="flex md:justify-end gap-3">
-        <a href="kurikulum.html" class="neu-btn-primary px-6 py-3.5 rounded-xl text-center">Lihat Kurikulum</a>
+      <div class="flex flex-wrap md:justify-end gap-3">
+        <a href="kurikulum.html" class="neu-btn-primary px-6 py-3.5 rounded-xl text-center text-sm font-semibold">Lihat
+          Kurikulum</a>
+        <a href="kontak.html" class="neu-btn-gold px-6 py-3.5 rounded-xl text-center text-sm font-semibold">Hubungi
+          Kami</a>
       </div>
     </div>
   </section>
 
-  <footer class="mt-20 neu-flat" x-data="{ p: SAMPLE_PENGATURAN }">
+
+  <footer class="footer-premium" x-data="{ p: SAMPLE_PENGATURAN }">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 grid grid-cols-2 md:grid-cols-4 gap-10">
       <div class="col-span-2 md:col-span-1">
         <div class="flex items-center gap-3 mb-4">
@@ -553,8 +596,8 @@
             <img src="assets/image/logo-ump.png" alt="Logo Program Studi Hukum UMP"
               class="w-full h-full object-contain">
           </div>
-          <p class="font-display font-semibold text-navy dark:text-white text-sm leading-tight">Program Studi<br>Hukum
-          </p>
+          <p class="font-display font-semibold text-navy dark:text-white text-sm leading-tight">Program Studi<br><span
+              class="text-red font-bold">Hukum</span></p>
         </div>
         <p class="text-sm text-text-muted">Mencetak sarjana hukum yang berintegritas, profesional, dan berkeadilan.</p>
       </div>
@@ -593,7 +636,7 @@
           </li>
           <li class="pt-1">
             <a href="kontak.html"
-              class="text-royal font-semibold hover:underline inline-flex items-center gap-1.5 text-xs">
+              class="text-royal font-semibold hover:text-red transition-colors inline-flex items-center gap-1.5 text-xs">
               <span>&#128506;&#65039;</span>
               <span>Peta &amp; Petunjuk Lokasi &rarr;</span>
             </a>
@@ -605,8 +648,6 @@
       &copy; 2026 Program Studi Hukum — Universitas Muhammadiyah Papua. All Rights Reserved.
     </div>
   </footer>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>

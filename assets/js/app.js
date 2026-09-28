@@ -8,8 +8,8 @@
 // preferensi OS (prefers-color-scheme) — supaya saat pengunjung menekan
 // tombol dark/light di header, warna chrome browser di HP ikut berubah
 // secara akurat, bukan tetap mengikuti tema OS yang mungkin berbeda.
-const THEME_COLOR_LIGHT = '#e8ecf1';
-const THEME_COLOR_DARK = '#101827';
+const THEME_COLOR_LIGHT = '#f4f6f9';
+const THEME_COLOR_DARK = '#0b1322';
 function syncThemeColorMeta(isDark) {
   const meta = document.getElementById('theme-color-meta');
   if (meta) meta.setAttribute('content', isDark ? THEME_COLOR_DARK : THEME_COLOR_LIGHT);
@@ -573,11 +573,12 @@ function monthlyContentTrend() {
 
 const NeuAlert = {
   base(options) {
+    const isDark = document.documentElement.classList.contains('dark');
     return Swal.fire({
-      background: document.documentElement.classList.contains('dark') ? '#141D30' : '#E8ECF1',
-      color: document.documentElement.classList.contains('dark') ? '#E7EBF2' : '#1B2430',
-      confirmButtonColor: '#2A4E9E',
-      cancelButtonColor: '#5B6472',
+      background: isDark ? '#14213D' : '#FFFFFF',
+      color: isDark ? '#F8FAFC' : '#1E293B',
+      confirmButtonColor: isDark ? '#3B82F6' : '#1D4ED8',
+      cancelButtonColor: '#64748B',
       customClass: { popup: 'rounded-3xl' },
       ...options
     });
@@ -601,24 +602,28 @@ const NeuAlert = {
     return this.base({ icon: 'error', title: 'Penyimpanan Penuh', text: msg });
   },
   async confirmDelete(itemLabel = 'data ini') {
+    const isDark = document.documentElement.classList.contains('dark');
     const res = await this.base({
       icon: 'warning',
       title: 'Hapus data?',
       text: `Apakah Anda yakin ingin menghapus ${itemLabel}?`,
       showCancelButton: true,
       confirmButtonText: 'Ya, Hapus',
+      confirmButtonColor: isDark ? '#EF4444' : '#B91C1C',
       cancelButtonText: 'Batal',
       reverseButtons: true
     });
     return res.isConfirmed;
   },
   async confirmLogout() {
+    const isDark = document.documentElement.classList.contains('dark');
     const res = await this.base({
       icon: 'question',
       title: 'Keluar dari akun?',
       text: 'Apakah Anda yakin ingin keluar?',
       showCancelButton: true,
       confirmButtonText: 'Ya, Keluar',
+      confirmButtonColor: isDark ? '#3B82F6' : '#1D4ED8',
       cancelButtonText: 'Batal',
       reverseButtons: true
     });
@@ -2023,4 +2028,102 @@ function kegiatanAdminPage() {
       NeuAlert.deleted('Data pendaftar berhasil dihapus.');
     }
   });
+}
+
+// ---- Admin: Activity Log (aktivitas.html) ----
+function adminAktivitasPage() {
+  return {
+    q: '',
+    filterUser: 'Semua',
+    filterType: 'Semua',
+    get list() {
+      return (typeof SAMPLE_AKTIVITAS !== 'undefined' && Array.isArray(SAMPLE_AKTIVITAS)) ? SAMPLE_AKTIVITAS : [];
+    },
+    get userOptions() {
+      const users = new Set(this.list.map(a => a.user).filter(Boolean));
+      return ['Semua', ...Array.from(users)];
+    },
+    get filteredList() {
+      const query = (this.q || '').trim().toLowerCase();
+      const uFilter = this.filterUser;
+      const tFilter = this.filterType;
+
+      return this.list.filter(a => {
+        const user = (a.user || '').toLowerCase();
+        const aksi = (a.aksi || '').toLowerCase();
+        const waktu = (a.waktu || '').toLowerCase();
+        const matchesQuery = !query || user.includes(query) || aksi.includes(query) || waktu.includes(query);
+
+        const matchesUser = (uFilter === 'Semua') || (a.user === uFilter);
+
+        let matchesType = true;
+        if (tFilter !== 'Semua') {
+          if (tFilter === 'Login') {
+            matchesType = aksi.includes('login') || aksi.includes('masuk');
+          } else if (tFilter === 'Tambah') {
+            matchesType = aksi.includes('menambah') || aksi.includes('tambah') || aksi.includes('buat');
+          } else if (tFilter === 'Ubah') {
+            matchesType = aksi.includes('edit') || aksi.includes('ubah') || aksi.includes('memperbarui') || aksi.includes('update');
+          } else if (tFilter === 'Hapus') {
+            matchesType = aksi.includes('hapus') || aksi.includes('delete');
+          } else if (tFilter === 'Publikasi') {
+            matchesType = aksi.includes('publikasi') || aksi.includes('unggah') || aksi.includes('upload');
+          }
+        }
+
+        return matchesQuery && matchesUser && matchesType;
+      });
+    },
+    get totalAktivitas() {
+      return this.list.length;
+    },
+    get aktivitasHariIni() {
+      return this.list.filter(a => {
+        const w = (a.waktu || '').toLowerCase();
+        return w.includes('lalu') || w.includes('menit') || w.includes('jam') || w.includes('baru saja');
+      }).length;
+    },
+    getUserInitials(user) {
+      if (!user) return 'AD';
+      const clean = user.replace(/\(.*?\)/g, '').trim().split(' ').filter(Boolean);
+      if (clean.length >= 2) return (clean[0][0] + clean[1][0]).toUpperCase();
+      return (clean[0] || 'AD').substring(0, 2).toUpperCase();
+    },
+    getActionCategory(aksi) {
+      const text = (aksi || '').toLowerCase();
+      if (text.includes('hapus')) return { label: 'Hapus Data', color: 'badge-important', icon: '\u{1F5D1}\u{FE0F}' };
+      if (text.includes('login')) return { label: 'Akses Sistem', color: 'badge-gold', icon: '\u{1F510}' };
+      if (text.includes('tambah') || text.includes('buat')) return { label: 'Tambah Data', color: 'badge-active', icon: '\u{2795}' };
+      if (text.includes('edit') || text.includes('ubah') || text.includes('memperbarui')) return { label: 'Perubahan Data', color: 'badge-new', icon: '\u{270F}\u{FE0F}' };
+      if (text.includes('publikasi') || text.includes('unggah')) return { label: 'Publikasi Dokumen', color: 'badge-red', icon: '\u{1F680}' };
+      return { label: 'Aktivitas Umum', color: 'badge-ended', icon: '\u{1F4DD}' };
+    },
+    resetFilter() {
+      this.q = '';
+      this.filterUser = 'Semua';
+      this.filterType = 'Semua';
+    },
+    exportCSV() {
+      if (!this.filteredList.length) {
+        if (typeof NeuAlert !== 'undefined') NeuAlert.warning('Tidak ada data log yang cocok untuk diekspor.');
+        return;
+      }
+      const headers = ['ID', 'Pengguna', 'Aktivitas', 'Waktu'];
+      const rows = this.filteredList.map(a => [
+        a.id,
+        `"${(a.user || '').replace(/"/g, '""')}"`,
+        `"${(a.aksi || '').replace(/"/g, '""')}"`,
+        `"${(a.waktu || '').replace(/"/g, '""')}"`
+      ]);
+      const csvContent = 'data:text/csv;charset=utf-8,\uFEFF' + [headers.join(','), ...rows.map(e => e.join(','))].join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `log_aktivitas_prodi_hukum_${new Date().toISOString().slice(0, 10)}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      if (typeof NeuAlert !== 'undefined') NeuAlert.success('Data log aktivitas berhasil diekspor ke CSV.');
+    }
+  };
 }

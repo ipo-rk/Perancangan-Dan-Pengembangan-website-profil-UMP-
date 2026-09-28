@@ -4,18 +4,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#e8ecf1" id="theme-color-meta">
+  <meta name="theme-color" content="#f4f6f9" id="theme-color-meta">
   <title>Dashboard | Program Studi Hukum — UMP</title>
   <meta name="description" content="Website resmi Program Studi Hukum Universitas Muhammadiyah Papua.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap"
-    rel="stylesheet">
+    rel="stylesheet" crossorigin>
   <link rel="stylesheet" href="../assets/css/tailwind.min.css">
   <script src="../assets/js/app.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="../assets/css/style.css">
-
   <link rel="icon" type="image/png" href="../assets/image/logo-ump.png">
 </head>
 
@@ -23,7 +22,7 @@
   <div class="flex min-h-screen">
 
     <aside
-      class="admin-sidebar w-72 shrink-0 neu-raised m-4 lg:mr-0 p-4 flex flex-col gap-1 fixed lg:sticky top-4 h-[calc(100vh-2rem)] overflow-y-auto z-40 bg-bg"
+      class="admin-sidebar w-72 shrink-0 neu-raised m-4 lg:mr-0 p-4 flex flex-col gap-1 fixed lg:sticky top-4 h-[calc(100vh-2rem)] overflow-y-auto z-40 bg-bg border-t-4 border-red"
       :class="sidebarOpen ? 'sidebar-open' : ''">
       <div class="flex items-center gap-3 px-2 pb-4 mb-2 border-b border-black/5 dark:border-white/5">
         <div class="w-10 h-10 neu-raised-sm flex items-center justify-center overflow-hidden p-1">
@@ -31,7 +30,8 @@
             class="w-full h-full object-contain">
         </div>
         <div class="leading-tight">
-          <p class="font-display font-semibold text-navy dark:text-white text-sm">Admin Prodi Hukum</p>
+          <p class="font-display font-semibold text-navy dark:text-white text-sm">Admin Prodi <span
+              class="text-red font-bold">Hukum</span></p>
           <p class="text-[11px] text-text-muted">Panel Manajemen</p>
         </div>
       </div>
@@ -168,7 +168,7 @@
 
     <div class="flex-1 min-w-0">
 
-      <div class="neu-flat sticky top-0 z-30 mb-6">
+      <div class="neu-flat sticky top-0 z-30 mb-6 admin-topbar-premium">
         <div class="flex items-center justify-between px-4 sm:px-6 py-4 gap-4">
           <div class="flex items-center gap-3">
             <button @click="sidebarOpen = !sidebarOpen"
@@ -204,22 +204,22 @@
                     d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                 </svg>
                 <span x-show="unreadNotifs > 0"
-                  class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-500 text-white rounded-full text-[10px] font-bold flex items-center justify-center"
+                  class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red text-white rounded-full text-[10px] font-bold flex items-center justify-center"
                   x-text="unreadNotifs"></span>
               </button>
               <div x-show="notifOpen" @click.outside="notifOpen = false" x-transition x-cloak class="notif-dropdown">
                 <!-- Header -->
                 <div
-                  class="flex items-center justify-between px-4 py-3 border-b border-black/10 dark:border-white/10 bg-[#d0d8e8] dark:bg-[#1e2d4a] rounded-t-2xl">
+                  class="flex items-center justify-between px-4 py-3 border-b border-black/10 dark:border-white/10 bg-[#eef2f7] dark:bg-[#0f1a2e] rounded-t-2xl">
                   <div class="flex items-center gap-2">
                     <span class="font-display font-semibold text-sm text-navy dark:text-white">&#128276;
                       Notifikasi</span>
                     <span x-show="unreadNotifs > 0"
-                      class="px-2 py-0.5 rounded-full text-[10px] bg-royal text-white font-bold"
+                      class="px-2 py-0.5 rounded-full text-[10px] bg-red text-white font-bold"
                       x-text="unreadNotifs + ' Baru'"></span>
                   </div>
                   <div class="flex items-center gap-3 text-[11px]">
-                    <button @click="markAllRead()" class="text-royal hover:underline font-semibold">Baca Semua</button>
+                    <button @click="markAllRead()" class="text-red hover:underline font-semibold">Baca Semua</button>
                     <span class="text-black/20 dark:text-white/20">|</span>
                     <button @click="clearNotifs()" class="text-red-500 hover:underline font-semibold">Hapus</button>
                   </div>
@@ -228,14 +228,14 @@
                 <div class="notif-list">
                   <template x-for="n in notifications" :key="n.id">
                     <div class="flex items-start gap-3 px-3 py-2.5 rounded-xl mx-2 my-1 transition-all cursor-default"
-                      :class="n.read ? 'bg-white/30 dark:bg-white/5' : 'bg-white/90 dark:bg-white/10 border-l-2 border-royal shadow-sm'">
+                      :class="n.read ? 'bg-white/30 dark:bg-white/5' : 'bg-white/90 dark:bg-white/10 border-l-2 border-red shadow-sm'">
                       <span class="text-xl shrink-0 mt-0.5" x-text="n.icon || '&#128276;'"></span>
                       <div class="flex-1 min-w-0">
                         <p class="text-xs font-semibold text-navy dark:text-white leading-snug" x-text="n.judul"></p>
                         <p class="text-[11px] text-text-muted mt-0.5 leading-snug line-clamp-2" x-text="n.pesan"></p>
-                        <p class="text-[10px] text-royal font-mono mt-1" x-text="n.waktu"></p>
+                        <p class="text-[10px] text-red font-mono mt-1" x-text="n.waktu"></p>
                       </div>
-                      <span x-show="!n.read" class="w-2 h-2 rounded-full bg-royal shrink-0 mt-1.5 flex-none"></span>
+                      <span x-show="!n.read" class="w-2 h-2 rounded-full bg-red shrink-0 mt-1.5 flex-none"></span>
                     </div>
                   </template>
                   <div x-show="notifications.length === 0" class="text-center py-8 text-xs text-text-muted">
@@ -245,8 +245,8 @@
                 </div>
                 <!-- Footer -->
                 <div
-                  class="px-4 py-2.5 border-t border-black/10 dark:border-white/10 bg-[#d0d8e8] dark:bg-[#1e2d4a] text-center rounded-b-2xl">
-                  <a href="aktivitas.html" class="text-[11px] text-royal hover:underline font-semibold">Lihat semua
+                  class="px-4 py-2.5 border-t border-black/10 dark:border-white/10 bg-[#eef2f7] dark:bg-[#0f1a2e] text-center rounded-b-2xl">
+                  <a href="aktivitas.html" class="text-[11px] text-red hover:underline font-semibold">Lihat semua
                     aktivitas &rarr;</a>
                 </div>
               </div>
@@ -264,7 +264,7 @@
               </svg>
             </button>
             <div
-              class="w-10 h-10 neu-raised-sm flex items-center justify-center font-display font-semibold text-royal text-sm">
+              class="w-10 h-10 neu-raised-sm flex items-center justify-center font-display font-semibold text-red text-sm">
               AP</div>
           </div>
         </div>
@@ -272,67 +272,92 @@
 
       <main class="px-4 sm:px-6 pb-10">
 
+        <!-- ══ ADMIN PREMIUM PAGE HEADER ══ -->
+        <div class="admin-page-header">
+          <div class="admin-page-header-content">
+            <nav class="admin-breadcrumb">
+              <a href="../index.html">Beranda</a>
+              <span class="sep">›</span>
+              <a href="dashboard.html">Admin</a>
+              <span class="sep">›</span>
+              <span class="current">Dashboard</span>
+            </nav>
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <span
+                  class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-white/10 text-white/90 border border-white/15 mb-2">&#128202;
+                  Panel Kontrol Eksekutif</span>
+                <h1 class="admin-header-title">Dashboard <span class="text-gold">Utama</span> Prodi Hukum</h1>
+                <span class="admin-header-underline"></span>
+                <p class="admin-header-desc">Pusat kendali, statistik akademik, ringkasan data mahasiswa, dosen, alumni,
+                  dan pemantauan sistem Program Studi Hukum UMP.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- ══ END ADMIN PREMIUM PAGE HEADER ══ -->
+
         <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
 
           <div class="neu-raised p-5">
             <div class="flex items-center justify-between mb-3">
-              <div class="w-11 h-11 neu-raised-sm flex items-center justify-center text-royal text-lg">&#128100;</div>
+              <div class="w-11 h-11 neu-raised-sm flex items-center justify-center text-red text-lg">&#128100;</div>
             </div>
             <p class="font-display font-bold text-2xl text-navy dark:text-white" x-countup="stats.dosen">0</p>
             <p class="text-xs text-text-muted mt-1">Total Dosen</p>
           </div>
           <div class="neu-raised p-5">
             <div class="flex items-center justify-between mb-3">
-              <div class="w-11 h-11 neu-raised-sm flex items-center justify-center text-royal text-lg">&#127891;</div>
+              <div class="w-11 h-11 neu-raised-sm flex items-center justify-center text-red text-lg">&#127891;</div>
             </div>
             <p class="font-display font-bold text-2xl text-navy dark:text-white" x-countup="stats.mahasiswa || 0">0</p>
             <p class="text-xs text-text-muted mt-1">Total Mahasiswa</p>
           </div>
           <div class="neu-raised p-5">
             <div class="flex items-center justify-between mb-3">
-              <div class="w-11 h-11 neu-raised-sm flex items-center justify-center text-royal text-lg">&#127894;</div>
+              <div class="w-11 h-11 neu-raised-sm flex items-center justify-center text-red text-lg">&#127894;</div>
             </div>
             <p class="font-display font-bold text-2xl text-navy dark:text-white" x-countup="stats.alumni">0</p>
             <p class="text-xs text-text-muted mt-1">Total Alumni</p>
           </div>
           <div class="neu-raised p-5">
             <div class="flex items-center justify-between mb-3">
-              <div class="w-11 h-11 neu-raised-sm flex items-center justify-center text-royal text-lg">&#128240;</div>
+              <div class="w-11 h-11 neu-raised-sm flex items-center justify-center text-red text-lg">&#128240;</div>
             </div>
             <p class="font-display font-bold text-2xl text-navy dark:text-white" x-countup="stats.berita">0</p>
             <p class="text-xs text-text-muted mt-1">Total Berita</p>
           </div>
           <div class="neu-raised p-5">
             <div class="flex items-center justify-between mb-3">
-              <div class="w-11 h-11 neu-raised-sm flex items-center justify-center text-royal text-lg">&#128197;</div>
+              <div class="w-11 h-11 neu-raised-sm flex items-center justify-center text-red text-lg">&#128197;</div>
             </div>
             <p class="font-display font-bold text-2xl text-navy dark:text-white" x-countup="stats.kegiatan">0</p>
             <p class="text-xs text-text-muted mt-1">Total Kegiatan</p>
           </div>
           <div class="neu-raised p-5">
             <div class="flex items-center justify-between mb-3">
-              <div class="w-11 h-11 neu-raised-sm flex items-center justify-center text-royal text-lg">&#128218;</div>
+              <div class="w-11 h-11 neu-raised-sm flex items-center justify-center text-red text-lg">&#128218;</div>
             </div>
             <p class="font-display font-bold text-2xl text-navy dark:text-white" x-countup="stats.artikel">0</p>
             <p class="text-xs text-text-muted mt-1">Total Artikel</p>
           </div>
           <div class="neu-raised p-5">
             <div class="flex items-center justify-between mb-3">
-              <div class="w-11 h-11 neu-raised-sm flex items-center justify-center text-royal text-lg">&#128193;</div>
+              <div class="w-11 h-11 neu-raised-sm flex items-center justify-center text-red text-lg">&#128193;</div>
             </div>
             <p class="font-display font-bold text-2xl text-navy dark:text-white" x-countup="stats.dokumen">0</p>
             <p class="text-xs text-text-muted mt-1">Total Dokumen</p>
           </div>
           <div class="neu-raised p-5">
             <div class="flex items-center justify-between mb-3">
-              <div class="w-11 h-11 neu-raised-sm flex items-center justify-center text-royal text-lg">&#128247;</div>
+              <div class="w-11 h-11 neu-raised-sm flex items-center justify-center text-red text-lg">&#128247;</div>
             </div>
             <p class="font-display font-bold text-2xl text-navy dark:text-white" x-countup="stats.galeri">0</p>
             <p class="text-xs text-text-muted mt-1">Total Galeri</p>
           </div>
           <div class="neu-raised p-5">
             <div class="flex items-center justify-between mb-3">
-              <div class="w-11 h-11 neu-raised-sm flex items-center justify-center text-royal text-lg">&#128101;</div>
+              <div class="w-11 h-11 neu-raised-sm flex items-center justify-center text-red text-lg">&#128101;</div>
             </div>
             <p class="font-display font-bold text-2xl text-navy dark:text-white" x-countup="stats.pendaftar">0</p>
             <p class="text-xs text-text-muted mt-1">Total Pendaftar Kegiatan</p>
@@ -383,7 +408,7 @@
             <div class="space-y-4">
               <template x-for="a in recentActivity" :key="a.id">
                 <div class="flex items-start gap-3">
-                  <div class="w-8 h-8 shrink-0 neu-raised-sm flex items-center justify-center text-royal text-xs"
+                  <div class="w-8 h-8 shrink-0 neu-raised-sm flex items-center justify-center text-red text-xs"
                     x-text="a.icon"></div>
                   <div>
                     <p class="text-xs text-navy dark:text-white font-medium" x-text="a.user + ': ' + a.aksi"></p>
@@ -395,64 +420,75 @@
                 aktivitas.</p>
             </div>
             <a href="aktivitas.html"
-              class="block mt-4 text-center text-xs font-semibold text-royal hover:text-royal-soft transition-colors">Lihat
+              class="block mt-4 text-center text-xs font-semibold text-red hover:text-royal-soft transition-colors">Lihat
               semua aktivitas &rarr;</a>
           </div>
         </div>
 
         <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
         <script>
-          const gridColor = 'rgba(91,100,114,0.12)';
-          const txt = getComputedStyle(document.documentElement).getPropertyValue('color') || '#5B6472';
+          document.addEventListener('DOMContentLoaded', () => {
+            if (typeof Chart === 'undefined') return;
 
-          // Tren konten riil (bukan lagi data ilustrasi) — dihitung dari tanggal
-          // sesungguhnya di SAMPLE_BERITA/SAMPLE_ARTIKEL/SAMPLE_KEGIATAN.
-          const trend = monthlyContentTrend();
-          new Chart(document.getElementById('chartKonten'), {
-            type: 'line',
-            data: {
-              labels: trend.labels,
-              datasets: [
-                { label: 'Berita', data: trend.datasets.Berita, borderColor: '#2A4E9E', backgroundColor: 'rgba(42,78,158,0.08)', tension: .4, fill: true },
-                { label: 'Artikel', data: trend.datasets.Artikel, borderColor: '#C9A227', backgroundColor: 'rgba(201,162,39,0.08)', tension: .4, fill: true },
-                { label: 'Kegiatan', data: trend.datasets.Kegiatan, borderColor: '#10B981', backgroundColor: 'rgba(16,185,129,0.08)', tension: .4, fill: true },
-              ]
-            },
-            options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 } } } }, scales: { y: { grid: { color: gridColor }, ticks: { precision: 0 } }, x: { grid: { display: false } } } }
-          });
+            const isDark = document.documentElement.classList.contains('dark');
+            const gridColor = isDark ? 'rgba(255,255,255,0.08)' : 'rgba(91,100,114,0.12)';
+            const txt = isDark ? '#94a3b8' : '#5b6472';
+            Chart.defaults.color = txt;
 
-          // Dihitung langsung dari SAMPLE_ALUMNI (bukan angka statis) supaya konsisten dengan halaman Alumni publik.
-          const alumniKategoriCount = SAMPLE_ALUMNI.reduce((acc, a) => {
-            acc[a.kategori] = (acc[a.kategori] || 0) + 1;
-            return acc;
-          }, {});
-          new Chart(document.getElementById('chartAlumni'), {
-            type: 'doughnut',
-            data: {
-              labels: Object.keys(alumniKategoriCount),
-              datasets: [{ data: Object.values(alumniKategoriCount), backgroundColor: ['#2A4E9E', '#C9A227', '#10B981', '#94A3B8'] }]
-            },
-            options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 } } } }, cutout: '65%' }
-          });
+            // Tren konten riil — Berita (Biru), Artikel (Merah), Kegiatan (Kuning)
+            const elKonten = document.getElementById('chartKonten');
+            if (elKonten && typeof monthlyContentTrend === 'function') {
+              const trend = monthlyContentTrend();
+              new Chart(elKonten, {
+                type: 'line',
+                data: {
+                  labels: trend.labels,
+                  datasets: [
+                    { label: 'Berita', data: trend.datasets.Berita, borderColor: isDark ? '#3B82F6' : '#1D4ED8', backgroundColor: isDark ? 'rgba(59,130,246,0.12)' : 'rgba(29,78,216,0.08)', tension: .4, fill: true },
+                    { label: 'Artikel', data: trend.datasets.Artikel, borderColor: isDark ? '#EF4444' : '#B91C1C', backgroundColor: isDark ? 'rgba(239,68,68,0.12)' : 'rgba(185,28,28,0.08)', tension: .4, fill: true },
+                    { label: 'Kegiatan', data: trend.datasets.Kegiatan, borderColor: isDark ? '#FACC15' : '#D97706', backgroundColor: isDark ? 'rgba(250,204,21,0.12)' : 'rgba(217,119,6,0.08)', tension: .4, fill: true },
+                  ]
+                },
+                options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 11 }, color: txt } } }, scales: { y: { grid: { color: gridColor }, ticks: { color: txt, precision: 0 } }, x: { grid: { display: false }, ticks: { color: txt } } } }
+              });
+            }
 
-          // 7 hari terakhir, dihitung dari log kunjungan riil di localStorage
-          // (setiap kunjungan ke halaman publik dicatat oleh trackPageView()).
-          const pv = getPageViewStats();
-          new Chart(document.getElementById('chartPengunjung'), {
-            type: 'bar',
-            data: {
-              labels: pv.days.map(d => d.label),
-              datasets: [{ label: 'Pengunjung', data: pv.days.map(d => d.count), backgroundColor: '#2A4E9E', borderRadius: 8 }]
-            },
-            options: { plugins: { legend: { display: false } }, scales: { y: { grid: { color: gridColor }, ticks: { precision: 0 } }, x: { grid: { display: false } } } }
+            // Dihitung langsung dari SAMPLE_ALUMNI — Palette: Biru, Merah, Kuning, Slate
+            const elAlumni = document.getElementById('chartAlumni');
+            if (elAlumni && typeof SAMPLE_ALUMNI !== 'undefined') {
+              const alumniKategoriCount = SAMPLE_ALUMNI.reduce((acc, a) => {
+                acc[a.kategori] = (acc[a.kategori] || 0) + 1;
+                return acc;
+              }, {});
+              new Chart(elAlumni, {
+                type: 'doughnut',
+                data: {
+                  labels: Object.keys(alumniKategoriCount),
+                  datasets: [{ data: Object.values(alumniKategoriCount), backgroundColor: isDark ? ['#3B82F6', '#EF4444', '#FACC15', '#94A3B8'] : ['#1D4ED8', '#B91C1C', '#D97706', '#64748B'] }]
+                },
+                options: { plugins: { legend: { position: 'bottom', labels: { boxWidth: 10, font: { size: 10 }, color: txt } } }, cutout: '65%' }
+              });
+            }
+
+            // 7 hari terakhir — Bar Pengunjung Biru UMP
+            const elPengunjung = document.getElementById('chartPengunjung');
+            if (elPengunjung && typeof getPageViewStats === 'function') {
+              const pv = getPageViewStats();
+              new Chart(elPengunjung, {
+                type: 'bar',
+                data: {
+                  labels: pv.days.map(d => d.label),
+                  datasets: [{ label: 'Pengunjung', data: pv.days.map(d => d.count), backgroundColor: isDark ? '#3B82F6' : '#1D4ED8', borderRadius: 8 }]
+                },
+                options: { plugins: { legend: { display: false } }, scales: { y: { grid: { color: gridColor }, ticks: { color: txt, precision: 0 } }, x: { grid: { display: false }, ticks: { color: txt } } } }
+              });
+            }
           });
         </script>
 
       </main>
     </div>
   </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>

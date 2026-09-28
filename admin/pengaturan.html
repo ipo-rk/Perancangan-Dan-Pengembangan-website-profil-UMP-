@@ -1,19 +1,19 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#e8ecf1" id="theme-color-meta">
+  <meta name="theme-color" content="#f4f6f9" id="theme-color-meta">
   <title>Pengaturan | Program Studi Hukum — UMP</title>
   <meta name="description" content="Website resmi Program Studi Hukum Universitas Muhammadiyah Papua.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap"
-    rel="stylesheet">
+    rel="stylesheet" crossorigin>
   <link rel="stylesheet" href="../assets/css/tailwind.min.css">
-  <script src="../assets/js/app.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <script defer src="../assets/js/app.js"></script>
   <link rel="stylesheet" href="../assets/css/style.css">
 
   <link rel="icon" type="image/png" href="../assets/image/logo-ump.png">
@@ -23,14 +23,15 @@
   <div class="flex min-h-screen">
 
     <aside
-      class="admin-sidebar w-72 shrink-0 neu-raised m-4 lg:mr-0 p-4 flex flex-col gap-1 fixed lg:sticky top-4 h-[calc(100vh-2rem)] overflow-y-auto z-40 bg-bg"
+      class="admin-sidebar w-72 shrink-0 neu-raised m-4 lg:mr-0 p-4 flex flex-col gap-1 fixed lg:sticky top-4 h-[calc(100vh-2rem)] overflow-y-auto z-40 bg-bg border-t-4 border-red"
       :class="sidebarOpen ? 'sidebar-open' : ''">
       <div class="flex items-center gap-3 px-2 pb-4 mb-2 border-b border-black/5 dark:border-white/5">
         <div class="w-10 h-10 neu-raised-sm flex items-center justify-center overflow-hidden p-1">
-          <img src="../assets/image/logo-ump.png" alt="Logo Program Studi Hukum UMP" class="w-full h-full object-contain">
+          <img src="../assets/image/logo-ump.png" alt="Logo Program Studi Hukum UMP"
+            class="w-full h-full object-contain">
         </div>
         <div class="leading-tight">
-          <p class="font-display font-semibold text-navy dark:text-white text-sm">Admin Prodi Hukum</p>
+          <p class="font-display font-semibold text-navy dark:text-white text-sm">Admin Prodi <span class="text-red font-bold">Hukum</span></p>
           <p class="text-[11px] text-text-muted">Panel Manajemen</p>
         </div>
       </div>
@@ -167,7 +168,7 @@
 
     <div class="flex-1 min-w-0">
 
-      <div class="neu-flat sticky top-0 z-30 mb-6">
+      <div class="neu-flat sticky top-0 z-30 mb-6 admin-topbar-premium">
         <div class="flex items-center justify-between px-4 sm:px-6 py-4 gap-4">
           <div class="flex items-center gap-3">
             <button @click="sidebarOpen = !sidebarOpen"
@@ -203,22 +204,22 @@
                     d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
                 </svg>
                 <span x-show="unreadNotifs > 0"
-                  class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-500 text-white rounded-full text-[10px] font-bold flex items-center justify-center"
+                  class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red text-white rounded-full text-[10px] font-bold flex items-center justify-center"
                   x-text="unreadNotifs"></span>
               </button>
               <div x-show="notifOpen" @click.outside="notifOpen = false" x-transition x-cloak class="notif-dropdown">
                 <!-- Header -->
                 <div
-                  class="flex items-center justify-between px-4 py-3 border-b border-black/10 dark:border-white/10 bg-[#d0d8e8] dark:bg-[#1e2d4a] rounded-t-2xl">
+                  class="flex items-center justify-between px-4 py-3 border-b border-black/10 dark:border-white/10 bg-[#eef2f7] dark:bg-[#0f1a2e] rounded-t-2xl">
                   <div class="flex items-center gap-2">
                     <span class="font-display font-semibold text-sm text-navy dark:text-white">&#128276;
                       Notifikasi</span>
                     <span x-show="unreadNotifs > 0"
-                      class="px-2 py-0.5 rounded-full text-[10px] bg-royal text-white font-bold"
+                      class="px-2 py-0.5 rounded-full text-[10px] bg-red text-white font-bold"
                       x-text="unreadNotifs + ' Baru'"></span>
                   </div>
                   <div class="flex items-center gap-3 text-[11px]">
-                    <button @click="markAllRead()" class="text-royal hover:underline font-semibold">Baca Semua</button>
+                    <button @click="markAllRead()" class="text-red hover:underline font-semibold">Baca Semua</button>
                     <span class="text-black/20 dark:text-white/20">|</span>
                     <button @click="clearNotifs()" class="text-red-500 hover:underline font-semibold">Hapus</button>
                   </div>
@@ -227,14 +228,14 @@
                 <div class="notif-list">
                   <template x-for="n in notifications" :key="n.id">
                     <div class="flex items-start gap-3 px-3 py-2.5 rounded-xl mx-2 my-1 transition-all cursor-default"
-                      :class="n.read ? 'bg-white/30 dark:bg-white/5' : 'bg-white/90 dark:bg-white/10 border-l-2 border-royal shadow-sm'">
+                      :class="n.read ? 'bg-white/30 dark:bg-white/5' : 'bg-white/90 dark:bg-white/10 border-l-2 border-red shadow-sm'">
                       <span class="text-xl shrink-0 mt-0.5" x-text="n.icon || '&#128276;'"></span>
                       <div class="flex-1 min-w-0">
                         <p class="text-xs font-semibold text-navy dark:text-white leading-snug" x-text="n.judul"></p>
                         <p class="text-[11px] text-text-muted mt-0.5 leading-snug line-clamp-2" x-text="n.pesan"></p>
-                        <p class="text-[10px] text-royal font-mono mt-1" x-text="n.waktu"></p>
+                        <p class="text-[10px] text-red font-mono mt-1" x-text="n.waktu"></p>
                       </div>
-                      <span x-show="!n.read" class="w-2 h-2 rounded-full bg-royal shrink-0 mt-1.5 flex-none"></span>
+                      <span x-show="!n.read" class="w-2 h-2 rounded-full bg-red shrink-0 mt-1.5 flex-none"></span>
                     </div>
                   </template>
                   <div x-show="notifications.length === 0" class="text-center py-8 text-xs text-text-muted">
@@ -244,8 +245,8 @@
                 </div>
                 <!-- Footer -->
                 <div
-                  class="px-4 py-2.5 border-t border-black/10 dark:border-white/10 bg-[#d0d8e8] dark:bg-[#1e2d4a] text-center rounded-b-2xl">
-                  <a href="aktivitas.html" class="text-[11px] text-royal hover:underline font-semibold">Lihat semua
+                  class="px-4 py-2.5 border-t border-black/10 dark:border-white/10 bg-[#eef2f7] dark:bg-[#0f1a2e] text-center rounded-b-2xl">
+                  <a href="aktivitas.html" class="text-[11px] text-red hover:underline font-semibold">Lihat semua
                     aktivitas &rarr;</a>
                 </div>
               </div>
@@ -264,13 +265,35 @@
               </svg>
             </button>
             <div
-              class="w-10 h-10 neu-raised-sm flex items-center justify-center font-display font-semibold text-royal text-sm">
+              class="w-10 h-10 neu-raised-sm flex items-center justify-center font-display font-semibold text-red text-sm">
               AP</div>
           </div>
         </div>
       </div>
 
       <main class="px-4 sm:px-6 pb-10">
+
+        <!-- ══ ADMIN PREMIUM PAGE HEADER ══ -->
+        <div class="admin-page-header">
+          <div class="admin-page-header-content">
+            <nav class="admin-breadcrumb">
+              <a href="../index.html">Beranda</a>
+              <span class="sep">›</span>
+              <a href="dashboard.html">Admin</a>
+              <span class="sep">›</span>
+              <span class="current">Pengaturan</span>
+            </nav>
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-white/10 text-white/90 border border-white/15 mb-2">&#9881;&#65039; Konfigurasi Global</span>
+                <h1 class="admin-header-title">Pengaturan <span class="text-gold">Situs Web</span></h1>
+                <span class="admin-header-underline"></span>
+                <p class="admin-header-desc">Kelola parameter website, kontak sekretariat, tautan media sosial, alamat kampus, dan preferensi umum.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- ══ END ADMIN PREMIUM PAGE HEADER ══ -->
 
         <div x-data="{
     tab: 'general',
@@ -407,7 +430,7 @@
                   <label class="text-xs font-semibold text-text-muted mb-2 block">Logo Website</label>
                   <div class="neu-pressed p-4 rounded-xl flex items-center gap-4">
                     <div
-                      class="w-14 h-14 neu-raised-sm rounded-xl flex items-center justify-center p-1 bg-white dark:bg-slate-800 shrink-0">
+                      class="w-14 h-14 neu-raised-sm rounded-xl flex items-center justify-center p-1 bg-surface shrink-0">
                       <img :src="form.logo || '../assets/image/logo-ump.png'" class="w-full h-full object-contain"
                         alt="Logo">
                     </div>
@@ -422,7 +445,7 @@
                   <label class="text-xs font-semibold text-text-muted mb-2 block">Favicon Website</label>
                   <div class="neu-pressed p-4 rounded-xl flex items-center gap-4">
                     <div
-                      class="w-14 h-14 neu-raised-sm rounded-xl flex items-center justify-center p-1 bg-white dark:bg-slate-800 shrink-0">
+                      class="w-14 h-14 neu-raised-sm rounded-xl flex items-center justify-center p-1 bg-surface shrink-0">
                       <img :src="form.favicon || '../assets/image/logo-ump.png'" class="w-7 h-7 object-contain"
                         alt="Favicon">
                     </div>
@@ -505,12 +528,12 @@
                 <div class="flex items-center justify-between text-xs">
                   <span class="font-semibold text-navy dark:text-white">Kapasitas Penyimpanan Browser
                     (localStorage)</span>
-                  <span class="font-mono text-royal"
+                  <span class="font-mono text-red"
                     x-text="storage.kb + ' KB / 5120 KB (' + storage.pct + '%)'"></span>
                 </div>
                 <div class="w-full h-3 bg-black/10 dark:bg-white/10 rounded-full overflow-hidden">
                   <div class="h-full rounded-full transition-all duration-300"
-                    :class="storage.pct > 80 ? 'bg-red-500' : (storage.pct > 50 ? 'bg-gold' : 'bg-royal')"
+                    :class="storage.pct > 80 ? 'bg-red-500' : (storage.pct > 50 ? 'bg-gold' : 'bg-red')"
                     :style="'width: ' + Math.min(100, storage.pct) + '%'"></div>
                 </div>
                 <p class="text-[11px] text-text-muted leading-relaxed">
@@ -544,8 +567,6 @@
       </main>
     </div>
   </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
 </body>

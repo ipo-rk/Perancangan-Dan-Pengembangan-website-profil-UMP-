@@ -4,17 +4,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#e8ecf1" id="theme-color-meta">
+  <meta name="theme-color" content="#f4f6f9" id="theme-color-meta">
   <title>Admin Login | Program Studi Hukum — UMP</title>
   <meta name="description"
     content="Portal Login Panel Administrasi Program Studi Hukum Universitas Muhammadiyah Papua.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
     href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap"
-    rel="stylesheet">
+    rel="stylesheet" crossorigin>
   <link rel="stylesheet" href="../assets/css/tailwind.min.css">
-  <script src="../assets/js/app.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+  <script defer src="../assets/js/app.js"></script>
   <link rel="stylesheet" href="../assets/css/style.css">
   <link rel="icon" type="image/png" href="../assets/image/logo-ump.png">
 </head>
@@ -119,20 +119,20 @@
        muncul area scroll tambahan yang transparan (tidak tertutup background)
        di bawah konten. Wrapper ini mengklip keduanya pas di batas body agar
        halaman tidak bisa discroll melebihi area yang benar-benar tertutup bg. -->
-  <div class="absolute inset-0 overflow-hidden pointer-events-none -z-10">
-    <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-royal/20 blur-3xl"></div>
-    <div class="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-gold/20 blur-3xl"></div>
+  <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
+    <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-red/15 dark:bg-red/20 blur-3xl"></div>
+    <div class="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-gold/15 dark:bg-gold/20 blur-3xl"></div>
   </div>
 
   <!-- Top Bar Navigation Actions -->
   <a href="../index.html"
-    class="neu-btn px-4 py-2.5 rounded-2xl text-xs font-semibold flex items-center gap-2 absolute top-6 left-6 z-20 hover:text-royal transition-all shadow-md">
+    class="neu-btn admin-auth-nav-btn px-4 py-2.5 rounded-2xl text-xs font-semibold flex items-center gap-2 absolute top-6 left-6 z-20 transition-all">
     <span>&larr;</span>
     <span class="hidden sm:inline">Kembali ke</span> <span>Website</span>
   </a>
 
   <button @click="toggle()"
-    class="neu-btn w-11 h-11 rounded-2xl flex items-center justify-center absolute top-6 right-6 z-20 shadow-md hover:text-royal transition-all"
+    class="neu-btn admin-auth-nav-btn w-11 h-11 rounded-2xl flex items-center justify-center absolute top-6 right-6 z-20 transition-all"
     aria-label="Ganti mode gelap/terang">
     <svg x-show="!dark" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
       stroke="currentColor">
@@ -152,31 +152,28 @@
     <!-- Branding Header -->
     <div class="text-center mb-7">
       <div
-        class="w-20 h-20 neu-raised flex items-center justify-center mx-auto mb-4 overflow-hidden p-2.5 rounded-3xl shadow-2xl bg-bg/95 backdrop-blur-md">
+        class="w-20 h-20 admin-auth-logo flex items-center justify-center mx-auto mb-4 overflow-hidden p-2.5 rounded-3xl">
         <img src="../assets/image/logo-ump.png" alt="Logo Program Studi Hukum UMP"
           class="w-full h-full object-contain drop-shadow-md">
       </div>
 
       <div class="flex flex-wrap items-center justify-center gap-2 mb-2">
-        <span
-          class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-royal/15 text-royal">
+        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red/15 text-red">
           <span>&#9878;&#65039;</span>
           <span>Panel Administrasi Akademik</span>
         </span>
-        <span
-          class="px-2.5 py-0.5 rounded-full text-[11px] font-serif italic bg-gold/15 text-amber-700 dark:text-amber-300 font-medium">
+        <span class="px-2.5 py-0.5 rounded-full text-[11px] font-serif italic bg-gold/15 text-gold font-medium">
           &ldquo;Fiat Justitia Ruat Caelum&rdquo;
         </span>
       </div>
 
-      <h1 class="font-display font-extrabold text-2xl sm:text-3xl text-white tracking-tight">Program
+      <h1 class="font-display font-extrabold text-2xl sm:text-3xl admin-auth-title tracking-tight">Program
         Studi Hukum</h1>
-      <p class="text-xs sm:text-sm text-white mt-1 font-medium">Universitas Muhammadiyah Papua</p>
+      <p class="text-xs sm:text-sm admin-auth-subtitle mt-1 font-medium">Universitas Muhammadiyah Papua</p>
     </div>
 
     <!-- Login Form Card -->
-    <form @submit.prevent="submit()"
-      class="neu-raised p-7 sm:p-9 space-y-5 rounded-3xl shadow-2xl border border-black/10 dark:border-white/10 bg-bg/95 backdrop-blur-md">
+    <form @submit.prevent="submit()" class="admin-auth-card p-7 sm:p-9 space-y-5 rounded-3xl backdrop-blur-md">
 
       <div>
         <label class="text-xs font-bold text-navy dark:text-white mb-2 flex items-center justify-between">
@@ -185,7 +182,7 @@
         </label>
         <div class="relative">
           <input x-model="form.email" type="text" placeholder="admin@ump.ac.id"
-            class="neu-input w-full pl-4 pr-10 text-sm" required autofocus>
+            class="admin-auth-input w-full pl-4 pr-10 text-sm" required autofocus>
           <div class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
               stroke="currentColor">
@@ -204,7 +201,7 @@
         <div class="relative">
           <input x-model="form.password" :type="showPass ? 'text' : 'password'"
             placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
-            class="neu-input w-full pl-4 pr-11 text-sm font-mono" required>
+            class="admin-auth-input w-full pl-4 pr-11 text-sm font-mono" required>
           <button type="button" @click="showPass = !showPass"
             class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-royal focus:outline-none p-1 transition-colors"
             :aria-label="showPass ? 'Sembunyikan password' : 'Tampilkan password'">
@@ -227,11 +224,11 @@
       <div class="flex items-center justify-between text-xs pt-1">
         <label class="flex items-center gap-2 text-text-muted cursor-pointer select-none">
           <input x-model="form.remember" type="checkbox"
-            class="rounded text-royal focus:ring-royal/30 transition-all cursor-pointer">
+            class="rounded text-red focus:ring-royal/30 transition-all cursor-pointer">
           <span>Ingat Saya</span>
         </label>
         <a :href="form.email ? ('lupa-sandi.html?email=' + encodeURIComponent(form.email)) : 'lupa-sandi.html'"
-          class="text-royal font-semibold hover:underline text-xs transition-colors">
+          class="text-red font-semibold hover:underline text-xs transition-colors">
           Lupa Password?
         </a>
       </div>
@@ -259,22 +256,21 @@
       </button>
 
       <!-- Interactive Demo Account Fill Box -->
-      <div
-        class="neu-pressed p-3.5 text-center text-xs text-text-muted rounded-2xl space-y-1.5 border border-black/5 dark:border-white/5">
+      <div class="admin-auth-demo p-3.5 text-center text-xs text-text-muted rounded-2xl space-y-1.5">
         <div class="flex items-center justify-between">
           <p class="font-bold text-navy dark:text-white flex items-center gap-1.5">
             <span>&#128273;</span>
             <span>Akun Uji Coba (Demo)</span>
           </p>
           <button type="button" @click="fillDemo('admin@ump.ac.id', 'admin')"
-            class="text-[11px] font-bold text-royal hover:underline bg-royal/10 hover:bg-royal/20 px-2 py-0.5 rounded-md transition-colors">
+            class="text-[11px] font-bold text-red hover:underline bg-red/10 hover:bg-red/20 px-2 py-0.5 rounded-md transition-colors">
             Isi Otomatis
           </button>
         </div>
         <p class="text-[11px] leading-relaxed">
           Email: <button type="button" @click="fillDemo('admin@ump.ac.id', 'admin')"
-            class="font-mono text-royal font-bold hover:underline">admin@ump.ac.id</button> | Password: <span
-            class="font-mono text-royal font-bold">admin</span>
+            class="font-mono text-red font-bold hover:underline">admin@ump.ac.id</button> | Password: <span
+            class="font-mono text-red font-bold">admin</span>
         </p>
       </div>
     </form>
@@ -282,22 +278,20 @@
     <!-- Footer Links -->
     <div class="text-center mt-6 space-y-2">
       <p class="text-xs text-text-muted">
-        <a href="../index.html" class="text-royal font-semibold hover:underline inline-flex items-center gap-1">
+        <a href="../index.html" class="text-red font-semibold hover:underline inline-flex items-center gap-1">
           <span>&larr;</span>
           <span>Kembali ke Beranda Website</span>
         </a>
       </p>
-      <p class="text-[11px] text-white/60">
+      <p class="text-[11px] admin-auth-footer-text">
         Butuh bantuan akses? Hubungi
         <a href="mailto:it@ump.ac.id" class="text-gold hover:underline font-semibold">Administrator IT Kampus</a>.
       </p>
-      <p class="text-[11px] text-white/70">
+      <p class="text-[11px] admin-auth-footer-text">
         &copy; 2026 Program Studi Hukum — Universitas Muhammadiyah Papua.
       </p>
     </div>
   </div>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>

@@ -1,16 +1,16 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#e8ecf1" id="theme-color-meta">
+  <meta name="theme-color" content="#f4f6f9" id="theme-color-meta">
 <title>Manajemen Kegiatan | Program Studi Hukum — UMP</title>
 <meta name="description" content="Website resmi Program Studi Hukum Universitas Muhammadiyah Papua.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap" rel="stylesheet" crossorigin>
 <link rel="stylesheet" href="../assets/css/tailwind.min.css">
-<script src="../assets/js/app.js"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+<script defer src="../assets/js/app.js"></script>
 <link rel="stylesheet" href="../assets/css/style.css">
 
   <link rel="icon" type="image/png" href="../assets/image/logo-ump.png">
@@ -18,13 +18,13 @@
 <body x-data="adminShell()" class="font-sans">
     <div class="flex min-h-screen">
       
-    <aside class="admin-sidebar w-72 shrink-0 neu-raised m-4 lg:mr-0 p-4 flex flex-col gap-1 fixed lg:sticky top-4 h-[calc(100vh-2rem)] overflow-y-auto z-40 bg-bg" :class="sidebarOpen ? 'sidebar-open' : ''">
+    <aside class="admin-sidebar w-72 shrink-0 neu-raised m-4 lg:mr-0 p-4 flex flex-col gap-1 fixed lg:sticky top-4 h-[calc(100vh-2rem)] overflow-y-auto z-40 bg-bg border-t-4 border-red" :class="sidebarOpen ? 'sidebar-open' : ''">
       <div class="flex items-center gap-3 px-2 pb-4 mb-2 border-b border-black/5 dark:border-white/5">
         <div class="w-10 h-10 neu-raised-sm flex items-center justify-center overflow-hidden p-1">
           <img src="../assets/image/logo-ump.png" alt="Logo Program Studi Hukum UMP" class="w-full h-full object-contain">
         </div>
         <div class="leading-tight">
-          <p class="font-display font-semibold text-navy dark:text-white text-sm">Admin Prodi Hukum</p>
+          <p class="font-display font-semibold text-navy dark:text-white text-sm">Admin Prodi <span class="text-red font-bold">Hukum</span></p>
           <p class="text-[11px] text-text-muted">Panel Manajemen</p>
         </div>
       </div>
@@ -97,7 +97,7 @@
     
       <div class="flex-1 min-w-0">
         
-      <div class="neu-flat sticky top-0 z-30 mb-6">
+      <div class="neu-flat sticky top-0 z-30 mb-6 admin-topbar-premium">
         <div class="flex items-center justify-between px-4 sm:px-6 py-4 gap-4">
           <div class="flex items-center gap-3">
             <button @click="sidebarOpen = !sidebarOpen" class="lg:hidden neu-btn w-10 h-10 flex items-center justify-center" aria-label="Buka menu sidebar" :aria-expanded="sidebarOpen">
@@ -117,18 +117,18 @@
             <div class="relative">
               <button @click="notifOpen = !notifOpen" class="neu-btn w-10 h-10 flex items-center justify-center relative" aria-label="Notifikasi">
                 <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.4-1.4A2 2 0 0118 14.2V11a6 6 0 10-12 0v3.2c0 .5-.2 1-.6 1.4L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
-                <span x-show="unreadNotifs > 0" class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red-500 text-white rounded-full text-[10px] font-bold flex items-center justify-center" x-text="unreadNotifs"></span>
+                <span x-show="unreadNotifs > 0" class="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 bg-red text-white rounded-full text-[10px] font-bold flex items-center justify-center" x-text="unreadNotifs"></span>
               </button>
               <div x-show="notifOpen" @click.outside="notifOpen = false" x-transition x-cloak
                    class="notif-dropdown">
                 <!-- Header -->
-                <div class="flex items-center justify-between px-4 py-3 border-b border-black/10 dark:border-white/10 bg-[#d0d8e8] dark:bg-[#1e2d4a] rounded-t-2xl">
+                <div class="flex items-center justify-between px-4 py-3 border-b border-black/10 dark:border-white/10 bg-[#eef2f7] dark:bg-[#0f1a2e] rounded-t-2xl">
                   <div class="flex items-center gap-2">
                     <span class="font-display font-semibold text-sm text-navy dark:text-white">&#128276; Notifikasi</span>
-                    <span x-show="unreadNotifs > 0" class="px-2 py-0.5 rounded-full text-[10px] bg-royal text-white font-bold" x-text="unreadNotifs + ' Baru'"></span>
+                    <span x-show="unreadNotifs > 0" class="px-2 py-0.5 rounded-full text-[10px] bg-red text-white font-bold" x-text="unreadNotifs + ' Baru'"></span>
                   </div>
                   <div class="flex items-center gap-3 text-[11px]">
-                    <button @click="markAllRead()" class="text-royal hover:underline font-semibold">Baca Semua</button>
+                    <button @click="markAllRead()" class="text-red hover:underline font-semibold">Baca Semua</button>
                     <span class="text-black/20 dark:text-white/20">|</span>
                     <button @click="clearNotifs()" class="text-red-500 hover:underline font-semibold">Hapus</button>
                   </div>
@@ -137,14 +137,14 @@
                 <div class="notif-list">
                   <template x-for="n in notifications" :key="n.id">
                     <div class="flex items-start gap-3 px-3 py-2.5 rounded-xl mx-2 my-1 transition-all cursor-default"
-                         :class="n.read ? 'bg-white/30 dark:bg-white/5' : 'bg-white/90 dark:bg-white/10 border-l-2 border-royal shadow-sm'">
+                         :class="n.read ? 'bg-white/30 dark:bg-white/5' : 'bg-white/90 dark:bg-white/10 border-l-2 border-red shadow-sm'">
                       <span class="text-xl shrink-0 mt-0.5" x-text="n.icon || '&#128276;'"></span>
                       <div class="flex-1 min-w-0">
                         <p class="text-xs font-semibold text-navy dark:text-white leading-snug" x-text="n.judul"></p>
                         <p class="text-[11px] text-text-muted mt-0.5 leading-snug line-clamp-2" x-text="n.pesan"></p>
-                        <p class="text-[10px] text-royal font-mono mt-1" x-text="n.waktu"></p>
+                        <p class="text-[10px] text-red font-mono mt-1" x-text="n.waktu"></p>
                       </div>
-                      <span x-show="!n.read" class="w-2 h-2 rounded-full bg-royal shrink-0 mt-1.5 flex-none"></span>
+                      <span x-show="!n.read" class="w-2 h-2 rounded-full bg-red shrink-0 mt-1.5 flex-none"></span>
                     </div>
                   </template>
                   <div x-show="notifications.length === 0" class="text-center py-8 text-xs text-text-muted">
@@ -153,8 +153,8 @@
                   </div>
                 </div>
                 <!-- Footer -->
-                <div class="px-4 py-2.5 border-t border-black/10 dark:border-white/10 bg-[#d0d8e8] dark:bg-[#1e2d4a] text-center rounded-b-2xl">
-                  <a href="aktivitas.html" class="text-[11px] text-royal hover:underline font-semibold">Lihat semua aktivitas &rarr;</a>
+                <div class="px-4 py-2.5 border-t border-black/10 dark:border-white/10 bg-[#eef2f7] dark:bg-[#0f1a2e] text-center rounded-b-2xl">
+                  <a href="aktivitas.html" class="text-[11px] text-red hover:underline font-semibold">Lihat semua aktivitas &rarr;</a>
                 </div>
               </div>
             </div>
@@ -162,12 +162,34 @@
               <svg x-show="!dark" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
               <svg x-show="dark" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
             </button>
-            <div class="w-10 h-10 neu-raised-sm flex items-center justify-center font-display font-semibold text-royal text-sm">AP</div>
+            <div class="w-10 h-10 neu-raised-sm flex items-center justify-center font-display font-semibold text-red text-sm">AP</div>
           </div>
         </div>
       </div>
     
         <main class="px-4 sm:px-6 pb-10">
+
+        <!-- ══ ADMIN PREMIUM PAGE HEADER ══ -->
+        <div class="admin-page-header">
+          <div class="admin-page-header-content">
+            <nav class="admin-breadcrumb">
+              <a href="../index.html">Beranda</a>
+              <span class="sep">›</span>
+              <a href="dashboard.html">Admin</a>
+              <span class="sep">›</span>
+              <span class="current">Kegiatan</span>
+            </nav>
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-white/10 text-white/90 border border-white/15 mb-2">&#128197; Agenda Akademik</span>
+                <h1 class="admin-header-title">Agenda & <span class="text-gold">Kegiatan</span> Hukum</h1>
+                <span class="admin-header-underline"></span>
+                <p class="admin-header-desc">Jadwal seminar, kuliah umum keadvokatan, lokakarya penulisan hukum, dan manajemen pendaftaran peserta.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- ══ END ADMIN PREMIUM PAGE HEADER ══ -->
           
 <div x-data="kegiatanAdminPage()">
   <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
@@ -201,14 +223,14 @@
               <td class="py-3 px-4 text-xs text-text-muted" x-text="r.penyelenggara"></td>
               <td class="py-3 px-4 text-center">
                 <button @click="lihatPeserta(r)" class="neu-btn px-3 py-1.5 rounded-lg text-xs inline-flex items-center gap-1.5" aria-label="Lihat Pendaftar">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-royal" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-1.13a4 4 0 100-8 4 4 0 000 8zm6 0a4 4 0 10-3.87-5"/></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-red" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87m6-1.13a4 4 0 100-8 4 4 0 000 8zm6 0a4 4 0 10-3.87-5"/></svg>
                   <span x-countup="jumlahPeserta(r)">0</span>
                 </button>
               </td>
               <td class="py-3 px-4">
                 <div class="flex items-center justify-end gap-2">
                   <button @click="openEdit(r)" class="neu-btn w-8 h-8 flex items-center justify-center" aria-label="Edit">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-royal" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                   </button>
                   <button @click="remove(r)" class="neu-btn w-8 h-8 flex items-center justify-center" aria-label="Hapus">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
@@ -305,8 +327,6 @@
         </main>
       </div>
     </div>
-    
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
 </body>
