@@ -334,6 +334,101 @@ const DB = (() => {
 })();
 
 /* ---- Log aktivitas & notifikasi real-time: dicatat otomatis setiap ada aksi CRUD ---- */
+const ADMIN_ICON_PATHS = {
+  '\u{1F4DD}': '<path d="M8 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-3M8 2h8v4H8zM8 11h8M8 15h5M16 8l4-4 2 2-4 4-3 1z"/>',
+  '\u{1F514}': '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/>',
+  '\u{1F4C4}': '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M8 13h8M8 17h8"/>',
+  '\u{1F4C1}': '<path d="M3 6a2 2 0 0 1 2-2h5l2 2h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
+  '\u{1F5D1}\u{FE0F}': '<path d="M3 6h18M8 6V4h8v2m3 0-1 14H6L5 6m4 4v6m6-6v6"/>',
+  '\u{1F510}': '<rect x="4" y="10" width="16" height="12" rx="2"/><path d="M8 10V7a4 4 0 1 1 8 0v3m-4 5v2"/>',
+  '\u{2795}': '<path d="M12 5v14M5 12h14"/>',
+  '\u{270F}\u{FE0F}': '<path d="m15 5 4 4M4 20l4-.8L19 8a2.8 2.8 0 0 0-4-4L4 15z"/>',
+  '\u{1F680}': '<path d="M12 15l-3 3-1-4-4-1 3-3m5 5c5-2 8-8 8-12-4 0-10 3-12 8m4 4 3 1 1 3 2-2 3-1-1-3"/>',
+  '\u{1F399}\u{FE0F}': '<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 10a7 7 0 0 0 14 0M12 17v5m-4 0h8"/>',
+  '\u{1F3EB}': '<path d="M3 21h18M5 21V7l7-4 7 4v14M9 10h.01M15 10h.01M9 14h.01M15 14h.01M10 21v-4h4v4"/>',
+  '\u2696\u{FE0F}': '<path d="M12 3v18m-7 0h14M5 7h14M7 7l-3 7h6zm10 0-3 7h6z"/>',
+  '\u{1F393}': '<path d="m2 9 10-5 10 5-10 5zM6 11v5c4 3 8 3 12 0v-5M22 9v7"/>',
+  '\u{1F91D}': '<path d="m8 12 3 3a2 2 0 0 0 3 0l5-5M4 10l4-4 4 2 3-1 5 4-5 6M2 9l3-3 4 3-4 4zm20 0-3-3-4 3 4 4z"/>',
+  '\u{1F52C}': '<path d="M9 3h6m-5 0v7l-5 8a2 2 0 0 0 2 3h10a2 2 0 0 0 2-3l-5-8V3M7 16h10"/>',
+  '\u{1F5BC}\u{FE0F}': '<rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/>',
+  '\u{1F3DB}\u{FE0F}': '<path d="M3 21h18M4 10h16M5 10v8m4-8v8m6-8v8m4-8v8M3 7l9-4 9 4v3H3z"/>',
+  '\u{1F9F9}': '<path d="m3 21 8-8m-5-5 5 5M4 4l5 5m-5-5 2-2 5 5-2 2zM13 12l3-3 5 5-3 3z"/>',
+  '\u{1F504}': '<path d="M20 7v5h-5M4 17v-5h5m-4 1a7 7 0 0 0 12 3l2-2M20 11A7 7 0 0 0 8 8L6 10"/>',
+  '\u{1F511}': '<circle cx="8" cy="15" r="5"/><path d="m12 12 9-9m-4 4 3 3m-6-1 3 3"/>',
+  '\u{1F3F7}\u{FE0F}': '<path d="M20 13 11 22l-9-9V2h11z"/><circle cx="7" cy="7" r="1"/>',
+  '\u{1F4DC}': '<path d="M5 3h14v18H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2Zm2 5h10M7 12h10M7 16h7"/>',
+  '\u{1F4CB}': '<rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 4V2h6v2M8 9h8M8 13h8M8 17h5"/>',
+  '\u26A1': '<path d="m13 2-9 12h7l-1 8 10-13h-7z"/>',
+  '\u{1F465}': '<circle cx="9" cy="8" r="4"/><path d="M2 21v-2a7 7 0 0 1 14 0v2m2-13a4 4 0 0 1 0 8m1 2a5 5 0 0 1 3 5"/>',
+  '\u{1F6E1}\u{FE0F}': '<path d="M12 22s8-4 8-11V5l-8-3-8 3v6c0 7 8 11 8 11Z"/><path d="m9 12 2 2 4-4"/>',
+  '\u2715': '<path d="m6 6 12 12M18 6 6 18"/>',
+  '\u{1F50D}': '<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
+  '\u{1F4F7}': '<path d="M4 7h3l2-3h6l2 3h3a2 2 0 0 1 2 2v10H2V9a2 2 0 0 1 2-2Z"/><circle cx="12" cy="13" r="4"/>',
+  '\u{1F4F0}': '<path d="M4 4h16v16H4zM8 8h8v4H8zm0 7h3m2 0h3m-8 3h8"/>',
+  '\u{1F4CA}': '<path d="M4 20V10m5 10V4m6 16v-7m5 7H2"/>',
+  '\u{1F464}': '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
+  '\u{1F396}\u{FE0F}': '<circle cx="12" cy="8" r="6"/><path d="m8 13-1 9 5-3 5 3-1-9"/>',
+  '\u{1F4C5}': '<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M16 3v4M8 3v4M3 10h18"/>',
+  '\u{1F4DA}': '<path d="M12 7v14m0-14C9 4 5 4 2 5v13c4-1 7-1 10 3m0-14c3-3 7-3 10-2v13c-4-1-7-1-10 3"/>',
+  '\u{1F4E3}': '<path d="M3 11v2a2 2 0 0 0 2 2h2l9 5V5l-9 5H5a2 2 0 0 0-2 1Zm4 4 2 6h4"/>',
+  '\u{1F3C6}': '<path d="M8 21h8m-4-4v4M7 4h10v6a5 5 0 0 1-10 0zm10 2h4v2a4 4 0 0 1-4 4M7 6H3v2a4 4 0 0 0 4 4"/>',
+  '\u2699': '<circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.4 1.1-1.4 2.4-1.7-.6a8 8 0 0 1-1.7 1l-.3 1.8h-2.8l-.3-1.8a8 8 0 0 1-1.7-1l-1.7.6-1.4-2.4 1.4-1.1a8 8 0 0 1 0-2l-1.4-1.1 1.4-2.4 1.7.6a8 8 0 0 1 1.7-1l.3-1.8h2.8l.3 1.8a8 8 0 0 1 1.7 1l1.7-.6 1.4 2.4-1.4 1.1a8 8 0 0 1 0 2Z"/>',
+  '\u2705': '<path d="m5 12 4 4L19 6"/>',
+  '\u{1F4E5}': '<path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>',
+  '\u{2B07}': '<path d="M12 3v12m-5-5 5 5 5-5M5 20h14"/>',
+  '\u270D': '<path d="m15 5 4 4M4 20l4-.8L19 8a2.8 2.8 0 0 0-4-4L4 15z"/>'
+};
+
+const ADMIN_ICON_ALIASES = {
+  bell: '\u{1F514}',
+  note: '\u{1F4DD}',
+  lock: '\u{1F510}',
+  key: '\u{1F511}',
+  scales: '\u2696\u{FE0F}',
+  file: '\u{1F4C4}',
+  folder: '\u{1F4C1}',
+  trash: '\u{1F5D1}\u{FE0F}',
+  add: '\u{2795}',
+  edit: '\u{270F}\u{FE0F}',
+  rocket: '\u{1F680}',
+  book: '\u{1F4DA}',
+  camera: '\u{1F4F7}',
+  calendar: '\u{1F4C5}',
+  chart: '\u{1F4CA}',
+  clipboard: '\u{1F4CB}',
+  lightning: '\u26A1',
+  people: '\u{1F465}',
+  person: '\u{1F464}',
+  shield: '\u{1F6E1}\u{FE0F}',
+  x: '\u2715',
+  search: '\u{1F50D}',
+  news: '\u{1F4F0}',
+  medal: '\u{1F396}\u{FE0F}',
+  megaphone: '\u{1F4E3}',
+  trophy: '\u{1F3C6}',
+  gear: '\u2699',
+  check: '\u{2705}',
+  upload: '\u{1F4E5}',
+  image: '\u{1F5BC}\u{FE0F}',
+  graduation: '\u{1F393}',
+  teacher: '\u{1F464}',
+  institution: '\u{1F3EB}',
+  broom: '\u{1F9F9}',
+  save: '\u{1F4BE}',
+  download: '\u{2B07}',
+  editHand: '\u270D'
+};
+
+function iconSvg(icon) {
+  const key = Object.prototype.hasOwnProperty.call(ADMIN_ICON_ALIASES, icon)
+    ? ADMIN_ICON_ALIASES[icon]
+    : icon;
+  const paths = Object.prototype.hasOwnProperty.call(ADMIN_ICON_PATHS, key)
+    ? ADMIN_ICON_PATHS[key]
+    : ADMIN_ICON_PATHS['\u{1F4DD}'];
+  return `<svg aria-hidden="true" focusable="false" class="admin-ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
+}
+
 function logActivity(aksi, icon) {
   const entry = {
     id: Date.now(),

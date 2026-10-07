@@ -15,11 +15,11 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        navy: '#0B1F3A',
-        royal: '#1D4ED8',
-        gold: '#D97706',
-        red: '#B91C1C',
-        bg: '#F4F6F9'
+        navy:  '#0a3a8f',   /* Navy UMP resmi — konsisten dengan style1.css */
+        royal: '#1b5bc0',   /* Biru royal interaktif UMP                    */
+        gold:  '#e8890a',   /* Kuning emas UMP (dark variant, kontras putih) */
+        red:   '#c8102e',   /* Merah UMP resmi — konsisten dengan style1.css */
+        bg:    '#f3f6fb'    /* Background utama neumorphism                  */
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],

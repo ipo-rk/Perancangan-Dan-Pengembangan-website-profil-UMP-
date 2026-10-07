@@ -5,33 +5,44 @@
 
 :root {
   /* Background & Surface (Nuansa Putih Bersih Neumorphic) */
-  --bg: #f4f6f9;
-  --bg-alt: #eef2f7;
+  --bg: #f3f6fb;
+  --bg-alt: #eaeff8;
   --surface: #ffffff;
 
-  /* 4 Warna Identitas Resmi Prodi Hukum: Merah, Kuning, Putih, Biru */
-  --red: #b91c1c; /* Merah Hukum (Ketegasan, Keadilan, Keberanian) */
-  --red-soft: #dc2626;
-  --gold: #d97706; /* Kuning / Emas Keadilan (Timbangan Hukum) */
-  --gold-soft: #f59e0b;
-  --white: #ffffff; /* Putih (Kemurnian & Integritas Hukum) */
-  --navy: #0b1f3a; /* Biru Dongker UMP (Wibawa Akademik & Heading) */
-  --navy-soft: #16305a;
-  --royal: #1d4ed8; /* Biru Royal Interaktif (Link, Outline, Tombol Primer) */
-  --royal-soft: #2563eb;
-  /* Semantic Brand Tokens (Kuning & Merah) */
+  /* ══ 4 Warna Identitas Resmi Prodi Hukum UMP ══
+     Diselaraskan dengan palette resmi (style1.css & referensi desain):
+     Merah Hukum / Kuning Emas / Putih Integritas / Biru Navy UMP         */
+  --red: #c8102e;        /* Merah UMP resmi — tegas, berkeadilan           */
+  --red-soft: #e0213f;   /* Merah sedikit lebih terang untuk hover/badge   */
+  --gold: #e8890a;       /* Turunan gelap dari #ffc20e — kontras di putih  */
+  --gold-soft: #ffc20e;  /* Kuning emas UMP asli (untuk aksen & badge)     */
+  --white: #ffffff;      /* Putih — kemurnian & integritas hukum            */
+  --navy: #0a3a8f;       /* Navy UMP resmi (#0a3a8f) — wibawa akademik     */
+  --navy-d: #06265f;     /* Navy lebih gelap — hover, border, heading      */
+  --navy-soft: #06265f;  /* Alias for navy-d                               */
+  --royal: #1b5bc0;      /* Biru royal interaktif — link, tombol, outline  */
+  --royal-soft: #2563eb; /* Royal sedikit lebih terang untuk hover          */
+  --yellow: var(--gold-soft);
+
+  /* Semantic Brand Tokens */
   --success: var(--gold);
   --danger: var(--red);
-  --warning: var(--gold);
+  --warning: var(--gold-soft);
 
   /* Text */
-  --text: #1e293b;
-  --text-muted: #64748b;
+  --text: #26324a;
+  --text-muted: #5d6b86;
   --text-inverse: #ffffff;
+  /* Aliases agar header/nav CSS kompatibel */
+  --muted: #5d6b86;
+  --line: #dce5f4;
 
   /* Neumorphic shadow tokens (light: pantulan cahaya putih bersih) */
-  --neu-light: rgba(255, 255, 255, 0.95);
-  --neu-dark: rgba(180, 194, 212, 0.45);
+  --neu-light: rgba(255, 255, 255, 0.92);
+  --neu-dark:  rgba(163, 180, 210, 0.50);
+  /* Short aliases — dipakai di header/nav CSS inline blocks */
+  --neu-lt: rgba(255, 255, 255, 0.92);
+  --neu-dk: rgba(163, 180, 210, 0.50);
 
   /* Radius scale */
   --r-sm: 12px;
@@ -40,14 +51,9 @@
   --r-xl: 24px;
 
   /* Scrollbar thumb */
-  --scrollbar-thumb: rgba(180, 194, 212, 0.7);
-  --scrollbar-thumb-hover: rgba(180, 194, 212, 0.95);
+  --scrollbar-thumb: rgba(163, 180, 210, 0.65);
+  --scrollbar-thumb-hover: rgba(10, 58, 143, 0.30);
 
-  /* Memberi tahu browser tema native (scrollbar, checkbox, dropdown
-     <select>/<option>, date/time picker, dst.) bahwa halaman ini terang,
-     supaya elemen bawaan browser ikut berubah warna sesuai mode, bukan
-     selalu memakai skema OS. Nilai ini diganti ke "dark" oleh aturan
-     `.dark` di bawah saat mode gelap aktif. */
   color-scheme: light;
 }
 
@@ -57,28 +63,39 @@
   --bg-alt: #0f1a2e;
   --surface: #14213d;
 
-  /* 4 Warna Identitas di Mode Gelap (Disesuaikan agar kontras & menyala) */
-  --red: #ef4444; /* Merah menyala jelas di latar gelap */
-  --red-soft: #f87171;
-  --gold: #facc15; /* Kuning emas cerah */
-  --gold-soft: #fde047;
+  /* Warna Identitas di Mode Gelap
+     CATATAN: --navy & --red DIPERTAHANKAN agar navbar, hero, footer
+     tetap konsisten dengan brand UMP. Hanya brightness accent yang naik. */
+  --red: #c8102e;        /* Navbar active, hero btn — tetap brand UMP      */
+  --red-soft: #ef4444;   /* Hover, badge di latar gelap — lebih terang      */
+  --gold: #ffc20e;       /* Kuning emas UMP asli di dark mode               */
+  --gold-soft: #fde047;  /* Lebih cerah untuk highlight                     */
   --white: #ffffff;
-  --navy: #0b1f3a;
-  --navy-soft: #1e293b;
-  --royal: #3b82f6; /* Biru royal terang */
+  --navy: #0a3a8f;       /* Navbar bg — TETAP navy UMP agar konsisten       */
+  --navy-d: #06265f;     /* Navbar darker tone                              */
+  --navy-soft: #06265f;
+  --royal: #3b82f6;      /* Link, tombol aktif — lebih terang di gelap      */
   --royal-soft: #60a5fa;
 
   /* Semantic Brand Tokens (Mode Gelap) */
   --success: var(--gold);
-  --danger: var(--red);
+  --danger: var(--red-soft);
   --warning: var(--gold);
 
-  --text: #f8fafc;
-  --text-muted: #94a3b8;
+  /* Text */
+  --text: #dde4f5;
+  --text-muted: #8a98b8;
   --text-inverse: #ffffff;
+  /* Aliases */
+  --muted: #8a98b8;
+  --line: rgba(255, 255, 255, 0.07);
 
+  /* Neumorphic shadow tokens (dark: kedalaman gelap) */
   --neu-light: rgba(255, 255, 255, 0.04);
-  --neu-dark: rgba(0, 0, 0, 0.6);
+  --neu-dark:  rgba(0, 0, 0, 0.60);
+  /* Short aliases */
+  --neu-lt: rgba(255, 255, 255, 0.04);
+  --neu-dk: rgba(0, 0, 0, 0.55);
 
   /* Scrollbar thumb khusus dark mode */
   --scrollbar-thumb: rgba(255, 255, 255, 0.18);
@@ -86,6 +103,67 @@
 
   color-scheme: dark;
 }
+
+/* =========================================================
+   TAILWIND COLOR OVERRIDE — Memastikan kelas Tailwind yang di-compile
+   dengan warna lama (navy #0b1f3a, red #b91c1c, gold #d97706) menampilkan
+   warna palette UMP resmi. Diperlukan karena tailwind.min.css sudah
+   pre-compiled dan tidak otomatis ikut perubahan tailwind.config.js.
+   ========================================================= */
+
+/* text-navy */
+.text-navy  { color: #0a3a8f !important; }
+/* text-red */
+.text-red   { color: #c8102e !important; }
+/* text-gold */
+.text-gold  { color: #e8890a !important; }
+/* text-royal */
+.text-royal { color: #1b5bc0 !important; }
+
+/* bg-navy */
+.bg-navy  { background-color: #0a3a8f !important; }
+/* bg-red */
+.bg-red   { background-color: #c8102e !important; }
+/* bg-gold */
+.bg-gold  { background-color: #e8890a !important; }
+/* bg-royal */
+.bg-royal { background-color: #1b5bc0 !important; }
+
+/* border-navy */
+.border-navy  { border-color: #0a3a8f !important; }
+.border-red   { border-color: #c8102e !important; }
+.border-gold  { border-color: #e8890a !important; }
+
+/* Opacity variants paling sering dipakai */
+.bg-red\/10   { background-color: rgba(200, 16,  46, 0.10) !important; }
+.bg-red\/20   { background-color: rgba(200, 16,  46, 0.20) !important; }
+.text-red\/70 { color: rgba(200, 16,  46, 0.70) !important; }
+.bg-gold\/10  { background-color: rgba(232,137, 10, 0.10) !important; }
+.bg-gold\/20  { background-color: rgba(232,137, 10, 0.20) !important; }
+.text-gold\/70{ color: rgba(232,137, 10, 0.70) !important; }
+.text-navy\/70{ color: rgba( 10, 58,143, 0.70) !important; }
+.text-navy\/80{ color: rgba( 10, 58,143, 0.80) !important; }
+.border-t-4.border-red  { border-top-color: #c8102e !important; }
+.border-t-4.border-gold { border-top-color: #e8890a !important; }
+
+/* Hero accent text */
+.accent-red  { color: #c8102e; }
+.accent-gold { color: #e8890a; }
+.dark .accent-red  { color: #f87171; }
+.dark .accent-gold { color: #ffc20e; }
+
+/* Footer premium background */
+.footer-premium {
+  background: #0a3a8f;
+  color: #fff;
+  font-size: 0.85rem;
+}
+.footer-premium .text-text-muted { color: rgba(255,255,255,0.65) !important; }
+.footer-premium a { color: rgba(255,255,255,0.75); }
+.footer-premium a:hover { color: #ffc20e !important; }
+.footer-premium .text-navy { color: #fff !important; }
+.footer-premium .dark\:text-white { color: #fff !important; }
+.footer-premium .hover\:text-royal:hover { color: #ffc20e !important; }
 
 * {
   box-sizing: border-box;
@@ -2304,6 +2382,11 @@ body:not(.law-court-bg) {
   -webkit-backdrop-filter: blur(6px);
   width: fit-content;
 }
+.dark .hero-badge-pill {
+  background: rgba(255, 194, 14, 0.12);
+  border-color: rgba(255, 194, 14, 0.3);
+  color: var(--gold-soft);
+}
 .hero-badge-pill.pill-gold {
   background: rgba(217, 119, 6, 0.22);
   border-color: rgba(245, 158, 11, 0.35);
@@ -3321,4 +3404,1142 @@ footer.footer-premium {
 }
 footer.footer-premium-admin {
   background-image: url("../image/Gedung-UMP-thumbnail.jpg") !important;
+}
+
+/* =========================================================
+   WEBSITE PRODI HUKUM UMP — MOCKUP DESIGN SYSTEM REFINED
+   Pixel-accurate matching user mockup, consistent Light & Dark Mode
+   ========================================================= */
+
+/* ── 1. Top Header Bar ── */
+.ump-header-top {
+  background-color: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+.dark .ump-header-top {
+  background-color: #0c182c;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.ump-brand-univ {
+  font-family: "Poppins", "Inter", sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #0b2341;
+  line-height: 1.2;
+}
+.dark .ump-brand-univ {
+  color: #f8fafc;
+}
+
+.ump-brand-prodi {
+  font-family: "Poppins", "Inter", sans-serif;
+  font-size: 1.125rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color: #1052ba;
+  line-height: 1.15;
+}
+.dark .ump-brand-prodi {
+  color: #60a5fa;
+}
+
+.ump-brand-motto {
+  font-size: 0.6875rem;
+  font-style: italic;
+  font-weight: 500;
+  color: #64748b;
+  margin-top: 1px;
+}
+.dark .ump-brand-motto {
+  color: #94a3b8;
+}
+
+.ump-search-pill {
+  background-color: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  border-radius: 9999px;
+  padding: 0.4rem 1rem 0.4rem 1rem;
+  font-size: 0.75rem;
+  color: #1e293b;
+  outline: none;
+  transition: all 0.2s ease;
+}
+.dark .ump-search-pill {
+  background-color: #14233c;
+  border-color: #334155;
+  color: #f8fafc;
+}
+.ump-search-pill:focus {
+  border-color: #1052ba;
+  box-shadow: 0 0 0 3px rgba(16, 82, 186, 0.15);
+}
+
+.ump-social-btn {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  background-color: #0b2545;
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+.ump-social-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.ump-social-btn.fb:hover {
+  background-color: #1877f2;
+}
+.ump-social-btn.ig:hover {
+  background-color: #e1306c;
+}
+.ump-social-btn.yt:hover {
+  background-color: #ff0000;
+}
+.ump-social-btn.tt:hover {
+  background-color: #000000;
+}
+
+.dark .ump-social-btn {
+  background-color: #1e3a6a;
+}
+
+.ump-theme-toggle {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 9999px;
+  background-color: #f1f5f9;
+  border: 1px solid #cbd5e1;
+  color: #0b2545;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.dark .ump-theme-toggle {
+  background-color: #1e293b;
+  border-color: #334155;
+  color: #facc15;
+}
+.ump-theme-toggle:hover {
+  transform: scale(1.08);
+}
+
+/* ── 2. Navigation Bar (Ribbon Style) ── */
+.ump-navbar-ribbon {
+  background: linear-gradient(90deg, #0b2240 0%, #0d2a52 60%, #0b2240 100%);
+  position: relative;
+  z-index: 40;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.ump-tab-home {
+  background-color: #c0151b;
+  color: #ffffff;
+  padding: 0.75rem 1.4rem;
+  font-size: 0.875rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+  line-height: 1;
+}
+.ump-tab-home:hover {
+  background-color: #991b1b;
+}
+
+.ump-nav-item {
+  color: #ffffff;
+  font-size: 0.84rem;
+  font-weight: 600;
+  padding: 0.75rem 0.95rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+}
+.ump-nav-item:hover {
+  color: #facc15;
+}
+
+.ump-nav-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  min-width: 13.5rem;
+  background-color: #0a1f3c;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0 0 0.5rem 0.5rem;
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.45);
+  padding: 0.5rem 0;
+  z-index: 50;
+}
+.ump-nav-dropdown a {
+  display: block;
+  padding: 0.55rem 1.15rem;
+  font-size: 0.75rem;
+  color: #e2e8f0;
+  text-decoration: none;
+  transition: all 0.15s ease;
+}
+.ump-nav-dropdown a:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #facc15;
+  padding-left: 1.35rem;
+}
+
+/* Nav Slanted Right Ribbon */
+.ump-nav-accent {
+  height: 100%;
+  min-height: 2.75rem;
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  user-select: none;
+}
+.ump-nav-accent-gold {
+  width: 2.25rem;
+  background-color: #facc15;
+  transform: skewX(-28deg);
+  margin-right: -0.25rem;
+}
+.ump-nav-accent-red {
+  width: 3.5rem;
+  background-color: #c0151b;
+  transform: skewX(-28deg);
+}
+
+/* ── 3. Hero Section (Slider Layout) ── */
+.ump-hero-banner {
+  background: linear-gradient(
+    100deg,
+    #06152b 0%,
+    #0b2240 40%,
+    #0d2a52 60%,
+    #0b2240 100%
+  );
+  position: relative;
+  overflow: hidden;
+  color: #ffffff;
+  min-height: 420px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.dark .ump-hero-banner {
+  background: linear-gradient(
+    100deg,
+    #04101e 0%,
+    #081729 40%,
+    #0a1f3a 60%,
+    #081729 100%
+  );
+}
+
+.ump-hero-corner-left {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 140px;
+  pointer-events: none;
+  z-index: 10;
+  background:
+    linear-gradient(135deg, #c0151b 0%, #c0151b 24%, transparent 24%),
+    linear-gradient(
+      135deg,
+      transparent 22%,
+      #f59e0b 22%,
+      #f59e0b 35%,
+      transparent 35%
+    ),
+    linear-gradient(
+      135deg,
+      transparent 33%,
+      #ffffff 33%,
+      #ffffff 42%,
+      transparent 42%
+    );
+  opacity: 0.95;
+}
+
+.ump-hero-corner-right {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 160px;
+  pointer-events: none;
+  z-index: 10;
+  background:
+    linear-gradient(-45deg, #c0151b 0%, #c0151b 26%, transparent 26%),
+    linear-gradient(
+      -45deg,
+      transparent 24%,
+      #f59e0b 24%,
+      #f59e0b 38%,
+      transparent 38%
+    );
+  opacity: 0.95;
+}
+
+.ump-hero-script {
+  font-family: "Dancing Script", "Caveat", "Playfair Display", cursive, serif;
+  font-style: italic;
+  font-size: 1.65rem;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: 0.03em;
+  margin-bottom: 0.2rem;
+  line-height: 1.2;
+}
+
+.ump-hero-heading-main {
+  font-family: "Poppins", "Inter", sans-serif;
+  font-size: 2.35rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+}
+@media (min-width: 640px) {
+  .ump-hero-heading-main {
+    font-size: 2.85rem;
+  }
+}
+.ump-hero-heading-main .highlight-gold {
+  color: #facc15;
+  font-weight: 900;
+}
+
+.ump-hero-heading-sub {
+  font-family: "Poppins", "Inter", sans-serif;
+  font-size: 1.05rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #ffffff;
+  margin-top: 0.25rem;
+}
+
+.ump-hero-desc {
+  font-size: 0.85rem;
+  color: #e2e8f0;
+  line-height: 1.65;
+  max-width: 31rem;
+  margin-top: 0.75rem;
+  font-weight: 400;
+}
+@media (min-width: 640px) {
+  .ump-hero-desc {
+    font-size: 0.925rem;
+  }
+}
+
+.ump-hero-btn-yellow {
+  background-color: #f59e0b;
+  color: #0b1f3a;
+  font-weight: 800;
+  font-size: 0.8125rem;
+  border-radius: 9999px;
+  padding: 0.65rem 1.65rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4);
+  transition: all 0.25s ease;
+}
+.ump-hero-btn-yellow:hover {
+  background-color: #d97706;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(245, 158, 11, 0.5);
+}
+
+.ump-hero-badge-scale {
+  position: absolute;
+  bottom: 1.25rem;
+  right: 1.25rem;
+  width: 4.75rem;
+  height: 4.75rem;
+  border-radius: 9999px;
+  background-color: #c0151b;
+  border: 2.5px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.6rem;
+  z-index: 20;
+}
+.ump-hero-badge-scale img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: brightness(1.1);
+}
+
+.ump-hero-arrow {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 9999px;
+  background-color: rgba(0, 0, 0, 0.25);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 25;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(4px);
+  transition: all 0.2s ease;
+}
+.ump-hero-arrow:hover {
+  background-color: rgba(0, 0, 0, 0.6);
+  transform: translateY(-50%) scale(1.1);
+}
+.ump-hero-arrow.prev {
+  left: 1rem;
+}
+.ump-hero-arrow.next {
+  right: 1rem;
+}
+
+.ump-hero-dot {
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 9999px;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  opacity: 0.75;
+}
+.ump-hero-dot.active {
+  background-color: #facc15;
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+/* ── 4. Quick Action 5-Cards Bar ── */
+.ump-quick-bar-wrapper {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.08);
+  padding: 1rem 1.25rem;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease;
+}
+.dark .ump-quick-bar-wrapper {
+  background-color: #14213d;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.35);
+}
+
+.ump-quick-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 0.75rem;
+  text-decoration: none;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+.ump-quick-item:hover {
+  background-color: rgba(0, 0, 0, 0.03);
+  transform: translateY(-2px);
+}
+.dark .ump-quick-item:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.ump-circle-icon {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  flex-shrink: 0;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
+.ump-circle-icon.red {
+  background-color: #c0151b;
+}
+.ump-circle-icon.gold {
+  background-color: #f59e0b;
+}
+.ump-circle-icon.navy {
+  background-color: #0b2341;
+}
+.dark .ump-circle-icon.navy {
+  background-color: #1e3a6a;
+}
+
+.ump-quick-title {
+  font-family: "Poppins", "Inter", sans-serif;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #0b1f3a;
+  line-height: 1.2;
+}
+.dark .ump-quick-title {
+  color: #f8fafc;
+}
+.ump-quick-subtitle {
+  font-size: 0.6875rem;
+  color: #64748b;
+  font-weight: 500;
+  line-height: 1.2;
+}
+.dark .ump-quick-subtitle {
+  color: #94a3b8;
+}
+
+/* ── 5. Section: Tentang Program Studi Hukum ── */
+.gavel-frame-wrapper {
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+  background-color: #0b1f3a;
+}
+.gavel-frame-wrapper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 90px;
+  height: 90px;
+  background:
+    linear-gradient(135deg, #c0151b 0%, #c0151b 24%, transparent 24%),
+    linear-gradient(
+      135deg,
+      transparent 20%,
+      #f59e0b 20%,
+      #f59e0b 38%,
+      transparent 38%
+    ),
+    linear-gradient(
+      135deg,
+      transparent 35%,
+      #ffffff 35%,
+      #ffffff 46%,
+      transparent 46%
+    );
+  z-index: 5;
+  pointer-events: none;
+}
+
+.ump-section-heading {
+  font-family: "Poppins", "Inter", sans-serif;
+  font-size: 1.375rem;
+  font-weight: 800;
+  color: #0b1f3a;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+.dark .ump-section-heading {
+  color: #f8fafc;
+}
+
+.ump-subheading-prodi {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-top: 0.25rem;
+}
+.dark .ump-subheading-prodi {
+  color: #cbd5e1;
+}
+
+.ump-prodi-p {
+  font-size: 0.8125rem;
+  line-height: 1.65;
+  color: #475569;
+}
+.dark .ump-prodi-p {
+  color: #94a3b8;
+}
+
+.ump-btn-navy-pill {
+  background-color: #0b2341;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 9999px;
+  padding: 0.55rem 1.35rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(11, 35, 65, 0.25);
+}
+.ump-btn-navy-pill:hover {
+  background-color: #1052ba;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(16, 82, 186, 0.35);
+}
+.dark .ump-btn-navy-pill {
+  background-color: #1052ba;
+}
+.dark .ump-btn-navy-pill:hover {
+  background-color: #1d4ed8;
+}
+
+/* Visi & Misi Box */
+.ump-visi-misi-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+/* ── 6. Section: Program Akademik & Berita Terbaru ── */
+.ump-akademik-icon-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.ump-akademik-icon-box .circle-btn {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 9999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  margin-bottom: 0.4rem;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+  transition: transform 0.2s ease;
+}
+.ump-akademik-icon-box:hover .circle-btn {
+  transform: scale(1.08);
+}
+.ump-akademik-label {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.25;
+}
+.dark .ump-akademik-label {
+  color: #cbd5e1;
+}
+
+.ump-btn-outline-pill {
+  border: 1px solid #cbd5e1;
+  background: transparent;
+  color: #1e293b;
+  font-size: 0.75rem;
+  font-weight: 700;
+  border-radius: 9999px;
+  padding: 0.5rem 1.25rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+.ump-btn-outline-pill:hover {
+  border-color: #1052ba;
+  color: #1052ba;
+  background-color: rgba(16, 82, 186, 0.04);
+}
+.dark .ump-btn-outline-pill {
+  border-color: #334155;
+  color: #cbd5e1;
+}
+.dark .ump-btn-outline-pill:hover {
+  border-color: #60a5fa;
+  color: #60a5fa;
+  background-color: rgba(96, 165, 250, 0.08);
+}
+
+/* News Cards */
+.ump-news-card {
+  background-color: #ffffff;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: all 0.25s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.ump-news-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+.dark .ump-news-card {
+  background-color: #14213d;
+  border-color: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+.dark .ump-news-card:hover {
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+.ump-news-card img {
+  width: 100%;
+  height: 5.5rem;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+.ump-news-card:hover img {
+  transform: scale(1.05);
+}
+
+.ump-news-date {
+  font-size: 0.625rem;
+  color: #64748b;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-bottom: 0.25rem;
+}
+.dark .ump-news-date {
+  color: #94a3b8;
+}
+
+.ump-news-title {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #0b1f3a;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  transition: color 0.15s ease;
+}
+.dark .ump-news-title {
+  color: #f8fafc;
+}
+.ump-news-card:hover .ump-news-title {
+  color: #1052ba;
+}
+.dark .ump-news-card:hover .ump-news-title {
+  color: #60a5fa;
+}
+
+.ump-news-link {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #1052ba;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  transition: color 0.15s ease;
+}
+.ump-news-link:hover {
+  color: #c0151b;
+}
+.dark .ump-news-link {
+  color: #60a5fa;
+}
+.dark .ump-news-link:hover {
+  color: #f87171;
+}
+
+/* ── 7. Footer ── */
+.ump-footer-main {
+  background-color: #071936;
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+.dark .ump-footer-main {
+  background-color: #051329;
+}
+
+.ump-script-slogan {
+  font-family: "Playfair Display", "Georgia", serif;
+  font-style: italic;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.35;
+  color: #ffffff;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.ump-footer-accent-ribbon {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  height: 3.5rem;
+  display: flex;
+  align-items: stretch;
+  overflow: hidden;
+  pointer-events: none;
+}
+.ump-footer-accent-gold {
+  width: 1.75rem;
+  background-color: #f59e0b;
+  transform: skewX(-28deg);
+  margin-right: -0.25rem;
+}
+.ump-footer-accent-red {
+  width: 2.5rem;
+  background-color: #c0151b;
+  transform: skewX(-28deg);
+}
+
+.papua-motif-bg {
+  background-image: radial-gradient(
+    circle at 10% 50%,
+    rgba(255, 255, 255, 0.05) 0%,
+    transparent 60%
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   DARK MODE — style1.css ELEMENT OVERRIDES
+   Semua elemen dari style1.css yang butuh dark mode treatment.
+   Diletakkan di akhir style.css agar specificity lebih tinggi.
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Body & Base ────────────────────────────────────────────────────── */
+.dark body {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
+
+/* ── Header .top (Neumorphic light → dark) ──────────────────────────── */
+.dark header.top {
+  background: #0d1828 !important;
+  box-shadow: 0 4px 18px rgba(0,0,0,.55), -2px -2px 6px rgba(255,255,255,0.025) !important;
+}
+.dark .brand small { color: #8a98b8 !important; }
+.dark .brand b     { color: #eef2ff !important; }
+.dark .brand i     { color: #6b7fa8 !important; }
+.dark header.top .logo {
+  background: #0d1828 !important;
+  box-shadow: 4px 4px 10px rgba(0,0,0,.55), -4px -4px 10px rgba(255,255,255,.04) !important;
+}
+.dark header.top .search {
+  background: #0b1322 !important;
+  box-shadow: inset 4px 4px 8px rgba(0,0,0,.55), inset -4px -4px 8px rgba(255,255,255,.04) !important;
+}
+.dark header.top .search input { color: #dde4f5 !important; }
+.dark header.top .search input::placeholder { color: #8a98b8 !important; }
+.dark header.top .burger { color: #c8d8f5 !important; }
+.dark .dark-toggle {
+  background: #0d1828 !important;
+  color: #ffc20e !important;
+  box-shadow: 3px 3px 7px rgba(0,0,0,.55), -3px -3px 7px rgba(255,255,255,.04) !important;
+}
+
+/* ── Navbar .main (tetap navy — brand consistency) ──────────────────── */
+.dark nav.main {
+  background: #06265f !important;
+  box-shadow: 0 6px 24px rgba(0,0,0,.60), inset 0 1px 0 rgba(255,255,255,.06) !important;
+}
+.dark nav.main li > a.on {
+  background: #b0091f !important;
+  box-shadow: inset 0 -3px 0 rgba(0,0,0,.30), 0 0 18px rgba(200,16,46,.45) !important;
+}
+.dark nav.main li > button.on {
+  background: rgba(255,255,255,.18) !important;
+  border-bottom-color: #ffc20e !important;
+}
+
+/* ── Dropdown .drop (dark panel) ────────────────────────────────────── */
+.dark .drop {
+  background: #0d1828 !important;
+  box-shadow: 8px 8px 22px rgba(0,0,0,.65), 0 2px 8px rgba(0,0,0,.45) !important;
+  border-top-color: #ffc20e !important;
+}
+.dark .drop a {
+  color: #bccfee !important;
+  border-bottom-color: rgba(255,255,255,.05) !important;
+}
+.dark .drop a:hover {
+  background: rgba(255,194,14,.09) !important;
+  color: #ffc20e !important;
+}
+
+/* ── Sections & Content ─────────────────────────────────────────────── */
+.dark .sec {
+  background: var(--bg) !important;
+  color: var(--text) !important;
+}
+.dark .sec.alt {
+  background: var(--bg-alt) !important;
+}
+.dark .h {
+  color: #dde4f5 !important;
+}
+.dark .sub {
+  color: #8a98b8 !important;
+}
+
+/* ── Quick Links ────────────────────────────────────────────────────── */
+.dark .quick {
+  border-color: rgba(255,255,255,.06) !important;
+  background: var(--bg) !important;
+}
+.dark .quick a {
+  color: #c8d8f5 !important;
+}
+.dark .quick a:hover {
+  background: rgba(255,255,255,.05) !important;
+}
+.dark .ic {
+  box-shadow: 5px 5px 12px rgba(0,0,0,.55), -5px -5px 12px rgba(255,255,255,.04) !important;
+}
+
+/* ── Cards ──────────────────────────────────────────────────────────── */
+.dark .card {
+  background: var(--surface) !important;
+  box-shadow: 6px 6px 14px rgba(0,0,0,.55), -4px -4px 10px rgba(255,255,255,.03) !important;
+  color: var(--text) !important;
+}
+.dark .card .ttl { color: #dde4f5 !important; }
+.dark .card .meta { color: #8a98b8 !important; }
+.dark .card .excerpt { color: #a0b0c8 !important; }
+.dark .card a { color: #dde4f5 !important; }
+.dark .card a:hover { color: #ffc20e !important; }
+
+/* ── About / Split section ──────────────────────────────────────────── */
+.dark .about { color: var(--text) !important; }
+.dark .vm {
+  border-left-color: rgba(255,255,255,.08) !important;
+}
+.dark .vm h4 { color: #c8d8f5 !important; }
+.dark .vm p  { color: #8a98b8 !important; }
+
+/* ── Pengumuman / List ──────────────────────────────────────────────── */
+.dark .list li {
+  border-color: rgba(255,255,255,.06) !important;
+  color: var(--text) !important;
+}
+.dark .list li:hover {
+  background: rgba(255,255,255,.03) !important;
+}
+.dark .list a { color: #c8d8f5 !important; }
+.dark .list .dt { color: #8a98b8 !important; }
+.dark .list .badge { background: rgba(200,16,46,.2) !important; color: #f87171 !important; }
+
+/* ── Statistik / Stats ──────────────────────────────────────────────── */
+.dark .stats {
+  background: #06265f !important;
+}
+.dark .stat { color: #fff !important; }
+.dark .stat .num { color: #ffc20e !important; }
+.dark .stat .lbl { color: rgba(255,255,255,.75) !important; }
+
+/* ── Agenda / Sambutan ──────────────────────────────────────────────── */
+.dark .agenda li {
+  border-color: rgba(255,255,255,.06) !important;
+  color: var(--text) !important;
+}
+.dark .sambutan {
+  background: #0d1828 !important;
+  color: var(--text) !important;
+}
+.dark .sambutan .name  { color: #c8d8f5 !important; }
+.dark .sambutan .title { color: #8a98b8 !important; }
+
+/* ── Program Akademik ───────────────────────────────────────────────── */
+.dark .prog a {
+  color: var(--text) !important;
+  border-color: rgba(255,255,255,.06) !important;
+}
+.dark .prog a:hover {
+  background: rgba(255,255,255,.04) !important;
+}
+.dark .prog a .lbl { color: #8a98b8 !important; }
+
+/* ── Fasilitas / Gedung ─────────────────────────────────────────────── */
+.dark .fac {
+  color: var(--text) !important;
+}
+.dark .fac div {
+  background: var(--surface) !important;
+  border-color: var(--line) !important;
+  color: var(--text) !important;
+}
+.dark .fac li {
+  color: #a0b0c8 !important;
+  border-color: rgba(255,255,255,.05) !important;
+}
+.dark .gedung {
+  box-shadow: 6px 6px 20px rgba(0,0,0,.55) !important;
+}
+
+/* ── Berita Terbaru / Three-col ─────────────────────────────────────── */
+.dark .three .card { background: #0d1828 !important; }
+.dark .cat { background: rgba(200,16,46,.18) !important; color: #f87171 !important; }
+
+/* ── Buttons ─────────────────────────────────────────────────────────── */
+.dark .btn {
+  background: var(--red) !important;
+  color: #fff !important;
+  box-shadow: 0 4px 14px rgba(200,16,46,.28) !important;
+}
+.dark .btn:hover {
+  background: #b0091f !important;
+  transform: translateY(-1px) !important;
+}
+.dark .btn.navy {
+  background: #0a3a8f !important;
+  box-shadow: 0 4px 14px rgba(10,58,143,.35) !important;
+}
+.dark .btn.navy:hover { background: #06265f !important; }
+.dark .btn.ghost {
+  background: transparent !important;
+  border-color: rgba(255,255,255,.2) !important;
+  color: #c8d8f5 !important;
+}
+.dark .grid button {
+  background: var(--surface) !important;
+  border-color: var(--line) !important;
+  color: var(--text) !important;
+}
+.dark .grid button:hover,
+.dark .grid button.on {
+  background: var(--bg-alt) !important;
+  border-left-color: var(--gold) !important;
+}
+
+/* ── Tabs / Filter ──────────────────────────────────────────────────── */
+.dark .tab-bar { background: #0d1828 !important; border-color: rgba(255,255,255,.06) !important; }
+.dark .tab-bar button { color: #8a98b8 !important; }
+.dark .tab-bar button.on {
+  color: var(--red) !important;
+  border-bottom-color: var(--red) !important;
+}
+
+/* ── Table / Data ───────────────────────────────────────────────────── */
+.dark table { color: var(--text) !important; }
+.dark table th {
+  background: #06265f !important;
+  color: #fff !important;
+  border-color: rgba(255,255,255,.08) !important;
+}
+.dark table td {
+  border-color: rgba(255,255,255,.05) !important;
+  color: var(--text) !important;
+}
+.dark table tr:nth-child(even) td { background: rgba(255,255,255,.025) !important; }
+.dark table tr:hover td           { background: rgba(255,255,255,.04)  !important; }
+
+/* ── Forms & Inputs ─────────────────────────────────────────────────── */
+.dark input,
+.dark textarea,
+.dark select {
+  background: #0d1828 !important;
+  color: var(--text) !important;
+  border-color: rgba(255,255,255,.1) !important;
+}
+.dark input::placeholder,
+.dark textarea::placeholder { color: #8a98b8 !important; }
+.dark input:focus,
+.dark textarea:focus,
+.dark select:focus {
+  border-color: #0a3a8f !important;
+  box-shadow: 0 0 0 3px rgba(10,58,143,.3) !important;
+}
+.dark label { color: #c8d8f5 !important; }
+
+/* ── Footer ─────────────────────────────────────────────────────────── */
+.dark footer {
+  background: #04183d !important;
+  color: rgba(255,255,255,.85) !important;
+}
+.dark footer a { color: rgba(255,255,255,.65) !important; }
+.dark footer a:hover { color: #ffc20e !important; }
+.dark footer .wrap > div {
+  border-color: rgba(255,255,255,.1) !important;
+}
+
+/* ── Neumorphic Raised Cards (dark: outset shadows inverted) ─────────── */
+.dark .neu-raised,
+.dark .neu-raised-sm {
+  background: #0d1828 !important;
+  box-shadow:
+    9px 9px 18px rgba(0,0,0,.60),
+    -9px -9px 18px rgba(255,255,255,.04) !important;
+}
+.dark .neu-pressed {
+  background: #0b1322 !important;
+  box-shadow:
+    inset 5px 5px 10px rgba(0,0,0,.60),
+    inset -5px -5px 10px rgba(255,255,255,.04) !important;
+}
+
+/* ── Dividers & Borders ─────────────────────────────────────────────── */
+.dark hr,
+.dark .divider { border-color: rgba(255,255,255,.07) !important; }
+
+/* ── Scrollbar (dark) ───────────────────────────────────────────────── */
+.dark ::-webkit-scrollbar-track { background: #0b1322 !important; }
+.dark ::-webkit-scrollbar-thumb { background: rgba(255,255,255,.18) !important; }
+.dark ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.28) !important; }
+
+/* ═══ END DARK MODE OVERRIDES ══════════════════════════════════════════ */
+
+/* Shared inline SVG icon sizing */
+.ui-icon {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  flex: none;
+  vertical-align: -0.15em;
+}
+.ui-icon-xs {
+  width: 0.75rem;
+  height: 0.75rem;
+}
+.ui-icon-sm {
+  width: 1rem;
+  height: 1rem;
+}
+.ui-icon-lg {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+.ui-icon-social {
+  width: 1rem;
+  height: 1rem;
+  display: block;
+}
+.admin-ui-icon {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  flex: none;
+  vertical-align: -0.15em;
 }

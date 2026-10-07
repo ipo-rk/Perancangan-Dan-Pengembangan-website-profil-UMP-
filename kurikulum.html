@@ -1,289 +1,131 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#f4f6f9" id="theme-color-meta">
-  <title>Kurikulum | Program Studi Hukum — UMP</title>
+  <meta name="theme-color" content="#0a3a8f" id="theme-color-meta">
+  <title>Kurikulum | Program Studi Hukum UMP</title>
   <meta name="description" content="Website resmi Program Studi Hukum Universitas Muhammadiyah Papua.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Poppins:wght@500;600;700;800&display=swap"
-    rel="stylesheet" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&family=Roboto:wght@400;500;700&family=Dancing+Script:wght@400;600&display=swap" rel="stylesheet" crossorigin>
   <link rel="stylesheet" href="assets/css/tailwind.min.css">
   <script defer src="assets/js/app.js"></script>
   <link rel="stylesheet" href="assets/css/style.css">
-
+  <link rel="stylesheet" href="assets/css/style1.css">
   <link rel="icon" type="image/png" href="assets/image/logo-ump.png">
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 </head>
 
 <body x-data="kurikulumPage()" class="font-sans">
 
-  <header x-data="siteHeader()" class="sticky top-0 z-50 neu-flat backdrop-blur">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex items-center justify-between py-3 gap-4">
-        <a href="index.html" class="flex items-center gap-3 shrink-0">
-          <div class="w-14 h-14 neu-raised-sm flex items-center justify-center overflow-hidden p-1">
-            <img src="assets/image/logo-ump.png" alt="Logo Program Studi Hukum UMP"
-              class="w-full h-full object-contain">
-          </div>
-          <div class="leading-tight hidden sm:block">
-            <p class="font-display font-semibold text-navy dark:text-white text-sm">Program Studi <span class="text-red font-bold">Hukum</span></p>
-            <p class="text-[11px] text-text-muted">Universitas Muhammadiyah Papua</p>
-          </div>
-        </a>
-
-        <nav class="hidden xl:flex items-center gap-1" x-data="{ openMenu: null }" @click.outside="openMenu = null"
-          @keydown.escape.window="openMenu = null">
-          <a href="index.html"
-            class="px-3 py-2 rounded-xl text-sm text-navy/70 dark:text-slate-300 hover:text-royal transition-colors whitespace-nowrap">Beranda</a>
-
-          <div class="relative">
-            <button type="button" @click="openMenu = (openMenu === 'profil' ? null : 'profil')"
-              :aria-expanded="openMenu === 'profil'"
-              class="px-3 py-2 rounded-xl text-sm text-red font-semibold transition-colors whitespace-nowrap inline-flex items-center gap-1">
-              Profil
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 transition-transform"
-                :class="openMenu === 'profil' && 'rotate-180'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            <div x-show="openMenu === 'profil'" x-transition x-cloak
-              class="absolute left-0 top-full mt-2 w-48 neu-raised p-2 z-50">
-              <a href="profil.html"
-                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Profil
-                Prodi</a>
-              <a href="dosen.html"
-                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Dosen</a>
-              <a href="kurikulum.html"
-                class="block px-3 py-2 rounded-lg text-sm text-red font-semibold bg-black/5 dark:bg-white/5">Kurikulum</a>
-            </div>
-          </div>
-
-          <div class="relative">
-            <button type="button" @click="openMenu = (openMenu === 'informasi' ? null : 'informasi')"
-              :aria-expanded="openMenu === 'informasi'"
-              class="px-3 py-2 rounded-xl text-sm text-navy/70 dark:text-slate-300 hover:text-royal transition-colors whitespace-nowrap inline-flex items-center gap-1">
-              Informasi
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 transition-transform"
-                :class="openMenu === 'informasi' && 'rotate-180'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            <div x-show="openMenu === 'informasi'" x-transition x-cloak
-              class="absolute left-0 top-full mt-2 w-48 neu-raised p-2 z-50">
-              <a href="berita.html"
-                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Berita</a>
-              <a href="pengumuman.html"
-                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Pengumuman</a>
-              <a href="kegiatan.html"
-                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Kegiatan</a>
-              <a href="artikel.html"
-                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Artikel
-                Hukum</a>
-            </div>
-          </div>
-
-          <div class="relative">
-            <button type="button" @click="openMenu = (openMenu === 'mahasiswa' ? null : 'mahasiswa')"
-              :aria-expanded="openMenu === 'mahasiswa'"
-              class="px-3 py-2 rounded-xl text-sm text-navy/70 dark:text-slate-300 hover:text-royal transition-colors whitespace-nowrap inline-flex items-center gap-1">
-              Mahasiswa
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 transition-transform"
-                :class="openMenu === 'mahasiswa' && 'rotate-180'" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
-              </svg>
-            </button>
-            <div x-show="openMenu === 'mahasiswa'" x-transition x-cloak
-              class="absolute left-0 top-full mt-2 w-48 neu-raised p-2 z-50">
-              <a href="prestasi.html"
-                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Prestasi</a>
-              <a href="alumni.html"
-                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Alumni</a>
-              <a href="galeri.html"
-                class="block px-3 py-2 rounded-lg text-sm text-navy/80 dark:text-slate-200 hover:text-royal hover:bg-black/5 dark:hover:bg-white/5">Galeri</a>
-            </div>
-          </div>
-
-          <a href="dokumen.html"
-            class="px-3 py-2 rounded-xl text-sm text-navy/70 dark:text-slate-300 hover:text-royal transition-colors whitespace-nowrap">Dokumen</a>
-          <a href="kontak.html"
-            class="px-3 py-2 rounded-xl text-sm text-navy/70 dark:text-slate-300 hover:text-royal transition-colors whitespace-nowrap">Kontak</a>
-        </nav>
-
-        <div class="flex items-center gap-2 shrink-0">
-          <div class="hidden md:flex items-center neu-pressed px-3 py-2 gap-2 w-44">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-muted" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            <input x-model="searchQ" @keydown.enter="doSearch()" type="search" placeholder="Cari informasi Prodi..."
-              class="bg-transparent text-sm outline-none w-full placeholder:text-text-muted">
-          </div>
-          <button @click="toggle()" class="neu-btn w-10 h-10 flex items-center justify-center"
-            aria-label="Ganti mode gelap/terang">
-            <svg x-show="!dark" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-            </svg>
-            <svg x-show="dark" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-            </svg>
-          </button>
-          <a href="admin/login.html" class="hidden md:inline-flex neu-btn-primary px-4 py-2.5 rounded-xl text-sm">Portal
-            Akademik</a>
-          <button @click="mobileOpen = !mobileOpen"
-            class="xl:hidden neu-btn w-10 h-10 flex items-center justify-center transition-transform active:scale-95"
-            aria-label="Buka menu navigasi" :aria-expanded="mobileOpen">
-            <svg x-show="!mobileOpen" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
-              stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-            <svg x-show="mobileOpen" x-cloak xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-red" fill="none"
-              viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          </button>
+  <!-- HEADER Neumorphic 2-part UMP -->
+  <header class="top" x-data="siteHeader()">
+    <div class="wrap">
+      <a class="brand" href="index.html">
+        <img class="logo" src="assets/image/logo-ump.png" width="76" height="76" alt="Logo UMP">
+        <span>
+          <small>UNIVERSITAS MUHAMMADIYAH PAPUA</small>
+          <b style="font-family:'Poppins','Inter',sans-serif;">PROGRAM STUDI HUKUM</b>
+          <i>Berilmu &middot; Berakhlak &middot; Berdaya untuk Negeri</i>
+        </span>
+      </a>
+      <div class="tools">
+        <form class="search" @submit.prevent="doSearch()">
+          <input x-model="searchQ" type="search" placeholder="Cari informasi..." aria-label="Cari">
+          <button type="submit" aria-label="Cari" style="background:none;border:none;cursor:pointer;font-size:.9rem;color:var(--muted);"><svg aria-hidden="true" focusable="false" class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/></svg></button>
+        </form>
+        <div class="soc">
+          <a href="#" class="fb" aria-label="Facebook"><svg aria-hidden="true" focusable="false" class="ui-icon ui-icon-social" viewBox="0 0 24 24" fill="currentColor"><path d="M13.6 21v-7.1H16l.4-2.8h-2.8V9.3c0-.8.3-1.4 1.4-1.4h1.5V5.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v1.8H7.7v2.8h2.6V21A10 10 0 0 1 12 2a10 10 0 0 1 1.6 19z"/></svg></a>
+          <a href="#" class="ig" aria-label="Instagram"><svg aria-hidden="true" focusable="false" class="ui-icon ui-icon-social" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor" stroke="none"/></svg></a>
+          <a href="#" class="yt" aria-label="YouTube"><svg aria-hidden="true" focusable="false" class="ui-icon ui-icon-social" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="4"/><path d="m10 9 5 3-5 3z" fill="currentColor" stroke="none"/></svg></a>
+          <a href="#" class="tt" aria-label="TikTok"><svg aria-hidden="true" focusable="false" class="ui-icon ui-icon-social" viewBox="0 0 24 24" fill="currentColor"><path d="M19.6 7.2a6.2 6.2 0 0 1-3.8-1.3v8.2a6.3 6.3 0 1 1-5.4-6.2v3.5a2.8 2.8 0 1 0 1.9 2.7V2h3.5a6.2 6.2 0 0 0 3.8 3.3z"/></svg></a>
         </div>
-      </div>
-
-      <!-- Mobile Navigation Menu -->
-      <div x-show="mobileOpen" x-transition:enter="transition ease-out duration-250 transform"
-        x-transition:enter-start="opacity-0 -translate-y-3 scale-98"
-        x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-        x-transition:leave="transition ease-in duration-150 transform"
-        x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-        x-transition:leave-end="opacity-0 -translate-y-3 scale-98" x-cloak class="xl:hidden pb-6 pt-2">
-        <div
-          class="neu-raised p-4 sm:p-5 rounded-3xl border border-black/5 dark:border-white/5 space-y-4 max-h-[80vh] overflow-y-auto">
-
-          <!-- Mobile Search Bar -->
-          <div class="flex items-center neu-pressed px-3.5 py-2.5 gap-2.5 rounded-2xl">
-            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-muted shrink-0" fill="none"
-              viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-            <input x-model="searchQ" @keydown.enter="doSearch()" type="search" placeholder="Cari informasi prodi..."
-              class="bg-transparent text-xs sm:text-sm outline-none w-full placeholder:text-text-muted">
-            <button @click="doSearch()"
-              class="px-2.5 py-1 rounded-xl bg-red/10 text-red text-xs font-semibold hover:bg-red hover:text-white transition-colors">Cari</button>
-          </div>
-
-          <!-- Menu Section: Utama -->
-          <div>
-            <a href="index.html"
-              class="flex items-center gap-3 px-4 py-3 rounded-2xl transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
-              <span class="text-base">&#127968;</span>
-              <span class="text-sm font-medium">Beranda</span>
-            </a>
-          </div>
-
-          <!-- Menu Section: Profil & Akademik -->
-          <div class="space-y-1.5 pt-2 border-t border-black/5 dark:border-white/5">
-            <p class="text-[11px] font-bold uppercase tracking-wider text-text-muted px-2">Profil &amp; Akademik</p>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              <a href="profil.html"
-                class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
-                <span>&#127963;</span>
-                <span>Profil Prodi</span>
-              </a>
-              <a href="dosen.html"
-                class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
-                <span>&#128104;&#8205;&#127979;</span>
-                <span>Dosen</span>
-              </a>
-              <a href="kurikulum.html"
-                class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all bg-red text-white font-semibold shadow-sm">
-                <span>&#128218;</span>
-                <span>Kurikulum</span>
-              </a>
-            </div>
-          </div>
-
-          <!-- Menu Section: Informasi -->
-          <div class="space-y-1.5 pt-2 border-t border-black/5 dark:border-white/5">
-            <p class="text-[11px] font-bold uppercase tracking-wider text-text-muted px-2">Informasi &amp; Publikasi</p>
-            <div class="grid grid-cols-2 gap-2">
-              <a href="berita.html"
-                class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
-                <span>&#128240;</span>
-                <span>Berita</span>
-              </a>
-              <a href="pengumuman.html"
-                class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
-                <span>&#128227;</span>
-                <span>Pengumuman</span>
-              </a>
-              <a href="kegiatan.html"
-                class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
-                <span>&#128197;</span>
-                <span>Kegiatan</span>
-              </a>
-              <a href="artikel.html"
-                class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
-                <span>&#9878;&#65039;</span>
-                <span>Artikel Hukum</span>
-              </a>
-            </div>
-          </div>
-
-          <!-- Menu Section: Kemahasiswaan & Layanan -->
-          <div class="space-y-1.5 pt-2 border-t border-black/5 dark:border-white/5">
-            <p class="text-[11px] font-bold uppercase tracking-wider text-text-muted px-2">Kemahasiswaan &amp; Layanan
-            </p>
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              <a href="prestasi.html"
-                class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
-                <span>&#127942;</span>
-                <span>Prestasi</span>
-              </a>
-              <a href="alumni.html"
-                class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
-                <span>&#127891;</span>
-                <span>Alumni</span>
-              </a>
-              <a href="galeri.html"
-                class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
-                <span>&#128444;&#65039;</span>
-                <span>Galeri</span>
-              </a>
-              <a href="dokumen.html"
-                class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal">
-                <span>&#128196;</span>
-                <span>Dokumen</span>
-              </a>
-              <a href="kontak.html"
-                class="flex items-center gap-2.5 px-3.5 py-2.5 rounded-2xl text-xs sm:text-sm transition-all neu-raised-sm text-navy dark:text-slate-200 hover:text-royal sm:col-span-2">
-                <span>&#128222;</span>
-                <span>Kontak &amp; Lokasi</span>
-              </a>
-            </div>
-          </div>
-
-          <!-- Portal Akademik Button -->
-          <div class="pt-3 border-t border-black/5 dark:border-white/5">
-            <a href="admin/login.html"
-              class="w-full text-center neu-btn-primary px-4 py-3 rounded-2xl text-sm font-semibold flex items-center justify-center gap-2 shadow-md">
-              <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-              </svg>
-              <span>Portal Akademik (Login Admin)</span>
-            </a>
-          </div>
-
-        </div>
+        <button class="dark-toggle" @click="toggle()" aria-label="Ganti tema" :title="dark ? 'Mode Terang' : 'Mode Gelap'">
+          <span x-show="!dark"><svg aria-hidden="true" focusable="false" class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.9 13A9 9 0 0 1 11 3.1 9 9 0 1 0 20.9 13z"/></svg></span>
+          <span x-show="dark" x-cloak><svg aria-hidden="true" focusable="false" class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg></span>
+        </button>
+        <button class="burger" @click="$dispatch('nav-mobile-toggle')" aria-label="Buka menu"><svg aria-hidden="true" focusable="false" class="ui-icon ui-icon-lg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
       </div>
     </div>
   </header>
+  <!-- NAVBAR Navy sticky neumorphic (active=akademik) -->
+    <!-- NAV neumorphic navy sticky (active: akademik) -->
+    <!-- ════ NAVBAR — Navy sticky neumorphic (active: profil) ════ -->
+  <nav class="main" role="navigation" aria-label="Menu utama"
+    x-data="{ open: null, mob: false }"
+    @nav-mobile-toggle.window="mob = !mob"
+    @click.outside="open = null"
+    @keydown.escape.window="open = null; mob = false">
+    <div class="wrap">
+      <ul :class="{ open: mob }">
+        <li><a href="index.html"><svg aria-hidden="true" focusable="false" class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7M5 9v12h14V9M9 21v-7h6v7"/></svg> Beranda</a></li>
+        <li>
+          <button class="on"
+            @click.stop="open = (open === 'profil' ? null : 'profil')"
+            :aria-expanded="open === 'profil'">Profil <svg aria-hidden="true" focusable="false" class="ui-icon ui-icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+          <div class="drop"
+            x-show="open === 'profil'" x-cloak
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 -translate-y-1"
+            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 -translate-y-1">
+            <a href="profil.html">Profil Prodi</a>
+            <a href="dosen.html">Dosen</a>
+            <a href="kurikulum.html">Kurikulum</a>          </div>
+        </li>
+        <li>
+          <button
+            @click.stop="open = (open === 'informasi' ? null : 'informasi')"
+            :aria-expanded="open === 'informasi'">Informasi <svg aria-hidden="true" focusable="false" class="ui-icon ui-icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+          <div class="drop"
+            x-show="open === 'informasi'" x-cloak
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 -translate-y-1"
+            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 -translate-y-1">
+            <a href="berita.html">Berita</a>
+            <a href="pengumuman.html">Pengumuman</a>
+            <a href="kegiatan.html">Kegiatan</a>
+            <a href="artikel.html">Artikel Hukum</a>          </div>
+        </li>
+        <li>
+          <button
+            @click.stop="open = (open === 'mahasiswa' ? null : 'mahasiswa')"
+            :aria-expanded="open === 'mahasiswa'">Mahasiswa <svg aria-hidden="true" focusable="false" class="ui-icon ui-icon-xs" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></button>
+          <div class="drop"
+            x-show="open === 'mahasiswa'" x-cloak
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 -translate-y-1"
+            x-transition:enter-end="opacity-100 translate-y-0"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 translate-y-0"
+            x-transition:leave-end="opacity-0 -translate-y-1">
+            <a href="prestasi.html">Prestasi</a>
+            <a href="alumni.html">Alumni</a>
+            <a href="galeri.html">Galeri</a>          </div>
+        </li>
+        <li><a href="dokumen.html">Dokumen</a></li>
+        <li><a href="kontak.html">Kontak</a></li>
+        <li class="nav-admin-item">
+          <a href="admin/login.html" class="admin-login">
+            <svg aria-hidden="true" focusable="false" class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg>
+            Login Admin
+          </a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+  <!-- ════ END NAV ════ -->
+  <!-- END NAV -->
+  <!-- END HEADER+NAV -->
 
   <!-- ══ PREMIUM PAGE HERO BANNER ══ -->
   <section class="page-hero-bg hero-blue">
@@ -298,7 +140,7 @@
         <span class="current">Kurikulum</span>
       </nav>
       <div>
-        <span class="hero-badge-pill">&#128218; Akademik &amp; Kurikulum</span>
+        <span class="hero-badge-pill"><svg aria-hidden="true" focusable="false" class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 7v14m0-14C10.5 5.5 8 5 3 5v14c5 0 7.5.5 9 2m0-14c1.5-1.5 4-2 9-2v14c-5 0-7.5.5-9 2"/></svg> Akademik &amp; Kurikulum</span>
       </div>
       <h1 class="page-hero-title">
         Struktur <span class="accent-gold">Kurikulum</span> Hukum
@@ -306,7 +148,7 @@
       <span class="hero-title-underline"></span>
       <p class="page-hero-desc">Kurikulum Program Studi Hukum UMP dirancang untuk menghasilkan sarjana hukum yang kompeten, adaptif terhadap dinamika hukum modern, dan berjiwa Islami.</p>
       <div class="scroll-indicator mt-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" style="color:rgba(255,255,255,0.5)" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" style="color:rgba(255,255,255,0.5)" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
         </svg>
       </div>
@@ -321,8 +163,10 @@
         <h2 class="font-display font-bold text-3xl sm:text-4xl text-navy dark:text-white">Kurikulum Program Studi Hukum
         </h2>
       </div>
-      <button @click="download()" class="neu-btn-gold px-6 py-3 rounded-xl whitespace-nowrap">&#11015; Download
-        Kurikulum</button>
+      <button @click="download()" class="neu-btn-gold px-6 py-3 rounded-xl whitespace-nowrap">
+        <svg aria-hidden="true" focusable="false" class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4m4-5 5 5 5-5m-5 5V3"/></svg>
+        Download Kurikulum
+      </button>
     </div>
 
     <div class="flex gap-2 filter-scroll mb-6 pb-1">
@@ -368,67 +212,37 @@
       atau unduh dokumen lengkap untuk semester lainnya.</p>
   </section>
 
-  <footer class="footer-premium" x-data="{ p: SAMPLE_PENGATURAN }">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14 grid grid-cols-2 md:grid-cols-4 gap-10">
-      <div class="col-span-2 md:col-span-1">
-        <div class="flex items-center gap-3 mb-4">
-          <div class="w-14 h-14 neu-raised-sm flex items-center justify-center overflow-hidden p-1">
-            <img src="assets/image/logo-ump.png" alt="Logo Program Studi Hukum UMP"
-              class="w-full h-full object-contain">
-          </div>
-          <p class="font-display font-semibold text-navy dark:text-white text-sm leading-tight">Program Studi<br><span class="text-red font-bold">Hukum</span></p>
+  <footer x-data="{ siteInfo: SAMPLE_PENGATURAN }">
+    <div class="wrap">
+      <div class="script" style="font-size:1.55rem;line-height:1.5;">
+        Hukum untuk Keadilan<br>&nbsp;&nbsp;Papua untuk Masa Depan
+      </div>
+      <div>
+        <svg aria-hidden="true" focusable="false" class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0ZM12 10h.01"/></svg> <strong>Program Studi Hukum</strong><br>
+        Universitas Muhammadiyah Papua<br>
+        <span x-text="siteInfo.alamat">Jl. Abepantai, Awiyo, Abepura</span><br>
+        Kota Jayapura, Papua
+      </div>
+      <div>
+        <svg aria-hidden="true" focusable="false" class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.4 19.4 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.8 2.1z"/></svg> <span x-text="siteInfo.telepon">(0967) 572 255</span><br>
+        <svg aria-hidden="true" focusable="false" class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg> <span x-text="siteInfo.email">hukum@umpapua.ac.id</span>
+      </div>
+      <div>
+        <strong>Ikuti Kami</strong>
+        <div class="soc" style="margin-top:10px;">
+          <a href="#" class="fb" aria-label="Facebook"><svg aria-hidden="true" focusable="false" class="ui-icon ui-icon-social" viewBox="0 0 24 24" fill="currentColor"><path d="M13.6 21v-7.1H16l.4-2.8h-2.8V9.3c0-.8.3-1.4 1.4-1.4h1.5V5.4c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v1.8H7.7v2.8h2.6V21A10 10 0 0 1 12 2a10 10 0 0 1 1.6 19z"/></svg></a>
+          <a href="#" class="ig" aria-label="Instagram"><svg aria-hidden="true" focusable="false" class="ui-icon ui-icon-social" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor" stroke="none"/></svg></a>
+          <a href="#" class="yt" aria-label="YouTube"><svg aria-hidden="true" focusable="false" class="ui-icon ui-icon-social" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="4"/><path d="m10 9 5 3-5 3z" fill="currentColor" stroke="none"/></svg></a>
+          <a href="#" class="tt" aria-label="TikTok"><svg aria-hidden="true" focusable="false" class="ui-icon ui-icon-social" viewBox="0 0 24 24" fill="currentColor"><path d="M19.6 7.2a6.2 6.2 0 0 1-3.8-1.3v8.2a6.3 6.3 0 1 1-5.4-6.2v3.5a2.8 2.8 0 1 0 1.9 2.7V2h3.5a6.2 6.2 0 0 0 3.8 3.3z"/></svg></a>
         </div>
-        <p class="text-sm text-text-muted">Mencetak sarjana hukum yang berintegritas, profesional, dan berkeadilan.</p>
-      </div>
-      <div>
-        <p class="font-display font-semibold text-navy dark:text-white mb-3 text-sm">Program Studi</p>
-        <ul class="space-y-2 text-sm text-text-muted">
-          <li><a href="profil.html" class="hover:text-royal">Profil</a></li>
-          <li><a href="profil.html#visi-misi" class="hover:text-royal">Visi &amp; Misi</a></li>
-          <li><a href="dosen.html" class="hover:text-royal">Dosen</a></li>
-          <li><a href="kurikulum.html" class="hover:text-royal">Kurikulum</a></li>
-        </ul>
-      </div>
-      <div>
-        <p class="font-display font-semibold text-navy dark:text-white mb-3 text-sm">Akademik</p>
-        <ul class="space-y-2 text-sm text-text-muted">
-          <li><a href="berita.html" class="hover:text-royal">Berita</a></li>
-          <li><a href="pengumuman.html" class="hover:text-royal">Pengumuman</a></li>
-          <li><a href="kegiatan.html" class="hover:text-royal">Kegiatan</a></li>
-          <li><a href="dokumen.html" class="hover:text-royal">Dokumen</a></li>
-        </ul>
-      </div>
-      <div>
-        <p class="font-display font-semibold text-navy dark:text-white mb-3 text-sm">Kontak</p>
-        <ul class="space-y-2 text-sm text-text-muted">
-          <li class="flex items-start gap-2">
-            <span class="shrink-0 text-red mt-0.5">&#128205;</span>
-            <span x-text="p.alamat">Jl. Yap Thiam Hien, Kel. Yobe, Jayapura Utara</span>
-          </li>
-          <li class="flex items-center gap-2">
-            <span class="shrink-0 text-red">&#9993;&#65039;</span>
-            <span x-text="p.email">hukum@ump.ac.id</span>
-          </li>
-          <li class="flex items-center gap-2">
-            <span class="shrink-0 text-red">&#128222;</span>
-            <span x-text="p.telepon">(0967) 123-456</span>
-          </li>
-          <li class="pt-1">
-            <a href="kontak.html"
-              class="text-red font-semibold hover:underline inline-flex items-center gap-1.5 text-xs">
-              <span>&#128506;&#65039;</span>
-              <span>Peta &amp; Petunjuk Lokasi &rarr;</span>
-            </a>
-          </li>
-        </ul>
       </div>
     </div>
-    <div class="border-t border-black/5 dark:border-white/5 py-5 text-center text-xs text-text-muted">
-      &copy; 2026 Program Studi Hukum — Universitas Muhammadiyah Papua. All Rights Reserved.
-    </div>
+    <span class="copy">
+      &copy; 2025 Program Studi Hukum &mdash; Universitas Muhammadiyah Papua. All Rights Reserved.
+    </span>
   </footer>
-  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
 </body>
 
 </html>
