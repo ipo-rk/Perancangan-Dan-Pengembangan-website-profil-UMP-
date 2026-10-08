@@ -248,6 +248,11 @@ nav.main li > a.admin-login {
   min-height: 340px;
   padding: 30px 70px;
 }
+.hero .slide h2,
+.hero .slide h3,
+.hero .slide h4 {
+  color: #fff;
+}
 .slide h3 {
   font-family: "Dancing Script", cursive;
   font-weight: 400;
@@ -748,8 +753,47 @@ footer .soc a {
   .fac {
     grid-template-columns: 1fr;
   }
-  .brand b {
+  .quick a {
+    min-width: 0;
+    gap: 8px;
+    padding: 12px 8px;
+    font-size: 0.8rem;
+  }
+  .quick .ic {
+    width: 46px;
+    height: 46px;
     font-size: 1.2rem;
+  }
+  header.top .wrap {
+    gap: 8px;
+    padding-right: 16px;
+    padding-left: 16px;
+  }
+  .brand {
+    min-width: 0;
+    gap: 8px;
+  }
+  header.top .logo {
+    width: 44px;
+    height: 44px;
+  }
+  .brand small {
+    font-size: 0.58rem;
+    letter-spacing: 0;
+  }
+  .brand b {
+    font-size: clamp(0.9rem, 4vw, 1.05rem);
+    line-height: 1.15;
+  }
+  .brand i {
+    display: none;
+  }
+  .tools {
+    flex: none;
+    gap: 8px;
+  }
+  header.top .soc {
+    display: none;
   }
   .logo {
     width: 54px;
@@ -949,7 +993,7 @@ footer .wrap > div:nth-child(2) {
 
 /* ===== HERO — semua slide konsisten pakai .hero.alt ===== */
 .hero {
-  height: 360px;
+  height: 420px;
   min-height: 0;
 }
 /* :before/:after default tersembunyi, hanya alt yang tampil */
@@ -963,8 +1007,8 @@ footer .wrap > div:nth-child(2) {
 }
 /* .slide: grid 2 kolom, teks kiri + gambar kanan */
 .slide {
-  min-height: 360px;
-  height: 360px;
+  min-height: 420px;
+  height: 420px;
   padding: 28px 17% 28px 103px;
   align-items: center;
 }
@@ -982,23 +1026,92 @@ footer .wrap > div:nth-child(2) {
   -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 22%);
   mask-image: linear-gradient(90deg, transparent 0%, #000 22%);
 }
-/* Mobile: sembunyikan gambar hero, tampilkan hanya teks */
-@media (max-width: 980px) {
+/* Tablet: pertahankan teks dan gambar berdampingan. */
+@media (max-width: 1280px) {
   .hero {
-    height: auto;
-    min-height: 280px;
+    height: 360px;
+    min-height: 360px;
   }
   .slide {
-    height: auto;
-    padding: 32px 24px;
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+    min-height: 360px;
+    height: 360px;
+    gap: 16px;
+    padding: 28px 64px;
+  }
+  .slide > div {
+    min-width: 0;
   }
   .art,
   .art.cut {
-    display: none;
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    object-fit: contain;
+    object-position: center;
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+  .slide h3 {
+    font-size: clamp(1.35rem, 2.6vw, 1.8rem);
+  }
+  .slide h2 {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+  }
+  .slide h4 {
+    font-size: clamp(1rem, 2vw, 1.25rem);
   }
   .hero:before {
     width: 30%;
     opacity: 0.4;
+  }
+}
+
+/* Compact screens: place the complete slide image above the text consistently. */
+@media (max-width: 720px) {
+  .hero {
+    height: clamp(540px, calc(665px - 23vw), 590px);
+    min-height: 0;
+  }
+  .slide {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: clamp(150px, 46vw, 210px) auto;
+    align-content: start;
+    gap: 8px;
+    height: 100%;
+    min-height: 0;
+    padding: 16px 42px 42px;
+  }
+  .slide > div {
+    grid-row: 2;
+    min-width: 0;
+  }
+  .art,
+  .art.cut {
+    grid-row: 1;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: center;
+  }
+  .slide h3 {
+    font-size: 1.45rem;
+    line-height: 1.2;
+  }
+  .slide h2 {
+    font-size: 1.65rem;
+    line-height: 1.12;
+  }
+  .slide h4 {
+    font-size: 1.05rem;
+    line-height: 1.3;
+  }
+  .slide p {
+    font-size: 0.9rem;
+  }
+  .arrow {
+    padding: 6px 4px;
   }
 }
 
@@ -1032,6 +1145,18 @@ footer .wrap > div:nth-child(2) {
 @media (max-width: 980px) {
   .facwrap {
     grid-template-columns: 1fr;
+  }
+  .about {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .split > div {
+    min-width: 0;
+  }
+  .quick {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
   .gedung {
     height: auto;
@@ -1256,6 +1381,18 @@ nav.main li > button:not(.on):hover {
     border-top: none !important;
     border-left: 3px solid var(--yellow);
     box-shadow: none !important;
+  }
+  html:not(.dark) nav.main .drop {
+    background: #fff !important;
+    box-shadow: 0 6px 16px rgba(6, 38, 95, 0.2) !important;
+  }
+  html:not(.dark) nav.main .drop a {
+    color: #0a3a8f !important;
+    border-bottom-color: rgba(6, 38, 95, 0.12) !important;
+  }
+  html:not(.dark) nav.main .drop a:hover {
+    background: #eaf0fa !important;
+    color: #c8102e !important;
   }
   .drop a {
     border-bottom-color: rgba(255, 255, 255, 0.06) !important;

@@ -4327,10 +4327,13 @@ footer.footer-premium-admin {
   color: var(--text) !important;
 }
 .dark .card .ttl { color: #dde4f5 !important; }
+.dark .card b { color: #dde4f5 !important; }
 .dark .card .meta { color: #8a98b8 !important; }
 .dark .card .excerpt { color: #a0b0c8 !important; }
 .dark .card a { color: #dde4f5 !important; }
 .dark .card a:hover { color: #ffc20e !important; }
+.dark .head a { color: #93c5fd !important; }
+.dark .head a:hover { color: #ffc20e !important; }
 
 /* ── About / Split section ──────────────────────────────────────────── */
 .dark .about { color: var(--text) !important; }
@@ -4353,6 +4356,19 @@ footer.footer-premium-admin {
 .dark .list .badge { background: rgba(200,16,46,.2) !important; color: #f87171 !important; }
 
 /* ── Statistik / Stats ──────────────────────────────────────────────── */
+.stats .num {
+  display: block;
+  color: var(--yellow);
+  font-size: 2.4rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+.stats .lbl {
+  display: block;
+  margin-top: 4px;
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.9rem;
+}
 .dark .stats {
   background: #06265f !important;
 }

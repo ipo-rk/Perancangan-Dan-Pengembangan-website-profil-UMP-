@@ -22,8 +22,7 @@ function syncThemeColorMeta(isDark) {
   if (isDark) {
     document.documentElement.classList.add('dark');
   }
-  // Dijalankan sebelum body dirender (script tanpa defer di <head>), jadi
-  // tidak ada "flash" warna address-bar yang salah saat halaman dibuka.
+  // Sinkronkan warna address-bar setelah preferensi tema diterapkan.
   syncThemeColorMeta(isDark);
 })();
 

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#0a3a8f" id="theme-color-meta">
+  <meta name="theme-color" content="#f4f6f9" id="theme-color-meta">
   <title>Beranda | Program Studi Hukum — Universitas Muhammadiyah Papua</title>
   <meta name="description"
     content="Website resmi Program Studi Hukum Universitas Muhammadiyah Papua — mencetak sarjana hukum yang berintegritas, profesional, dan berkeadilan.">
@@ -287,7 +287,7 @@
       <div>
         <h2 class="h">Program Akademik</h2>
         <p class="sub">Pilihan Program dan Fasilitas Terbaik untuk Masa Depan Anda</p>
-        <div class="prog-home">
+        <div class="prog">
           <a href="kurikulum.html">
             <span class="ic c-navy"><svg aria-hidden="true" focusable="false" class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m2 9 10-5 10 5-10 5L2 9Zm4 2.5V16c3.5 2.7 8.5 2.7 12 0v-4.5M22 9v6"/></svg></span>Kurikulum Terkini
           </a>
@@ -329,7 +329,7 @@
                   <span x-text="n.tanggal"></span>
                 </time>
                 <b x-text="n.judul"
-                  style="display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;"></b>
+                  style="display:-webkit-box;line-clamp:2;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;"></b>
                 <a :href="'detail-berita.html?id=' + n.id">Baca Selengkapnya &rarr;</a>
               </div>
             </article>
@@ -348,7 +348,7 @@
       <!-- Pengumuman (SAMPLE_PENGUMUMAN) -->
       <div>
         <h2 class="h">Pengumuman</h2>
-        <ul class="ann-list">
+        <ul class="list">
           <template x-for="p in latestAnn" :key="p.id">
             <li>
               <a :href="'detail-pengumuman.html?id=' + p.id" x-text="p.judul"></a>
@@ -365,7 +365,7 @@
         <ul class="list">
           <template x-for="k in latestKegiatan" :key="k.id">
             <li>
-              <span class="date-badge">
+              <span class="d">
                 <b x-text="k.hari"></b>
                 <span x-text="k.bulan"></span>
               </span>
@@ -393,21 +393,21 @@
   <!-- ════════════════════════════════════════════════════════════════
        STATISTIK — navy bar + angka kuning + x-countup
        ════════════════════════════════════════════════════════════════ -->
-  <section class="stats-bar" aria-label="Statistik Program Studi">
+  <section class="stats" aria-label="Statistik Program Studi">
     <div class="wrap">
-      <div>
+      <div class="stat">
         <span class="num" x-countup="totalMahasiswa"></span>
         <span class="lbl">Mahasiswa Aktif</span>
       </div>
-      <div>
+      <div class="stat">
         <span class="num" x-countup="totalDosen"></span>
         <span class="lbl">Dosen Aktif</span>
       </div>
-      <div>
+      <div class="stat">
         <span class="num" x-countup="totalAlumni"></span>
         <span class="lbl">Alumni</span>
       </div>
-      <div>
+      <div class="stat">
         <span class="num" x-text="akreditasi"></span>
         <span class="lbl">Akreditasi BAN-PT</span>
       </div>
