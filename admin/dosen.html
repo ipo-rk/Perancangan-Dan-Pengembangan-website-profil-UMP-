@@ -294,7 +294,8 @@
                 class="bg-transparent text-sm outline-none w-full">
             </div>
             <div class="flex gap-2">
-              <button class="neu-btn px-4 py-2.5 rounded-xl text-xs"><span x-html="iconSvg('download')"></span> Export</button>
+              <button @click="exportCsv()" class="neu-btn px-4 py-2.5 rounded-xl text-xs"
+                :disabled="filtered.length === 0"><span x-html="iconSvg('download')"></span> Export CSV</button>
               <button @click="openAdd()" class="neu-btn-primary px-5 py-2.5 rounded-xl text-xs">+ Tambah Dosen</button>
             </div>
           </div>

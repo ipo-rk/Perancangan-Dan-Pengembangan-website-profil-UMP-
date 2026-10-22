@@ -282,7 +282,7 @@
         <!-- ══ END ADMIN PREMIUM PAGE HEADER ══ -->
 
         <div x-data="{
-    tab: 'list', editing: null,
+    tab: 'list', editing: null, editingSnapshot: undefined,
     artikel: [...SAMPLE_ARTIKEL],
     init() {
       window.addEventListener('db-update', event => {
@@ -296,8 +296,8 @@
     form: {},
     uploadingThumb: false,
     openList() { this.tab = 'list'; },
-    openAdd() { this.editing = null; this.form = this.emptyForm(); this.tab = 'editor'; },
-    openEdit(item) { this.editing = item.id; this.form = { ...item }; this.tab = 'editor'; },
+    openAdd() { this.editing = null; this.editingSnapshot = undefined; this.form = this.emptyForm(); this.tab = 'editor'; },
+    openEdit(item) { this.editing = item.id; this.editingSnapshot = JSON.stringify(item); this.form = { ...item }; this.tab = 'editor'; },
     async onThumb(e) {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
@@ -330,7 +330,8 @@
     saveNew() {
       if(!this.form.judul || !this.form.isi){ NeuAlert.error('Judul dan Isi artikel wajib diisi.'); return; }
       if(!this.form.thumbnail){ this.form.thumbnail = 'https://placehold.co/400x220/EEF1F5/0B1F3A?text=Artikel+Hukum'; }
-      if(this.editing){
+      if(this.editing !== null && this.editing !== undefined){
+        if(!hasCurrentRecord(this.artikel, this.editing, 'Artikel', this.editingSnapshot)) return;
         const idx = this.artikel.findIndex(x=>x.id===this.editing);
         const prev = this.artikel[idx];
         this.artikel[idx] = { ...this.form, id: this.editing };
@@ -345,6 +346,8 @@
       }
       this.form = this.emptyForm();
       this.tab = 'list';
+      this.editing = null;
+      this.editingSnapshot = undefined;
     }
   }">
 

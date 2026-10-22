@@ -367,7 +367,7 @@
         <div class="max-w-4xl mt-6" x-data="{
     rows: [...SAMPLE_STRUKTUR],
     dosen: [...SAMPLE_DOSEN],
-    showModal: false, editing: null, uploadingFoto: false,
+    showModal: false, editing: null, editingSnapshot: undefined, uploadingFoto: false,
     emptyForm() { return { id:null, dosenId:'', nama:'', jabatan:'', foto:'' }; },
     form: { id:null, dosenId:'', nama:'', jabatan:'', foto:'' },
     init() {
@@ -404,9 +404,10 @@
       SAMPLE_STRUKTUR = this.rows;
       return true;
     },
-    openAdd() { this.editing = null; this.form = this.emptyForm(); this.showModal = true; },
+    openAdd() { this.editing = null; this.editingSnapshot = undefined; this.form = this.emptyForm(); this.showModal = true; },
     openEdit(r) {
       this.editing = r.id;
+      this.editingSnapshot = JSON.stringify(r);
       this.form = { ...r, dosenId: r.dosenId == null ? '' : String(r.dosenId) };
       this.pilihDosen();
       this.showModal = true;
@@ -432,7 +433,8 @@
       this.pilihDosen();
       if(!this.form.nama || !this.form.jabatan){ NeuAlert.error('Nama dan Jabatan wajib diisi.'); return; }
       const savedForm = { ...this.form };
-      if(this.editing){
+      if(this.editing !== null && this.editing !== undefined){
+        if(!hasCurrentRecord(this.rows, this.editing, 'Data struktur organisasi', this.editingSnapshot)) return;
         const idx = this.rows.findIndex(x=>x.id===this.editing);
         const prev = this.rows[idx];
         this.rows[idx] = savedForm;
@@ -447,6 +449,8 @@
         NeuAlert.success();
       }
       this.showModal = false;
+      this.editing = null;
+      this.editingSnapshot = undefined;
     },
     async remove(r) {
       const ok = await NeuAlert.confirmDelete('data ini');

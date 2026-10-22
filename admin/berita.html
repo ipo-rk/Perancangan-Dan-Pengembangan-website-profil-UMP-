@@ -295,7 +295,7 @@
         <!-- ══ END ADMIN PREMIUM PAGE HEADER ══ -->
 
         <div x-data="{
-        tab: 'list', editing: null,
+        tab: 'list', editing: null, editingSnapshot: undefined,
         // Sumber data sama dengan yang dipakai halaman publik berita.html (SAMPLE_BERITA di app.js,
         // dimuat dari localStorage) supaya berita di admin & frontend selalu konsisten dan akurat.
         berita: [...SAMPLE_BERITA],
@@ -311,8 +311,8 @@
         form: {},
         uploadingGambar: false,
         openList() { this.tab = 'list'; },
-        openAdd() { this.editing = null; this.form = this.emptyForm(); this.tab = 'editor'; },
-        openEdit(b) { this.editing = b.id; this.form = { ...b }; this.tab = 'editor'; },
+        openAdd() { this.editing = null; this.editingSnapshot = undefined; this.form = this.emptyForm(); this.tab = 'editor'; },
+        openEdit(b) { this.editing = b.id; this.editingSnapshot = JSON.stringify(b); this.form = { ...b }; this.tab = 'editor'; },
         async onPhoto(e) {
           const file = e.target.files && e.target.files[0];
           if (!file) return;
@@ -335,7 +335,8 @@
         saveBerita() {
           if (!this.form.judul) { NeuAlert.error('Judul berita wajib diisi.'); return; }
           if (!this.form.gambar) { this.form.gambar = 'https://placehold.co/400x240/EEF1F5/0B1F3A?text=Berita'; }
-          if (this.editing) {
+          if (this.editing !== null && this.editing !== undefined) {
+            if (!hasCurrentRecord(this.berita, this.editing, 'Berita', this.editingSnapshot)) return;
             const idx = this.berita.findIndex(x => x.id === this.editing);
             const prev = this.berita[idx];
             this.berita[idx] = { ...this.form, id: this.editing, tanggal: this.berita[idx].tanggal, penulis: this.berita[idx].penulis };
@@ -349,6 +350,8 @@
             NeuAlert.success('Berita berhasil disimpan.');
           }
           this.tab = 'list';
+          this.editing = null;
+          this.editingSnapshot = undefined;
         },
         async remove(item) {
           const ok = await NeuAlert.confirmDelete('berita ini');

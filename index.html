@@ -45,7 +45,7 @@
   Kedua scope berkomunikasi via $dispatch untuk toggle mobile nav.
 -->
 
-<body x-data="homePage()" x-init="init()">
+<body x-data="homePage()">
 
   <!-- ════════════════════════════════════════════════════════════════
        HEADER — Neumorphic surface, sesuai referensi desain
@@ -331,9 +331,9 @@
           </div>
         </div>
         <div class="row">
-          <span class="ic c-yel" style="width:46px;height:46px;min-width:46px;font-size:1.3rem;"><svg aria-hidden="true"
-              focusable="false" class="ui-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
-              stroke-linecap="round" stroke-linejoin="round">
+          <span class="ic c-yel" style="width:46px;height:46px;min-width:46px;font-size:1.3rem;"><svg
+              aria-hidden="true" focusable="false" class="ui-icon" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
               <circle cx="12" cy="12" r="9" />
               <circle cx="12" cy="12" r="5" />
               <circle cx="12" cy="12" r="1" />
@@ -643,13 +643,19 @@
           return SAMPLE_KEGIATAN.slice(0, 3);
         },
         get totalMahasiswa() {
-          return typeof SAMPLE_PENGATURAN !== 'undefined' ? SAMPLE_PENGATURAN.mahasiswaAktif : 350;
+          return typeof SAMPLE_PENGATURAN !== 'undefined'
+            ? Number(SAMPLE_PENGATURAN.mahasiswaAktif) || 0
+            : 0;
         },
         get totalDosen() {
-          return typeof SAMPLE_DOSEN !== 'undefined' ? SAMPLE_DOSEN.filter(d => d.status === 'Aktif').length : 25;
+          return typeof SAMPLE_DOSEN !== 'undefined' && Array.isArray(SAMPLE_DOSEN)
+            ? SAMPLE_DOSEN.length
+            : 0;
         },
         get totalAlumni() {
-          return typeof SAMPLE_ALUMNI !== 'undefined' ? SAMPLE_ALUMNI.length : 0;
+          return typeof SAMPLE_ALUMNI !== 'undefined' && Array.isArray(SAMPLE_ALUMNI)
+            ? SAMPLE_ALUMNI.length
+            : 0;
         },
         get akreditasi() {
           return typeof SAMPLE_PROFIL !== 'undefined' ? SAMPLE_PROFIL.akreditasi : 'B';

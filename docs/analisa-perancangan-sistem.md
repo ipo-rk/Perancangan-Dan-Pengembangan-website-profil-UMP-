@@ -32,7 +32,7 @@ Lupa sandi memverifikasi kecocokan email dan status aktif terhadap data lokal, l
 
 Aplikasi memakai 18 key entitas: `berita`, `dosen`, `dokumen`, `galeri`, `pengumuman`, `kegiatan`, `pendaftar`, `pesan`, `artikel`, `prestasi`, `kurikulum`, `alumni`, `pengguna`, `aktivitas`, `notifikasi`, `profil`, `struktur`, dan `pengaturan`.
 
-Enam belas key menyimpan daftar record; `profil` dan `pengaturan` menyimpan satu objek. Kode menerapkan tiga asosiasi melalui lookup aplikasi: `pendaftar.kegiatanId` ke `kegiatan.id`, `struktur.dosenId` opsional ke `dosen.id`, dan pencocokan nama ternormalisasi `kurikulum.pengampu` ke `dosen.nama`. `pendaftar.kegiatanNama` adalah salinan teks nama kegiatan; `kurikulum.kodeDosen` adalah teks opsional, bukan foreign key. Lookup tidak menegakkan integritas referensial, cascade, atau transaksi; karena itu data yatim dapat tertinggal. Seed struktur lama dapat tidak memiliki `dosenId`. Field `penulis`, `user`, dan teks sejenis bukan relasi ke entitas pengguna/dosen.
+Enam belas key menyimpan daftar record; `profil` dan `pengaturan` menyimpan satu objek. Kode menerapkan tiga asosiasi melalui lookup aplikasi: `pendaftar.kegiatanId` ke `kegiatan.id`, `struktur.dosenId` opsional ke `dosen.id`, dan `kurikulum.kodeDosen` ke `dosen.kode` dengan pencocokan nama `pengampu` sebagai fallback untuk record tanpa kode. `pendaftar.kegiatanNama` adalah salinan teks nama kegiatan. Lookup tidak menegakkan integritas referensial, cascade, atau transaksi; karena itu data yatim dapat tertinggal. Seed struktur lama dapat tidak memiliki `dosenId`. Field `penulis`, `user`, dan teks sejenis bukan relasi ke entitas pengguna/dosen.
 
 Rincian kolom dan batas implementasi dicatat pada [`spesifikasi-sistem.md`](spesifikasi-sistem.md).
 

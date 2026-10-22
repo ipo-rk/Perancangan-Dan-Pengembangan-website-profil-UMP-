@@ -154,12 +154,14 @@ let SAMPLE_DOSEN = DB.load('dosen', SEED_DOSEN);
 
 | Method | Fungsi |
 |--------|--------|
-| `DB.load(key, fallback)` | Ambil dari localStorage; pakai `fallback` jika kosong |
+| `DB.load(key, fallback)` | Ambil dari localStorage; gunakan `fallback` jika kosong atau bentuk data tidak sesuai |
 | `DB.save(key, data)` | Simpan ke localStorage (sync) + IndexedDB (async write-through) |
 
 ### Kunci localStorage (prefix: `prodihukum_db_v1_`)
 
 Format key lengkap: `prodihukum_db_v1_<entity>`, contoh: `prodihukum_db_v1_dosen`
+
+Semua halaman Admin dan publik membaca key yang sama selama dibuka pada origin dan profil browser yang sama. Perubahan antartab pada origin tersebut diperbarui melalui event browser. localStorage/IndexedDB tidak membagikan data ke perangkat atau profil browser lain; gunakan backup/restore untuk memindahkan data secara manual, atau pasang backend bersama untuk sinkronisasi lintas perangkat.
 
 ### Sesi Admin
 
@@ -248,8 +250,7 @@ Sesi admin disimpan di: `prodihukum_admin_session` (localStorage)
 
 ### Pencocokan Dosen
 
-Fungsi `coursesForLecturer()` mencocokkan `dosen.nama` dengan `kurikulum.pengampu` (string match).  
-→ Nama di `SEED_KURIKULUM.pengampu` **harus persis sama** dengan `SEED_DOSEN.nama`.
+Fungsi `coursesForLecturer()` mencocokkan `dosen.kode` dengan `kurikulum.kodeDosen` terlebih dahulu. Nama dosen menjadi fallback untuk data mata kuliah lama yang belum memiliki kode. Tampilan pengampu kurikulum mengikuti nama dosen terkini jika kodenya terhubung ke roster, sehingga perubahan nama dosen tidak memutus hubungan.
 
 ### Import/Export Kurikulum
 
@@ -478,7 +479,7 @@ Tidak ada foreign key nyata. Semua relasi adalah **logical lookup** di JavaScrip
 |--------|------|
 | `pendaftar` ↔ `kegiatan` | `pendaftar.kegiatanId === kegiatan.id` |
 | `struktur` ↔ `dosen` | `struktur.dosenId === dosen.id` (opsional) |
-| `kurikulum` ↔ `dosen` | `kurikulum.pengampu === dosen.nama` (string match) |
+| `kurikulum` ↔ `dosen` | `kurikulum.kodeDosen === dosen.kode`; fallback ke nama pengampu untuk record tanpa kode |
 
 ---
 

@@ -249,13 +249,22 @@ const DB = (() => {
     try {
       const raw = localStorage.getItem(NS + key);
       if (raw !== null) {
-        return sanitizeBlobUrls(JSON.parse(raw));
+        const stored = JSON.parse(raw);
+        const matchesSeedShape = Array.isArray(seed)
+          ? Array.isArray(stored)
+          : Boolean(seed && typeof seed === 'object')
+            ? Boolean(stored && typeof stored === 'object' && !Array.isArray(stored))
+            : typeof stored === typeof seed;
+        if (matchesSeedShape) return sanitizeBlobUrls(stored);
+        console.warn('DB: bentuk data "' + key + '" tidak sesuai; memulihkan data awal.');
       }
     } catch (e) {
       console.warn('DB: gagal membaca data "' + key + '" dari localStorage.', e);
     }
     const copy = JSON.parse(JSON.stringify(seed));
-    save(key, copy);
+    if (!save(key, copy)) {
+      console.warn('DB: gagal menyimpan data awal "' + key + '" ke localStorage.');
+    }
     return copy;
   }
 
@@ -1325,23 +1334,50 @@ function dosenPage() {
 }
 
 function lecturerHasCode(dosen) {
-  const code = String(dosen?.kode || '').trim().toLocaleLowerCase('id-ID');
-  return Boolean(code) && !['-', '—', 'tidak tercantum', 'n/a'].includes(code);
+  return Boolean(normalizeLecturerCode(dosen?.kode));
+}
+
+function hasCurrentRecord(rows, id, label, expectedSnapshot) {
+  const current = rows.find(row => String(row.id) === String(id));
+  if (!current) {
+    NeuAlert.error(`${label} yang akan diperbarui tidak ditemukan. Muat ulang halaman lalu coba lagi.`);
+    return false;
+  }
+  if (expectedSnapshot !== undefined && JSON.stringify(current) !== expectedSnapshot) {
+    NeuAlert.error(`${label} telah diubah pada tab lain. Tutup formulir, muat ulang data, lalu coba lagi.`);
+    return false;
+  }
+  return true;
+}
+
+function normalizeLecturerCode(value) {
+  const code = String(value || '').trim().toLocaleLowerCase('id-ID');
+  return code && !['-', '—', 'tidak tercantum', 'n/a'].includes(code) ? code : '';
 }
 
 function coursesForLecturer(dosen) {
   const normalizeName = value => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
   const lecturerName = normalizeName(dosen.nama);
-  if (!lecturerName) return [];
-  return SAMPLE_KURIKULUM.filter(course =>
-    course.pengampu && normalizeName(course.pengampu) === lecturerName
-  );
+  const lecturerCode = normalizeLecturerCode(dosen.kode);
+  if (!lecturerName && !lecturerCode) return [];
+  return SAMPLE_KURIKULUM.filter(course => {
+    const courseCode = normalizeLecturerCode(course.kodeDosen);
+    if (lecturerCode && courseCode) return lecturerCode === courseCode;
+    return Boolean(course.pengampu && lecturerName && normalizeName(course.pengampu) === lecturerName);
+  });
+}
+
+function courseLecturerName(course) {
+  const code = normalizeLecturerCode(course.kodeDosen);
+  const lecturer = code && SAMPLE_DOSEN.find(dosen => normalizeLecturerCode(dosen.kode) === code);
+  return lecturer ? lecturer.nama : (course.pengampu || '');
 }
 
 function adminDosenPage() {
   return {
     showModal: false,
     editing: null,
+    editingSnapshot: undefined,
     dosen: [...SAMPLE_DOSEN],
     form: { id: null, nama: '', kode: '' },
     q: '',
@@ -1367,16 +1403,47 @@ function adminDosenPage() {
       this.curriculumRevision;
       return coursesForLecturer(dosen);
     },
+    exportCsv() {
+      const quote = value => {
+        const text = String(value == null ? '' : value);
+        const safe = /^[\t\r ]*[=+\-@]/.test(text) ? "'" + text : text;
+        return '"' + safe.replace(/"/g, '""') + '"';
+      };
+      const rows = [
+        ['Nama Dosen', 'Kode Dosen', 'Jumlah Mata Kuliah', 'Mata Kuliah Diampu'],
+        ...this.filtered.map(dosen => {
+          const courses = this.coursesFor(dosen);
+          return [
+            dosen.nama,
+            dosen.kode || '',
+            courses.length,
+            courses.map(course => course.nama).join('; ')
+          ];
+        })
+      ];
+      const csv = '\uFEFF' + rows.map(row => row.map(quote).join(',')).join('\r\n');
+      const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'data-dosen-prodi-hukum.csv';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 0);
+      NeuAlert.success(`${this.filtered.length} data dosen diekspor ke CSV.`);
+    },
     emptyForm() {
       return { id: null, nama: '', kode: '' };
     },
     openAdd() {
       this.editing = null;
+      this.editingSnapshot = undefined;
       this.form = this.emptyForm();
       this.showModal = true;
     },
     openEdit(dosen) {
       this.editing = dosen.id;
+      this.editingSnapshot = JSON.stringify(dosen);
       this.form = { ...dosen };
       this.showModal = true;
     },
@@ -1393,6 +1460,7 @@ function adminDosenPage() {
       this.form.nama = this.form.nama.trim();
 
       if (this.editing !== null) {
+        if (!hasCurrentRecord(this.dosen, this.editing, 'Data dosen', this.editingSnapshot)) return;
         const index = this.dosen.findIndex(dosen => dosen.id === this.editing);
         if (index < 0) {
           NeuAlert.error('Data dosen yang akan diperbarui tidak ditemukan. Muat ulang halaman lalu coba lagi.');
@@ -1419,6 +1487,8 @@ function adminDosenPage() {
         NeuAlert.success('Data dosen berhasil disimpan.');
       }
       this.showModal = false;
+      this.editing = null;
+      this.editingSnapshot = undefined;
     },
     async remove(dosen) {
       const confirmed = await NeuAlert.confirmDelete('data dosen ini');
@@ -2309,6 +2379,7 @@ const ALBUM_ICONS = {
 function adminGaleriPage() {
   return {
     foto: [...SAMPLE_GALERI],
+    editingSnapshot: undefined,
     init() {
       window.addEventListener('db-update', event => {
         if (event.detail?.key === 'galeri' && Array.isArray(event.detail.data)) {
@@ -2356,26 +2427,27 @@ function adminGaleriPage() {
     },
     openAdd() {
       this.editing = null;
+      this.editingSnapshot = undefined;
       this.form = { judul: '', album: 'Seminar', src: '' };
       this.showModal = true;
     },
     openEdit(item) {
       this.editing = item.id;
+      this.editingSnapshot = JSON.stringify(item);
       this.form = { ...item };
       this.showModal = true;
     },
     save() {
       if (!this.form.judul) { NeuAlert.error('Judul/caption foto wajib diisi.'); return; }
       if (!this.form.src) { NeuAlert.error('Pilih foto terlebih dahulu.'); return; }
-      if (this.editing) {
+      if (this.editing !== null && this.editing !== undefined) {
+        if (!hasCurrentRecord(this.foto, this.editing, 'Foto', this.editingSnapshot)) return;
         const idx = this.foto.findIndex(f => f.id === this.editing);
-        if (idx !== -1) {
-          const prev = this.foto[idx];
-          this.foto[idx] = { ...this.form };
-          if (!this.persist()) { this.foto[idx] = prev; NeuAlert.storageFull(); return; }
-          logActivity('Memperbarui foto: ' + this.form.judul, '\u270F\uFE0F');
-          NeuAlert.updated('Foto galeri berhasil diperbarui.');
-        }
+        const prev = this.foto[idx];
+        this.foto[idx] = { ...this.form };
+        if (!this.persist()) { this.foto[idx] = prev; NeuAlert.storageFull(); return; }
+        logActivity('Memperbarui foto: ' + this.form.judul, '\u270F\uFE0F');
+        NeuAlert.updated('Foto galeri berhasil diperbarui.');
       } else {
         const prevList = this.foto;
         const newItem = { id: Date.now(), judul: this.form.judul, album: this.form.album, src: this.form.src };
@@ -2387,6 +2459,7 @@ function adminGaleriPage() {
       this.showModal = false;
       this.form = { judul: '', album: 'Seminar', src: '' };
       this.editing = null;
+      this.editingSnapshot = undefined;
     },
     async remove(item) {
       const ok = await NeuAlert.confirmDelete('foto "' + item.judul + '"');
@@ -2417,6 +2490,7 @@ function adminDokumenTable() {
     rows: [...SAMPLE_DOKUMEN],
     showModal: false,
     editing: null,
+    editingSnapshot: undefined,
     uploading: false,
     q: '',
     form: { ...emptyForm },
@@ -2473,19 +2547,22 @@ function adminDokumenTable() {
     },
     openAdd() {
       this.editing = null;
+      this.editingSnapshot = undefined;
       this.form = { ...emptyForm };
       this.showModal = true;
     },
     openEdit(row) {
       this.editing = row.id;
+      this.editingSnapshot = JSON.stringify(row);
       this.form = { ...emptyForm, ...row };
       this.showModal = true;
     },
     save() {
       if (!this.form.nama.trim()) { NeuAlert.error('Nama dokumen wajib diisi.'); return; }
-      if (!this.editing && !this.form.fileData) { NeuAlert.error('Silakan unggah berkas PDF/DOC/DOCX terlebih dahulu.'); return; }
+      if ((this.editing === null || this.editing === undefined) && !this.form.fileData) { NeuAlert.error('Silakan unggah berkas PDF/DOC/DOCX terlebih dahulu.'); return; }
 
-      if (this.editing) {
+      if (this.editing !== null && this.editing !== undefined) {
+        if (!hasCurrentRecord(this.rows, this.editing, 'Dokumen', this.editingSnapshot)) return;
         const idx = this.rows.findIndex(x => x.id === this.editing);
         const prev = this.rows[idx];
         this.rows[idx] = { ...this.form };
@@ -2500,6 +2577,8 @@ function adminDokumenTable() {
         NeuAlert.success('Dokumen berhasil diunggah.');
       }
       this.showModal = false;
+      this.editing = null;
+      this.editingSnapshot = undefined;
     },
     async remove(row) {
       const ok = await NeuAlert.confirmDelete('dokumen "' + row.nama + '"');
@@ -2529,6 +2608,7 @@ function adminPenggunaTable(config) {
   return {
     showModal: false,
     editing: null,
+    editingSnapshot: undefined,
     q: '',
     rows: [...config.rows],
     form: { ...config.emptyForm },
@@ -2551,11 +2631,13 @@ function adminPenggunaTable(config) {
     },
     openAdd() {
       this.editing = null;
+      this.editingSnapshot = undefined;
       this.form = { ...config.emptyForm };
       this.showModal = true;
     },
     openEdit(row) {
       this.editing = row.id;
+      this.editingSnapshot = JSON.stringify(row);
       // Password lama sengaja TIDAK dimuat ke form (dikosongkan) supaya
       // tidak terpampang begitu saja di layar. Isi field ini hanya jika
       // admin ingin mengganti password akun tersebut.
@@ -2563,14 +2645,27 @@ function adminPenggunaTable(config) {
       this.showModal = true;
     },
     save() {
-      if (config.validate && !config.validate(this.form, !!this.editing)) return;
+      if (config.validate && !config.validate(this.form, this.editing !== null && this.editing !== undefined)) return;
 
-      if (!this.editing && !(this.form.password || '').trim()) {
+      const email = String(this.form.email || '').trim().toLocaleLowerCase('id-ID');
+      const duplicateEmail = this.rows.some(row =>
+        String(row.email || '').trim().toLocaleLowerCase('id-ID') === email &&
+        String(row.id) !== String(this.editing)
+      );
+      if (email && duplicateEmail) {
+        NeuAlert.error('Email tersebut sudah digunakan oleh akun lain.');
+        return;
+      }
+      this.form.email = String(this.form.email || '').trim();
+      this.form.nama = String(this.form.nama || '').trim();
+
+      if ((this.editing === null || this.editing === undefined) && !(this.form.password || '').trim()) {
         NeuAlert.error('Kata sandi wajib diisi untuk akun baru.');
         return;
       }
 
-      if (this.editing) {
+      if (this.editing !== null && this.editing !== undefined) {
+        if (!hasCurrentRecord(this.rows, this.editing, 'Akun', this.editingSnapshot)) return;
         const idx = this.rows.findIndex(x => x.id === this.editing);
         const prev = this.rows[idx];
         // Field password dikosongkan di form -> pertahankan password lama.
@@ -2588,6 +2683,8 @@ function adminPenggunaTable(config) {
         NeuAlert.success();
       }
       this.showModal = false;
+      this.editing = null;
+      this.editingSnapshot = undefined;
     },
     async remove(row) {
       const ok = await NeuAlert.confirmDelete(config.itemLabel || 'data ini');
@@ -2606,15 +2703,23 @@ function adminCrudTable(config) {
   return {
     showModal: false,
     editing: null,
+    editingSnapshot: undefined,
     uploadingFoto: false,
     q: '',
     filterValue: 'all',
     rows: [...config.rows],
     form: { ...config.emptyForm },
+    relatedDataRevision: 0,
     get filtered() {
+      this.relatedDataRevision;
       const keys = config.searchKeys || ['nama'];
       return this.rows.filter(row =>
-        keys.some(k => String(row[k] || '').toLowerCase().includes(this.q.toLowerCase())) &&
+        keys.some(k => {
+          const value = config.searchValue
+            ? config.searchValue(row, k)
+            : row[k];
+          return String(value || '').toLowerCase().includes(this.q.toLowerCase());
+        }) &&
         (!config.filter || config.filter(row, this.filterValue))
       );
     },
@@ -2635,7 +2740,9 @@ function adminCrudTable(config) {
       };
       const rows = [
         config.exportColumns.map(column => column[0]),
-        ...this.filtered.map(row => config.exportColumns.map(column => row[column[1]]))
+        ...this.filtered.map(row => config.exportColumns.map(column =>
+          typeof column[2] === 'function' ? column[2](row) : row[column[1]]
+        ))
       ];
       const csv = '\uFEFF' + rows.map(row => row.map(quote).join(',')).join('\r\n');
       const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
@@ -2688,24 +2795,32 @@ function adminCrudTable(config) {
     },
     init() {
       window.addEventListener('db-update', (event) => {
-        if (!event.detail || event.detail.key !== config.dbKey || !Array.isArray(event.detail.data)) return;
+        if (!event.detail) return;
+        if (config.dbKey === 'kurikulum' && event.detail.key === 'dosen') {
+          this.relatedDataRevision += 1;
+          return;
+        }
+        if (event.detail.key !== config.dbKey || !Array.isArray(event.detail.data)) return;
         this.rows = [...event.detail.data];
       });
     },
     openAdd() {
       this.editing = null;
+      this.editingSnapshot = undefined;
       this.form = { ...config.emptyForm };
       this.showModal = true;
     },
     openEdit(row) {
       this.editing = row.id;
+      this.editingSnapshot = JSON.stringify(row);
       this.form = { ...row };
       this.showModal = true;
     },
     save() {
       if (config.validate && !config.validate(this.form)) return;
       const label = config.itemLabel ? config.itemLabel.replace(/ ini$/, '') : 'Data';
-      if (this.editing) {
+      if (this.editing !== null && this.editing !== undefined) {
+        if (!hasCurrentRecord(this.rows, this.editing, label, this.editingSnapshot)) return;
         const idx = this.rows.findIndex(x => x.id === this.editing);
         const prev = this.rows[idx];
         this.rows[idx] = { ...this.form };
@@ -2720,6 +2835,8 @@ function adminCrudTable(config) {
         NeuAlert.success();
       }
       this.showModal = false;
+      this.editing = null;
+      this.editingSnapshot = undefined;
     },
     async remove(row) {
       const ok = await NeuAlert.confirmDelete(config.itemLabel || 'data ini');

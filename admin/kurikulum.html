@@ -300,12 +300,13 @@
     emptyForm: { kode:'', nama:'', sks:2, semester:1, pengampu:'', kodeDosen:'' },
     searchKeys: ['kode','nama','pengampu','kodeDosen'],
     filter(row, semester) { return semester === 'all' || Number(row.semester) === Number(semester); },
+    searchValue(row, key) { return key === 'pengampu' ? courseLecturerName(row) : row[key]; },
     exportColumns: [
       ['Semester', 'semester'],
       ['Kode MK', 'kode'],
       ['Mata Kuliah', 'nama'],
       ['SKS', 'sks'],
-      ['Dosen Pengampu', 'pengampu'],
+      ['Dosen Pengampu', 'pengampu', row => courseLecturerName(row)],
       ['Kode Dosen', 'kodeDosen']
     ],
     exportFilename: 'kurikulum-prodi-hukum.csv',
@@ -373,7 +374,7 @@
                       <td class="py-3 px-4 text-sm text-center" x-text="r.sks"></td>
                       <td class="py-3 px-4 text-sm text-center" x-text="r.semester"></td>
                       <td class="py-3 px-4 text-xs text-text-muted"
-                        x-text="r.pengampu || 'Tidak tercantum pada MK Baru'"></td>
+                        x-text="(relatedDataRevision, courseLecturerName(r) || 'Tidak tercantum pada MK Baru')"></td>
                       <td class="py-3 px-4 text-xs font-mono text-text-muted" x-text="r.kodeDosen || '-'"></td>
                       <td class="py-3 px-4">
                         <div class="flex items-center justify-end gap-2">
