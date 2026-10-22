@@ -1,0 +1,111 @@
+flowchart TD
+    START((Mulai)) --> OPEN["Buka halaman pada browser"]
+    OPEN --> AREA{Area yang diakses?}
+
+    subgraph PUBLIC["Alur Pengunjung"]
+        direction TB
+        LOAD["Muat data dari localStorage; seed dipakai hanya jika key belum ada"]
+        VIEW["Tampilkan konten; berita dan artikel publik berstatus Published"]
+        ACTION{Aksi pengunjung?}
+        BROWSE["Jelajah, cari, atau unduh dokumen"]
+        CONTACT["Isi formulir kontak"]
+        CONTACT_VALID{Nama, email valid, dan pesan terisi?}
+        CONTACT_ERROR["Tampilkan validasi; perbaiki formulir"]
+        REGISTER["Isi formulir pendaftaran kegiatan"]
+        REGISTER_VALID{Nama, email, dan WhatsApp valid?}
+        DUPLICATE{Email sudah terdaftar untuk kegiatan ini?}
+        REGISTER_ERROR["Tampilkan validasi atau penolakan duplikat"]
+
+        LOAD --> VIEW --> ACTION
+        ACTION -->|Jelajah| BROWSE
+        ACTION -->|Kirim pesan| CONTACT --> CONTACT_VALID
+        CONTACT_VALID -->|Tidak| CONTACT_ERROR --> CONTACT
+        CONTACT_VALID -->|Ya| CONTACT_SAVE["Siapkan record pesan"]
+        ACTION -->|Daftar kegiatan| REGISTER --> REGISTER_VALID
+        REGISTER_VALID -->|Tidak| REGISTER_ERROR --> REGISTER
+        REGISTER_VALID -->|Ya| DUPLICATE
+        DUPLICATE -->|Ya| REGISTER_ERROR
+        DUPLICATE -->|Tidak| REG_SAVE["Siapkan record pendaftar"]
+    end
+    AREA -->|Publik| LOAD
+    BROWSE --> FINISH([Selesai])
+
+    subgraph ADMIN["Alur Administrator"]
+        direction TB
+        ENTRY{Login atau buka modul admin?}
+        LOGIN["Masukkan email dan kata sandi"]
+        CREDENTIALS{Email dan sandi cocok, akun aktif, serta data sesi valid?}
+        LOGIN_ERROR["Tampilkan kegagalan login"]
+        SESSION["AUTH.login(): simpan sesi pada localStorage"]
+        GUARD["AUTH.guard(): periksa sesi"]
+        SESSION_VALID{Sesi valid?}
+        REDIRECT["Arahkan ke halaman login"]
+        ROLE_PAGE{Halaman Pengguna atau Pengaturan?}
+        SUPER_ADMIN{Peran Super Admin?}
+        DENY["Tolak akses; arahkan ke dashboard"]
+        ADMIN_ACTION["Kelola data (CRUD)"]
+        ADMIN_SAVE["Siapkan perubahan data"]
+
+        ENTRY -->|Login| LOGIN --> CREDENTIALS
+        CREDENTIALS -->|Tidak| LOGIN_ERROR --> LOGIN
+        CREDENTIALS -->|Ya| SESSION --> ADMIN_ACTION
+        ENTRY -->|Modul admin| GUARD --> SESSION_VALID
+        SESSION_VALID -->|Tidak| REDIRECT
+        SESSION_VALID -->|Ya| ROLE_PAGE
+        ROLE_PAGE -->|Tidak| ADMIN_ACTION
+        ROLE_PAGE -->|Ya| SUPER_ADMIN
+        SUPER_ADMIN -->|Tidak| DENY
+        SUPER_ADMIN -->|Ya| ADMIN_ACTION
+        ADMIN_ACTION --> ADMIN_SAVE
+    end
+    AREA -->|Admin| ENTRY
+    REDIRECT --> LOGIN
+    DENY --> FINISH
+
+    subgraph PERSISTENCE["Penyimpanan dan pembaruan"]
+        direction TB
+        BACKUP["Minta salinan IndexedDB secara asinkron (best-effort)"]
+        WRITE["DB.save(): tulis sinkron ke localStorage"]
+        SAVED{Penulisan berhasil?}
+        PRUNE["Pangkas aktivitas/pageview yang dibatasi; coba sekali lagi"]
+        RETRY{Percobaan ulang berhasil?}
+        ROLLBACK["Pulihkan state di memori dan tampilkan kegagalan"]
+        LOG["Jalankan logger aktivitas/notifikasi sesuai alur"]
+        RESULT["Tampilkan konfirmasi dan perbarui tampilan"]
+        UPDATE["Pancarkan db-update pada tab aktif"]
+        STORAGE_EVENT["Tab lain menerima storage event"]
+        CONTENT_CHANGED{Tab penerima publik dan key termasuk konten?}
+        RELOAD["Halaman publik memuat ulang"]
+
+        BACKUP --> WRITE --> SAVED
+        SAVED -->|Tidak| PRUNE --> RETRY
+        RETRY -->|Tidak| ROLLBACK
+        SAVED -->|Ya| LOG
+        RETRY -->|Ya| LOG
+        LOG --> RESULT --> UPDATE
+        UPDATE --> STORAGE_EVENT --> CONTENT_CHANGED
+        CONTENT_CHANGED -->|Ya| RELOAD
+        CONTENT_CHANGED -->|Tidak| FINISH
+    end
+    CONTACT_SAVE --> BACKUP
+    REG_SAVE --> BACKUP
+    ADMIN_SAVE --> BACKUP
+    BROWSE --> FINISH
+    ROLLBACK --> FINISH
+    RELOAD --> FINISH
+
+    NOTE["Cakupan: CRUD administrator dan formulir publik. Semua proses berjalan di browser; tidak ada backend atau sinkronisasi antarperangkat."]
+    PERSISTENCE -.-> NOTE
+
+    classDef terminal fill:#e0f2fe,stroke:#0284c7,color:#0c4a6e,stroke-width:2px;
+    classDef action fill:#f8fafc,stroke:#64748b,color:#0f172a,stroke-width:1.5px;
+    classDef decision fill:#fff7ed,stroke:#f97316,color:#7c2d12,stroke-width:1.5px;
+    classDef warning fill:#fef2f2,stroke:#ef4444,color:#7f1d1d,stroke-width:1.5px;
+    classDef storage fill:#eff6ff,stroke:#3b82f6,color:#1e3a8a,stroke-width:1.5px;
+    classDef note fill:#fffbeb,stroke:#d97706,color:#78350f,stroke-dasharray:4 3;
+    class START,FINISH terminal;
+    class OPEN,VIEW,BROWSE,CONTACT,REGISTER,CONTACT_SAVE,REG_SAVE,LOGIN,SESSION,GUARD,ADMIN_ACTION,ADMIN_SAVE,LOG,RESULT,UPDATE,STORAGE_EVENT,RELOAD action;
+    class AREA,ACTION,CONTACT_VALID,REGISTER_VALID,DUPLICATE,ENTRY,CREDENTIALS,SESSION_VALID,ROLE_PAGE,SUPER_ADMIN,SAVED,RETRY,CONTENT_CHANGED decision;
+    class BACKUP,WRITE storage;
+    class CONTACT_ERROR,REGISTER_ERROR,LOGIN_ERROR,REDIRECT,DENY,PRUNE,ROLLBACK warning;
+    class NOTE note;

@@ -1,104 +1,101 @@
 sequenceDiagram
     autonumber
-    actor User as Pengunjung Publik / Admin
-    participant UI as Web Browser View
-    participant Alpine as Alpine.js Controller
-    participant AUTH as AUTH Module
-    participant DB as DB Engine (app.js)
-    participant LS as LocalStorage (prodihukum_db_v1_*)
-    participant IDB as IndexedDB (ProdiHukumDB)
-    participant Alert as NeuAlert (SweetAlert2)
+    actor Admin as Administrator
+    actor Public as Pengunjung
+    participant Page as Browser DOM / Alpine.js
+    participant App as app.js (Modul Inti)
+    participant Store as localStorage (Klien)
+    participant IDB as IndexedDB (Salinan Best-Effort)
+    participant OtherTab as Tab Browser Lain
 
-    %% ----------------------------------------------------
-    %% SKENARIO 1: PENDAFTARAN KEGIATAN OLEH PUBLIK
-    %% ----------------------------------------------------
-    rect rgb(240, 248, 255)
-        Note over User, Alert: SKENARIO 1: Pendaftaran Kegiatan Akademik (Publik)
-        User->>UI: Akses detail-kegiatan.html?id=1
-        UI->>Alpine: Inisialisasi detailKegiatanPage()
-        Alpine->>DB: DB.load('kegiatan') & DB.load('pendaftar')
-        DB->>LS: getItem('prodihukum_db_v1_kegiatan')
-        LS-->>DB: Data Koleksi Kegiatan
-        DB-->>Alpine: Objek Detail Kegiatan (id: 1)
-        Alpine-->>UI: Render Detail & Form Pendaftaran
-
-        User->>UI: Input Formulir & Submit
-        UI->>Alpine: Trigger daftarKegiatan()
-        Alpine->>Alpine: Validasi Duplikasi Email pada Kegiatan Ini
-        alt Email Sudah Terdaftar
-            Alpine->>Alert: NeuAlert.error('Email sudah terdaftar')
-            Alert-->>User: Tampilkan Modal Peringatan
-        else Validasi Berhasil
-            Alpine->>DB: DB.save('pendaftar', dataPendaftar)
-            DB->>LS: setItem('prodihukum_db_v1_pendaftar', JSON)
-            Alpine->>DB: logPublicEvent('Pendaftaran Baru...', '📝')
-            DB->>LS: setItem('prodihukum_db_v1_aktivitas', JSON)
-            Alpine->>Alert: NeuAlert.success('Pendaftaran Berhasil')
-            Alert-->>User: Tampilkan Modal Sukses
+    %% ==========================================
+    %% SKENARIO 1: AUTENTIKASI ADMIN & SESI
+    %% ==========================================
+    rect rgb(239, 246, 255)
+        Note over Admin,Store: SKENARIO 1 - Autentikasi Login Admin & Pembuatan Sesi Klien
+        App->>Store: Baca prodihukum_db_v1_pengguna saat halaman dimuat
+        Store-->>App: Data daftar pengguna (fallback ke SEED_PENGGUNA jika kosong)
+        Admin->>Page: Kirim email dan kata sandi pada login.html
+        Page->>App: Cocokkan email, status, dan kata sandi dengan data pengguna lokal
+        alt Akun Ditemukan, Status 'Aktif', dan Password Cocok
+            Page->>App: Panggil AUTH.login(matchedUser)
+            App->>Store: Simpan data sesi ke prodihukum_admin_session
+            App-->>Page: Login Berhasil (true)
+            Page-->>Admin: Arahkan ke admin/dashboard.html
+        else Kredensial Tidak Cocok / Akun Nonaktif
+            App-->>Page: Login Ditolak (false)
+            Page-->>Admin: Tampilkan Notifikasi Error (SweetAlert)
         end
     end
 
-    %% ----------------------------------------------------
-    %% SKENARIO 2: AUTENTIKASI & GUARD RBAC ADMIN
-    %% ----------------------------------------------------
-    rect rgb(255, 250, 240)
-        Note over User, Alert: SKENARIO 2: Autentikasi Login & Guard RBAC Admin
-        User->>UI: Akses admin/login.html & Submit Kredensial
-        UI->>AUTH: AUTH.login({ email, password })
-        AUTH->>DB: DB.load('pengguna')
-        DB->>LS: getItem('prodihukum_db_v1_pengguna')
-        LS-->>DB: Data Akun Admin
-        DB-->>AUTH: List Akun
-        AUTH->>AUTH: Verifikasi Email, Status, & Password
-        alt Kredensial Tidak Cocok
-            AUTH-->>UI: false
-            UI->>Alert: NeuAlert.error('Kredensial tidak valid')
-        else Kredensial Cocok
-            AUTH->>LS: setItem('prodihukum_admin_session', Sesi)
-            AUTH-->>UI: true
-            UI->>Alert: NeuAlert.success('Login Berhasil')
-            UI-->>User: Redirect ke admin/dashboard.html
-        end
-
-        User->>UI: Navigasi ke admin/pengguna.html (Khusus Super Admin)
-        UI->>AUTH: AUTH.guard('Super Admin')
-        AUTH->>LS: getItem('prodihukum_admin_session')
-        alt Sesi Tidak Memenuhi Syarat
-            AUTH-->>UI: Access Denied
-            UI-->>User: Redirect ke dashboard.html / login.html
-        else Sesi Super Admin Valid
-            AUTH-->>UI: Access Granted
-            UI-->>User: Tampilkan Antarmuka Pengguna
-        end
-    end
-
-    %% ----------------------------------------------------
-    %% SKENARIO 3: CRUD & AUTO-PRUNING STORAGE
-    %% ----------------------------------------------------
-    rect rgb(245, 255, 250)
-        Note over User, Alert: SKENARIO 3: Simpan Data CRUD & Fallback Auto-Pruning
-        User->>UI: Submit Form CRUD (Upload Gambar)
-        UI->>Alpine: adminCrudTable.saveForm()
-        Alpine->>DB: DB.save(entity, newArray)
-        DB->>LS: setItem('prodihukum_db_v1_' + entity, payload)
-        alt Normal (Kapasitas Cukup)
-            LS-->>DB: Sukses
-            DB->>IDB: set(entity, payload) [Cadangan Asinkron]
-            DB-->>Alpine: true
-            Alpine->>Alert: NeuAlert.success('Data tersimpan')
-        else Kuota Penuh (QuotaExceededError)
-            LS-->>DB: Error Kuota
-            Note over DB: Jalankan pruneStorage():<br/>Hapus log & pageview lama
-            DB->>LS: Pangkas key internal
-            DB->>LS: Retry setItem(...)
-            alt Retry Berhasil
-                DB->>IDB: set(entity, payload)
-                DB-->>Alpine: true
-                Alpine->>Alert: NeuAlert.success('Data tersimpan setelah optimasi ruang')
+    %% ==========================================
+    %% SKENARIO 2: OPERASI CRUD KONTEN & SYNC
+    %% ==========================================
+    rect rgb(240, 253, 244)
+        Note over Admin,OtherTab: SKENARIO 2 - Simpan Konten dan Perbarui Tampilan Lintas Tab
+        Admin->>Page: Simpan formulir data (Tambah/Edit/Hapus)
+        Page->>App: Panggil DB.save(entityKey, dataArray)
+        App-)IDB: Minta IDB.set() secara asinkron (best-effort)
+        App->>Store: setItem('prodihukum_db_v1_' + entityKey, JSON.stringify(dataArray))
+        alt Penyimpanan localStorage Berhasil
+            App->>App: Panggil logActivity() -> catat ke store 'aktivitas' & 'notifikasi'
+            App-->>Page: Dispatch CustomEvent 'db-update' pada tab aktif
+            Store-->>OtherTab: Browser memancarkan 'storage' event secara otomatis
+            OtherTab->>OtherTab: Dispatch event 'db-update' pada komponen Alpine lokal
+            OtherTab-->>Public: Halaman publik memuat ulang setelah storage event
+            Page-->>Admin: Tampilkan SweetAlert sukses & perbarui tabel
+        else QuotaExceededError (Kapasitas Penyimpanan Penuh)
+            App->>App: Panggil pruneStorage() -> pangkas riwayat lama
+            App->>Store: Coba ulang setItem() setelah pemangkasan
+            alt Coba Ulang Berhasil
+                App-->>Page: Simpan terkonfirmasi setelah optimasi ruang
+                Page-->>Admin: Tampilkan notifikasi berhasil dengan optimasi
             else Tetap Gagal
-                DB-->>Alpine: false (Rollback State)
-                Alpine->>Alert: NeuAlert.storageFull()
+                App-->>Page: Kembalikan false (Rollback status form)
+                Page-->>Admin: Tampilkan NeuAlert.storageFull (Kapasitas Browser Penuh)
             end
         end
     end
 
+    %% ==========================================
+    %% SKENARIO 3: PENDAFTARAN KEGIATAN PUBLIK
+    %% ==========================================
+    rect rgb(255, 251, 235)
+        Note over Public,Store: SKENARIO 3 - Pendaftaran Kegiatan dan Cek Email per Kegiatan
+        Public->>Page: Isi formulir pendaftaran pada detail-kegiatan.html
+        Page->>App: Panggil daftarKegiatan(kegiatanId, kegiatanNama, form)
+        App->>Store: Baca data dari prodihukum_db_v1_pendaftar
+        Store-->>App: Daftar seluruh pendaftar
+        App->>App: Validasi: Cek apakah email sudah terdaftar pada kegiatanId ini
+        alt Email Sudah Terdaftar untuk Kegiatan Tersebut
+            App-->>Page: Validasi gagal (duplikat email)
+            Page-->>Public: Tampilkan peringatan: Email sudah terdaftar untuk kegiatan ini
+        else Data Baru & Valid
+            App->>Store: Simpan data pendaftar baru via DB.save('pendaftar')
+            App->>App: Panggil logPublicEvent() -> catat aktivitas pendaftar baru
+            Store-->>App: Konfirmasi simpan data
+            App-->>Page: Registrasi berhasil
+            Page-->>Public: Tampilkan konfirmasi pendaftaran berhasil & reset form
+        end
+    end
+
+    %% ==========================================
+    %% SKENARIO 4: FORMULIR KONTAK PUBLIK
+    %% ==========================================
+    rect rgb(254, 242, 242)
+        Note over Public,Store: SKENARIO 4 - Pengiriman Pesan Kontak ke Penyimpanan Lokal
+        Public->>Page: Isi formulir kontak pada kontak.html & klik Kirim
+        Page->>App: Validasi dan simpan pesan melalui contactForm()
+        App->>App: Jalankan DB.save('pesan', SAMPLE_PESAN)
+        App-)IDB: Minta salinan IndexedDB secara asinkron (best-effort)
+        App->>Store: Simpan pesan ke localStorage
+        alt Penyimpanan localStorage Berhasil
+            Store-->>App: DB.save('pesan') berhasil
+            App->>App: Panggil logPublicEvent() untuk aktivitas dan notifikasi
+            App-->>Page: Kembalikan status berhasil
+            Page-->>Public: Reset formulir dan tampilkan konfirmasi
+        else Penyimpanan Gagal
+            App-->>Page: Kembalikan false dan pulihkan data sebelumnya
+            Page-->>Public: Tampilkan peringatan kapasitas penyimpanan
+        end
+    end

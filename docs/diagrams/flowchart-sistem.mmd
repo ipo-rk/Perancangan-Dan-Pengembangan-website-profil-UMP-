@@ -1,110 +1,115 @@
 flowchart TD
-    %% SUB-FLOW 1: PENGUNJUNG PUBLIK
-    subgraph PUBLIC_FLOW["🌐 ALUR INTERAKSI PENGUNJUNG PUBLIK"]
-        P_Start([Mulai: Pengunjung Buka Website]) --> P_Choice{Pilih Menu / Fitur}
-        P_Start([Mulai: Pengunjung Buka Website]) -->|Inisialisasi Aplikasi| P_Choice{Pilih Menu / Fitur}
+    START([Mulai])
+    ROUTE{Area yang dibuka?}
+    FINISH([Selesai])
+    START --> ROUTE
 
-        P_Choice -->|Akses Halaman Informasi| P_Load[Muat Data dari LocalStorage & IndexedDB]
-        P_Load --> P_PV[Catat Pageview Harian otomatis]
-        P_PV --> P_Render[Render Tampilan Responsif & Interaktif]
-        P_Choice -->|1. Akses Informasi| P_Load[Muat Data dari LocalStorage & IndexedDB]
-        P_Load -->|Koleksi Dimuat| P_PV[Catat Pageview Harian otomatis]
-        P_PV -->|Hit Tercatat| P_Render[Render Tampilan Responsif & Interaktif]
+    subgraph PUBLIC["Alur Pengunjung"]
+        direction TD
+        LOAD_PUBLIC["Muat halaman dan data dari localStorage; gunakan seed bila key belum tersedia"]
+        PUBLISHED["Tampilkan konten sesuai modul; berita dan artikel hanya berstatus Published"]
+        PAGEVIEW["Catat pageview pada browser"]
+        PUBLIC_ACTION{Aksi pengunjung?}
+        BROWSE["Jelajahi konten, cari informasi, atau unduh dokumen"]
+        CONTACT_FORM["Isi formulir kontak"]
+        CONTACT_VALIDATE{Nama, email, dan pesan valid?}
+        CONTACT_SAVE["Simpan pesan ke localStorage melalui DB.save('pesan')"]
+        CONTACT_ERROR["Tampilkan validasi atau kegagalan penyimpanan"]
+        CONTACT_CONFIRM["Catat event publik dan tampilkan konfirmasi"]
+        REG_FORM["Isi formulir pendaftaran kegiatan"]
+        REG_VALIDATE{Data pendaftaran valid?}
+        DUPLICATE{Email sudah terdaftar pada kegiatan ini?}
+        REG_SAVE["Simpan pendaftar melalui DB.save('pendaftar')"]
+        REG_ERROR["Tampilkan validasi atau kegagalan penyimpanan"]
+        REG_CONFIRM["Catat event publik dan tampilkan konfirmasi"]
 
-        P_Choice -->|Pencarian Global| P_Search[/Input Kata Kunci/]
-        P_Search --> P_ExecSearch[Cari pada Indeks 9 Entitas Data]
-        P_ExecSearch --> P_RenderSearch[Tampilkan Hasil & Tautan Langsung]
-        P_Choice -->|2. Pencarian Global| P_Search[/Input Kata Kunci/]
-        P_Search -->|Kueri Dikirim| P_ExecSearch[Cari pada Indeks 9 Entitas Data]
-        P_ExecSearch -->|Hasil Ditemukan| P_RenderSearch[Tampilkan Hasil & Tautan Langsung]
+        LOAD_PUBLIC --> PUBLISHED --> PAGEVIEW --> PUBLIC_ACTION
+        PUBLIC_ACTION -->|Jelajah / cari / unduh| BROWSE --> FINISH
+        PUBLIC_ACTION -->|Kirim pesan| CONTACT_FORM --> CONTACT_VALIDATE
+        CONTACT_VALIDATE -->|Tidak| CONTACT_ERROR --> FINISH
+        CONTACT_VALIDATE -->|Ya| CONTACT_SAVE
+        CONTACT_SAVE -->|Gagal| CONTACT_ERROR
+        CONTACT_SAVE -->|Berhasil| CONTACT_CONFIRM --> FINISH
+        PUBLIC_ACTION -->|Daftar kegiatan| REG_FORM --> REG_VALIDATE
+        REG_VALIDATE -->|Tidak| REG_ERROR --> FINISH
+        REG_VALIDATE -->|Ya| DUPLICATE
+        DUPLICATE -->|Ya| REG_ERROR
+        DUPLICATE -->|Tidak| REG_SAVE
+        REG_SAVE -->|Gagal| REG_ERROR
+        REG_SAVE -->|Berhasil| REG_CONFIRM --> FINISH
+    end
+    ROUTE -->|Halaman publik| LOAD_PUBLIC
 
-        P_Choice -->|Pendaftaran Kegiatan| P_OpenKeg[Buka detail-kegiatan.html?id=...]
-        P_OpenKeg --> P_FillKeg[/Isi Formulir Pendaftaran/]
-        P_FillKeg --> P_ValEmail{Email Sudah Terdaftar?}
-        P_ValEmail -- Ya --> P_ErrEmail[Tampilkan SweetAlert Error]
-        P_ValEmail -- Tidak --> P_SaveKeg[Simpan ke 'pendaftar' & Catat Log Aktivitas]
-        P_SaveKeg --> P_OkKeg[Tampilkan SweetAlert Sukses]
-        P_Choice -->|3. Pendaftaran Kegiatan| P_OpenKeg[Buka detail-kegiatan.html?id=...]
-        P_OpenKeg -->|Submit Form Event| P_FillKeg[/Isi Formulir Pendaftaran/]
-        P_FillKeg -->|Cek Duplikasi| P_ValEmail{Email Sudah Terdaftar?}
-        P_ValEmail -- Ya (Duplikat) --> P_ErrEmail[Tampilkan SweetAlert Error]
-        P_ValEmail -- Tidak (Valid) --> P_SaveKeg[Simpan ke 'pendaftar' & Catat Log]
-        P_SaveKeg -->|Commit Berhasil| P_OkKeg[Tampilkan SweetAlert Sukses]
+    subgraph AUTH["Autentikasi Administrator"]
+        direction TD
+        ADMIN_ROUTE{Jenis halaman admin?}
+        LOGIN_FORM["Masukkan email dan kata sandi"]
+        LOGIN_CHECK{Akun aktif dan kredensial cocok?}
+        LOGIN_DENIED["Tampilkan pesan login gagal"]
+        LOGIN_SESSION["Simpan sesi lokal prodihukum_admin_session"]
+        LOGIN_HOME["Buka dashboard admin"]
+        RESET_FORM["Masukkan email terdaftar"]
+        RESET_CHECK{Email ditemukan dan akun aktif?}
+        RESET_PASSWORD["Masukkan kata sandi baru dan konfirmasi"]
+        RESET_PASSWORD_CHECK{Minimal 4 karakter dan konfirmasi cocok?}
+        RESET_SAVE["Simpan kata sandi melalui DB.save('pengguna')"]
+        RESET_SAVE_CHECK{Penyimpanan berhasil?}
+        RESET_DONE["Tampilkan konfirmasi dan kembali ke login"]
+        GUARD["Jalankan AUTH.guard()"]
+        SESSION_CHECK{Sesi admin valid?}
+        REDIRECT_LOGIN["Arahkan ke halaman login"]
+        ROLE_CHECK{Halaman hanya untuk Super Admin?}
+        SUPER_CHECK{Peran sesi adalah Super Admin?}
+        ROLE_DENIED["Tolak akses dan arahkan ke dashboard"]
+        ADMIN_HOME["Buka modul admin"]
 
-        P_Choice -->|Ganti Tema| P_ToggleDark[Klik Tombol Mode Gelap/Terang]
-        P_ToggleDark --> P_ApplyTheme[Toggle Class .dark & Simpan ke localStorage]
-        P_Choice -->|4. Ganti Tema| P_ToggleDark[Klik Tombol Mode Gelap/Terang]
-        P_ToggleDark -->|Simpan Preferensi| P_ApplyTheme[Toggle Class .dark & Simpan ke localStorage]
+        ADMIN_ROUTE -->|login.html| LOGIN_FORM --> LOGIN_CHECK
+        LOGIN_CHECK -->|Tidak| LOGIN_DENIED --> FINISH
+        LOGIN_CHECK -->|Ya| LOGIN_SESSION --> LOGIN_HOME --> FINISH
+        ADMIN_ROUTE -->|lupa-sandi.html| RESET_FORM --> RESET_CHECK
+        RESET_CHECK -->|Tidak, tampilkan pesan| RESET_FORM
+        RESET_CHECK -->|Ya| RESET_PASSWORD --> RESET_PASSWORD_CHECK
+        RESET_PASSWORD_CHECK -->|Tidak, tampilkan validasi| RESET_PASSWORD
+        RESET_PASSWORD_CHECK -->|Ya| RESET_SAVE --> RESET_SAVE_CHECK
+        RESET_SAVE_CHECK -->|Tidak, storage penuh| RESET_PASSWORD
+        RESET_SAVE_CHECK -->|Ya| RESET_DONE --> FINISH
+        ADMIN_ROUTE -->|Halaman admin lain| GUARD --> SESSION_CHECK
+        SESSION_CHECK -->|Tidak| REDIRECT_LOGIN --> FINISH
+        SESSION_CHECK -->|Ya| ROLE_CHECK
+        ROLE_CHECK -->|Tidak| ADMIN_HOME
+        ROLE_CHECK -->|Ya| SUPER_CHECK
+        SUPER_CHECK -->|Tidak| ROLE_DENIED --> FINISH
+        SUPER_CHECK -->|Ya| ADMIN_HOME
+    end
+    ROUTE -->|Halaman admin| ADMIN_ROUTE
 
-        P_Render --> P_End([Selesai])
-        P_RenderSearch --> P_End
-        P_ErrEmail --> P_End
-        P_OkKeg --> P_End
-        P_ApplyTheme --> P_End
-        P_Render -->|Navigasi Selesai| P_End([Selesai])
-        P_RenderSearch -->|Buka Detail Konten| P_End
-        P_ErrEmail -->|Tutup Alert Error| P_End
-        P_OkKeg -->|Unduh Tiket PDF| P_End
-        P_ApplyTheme -->|Terapkan Tema Baru| P_End
+    subgraph MANAGE["Operasi Admin"]
+        direction TD
+        ADMIN_ACTION{Aksi admin?}
+        CRUD["Tambah, ubah, atau hapus data"]
+        SAVE["DB.save(): tulis sinkron ke localStorage"]
+        SAVE_RESULT{Penulisan berhasil?}
+        RETRY["Pangkas log internal yang dibatasi, lalu coba sekali lagi"]
+        RETRY_RESULT{Percobaan ulang berhasil?}
+        SAVE_FAIL["Batalkan perubahan dan beri tahu admin"]
+        ASYNC_COPY["Minta salinan IndexedDB secara asinkron (best-effort)"]
+        ACTIVITY["Catat aktivitas dan notifikasi"]
+        UPDATE_VIEW["Pancarkan db-update; tab lain menerima storage event"]
+        SAVE_OK["Perbarui tampilan dan tampilkan hasil"]
+        BACKUP["Backup atau restore JSON data aplikasi"]
+        EXPORT["Ekspor CSV kurikulum sesuai pencarian dan filter aktif"]
+        LOGOUT["Hapus sesi lokal dan kembali ke login"]
+
+        ADMIN_HOME --> ADMIN_ACTION
+        ADMIN_ACTION -->|CRUD| CRUD --> SAVE --> SAVE_RESULT
+        SAVE_RESULT -->|Ya| ASYNC_COPY --> ACTIVITY --> UPDATE_VIEW --> SAVE_OK --> FINISH
+        SAVE_RESULT -->|Tidak| RETRY --> RETRY_RESULT
+        RETRY_RESULT -->|Ya| ASYNC_COPY
+        RETRY_RESULT -->|Tidak| SAVE_FAIL --> FINISH
+        ADMIN_ACTION -->|Backup / restore| BACKUP --> FINISH
+        ADMIN_ACTION -->|Ekspor kurikulum| EXPORT --> FINISH
+        ADMIN_ACTION -->|Logout| LOGOUT --> FINISH
     end
 
-    %% SUB-FLOW 2: PANEL ADMINISTRASI
-    subgraph ADMIN_FLOW["🔐 ALUR AUTENTIKASI & KONTROL AKSES (RBAC) ADMIN"]
-        A_Start([Mulai: Buka Panel Admin]) --> A_CheckLogin{Halaman Login?}
-        A_Start([Mulai: Buka Panel Admin]) -->|Akses URL /admin/*| A_CheckLogin{Halaman Login?}
-
-        A_CheckLogin -- Ya --> A_HasSession{Ada Sesi Aktif?}
-        A_HasSession -- Ya --> A_DirectDash[Redirect ke dashboard.html]
-        A_HasSession -- Tidak --> A_ShowForm[Tampilkan Form Login]
-        A_ShowForm --> A_SubmitCreds[/Input Email & Password/]
-        A_SubmitCreds --> A_VerifyAcc{Verifikasi Kredensial & Status}
-        A_CheckLogin -- Ya (Halaman Login) --> A_HasSession{Ada Sesi Aktif?}
-        A_HasSession -- Ya (Sesi Valid) --> A_DirectDash[Redirect ke dashboard.html]
-        A_HasSession -- Tidak (Belum Login) --> A_ShowForm[Tampilkan Form Login]
-        A_ShowForm -->|Kirim Kredensial| A_SubmitCreds[/Input Email & Password/]
-        A_SubmitCreds -->|Validasi Hash SHA-256| A_VerifyAcc{Verifikasi Kredensial & Status}
-        A_VerifyAcc -- Gagal / Nonaktif --> A_AlertFail[SweetAlert: Kredensial Tidak Valid]
-        A_AlertFail --> A_ShowForm
-        A_AlertFail -->|Ulangi Login| A_ShowForm
-        A_VerifyAcc -- Sukses --> A_CreateSession[Simpan Sesi ke prodihukum_admin_session]
-        A_CreateSession --> A_DirectDash
-        A_CreateSession -->|Masuk Dashboard| A_DirectDash
-
-        A_CheckLogin -- Tidak --> A_RunGuard["Eksekusi AUTH.guard()"]
-        A_RunGuard --> A_CheckAuth{Sesi Valid?}
-        A_CheckAuth -- Tidak --> A_RedirectLogin[Redirect ke login.html]
-        A_CheckAuth -- Ya --> A_CheckRole{Halaman Khusus Super Admin?}
-        A_CheckLogin -- Tidak (Halaman CRUD/Modul) --> A_RunGuard["Eksekusi AUTH.guard()"]
-        A_RunGuard -->|Periksa sessionStorage| A_CheckAuth{Sesi Valid?}
-        A_CheckAuth -- Tidak (Tidak Ada Sesi) --> A_RedirectLogin[Redirect ke login.html]
-        A_CheckAuth -- Ya (Terotentikasi) --> A_CheckRole{Halaman Khusus Super Admin?}
-
-        A_CheckRole -- Ya (pengguna/pengaturan) --> A_IsSuper{Role === 'Super Admin'?}
-        A_IsSuper -- Tidak --> A_DenyAlert[SweetAlert: Hak Akses Ditolak]
-        A_DenyAlert --> A_DirectDash
-        A_IsSuper -- Ya --> A_AllowSuper[Buka Halaman Manajemen Pengguna/Pengaturan]
-        A_IsSuper -- Tidak (Hak Ditolak) --> A_DenyAlert[SweetAlert: Hak Akses Ditolak]
-        A_DenyAlert -->|Kembali ke Dashboard| A_DirectDash
-        A_IsSuper -- Ya (Otorisasi Penuh) --> A_AllowSuper[Buka Manajemen Pengguna/Pengaturan]
-
-        A_CheckRole -- Tidak (Modul CRUD Umum) --> A_AllowGeneral[Buka Modul CRUD Sesuai Hak Akses]
-        A_CheckRole -- Tidak (Modul CRUD Umum) --> A_AllowGeneral[Buka Modul CRUD Sesuai Role]
-
-        A_AllowSuper --> A_ExecCRUD[Operasi: Tambah / Edit / Hapus / Backup]
-        A_AllowGeneral --> A_ExecCRUD
-        A_ExecCRUD --> A_SaveData[Simpan ke LocalStorage & Cadangkan ke IDB]
-        A_SaveData --> A_WriteLog[Pencatatan Otomatis Log Audit]
-        A_WriteLog --> A_RefreshTable[Pembaruan Tabel Reaktif]
-        A_AllowSuper -->|Akses Penuh Super Admin| A_ExecCRUD[Operasi: Tambah / Edit / Hapus / Backup]
-        A_AllowGeneral -->|Akses Terbatas Editor/Operator| A_ExecCRUD
-        A_ExecCRUD -->|Commit Transaksi| A_SaveData[Simpan ke LocalStorage & Cadangkan ke IDB]
-        A_SaveData -->|Trigger Audit Trail| A_WriteLog[Pencatatan Otomatis Log Audit]
-        A_WriteLog -->|Perbarui Tampilan| A_RefreshTable[Pembaruan Tabel Reaktif]
-
-        A_DirectDash --> A_End([Selesai])
-        A_RedirectLogin --> A_End
-        A_RefreshTable --> A_End
-        A_DirectDash -->|Sesi Berjalan| A_End([Selesai])
-        A_RedirectLogin -->|Kembali ke Login| A_End
-        A_RefreshTable -->|Operasi Selesai| A_End
-    end
+    NOTE["Catatan: autentikasi, reset kata sandi, dan penyimpanan berjalan di browser; tidak ada server autentikasi atau sinkronisasi antarperangkat."]
+    AUTH -.-> NOTE

@@ -146,7 +146,7 @@
         Struktur <span class="accent-gold">Kurikulum</span> Hukum
       </h1>
       <span class="hero-title-underline"></span>
-      <p class="page-hero-desc">Kurikulum Program Studi Hukum UMP dirancang untuk menghasilkan sarjana hukum yang kompeten, adaptif terhadap dinamika hukum modern, dan berjiwa Islami.</p>
+      <p class="page-hero-desc">Struktur kurikulum semester 1–8 mengikuti data akademik, meliputi kode mata kuliah, SKS, dan dosen pengampu.</p>
       <div class="scroll-indicator mt-2">
         <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" style="color:rgba(255,255,255,0.5)" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
@@ -159,14 +159,30 @@
   <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
       <div>
-        <span class="neu-badge badge-new mb-3">Kurikulum 2024</span>
+        <span class="neu-badge badge-new mb-3">Sumber MK Baru</span>
         <h2 class="font-display font-bold text-3xl sm:text-4xl text-navy dark:text-white">Kurikulum Program Studi Hukum
         </h2>
       </div>
-      <button @click="download()" class="neu-btn-gold px-6 py-3 rounded-xl whitespace-nowrap">
+      <button type="button" @click="download()" class="neu-btn-gold px-6 py-3 rounded-xl whitespace-nowrap">
         <svg aria-hidden="true" focusable="false" class="ui-icon ui-icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4m4-5 5 5 5-5m-5 5V3"/></svg>
-        Download Kurikulum
+        Unduh Daftar Mata Kuliah (CSV)
       </button>
+    </div>
+
+    <div class="neu-flat p-4 sm:p-5 rounded-2xl mb-6" role="note">
+      <p class="text-sm text-navy dark:text-white font-semibold">
+        Total kurikulum:
+        <span x-text="totalSks + ' SKS dalam ' + all.length + ' mata kuliah'"></span>
+      </p>
+      <p class="text-xs text-text-muted mt-2">
+        Kode MK, nama mata kuliah, SKS, dan pengampu mengikuti lembar MK Baru untuk seluruh semester 1–8. Kode dosen dicocokkan dengan lembar Dosen. Pengampu yang tidak tercantum pada MK Baru tidak diisi dari MK Lama atau jadwal.
+      </p>
+      <p class="text-xs text-text-muted mt-2">
+        Hitung ulang lembar MK Baru menghasilkan 57 mata kuliah (per semester: 9, 8, 10, 10, 8, 9, 2, 1), bukan 53. Jumlah SKS per semester adalah 20, 20, 24, 24, 24, 24, 12, 6; totalnya 154 SKS.
+      </p>
+      <p class="text-xs text-text-muted mt-2">
+        MK Baru mencantumkan kode UMP1002 untuk AI Islam dan Kemuhammadiyahan 1 serta Bahasa Indonesia. Keduanya ditampilkan sesuai sumber; kode ganda ini perlu dikonfirmasi kepada pengelola kurikulum. Pengampu semester 3–8 kosong pada MK Baru sehingga ditampilkan sebagai tidak tercantum.
+      </p>
     </div>
 
     <div class="flex gap-2 filter-scroll mb-6 pb-1">
@@ -178,13 +194,14 @@
 
     <div class="neu-raised p-2 sm:p-4">
       <div class="table-scroll">
-        <table class="w-full min-w-[560px]">
+        <table class="w-full" style="min-width: 1000px;">
           <thead>
             <tr class="text-left text-xs text-text-muted uppercase tracking-wide">
               <th class="py-3 px-4">Kode</th>
               <th class="py-3 px-4">Nama Mata Kuliah</th>
               <th class="py-3 px-4 text-center">SKS</th>
-              <th class="py-3 px-4 text-center">Jenis</th>
+              <th class="py-3 px-4">Dosen Pengampu</th>
+              <th class="py-3 px-4">Kode Dosen</th>
             </tr>
           </thead>
           <tbody>
@@ -193,23 +210,30 @@
                 <td class="py-3 px-4 font-mono text-xs text-red" x-text="mk.kode"></td>
                 <td class="py-3 px-4 text-sm text-navy dark:text-white" x-text="mk.nama"></td>
                 <td class="py-3 px-4 text-sm text-center" x-text="mk.sks"></td>
-                <td class="py-3 px-4 text-center">
-                  <span class="neu-badge" :class="mk.jenis === 'Wajib' ? 'badge-red' : 'badge-gold'"
-                    x-text="mk.jenis"></span>
-                </td>
+                <td class="py-3 px-4 text-sm text-text-muted"
+                  x-text="mk.pengampu || 'Tidak tercantum pada MK Baru'"></td>
+                <td class="py-3 px-4 text-sm font-mono text-text-muted" x-text="mk.kodeDosen || '-'"></td>
               </tr>
             </template>
             <tr x-show="results.length === 0">
-              <td colspan="4" class="py-10 text-center text-sm text-text-muted">Belum ada data untuk semester ini.</td>
+              <td colspan="5" class="py-10 text-center text-sm text-text-muted">Belum ada data untuk semester ini.</td>
+            </tr>
+            <tr x-show="results.length > 0" class="border-t-2 border-black/10 dark:border-white/10 font-semibold">
+              <td colspan="2" class="py-3 px-4 text-sm text-navy dark:text-white"
+                x-text="'Total Semester ' + semester"></td>
+              <td class="py-3 px-4 text-sm text-center text-navy dark:text-white" x-text="semesterSks"></td>
+              <td colspan="2"></td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
 
-    <p class="text-center text-xs text-text-muted mt-6">Menampilkan <span x-text="'Semester ' + semester"></span>
-      &middot; gunakan filter semester di atas
-      atau unduh dokumen lengkap untuk semester lainnya.</p>
+    <p class="text-center text-xs text-text-muted mt-6" aria-live="polite">
+      Menampilkan <span x-text="'Semester ' + semester"></span>
+      &middot; <span x-text="results.length + ' mata kuliah'"></span>
+      &middot; <span x-text="semesterSks + ' SKS'"></span>
+    </p>
   </section>
 
   <footer x-data="{ siteInfo: SAMPLE_PENGATURAN }">

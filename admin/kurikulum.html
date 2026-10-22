@@ -284,10 +284,10 @@
             </nav>
             <div class="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-white/10 text-white/90 border border-white/15 mb-2"><span x-html="iconSvg('book')"></span> Capaian Pembelajaran</span>
+                <span class="admin-header-badge inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-white/10 text-white/90 border border-white/15 mb-2"><span x-html="iconSvg('book')"></span> Capaian Pembelajaran</span>
                 <h1 class="admin-header-title">Manajemen <span class="text-gold">Kurikulum</span> & SKS</h1>
                 <span class="admin-header-underline"></span>
-                <p class="admin-header-desc">Struktur mata kuliah hukum perdata, pidana, tata negara, hukum internasional, dan sebaran per semester.</p>
+                <p class="admin-header-desc">Data mata kuliah dan pengampu mengikuti lembar MK Baru semester 1–8; kode dosen dicocokkan dengan lembar Dosen.</p>
               </div>
             </div>
           </div>
@@ -297,41 +297,71 @@
         <div x-data="adminCrudTable({
     rows: SAMPLE_KURIKULUM,
       dbKey: 'kurikulum',
-    emptyForm: { kode:'', nama:'', sks:2, jenis:'Wajib', semester:1 },
-    searchKeys: ['kode','nama'],
+    emptyForm: { kode:'', nama:'', sks:2, semester:1, pengampu:'', kodeDosen:'' },
+    searchKeys: ['kode','nama','pengampu','kodeDosen'],
+    filter(row, semester) { return semester === 'all' || Number(row.semester) === Number(semester); },
+    exportColumns: [
+      ['Semester', 'semester'],
+      ['Kode MK', 'kode'],
+      ['Mata Kuliah', 'nama'],
+      ['SKS', 'sks'],
+      ['Dosen Pengampu', 'pengampu'],
+      ['Kode Dosen', 'kodeDosen']
+    ],
+    exportFilename: 'kurikulum-prodi-hukum.csv',
     itemLabel: 'mata kuliah ini',
     validate(f) { if(!f.kode || !f.nama){ NeuAlert.error('Kode dan Nama Mata Kuliah wajib diisi.'); return false; } return true; }
   })">
-          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <div class="flex items-center neu-pressed px-4 py-3 gap-2 w-full sm:w-72">
-              <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-muted shrink-0" fill="none"
-                viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                  d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
-              </svg>
-              <input x-model="q" type="text" placeholder="Cari kode / nama mata kuliah..."
-                class="bg-transparent text-sm outline-none w-full">
+          <div class="space-y-4 mb-6">
+            <div class="curriculum-filter-grid">
+              <div class="curriculum-search-field flex items-center neu-pressed px-4 py-3 gap-2 w-full">
+                <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 text-text-muted shrink-0" fill="none"
+                  viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+                <input x-model="q" type="text" placeholder="Cari kode, nama, atau dosen..."
+                  aria-label="Cari mata kuliah" class="bg-transparent text-sm outline-none w-full min-w-0">
+                <button x-show="q" x-cloak @click="q = ''" type="button"
+                  class="text-text-muted hover:text-red text-sm font-semibold shrink-0" aria-label="Hapus pencarian">×</button>
+              </div>
+              <select x-model="filterValue" class="neu-input w-full min-w-0" aria-label="Filter berdasarkan semester">
+                <option value="all">Semua Semester</option>
+                <template x-for="semester in [1,2,3,4,5,6,7,8]" :key="semester">
+                  <option :value="String(semester)" x-text="'Semester ' + semester"></option>
+                </template>
+              </select>
             </div>
-            <div class="flex gap-2">
-              <button @click="NeuAlert.success('Data kurikulum diimpor (simulasi).')"
-                class="neu-btn px-4 py-2.5 rounded-xl text-xs"><span x-html="iconSvg('download')"></span> Import</button>
-              <button @click="NeuAlert.success('Data kurikulum diekspor (simulasi).')"
-                class="neu-btn px-4 py-2.5 rounded-xl text-xs"><span x-html="iconSvg('download')"></span> Export</button>
-              <button @click="openAdd()" class="neu-btn-primary px-5 py-2.5 rounded-xl text-xs">+ Tambah Mata
-                Kuliah</button>
+            <div class="curriculum-toolbar-row">
+              <p class="text-xs text-text-muted" role="status" aria-live="polite"
+                x-text="(filterValue === 'all' ? 'Semua semester' : 'Semester ' + filterValue) + ' · ' + filtered.length + ' mata kuliah · ' +
+                  filtered.reduce((total, course) => total + Number(course.sks || 0), 0) + ' SKS'"></p>
+              <div class="curriculum-toolbar-actions">
+                <button @click="clearFilters()" :disabled="!q && filterValue === 'all'"
+                  class="neu-btn px-3.5 py-2.5 rounded-xl text-xs inline-flex items-center justify-center gap-2">
+                  <span x-html="iconSvg('broom')"></span> Reset Filter
+                </button>
+                <button @click="exportCsv()" :disabled="filtered.length === 0"
+                  class="neu-btn px-3.5 py-2.5 rounded-xl text-xs inline-flex items-center justify-center gap-2">
+                  <span x-html="iconSvg('download')"></span> Export CSV
+                </button>
+                <button @click="openAdd()"
+                  class="neu-btn-primary curriculum-add-action px-4 py-2.5 rounded-xl text-xs">+ Tambah Mata Kuliah</button>
+              </div>
             </div>
           </div>
 
           <div class="neu-raised p-2 sm:p-4">
             <div class="table-scroll">
-              <table class="w-full min-w-[640px]">
+              <table class="w-full" style="min-width: 900px;">
                 <thead>
                   <tr class="text-left text-xs text-text-muted uppercase tracking-wide">
                     <th class="py-3 px-4">Kode</th>
                     <th class="py-3 px-4">Nama Mata Kuliah</th>
                     <th class="py-3 px-4 text-center">SKS</th>
                     <th class="py-3 px-4 text-center">Semester</th>
-                    <th class="py-3 px-4 text-center">Jenis</th>
+                    <th class="py-3 px-4">Dosen Pengampu</th>
+                    <th class="py-3 px-4">Kode Dosen</th>
                     <th class="py-3 px-4 text-right">Aksi</th>
                   </tr>
                 </thead>
@@ -342,8 +372,9 @@
                       <td class="py-3 px-4 text-sm text-navy dark:text-white" x-text="r.nama"></td>
                       <td class="py-3 px-4 text-sm text-center" x-text="r.sks"></td>
                       <td class="py-3 px-4 text-sm text-center" x-text="r.semester"></td>
-                      <td class="py-3 px-4 text-center"><span class="neu-badge"
-                          :class="r.jenis==='Wajib' ? 'badge-red' : 'badge-gold'" x-text="r.jenis"></span></td>
+                      <td class="py-3 px-4 text-xs text-text-muted"
+                        x-text="r.pengampu || 'Tidak tercantum pada MK Baru'"></td>
+                      <td class="py-3 px-4 text-xs font-mono text-text-muted" x-text="r.kodeDosen || '-'"></td>
                       <td class="py-3 px-4">
                         <div class="flex items-center justify-end gap-2">
                           <button @click="openEdit(r)" class="neu-btn w-8 h-8 flex items-center justify-center"
@@ -367,47 +398,51 @@
                     </tr>
                   </template>
                   <tr x-show="filtered.length === 0">
-                    <td colspan="6" class="py-10 text-center text-sm text-text-muted">Data yang Anda cari tidak
-                      ditemukan.</td>
+                    <td colspan="7" class="py-10 text-center text-sm text-text-muted">Data yang Anda cari tidak
+                      ditemukan pada semester yang dipilih.</td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </div>
 
-          <div x-show="showModal" x-cloak class="modal-backdrop-neu" x-transition>
-            <div class="neu-raised p-6 sm:p-8 w-full max-w-lg bg-bg" @click.outside="showModal=false">
-              <h3 class="font-display font-semibold text-lg text-navy dark:text-white mb-6"
-                x-text="editing ? 'Edit Mata Kuliah' : 'Tambah Mata Kuliah'"></h3>
-              <div class="space-y-4">
-                <div class="grid grid-cols-2 gap-4">
-                  <input x-model="form.kode" type="text" placeholder="Kode MK" class="neu-input w-full">
-                  <select x-model.number="form.sks" class="neu-input w-full">
-                    <option value="1">1 SKS</option>
-                    <option value="2">2 SKS</option>
-                    <option value="3">3 SKS</option>
-                    <option value="4">4 SKS</option>
-                  </select>
+          <template x-teleport="body">
+            <div x-show="showModal" x-cloak class="modal-backdrop-neu modal-backdrop-viewport" x-transition
+              @keydown.escape.window="showModal=false">
+              <div class="neu-raised admin-modal-panel p-6 sm:p-8 w-full max-w-lg bg-bg" role="dialog" aria-modal="true"
+                aria-labelledby="kurikulum-modal-title" @click.outside="showModal=false">
+                <h3 id="kurikulum-modal-title" class="font-display font-semibold text-lg text-navy dark:text-white mb-6"
+                  x-text="editing ? 'Edit Mata Kuliah' : 'Tambah Mata Kuliah'"></h3>
+                <div class="space-y-4">
+                  <div class="grid grid-cols-2 gap-4">
+                    <input x-model="form.kode" type="text" placeholder="Kode MK" class="neu-input w-full">
+                    <select x-model.number="form.sks" class="neu-input w-full">
+                      <option value="1">1 SKS</option>
+                      <option value="2">2 SKS</option>
+                      <option value="3">3 SKS</option>
+                      <option value="4">4 SKS</option>
+                      <option value="5">5 SKS</option>
+                      <option value="6">6 SKS</option>
+                    </select>
+                  </div>
+                  <input x-model="form.nama" type="text" placeholder="Nama Mata Kuliah" class="neu-input w-full">
+                  <input x-model="form.pengampu" type="text" placeholder="Dosen Pengampu (opsional)" class="neu-input w-full">
+                  <input x-model="form.kodeDosen" type="text" placeholder="Kode Dosen (opsional)" class="neu-input w-full">
+                  <div>
+                    <select x-model.number="form.semester" class="neu-input w-full">
+                      <template x-for="s in [1,2,3,4,5,6,7,8]" :key="s">
+                        <option :value="s" x-text="'Semester ' + s"></option>
+                      </template>
+                    </select>
+                  </div>
                 </div>
-                <input x-model="form.nama" type="text" placeholder="Nama Mata Kuliah" class="neu-input w-full">
-                <div class="grid grid-cols-2 gap-4">
-                  <select x-model.number="form.semester" class="neu-input w-full">
-                    <template x-for="s in [1,2,3,4,5,6,7,8]" :key="s">
-                      <option :value="s" x-text="'Semester ' + s"></option>
-                    </template>
-                  </select>
-                  <select x-model="form.jenis" class="neu-input w-full">
-                    <option>Wajib</option>
-                    <option>Pilihan</option>
-                  </select>
+                <div class="flex gap-3 mt-6">
+                  <button @click="showModal=false" class="neu-btn flex-1 py-3 rounded-xl text-sm">Batal</button>
+                  <button @click="save()" class="neu-btn-primary flex-1 py-3 rounded-xl text-sm">Simpan</button>
                 </div>
-              </div>
-              <div class="flex gap-3 mt-6">
-                <button @click="showModal=false" class="neu-btn flex-1 py-3 rounded-xl text-sm">Batal</button>
-                <button @click="save()" class="neu-btn-primary flex-1 py-3 rounded-xl text-sm">Simpan</button>
               </div>
             </div>
-          </div>
+          </template>
         </div>
 
       </main>

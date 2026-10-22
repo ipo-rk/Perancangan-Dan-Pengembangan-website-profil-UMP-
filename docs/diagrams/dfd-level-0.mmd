@@ -1,18 +1,35 @@
-flowchart TB
-    P["👤 Pengunjung Publik<br/>(Mahasiswa, Calon Mahasiswa, Alumni, Umum)"]
-    A["🔐 Pengguna Admin<br/>(Super Admin, Editor, Operator)"]
-    SYS[["🏛️ SISTEM INFORMASI WEBSITE PROFIL & ADMIN PANEL<br/>PRODI HUKUM UNIVERSITAS MUHAMMADIYAH PAPUA"]]
-    MAP["🗺️ Google Maps Embed API"]
-    CDN["📦 CDN External Services<br/>(Tailwind, Alpine.js, SweetAlert2, Google Fonts)"]
+flowchart LR
+    %% Entitas Eksternal
+    E_VISITOR["Pengunjung\nCalon mahasiswa, mahasiswa, alumni, dan masyarakat"]
+    E_ADMIN["Administrator\nSuper Admin, Editor, atau Operator"]
+    E_CDN["Layanan eksternal\nCDN pustaka dan Google Fonts"]
+    E_MAPS["Layanan eksternal\nGoogle Maps Embed"]
 
-    P -- "1. Request halaman & kata kunci pencarian<br/>2. Submit formulir kontak & pendaftaran kegiatan" --> SYS
-    SYS -- "1. Tampilan informasi akademik, berita, dosen, dokumen<br/>2. Feedback konfirmasi & notifikasi SweetAlert2" --> P
+    %% Proses Konteks Utama
+    P0(("0\nWebsite Profil\nProgram Studi Hukum UMP"))
 
-    A -- "1. Kredensial login (email & password)<br/>2. Input data CRUD 11 modul & manajemen akun<br/>3. Konfigurasi identitas & backup/restore database" --> SYS
-    SYS -- "1. Sesi login & verifikasi hak akses (RBAC)<br/>2. Dashboard statistik, tren konten, & audit log<br/>3. Status notifikasi keberhasilan transaksi" --> A
+    %% Data Store Sistem Klien
+    D1[("D1 Data aplikasi dan sesi\n(localStorage pada origin browser)")]
+    D2[("D2 Salinan data best-effort\n(IndexedDB: ProdiHukumDB / entities)")]
 
-    SYS -- "Request embed peta lokasi" --> MAP
-    MAP -- "Iframe visualisasi peta interaktif" --> SYS
+    %% Aliran Data Pengunjung (Data Flows)
+    E_VISITOR -->|"Permintaan halaman dan pencarian"| P0
+    E_VISITOR -->|"Data formulir kontak"| P0
+    E_VISITOR -->|"Data pendaftaran kegiatan"| P0
+    P0 -->|"Konten, hasil pencarian, dan dokumen"| E_VISITOR
+    P0 -->|"Konfirmasi formulir dan pendaftaran"| E_VISITOR
 
-    CDN -- "Style utilitas, library reaktif, & webfonts" --> SYS
+    %% Aliran Data Administrator (Data Flows)
+    E_ADMIN -->|"Kredensial, permintaan reset, dan data kelola"| P0
+    E_ADMIN -->|"Pengaturan serta berkas backup/restore JSON"| P0
+    P0 -->|"Dashboard, modul admin, dan notifikasi"| E_ADMIN
+    P0 -->|"Status operasi dan riwayat aktivitas"| E_ADMIN
 
+    %% Aliran Data Penyimpanan (Read / Write)
+    P0 -->|"Simpan data, sesi, dan pageview"| D1
+    D1 -->|"Baca data aplikasi dan sesi"| P0
+    P0 -.->|"Salinan tulis asinkron best-effort"| D2
+
+    %% Aliran Data Layanan Eksternal
+    E_CDN -->|"Pustaka UI, skrip, dan font"| P0
+    E_MAPS -->|"Konten peta tertanam"| P0

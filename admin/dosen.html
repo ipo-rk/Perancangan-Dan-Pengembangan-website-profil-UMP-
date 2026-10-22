@@ -271,7 +271,7 @@
             </nav>
             <div class="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-white/10 text-white/90 border border-white/15 mb-2"><span x-html="iconSvg('teacher')"></span> Sivitas Pendidik</span>
+                <span class="admin-header-badge inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-white/10 text-white/90 border border-white/15 mb-2"><span x-html="iconSvg('teacher')"></span> Sivitas Pendidik</span>
                 <h1 class="admin-header-title">Data <span class="text-gold">Dosen</span> & Tenaga Pengajar</h1>
                 <span class="admin-header-underline"></span>
                 <p class="admin-header-desc">Kelola informasi tenaga pendidik, kepakaran bidang hukum, riwayat pendidikan, dan status keaktifan dosen.</p>
@@ -281,66 +281,7 @@
         </div>
         <!-- ══ END ADMIN PREMIUM PAGE HEADER ══ -->
 
-        <div x-data="{
-        showModal:false, editing:null,
-        // Sumber data sama dengan yang dipakai halaman publik dosen.html (SAMPLE_DOSEN di app.js,
-        // dimuat dari localStorage) supaya data dosen di admin & frontend selalu konsisten dan akurat.
-        dosen: [...SAMPLE_DOSEN],
-        persist() { SAMPLE_DOSEN = this.dosen; return DB.save('dosen', this.dosen); },
-        emptyForm() { return {id:null, nama:'', nidn:'', jabatan:'Dosen', keahlian:'', pendidikan:'', email:'', profil:'', status:'Aktif', foto:''}; },
-        form: {id:null, nama:'', nidn:'', jabatan:'Dosen', keahlian:'', pendidikan:'', email:'', profil:'', status:'Aktif', foto:''},
-        q: '',
-        uploadingFoto: false,
-        get filtered() {
-          return this.dosen.filter(d => d.nama.toLowerCase().includes(this.q.toLowerCase()) || d.keahlian.toLowerCase().includes(this.q.toLowerCase()));
-        },
-        openAdd() { this.editing=null; this.form=this.emptyForm(); this.showModal=true; },
-        openEdit(d) { this.editing=d.id; this.form={...d}; this.showModal=true; },
-        async onFoto(e) {
-          const file = e.target.files && e.target.files[0];
-          if (!file) return;
-          // Foto dikompres (diperkecil & di-JPEG-kan) sebelum diubah ke base64
-          // supaya tidak lagi menyebabkan localStorage QuotaExceededError.
-          this.uploadingFoto = true;
-          try {
-            this.form.foto = await compressImageFile(file, { maxWidth: 300, maxHeight: 300, quality: 0.60 });
-          } catch (err) {
-            NeuAlert.error(err.message || 'Gagal memproses foto.');
-          } finally {
-            this.uploadingFoto = false;
-            e.target.value = '';
-          }
-        },
-        save() {
-          if(!this.form.nama || !this.form.nidn){ NeuAlert.error('Nama dan NIDN wajib diisi.'); return; }
-          if(!this.form.foto){ this.form.foto = 'https://placehold.co/300x300/EEF1F5/0B1F3A?text=Foto+Dosen'; }
-          if(this.editing){
-            const idx = this.dosen.findIndex(x=>x.id===this.editing);
-            const prev = this.dosen[idx];
-            this.dosen[idx] = {...this.form};
-            if(!this.persist()){ this.dosen[idx] = prev; NeuAlert.storageFull(); return; }
-            logActivity(`Memperbarui data dosen: ${this.form.nama}`, '\u{270F}\u{FE0F}');
-            NeuAlert.updated('Data dosen berhasil diperbarui.');
-          } else {
-            this.form.id = Date.now();
-            this.dosen.unshift({...this.form});
-            if(!this.persist()){ this.dosen.shift(); NeuAlert.storageFull(); return; }
-            logActivity(`Menambahkan dosen baru: ${this.form.nama}`, '\u{2795}');
-            NeuAlert.success('Data dosen berhasil disimpan.');
-          }
-          this.showModal=false;
-        },
-        async remove(d) {
-          const ok = await NeuAlert.confirmDelete('data dosen ini');
-          if(ok){
-            const prevList = this.dosen;
-            this.dosen = this.dosen.filter(x=>x.id!==d.id);
-            if(!this.persist()){ this.dosen = prevList; NeuAlert.storageFull(); return; }
-            logActivity(`Menghapus data dosen: ${d.nama}`, '\u{1F5D1}\u{FE0F}');
-            NeuAlert.deleted('Data dosen berhasil dihapus.');
-          }
-        }
-      }">
+        <div x-data="adminDosenPage()">
 
           <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div class="flex items-center neu-pressed px-4 py-3 gap-2 w-full sm:w-72">
@@ -349,7 +290,7 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                   d="M21 21l-4.35-4.35M17 10a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
-              <input x-model="q" type="text" placeholder="Cari nama / keahlian..."
+              <input x-model="q" type="search" placeholder="Cari nama / kode dosen..."
                 class="bg-transparent text-sm outline-none w-full">
             </div>
             <div class="flex gap-2">
@@ -358,34 +299,28 @@
             </div>
           </div>
 
+          <div class="flex flex-wrap gap-3 mb-4 text-sm text-text-muted" aria-live="polite">
+            <span><strong class="text-navy dark:text-white" x-text="dosen.length"></strong> dosen sesuai halaman publik</span>
+            <span><strong class="text-navy dark:text-white" x-text="filtered.length"></strong> ditampilkan</span>
+          </div>
+
           <div class="neu-raised p-2 sm:p-4">
             <div class="table-scroll">
-              <table class="w-full min-w-[820px]">
+              <table class="w-full min-w-[650px]">
                 <thead>
                   <tr class="text-left text-xs text-text-muted uppercase tracking-wide">
-                    <th class="py-3 px-4">Foto</th>
                     <th class="py-3 px-4">Nama</th>
-                    <th class="py-3 px-4">NIDN</th>
-                    <th class="py-3 px-4">Jabatan</th>
-                    <th class="py-3 px-4">Keahlian</th>
-                    <th class="py-3 px-4">Email</th>
-                    <th class="py-3 px-4">Status</th>
+                    <th class="py-3 px-4">Kode Dosen</th>
+                    <th class="py-3 px-4">MK Pengampu</th>
                     <th class="py-3 px-4 text-right">Aksi</th>
                   </tr>
                 </thead>
                 <tbody>
                   <template x-for="d in filtered" :key="d.id">
                     <tr class="border-b border-black/5 dark:border-white/5">
-                      <td class="py-3 px-4"><img :src="assetPath(d.foto)" :alt="d.nama" class="neu-thumb"></td>
                       <td class="py-3 px-4 text-sm font-medium text-navy dark:text-white" x-text="d.nama"></td>
-                      <td class="py-3 px-4 text-xs font-mono text-text-muted" x-text="d.nidn"></td>
-                      <td class="py-3 px-4 text-xs text-text-muted" x-text="d.jabatan"></td>
-                      <td class="py-3 px-4 text-xs text-text-muted" x-text="d.keahlian"></td>
-                      <td class="py-3 px-4 text-xs text-text-muted" x-text="d.email"></td>
-                      <td class="py-3 px-4">
-                        <span class="neu-badge" :class="d.status==='Aktif' ? 'badge-active' : 'badge-ended'"
-                          x-text="d.status"></span>
-                      </td>
+                      <td class="py-3 px-4 text-xs font-mono text-text-muted" x-text="d.kode || 'Tidak tercantum'"></td>
+                      <td class="py-3 px-4 text-xs text-text-muted" x-text="coursesFor(d).length"></td>
                       <td class="py-3 px-4">
                         <div class="flex items-center justify-end gap-2">
                           <button @click="openEdit(d)" class="neu-btn w-8 h-8 flex items-center justify-center"
@@ -409,7 +344,7 @@
                     </tr>
                   </template>
                   <tr x-show="filtered.length === 0">
-                    <td colspan="8" class="py-10 text-center text-sm text-text-muted">Data yang Anda cari tidak
+                    <td colspan="4" class="py-10 text-center text-sm text-text-muted">Data yang Anda cari tidak
                       ditemukan.</td>
                   </tr>
                 </tbody>
@@ -418,41 +353,17 @@
           </div>
 
           <!-- Modal Tambah/Edit -->
-          <div x-show="showModal" x-cloak
-            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy/40 backdrop-blur-sm" x-transition>
-            <div class="neu-raised p-6 sm:p-8 w-full max-w-lg bg-bg" @click.outside="showModal=false">
-              <h3 class="font-display font-semibold text-lg text-navy dark:text-white mb-6"
+          <template x-teleport="body">
+          <div x-show="showModal" x-cloak class="modal-backdrop-neu modal-backdrop-viewport" x-transition
+            @keydown.escape.window="showModal=false">
+            <div class="neu-raised admin-modal-panel p-6 sm:p-8 w-full max-w-lg bg-bg" role="dialog" aria-modal="true"
+              aria-labelledby="lecturer-modal-title"
+              @click.outside="showModal=false">
+              <h3 id="lecturer-modal-title" class="font-display font-semibold text-lg text-navy dark:text-white mb-6"
                 x-text="editing ? 'Edit Dosen' : 'Tambah Dosen'"></h3>
               <div class="space-y-4">
-                <div class="flex items-center gap-4">
-                  <label
-                    class="neu-dropzone neu-pressed w-20 h-20 rounded-2xl flex items-center justify-center text-center text-text-muted text-[10px] overflow-hidden relative shrink-0">
-                    <img x-show="form.foto && !uploadingFoto" :src="form.foto"
-                      class="absolute inset-0 w-full h-full object-cover" alt="Pratinjau foto dosen">
-                    <span x-show="!form.foto && !uploadingFoto">Unggah Foto</span>
-                    <span x-show="uploadingFoto">Memproses&hellip;</span>
-                    <input type="file" accept="image/*" class="hidden" @change="onFoto($event)">
-                  </label>
-                  <p class="text-xs text-text-muted">Foto profil dosen. Format JPG/PNG, disarankan rasio 1:1. Otomatis
-                    dikompres agar tidak memenuhi penyimpanan.</p>
-                </div>
                 <input x-model="form.nama" type="text" placeholder="Nama Lengkap &amp; Gelar" class="neu-input w-full">
-                <div class="grid grid-cols-2 gap-4">
-                  <input x-model="form.nidn" type="text" placeholder="NIDN" class="neu-input w-full">
-                  <select x-model="form.jabatan" class="neu-input w-full">
-                    <option>Profesor</option>
-                    <option>Lektor Kepala</option>
-                    <option>Lektor</option>
-                    <option>Asisten Ahli</option>
-                    <option>Dosen</option>
-                  </select>
-                </div>
-                <input x-model="form.keahlian" type="text" placeholder="Bidang Keahlian" class="neu-input w-full">
-                <input x-model="form.email" type="email" placeholder="Email" class="neu-input w-full">
-                <select x-model="form.status" class="neu-input w-full">
-                  <option>Aktif</option>
-                  <option>Nonaktif</option>
-                </select>
+                <input x-model="form.kode" type="text" placeholder="Kode Dosen (jika tercantum)" class="neu-input w-full">
               </div>
               <div class="flex gap-3 mt-6">
                 <button @click="showModal=false" class="neu-btn flex-1 py-3 rounded-xl text-sm">Batal</button>
@@ -460,6 +371,7 @@
               </div>
             </div>
           </div>
+          </template>
         </div>
 
       </main>

@@ -1,211 +1,232 @@
 erDiagram
-    KEGIATAN ||--o{ PENDAFTAR : "memiliki pendaftar (kegiatanId)"
-    KEGIATAN ||--o{ GALERI : "dokumentasi kegiatan"
-    PENGGUNA ||--o{ AKTIVITAS : "mencatat log aktivitas (user)"
-    PENGGUNA ||--o{ NOTIFIKASI : "menerima notifikasi"
-    PENGGUNA ||--o{ BERITA : "menerbitkan warta (penulis)"
-    PENGGUNA ||--o{ ARTIKEL : "membuat publikasi (penulis)"
-    PENGGUNA ||--o{ PENGUMUMAN : "merilis pengumuman"
-    PENGGUNA ||--o{ DOKUMEN : "mengunggah dokumen"
-    PROFIL ||--|{ STRUKTUR : "memiliki struktur organisasi"
-    DOSEN ||--o| STRUKTUR : "penugasan jabatan struktural"
-    DOSEN ||--o{ KURIKULUM : "dosen pengampu matakuliah"
-    DOSEN ||--o{ PRESTASI : "penghargaan dosen"
-    ALUMNI ||--o{ PRESTASI : "rekam jejak prestasi"
-    PROFIL ||--|| PENGATURAN : "konfigurasi situs & prodi"
-    PROFIL ||--|{ DOKUMEN : "dokumen SK & akreditasi"
-    PROFIL ||--|{ KURIKULUM : "struktur kurikulum prodi"
+    %% Asosiasi berikut adalah lookup aplikasi; tidak ada foreign-key enforcement.
+    KEGIATAN o|--o{ PENDAFTAR : "lookup opsional melalui kegiatanId"
+    DOSEN o|--o{ STRUKTUR : "lookup opsional melalui dosenId"
+    DOSEN o|--o{ KURIKULUM : "pencocokan nama pengampu"
 
-    BERITA {
-        int id PK
-        string slug
-        string judul
-        string kategori
-        string tanggal
-        string penulis FK "Mereferensi PENGGUNA.nama"
-        string excerpt
-        string konten
-        string status "Draft | Review | Published"
-        bool featured
-        string gambar "Path / Base64"
-    }
-
+    %% ==========================================
+    %% DOMAIN 1: AKADEMIK & STRUKTUR ORGANISASI
+    %% ==========================================
     DOSEN {
-        int id PK
-        string nama
-        string jabatan
-        string keahlian
-        string pendidikan
-        string email
-        string nidn
-        string profil
-        string status "Aktif | Cuti | Tugas Belajar"
-        string foto "Path / Base64"
-    }
-
-    DOKUMEN {
-        int id PK
-        string nama
-        string kategori "Kurikulum | Panduan | SK | Formulir"
-        string format "PDF | DOCX | XLS"
-        string ukuran
-        int tahun
-        string fileUrl
-        int downloads
-    }
-
-    GALERI {
-        int id PK
-        string judul
-        string album "Seminar | Kuliah Umum | Praktikum | Wisuda | dll"
-        string src "Path / Base64"
-        string tanggal
-    }
-
-    PENGUMUMAN {
-        int id PK
-        string judul
-        string status "Penting | Baru | Aktif | Berakhir"
-        string badge "badge-important | badge-new | badge-active"
-        string tanggal
-        string isi
-        string lampiran
-    }
-
-    KEGIATAN {
-        int id PK
-        string nama
-        string tanggal
-        string hari
-        string bulan
-        string waktu
-        string lokasi
-        string penyelenggara
-        string deskripsi
-        string gambar "Path / Base64"
-    }
-
-    PENDAFTAR {
-        int id PK
-        int kegiatanId FK "Mereferensi KEGIATAN.id"
-        string kegiatanNama
-        string nama
-        string email
-        string whatsapp
-        string instansi
-        string waktuDaftar
-    }
-
-    ARTIKEL {
-        int id PK
-        string judul
-        string penulis FK "Mereferensi PENGGUNA / DOSEN"
-        string kategori "Hukum Pidana | Tata Negara | Adat | Bisnis"
-        string tanggal
-        string isi
-        string referensi
-        string tags
-        string status "Draft | Review | Published"
-        string thumbnail "Path / Base64"
-    }
-
-    PRESTASI {
-        int id PK
-        string nama
-        string kategori "Mahasiswa | Dosen | Alumni | Program Studi"
-        string tingkat "Provinsi | Regional | Nasional | Internasional"
-        string tahun
-        string foto "Path / Base64"
-    }
-
-    KURIKULUM {
-        int id PK
-        string kode
-        string nama
-        int sks
-        string jenis "Wajib | Pilihan"
-        int semester
-        string silabusUrl
-        string deskripsi
-    }
-
-    ALUMNI {
-        int id PK
-        string nama
-        string angkatan
-        string pekerjaan
-        string instansi
-        string kategori "Bekerja | Studi Lanjut | Wirausaha"
-        string email
-        string linkedin
-        string status "Terverifikasi | Menunggu"
-        string foto "Path / Base64"
-    }
-
-    PENGGUNA {
-        int id PK
-        string nama
-        string email
-        string password
-        string role "Super Admin | Editor | Operator"
-        string status "Aktif | Nonaktif"
-    }
-
-    AKTIVITAS {
-        int id PK
-        string user FK "Mereferensi PENGGUNA.nama"
-        string aksi
-        string waktu
-        string tanggalIso
-        string icon
-    }
-
-    NOTIFIKASI {
-        int id PK
-        string judul
-        string pesan
-        string waktu
-        bool read
-        string icon
-    }
-
-    PROFIL {
-        string nama
-        string kode
-        string fakultas
-        string universitas
-        string akreditasi
-        string deskripsi
-        string sejarah
-        string visi
-        string misi
-        string tujuan
-        string lulusan
+        number id PK "ID unik dosen"
+        string nama "Nama lengkap beserta gelar"
+        string kode "Kode dosen (contoh: HKM001; dapat kosong)"
+        string jabatan "Jabatan akademik"
+        string pendidikan "Riwayat pendidikan terakhir"
+        string spesialisasi "Bidang keahlian hukum"
+        string foto "Path file foto dosen"
+        string email "Email resmi dosen"
+        string telepon "Nomor kontak telepon"
     }
 
     STRUKTUR {
-        int id PK
-        string nama
-        string jabatan
-        string foto
+        number id PK "ID posisi struktur"
+        number dosenId "Lookup opsional ke DOSEN.id"
+        string nama "Nama pejabat struktural"
+        string jabatan "Nama jabatan struktural"
+        string foto "Path file foto pejabat"
+    }
+
+    KURIKULUM {
+        number id PK "ID mata kuliah"
+        string kode "Kode mata kuliah"
+        string nama "Nama mata kuliah"
+        number sks "Bobot SKS (1-6)"
+        number semester "Semester sajian (1-8)"
+        string kategori "Wajib / Pilihan / MBKM"
+        string deskripsi "Deskripsi singkat capaian MK"
+        string pengampu "Nama pengampu; dicocokkan setelah normalisasi"
+        string kodeDosen "Kode dosen opsional; teks biasa, bukan relasi"
+    }
+
+    ALUMNI {
+        number id PK "ID data alumni"
+        string nama "Nama alumni"
+        string angkatan "Tahun angkatan masuk"
+        string pekerjaan "Pekerjaan/profesi saat ini"
+        string instansi "Nama tempat bekerja/kantor"
+        string kategori "Kategori karir alumni"
+        string email "Email kontak alumni"
+        string linkedin "Tautan profil LinkedIn"
+        string status "Status verifikasi (Aktif/Pending)"
+        string foto "Path file foto alumni"
+    }
+
+    PROFIL {
+        string nama "Nama Program Studi [SINGLETON]"
+        string kode "Kode Prodi Dikti"
+        string fakultas "Nama Fakultas"
+        string universitas "Nama Universitas"
+        string akreditasi "Peringkat Akreditasi BAN-PT"
+        string deskripsi "Deskripsi profil program studi"
+        string sejarah "Sejarah pendirian prodi"
+        string visi "Pernyataan visi keilmuan"
+        string misi "Pernyataan butir-butir misi"
+        string tujuan "Tujuan pendidikan prodi"
+        string lulusan "Profil lulusan sarjana"
+    }
+
+    %% ==========================================
+    %% DOMAIN 2: INFORMASI & PUBLIKASI
+    %% ==========================================
+    BERITA {
+        number id PK "ID unik berita"
+        string slug "Slug URL ramah SEO"
+        string judul "Judul berita"
+        string kategori "Kategori berita"
+        string tanggal "Tanggal publikasi (DD MMMM YYYY)"
+        string penulis "Nama penulis berita"
+        string excerpt "Ringkasan pembuka"
+        string konten "Isi lengkap berita (HTML)"
+        string status "Status publikasi, misalnya Published atau Draft"
+        boolean featured "Status sorotan di beranda"
+        string gambar "Path atau URL file gambar"
+    }
+
+    ARTIKEL {
+        number id PK "ID artikel ilmiah/populer"
+        string judul "Judul artikel"
+        string penulis "Nama penulis artikel"
+        string kategori "Kategori hukum"
+        string tanggal "Tanggal terbit"
+        string isi "Konten artikel lengkap"
+        string referensi "Daftar rujukan pustaka"
+        string tags "Daftar tag pemisah koma"
+        string status "Published / Draft"
+        string thumbnail "Path gambar miniatur"
+    }
+
+    PENGUMUMAN {
+        number id PK "ID pengumuman"
+        string judul "Judul pengumuman akademik"
+        string status "Penting / Info / Urgent"
+        string badge "Teks label badge visual"
+        string tanggal "Tanggal rilis"
+        string isi "Informasi detail pengumuman"
+        string lampiran "Nama atau tautan file lampiran"
+    }
+
+    KEGIATAN {
+        number id PK "ID kegiatan/event"
+        string nama "Nama kegiatan atau seminar"
+        string tanggal "Tanggal kegiatan"
+        string hari "Nama hari pelaksanaan"
+        string bulan "Bulan pelaksanaan"
+        string waktu "Waktu pelaksanaan (WIB/WIT)"
+        string lokasi "Tempat atau media online"
+        string penyelenggara "Panitia pelaksana"
+        string deskripsi "Deskripsi lengkap acara"
+        string gambar "Poster atau banner acara"
+    }
+
+    GALERI {
+        number id PK "ID foto galeri"
+        string judul "Judul foto kegiatan"
+        string album "Nama album kegiatan"
+        string src "Path gambar atau URL data"
+    }
+
+    PRESTASI {
+        number id PK "ID prestasi mahasiswa/prodi"
+        string nama "Nama prestasi atau kejuaraan"
+        string kategori "Akademik / Non-Akademik"
+        string tingkat "Lokal / Regional / Nasional / Internasional"
+        string tahun "Tahun perolehan prestasi"
+        string foto "Dokumentasi foto sertifikat/trofi"
+    }
+
+    DOKUMEN {
+        number id PK "ID dokumen unduhan"
+        string nama "Nama resmi dokumen"
+        string kategori "Panduan / Formulir / SK / Kurikulum"
+        string format "Format ekstensi file (PDF/DOCX)"
+        string ukuran "Ukuran file (contoh: 2.4 MB)"
+        string fileName "Nama berkas fisik"
+        string fileData "Base64 data URI atau path file"
+    }
+
+    %% ==========================================
+    %% DOMAIN 3: INTERAKSI PUBLIK
+    %% ==========================================
+    PENDAFTAR {
+        number id PK "ID pendaftaran"
+        number kegiatanId "Lookup aplikasi ke KEGIATAN.id"
+        string kegiatanNama "Snapshot teks nama kegiatan saat mendaftar"
+        string nama "Nama lengkap pendaftar"
+        string email "Email; duplikasi dicek per kegiatan oleh aplikasi"
+        string whatsapp "Nomor WhatsApp aktif"
+        string instansi "Asal kampus/sekolah/instansi"
+        string waktuDaftar "Timestamp ISO pendaftaran"
+    }
+
+    PESAN {
+        number id PK "ID pesan masuk"
+        string nama "Nama pengirim pesan"
+        string email "Email pengirim"
+        string subjek "Topik atau perihal pesan"
+        string pesan "Isi pesan kontak"
+        string waktu "Timestamp waktu kirim pesan"
+        boolean read "Status sudah dibaca oleh admin"
+    }
+
+    %% ==========================================
+    %% DOMAIN 4: SISTEM & ADMINISTRASI
+    %% ==========================================
+    PENGGUNA {
+        number id PK "ID pengguna sistem"
+        string nama "Nama staf / administrator"
+        string email "Email login"
+        string password "Kata sandi yang dicocokkan di sisi klien"
+        string role "Super Admin / Editor / Operator"
+        string status "Aktif / Nonaktif"
+    }
+
+    AKTIVITAS {
+        number id PK "ID log aktivitas"
+        string user "Nama pelaku aksi / sistem"
+        string aksi "Deskripsi tindakan yang dilakukan"
+        string waktu "Waktu relatif (contoh: 5 menit lalu)"
+        string tanggalIso "Waktu absolut ISO 8601"
+        string icon "Nama ikon representasi visual"
+    }
+
+    NOTIFIKASI {
+        number id PK "ID notifikasi sistem"
+        string judul "Judul pemberitahuan"
+        string pesan "Rincian pesan notifikasi"
+        string waktu "Waktu pemberitahuan"
+        boolean read "Status dibaca (true/false)"
+        string icon "Ikon kategori notifikasi"
     }
 
     PENGATURAN {
-        string namaWebsite
-        string deskripsi
-        string logo
-        string favicon
-        string theme
-        string primaryColor
-        bool darkMode
-        string metaTitle
-        string metaDesc
-        string keywords
-        string email
-        string telepon
-        string alamat
-        string mapEmbed
-        string mapLink
-        string koordinat
-        int mahasiswaAktif
+        string namaWebsite "Judul situs web [SINGLETON]"
+        string deskripsi "Deskripsi meta website"
+        string logo "Path gambar logo instansi"
+        string favicon "Path icon favicon browser"
+        string theme "Tema warna aktif"
+        string primaryColor "Kode warna hex primer"
+        boolean darkMode "Status mode gelap"
+        string metaTitle "SEO meta title"
+        string metaDesc "SEO meta description"
+        string keywords "SEO kata kunci"
+        string facebook "URL profil Facebook"
+        string instagram "URL profil Instagram"
+        string youtube "URL kanal YouTube"
+        string linkedin "URL profil LinkedIn"
+        string tiktok "URL profil TikTok"
+        string email "Email resmi prodi"
+        string telepon "Nomor telepon prodi"
+        string alamat "Alamat fisik kampus"
+        string mapEmbed "HTML iframe embed peta Google"
+        string mapLink "Tautan langsung Google Maps"
+        string koordinat "Koordinat lintang/bujur"
+        number mahasiswaAktif "Jumlah mahasiswa aktif terkini"
     }
+
+    %% =========================================================================
+    %% Model mencakup 18 key data aplikasi: 16 daftar dan dua objek tunggal
+    %% (PROFIL, PENGATURAN). Key sesi admin dan statistik pageview disimpan
+    %% terpisah. ID dan tiga asosiasi di atas dikelola aplikasi; tidak ada
+    %% constraint, cascade delete, atau transaksi basis data relasional.
+    %% =========================================================================

@@ -221,10 +221,13 @@
   </main>
 
   <!-- Modal: Formulir Pendaftaran Kegiatan -->
-  <div x-show="daftarOpen" x-cloak class="modal-backdrop-neu" x-transition>
-    <div class="neu-raised p-6 sm:p-8 w-full max-w-md bg-bg max-h-[85vh] overflow-y-auto"
+  <template x-teleport="body">
+  <div x-show="daftarOpen" x-cloak class="modal-backdrop-neu modal-backdrop-viewport" x-transition
+    @keydown.escape.window="closeDaftar()">
+    <div class="neu-raised neu-modal-panel p-6 sm:p-8 w-full max-w-md bg-bg" role="dialog" aria-modal="true"
+      aria-labelledby="event-registration-title"
       @click.outside="closeDaftar()">
-      <h3 class="font-display font-semibold text-lg text-navy dark:text-white mb-1">Daftar Kegiatan</h3>
+      <h3 id="event-registration-title" class="font-display font-semibold text-lg text-navy dark:text-white mb-1">Daftar Kegiatan</h3>
       <p class="text-xs text-text-muted mb-6" x-text="item.nama"></p>
       <div class="space-y-4">
         <input x-model="form.nama" type="text" placeholder="Nama Lengkap" class="neu-input w-full">
@@ -243,6 +246,7 @@
       </div>
     </div>
   </div>
+  </template>
 
   <footer x-data="{ siteInfo: SAMPLE_PENGATURAN }">
     <div class="wrap">

@@ -271,7 +271,7 @@
             </nav>
             <div class="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-white/10 text-white/90 border border-white/15 mb-2"><span x-html="iconSvg('scales')"></span> Kelembagaan Hukum</span>
+                <span class="admin-header-badge inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-white/10 text-white/90 border border-white/15 mb-2"><span x-html="iconSvg('scales')"></span> Kelembagaan Hukum</span>
                 <h1 class="admin-header-title">Profil <span class="text-gold">Program Studi</span></h1>
                 <span class="admin-header-underline"></span>
                 <p class="admin-header-desc">Sunting visi keilmuan, misi pengabdian, sejarah berdirinya prodi, struktur organisasi, dan akreditasi BAN-PT.</p>
@@ -283,6 +283,13 @@
 
         <div x-data="{
     form: { ...SAMPLE_PROFIL },
+    init() {
+      window.addEventListener('db-update', event => {
+        if (event.detail?.key === 'profil' && event.detail.data && !Array.isArray(event.detail.data)) {
+          this.form = { ...event.detail.data };
+        }
+      });
+    },
     save() {
       if(!this.form.nama){ NeuAlert.error('Nama Program Studi wajib diisi.'); return; }
       const prev = SAMPLE_PROFIL;
@@ -355,17 +362,55 @@
           </div>
         </div>
 
-        <!-- Struktur Organisasi: sebelumnya 3 kartu hardcode di profil.html tanpa
-     terhubung ke data apapun. Sekarang punya modul CRUD sendiri (disimpan
-     lewat DB seperti entitas lain) dan tampil dinamis di halaman publik. -->
+        <!-- Struktur organisasi dikelola lewat CRUD dan dapat ditautkan ke data dosen
+     berdasarkan ID agar nama serta foto mengikuti roster dosen. -->
         <div class="max-w-4xl mt-6" x-data="{
     rows: [...SAMPLE_STRUKTUR],
+    dosen: [...SAMPLE_DOSEN],
     showModal: false, editing: null, uploadingFoto: false,
-    emptyForm() { return { id:null, nama:'', jabatan:'', foto:'' }; },
-    form: { id:null, nama:'', jabatan:'', foto:'' },
-    persist() { SAMPLE_STRUKTUR = this.rows; return DB.save('struktur', this.rows); },
+    emptyForm() { return { id:null, dosenId:'', nama:'', jabatan:'', foto:'' }; },
+    form: { id:null, dosenId:'', nama:'', jabatan:'', foto:'' },
+    init() {
+      window.addEventListener('db-update', event => {
+        if (!event.detail) return;
+        if (event.detail.key === 'dosen' && Array.isArray(event.detail.data)) {
+          this.dosen = [...event.detail.data];
+        }
+        if (event.detail.key === 'struktur' && Array.isArray(event.detail.data)) {
+          this.rows = [...event.detail.data];
+        }
+      });
+    },
+    dosenUntuk(member) {
+      return this.dosen.find(d => String(d.id) === String(member.dosenId)) || null;
+    },
+    namaUntuk(member) {
+      const dosen = this.dosenUntuk(member);
+      return dosen ? dosen.nama : member.nama;
+    },
+    fotoUntuk(member) {
+      const dosen = this.dosenUntuk(member);
+      return (dosen && dosen.foto) || member.foto || '';
+    },
+    pilihDosen() {
+      const dosen = this.dosen.find(d => String(d.id) === String(this.form.dosenId));
+      if (dosen) {
+        this.form.nama = dosen.nama;
+        this.form.foto = dosen.foto || this.form.foto || '';
+      }
+    },
+    persist() {
+      if (!DB.save('struktur', this.rows)) return false;
+      SAMPLE_STRUKTUR = this.rows;
+      return true;
+    },
     openAdd() { this.editing = null; this.form = this.emptyForm(); this.showModal = true; },
-    openEdit(r) { this.editing = r.id; this.form = { ...r }; this.showModal = true; },
+    openEdit(r) {
+      this.editing = r.id;
+      this.form = { ...r, dosenId: r.dosenId == null ? '' : String(r.dosenId) };
+      this.pilihDosen();
+      this.showModal = true;
+    },
     async onFoto(e) {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
@@ -380,19 +425,25 @@
       }
     },
     save() {
+      if (this.form.dosenId && !this.dosen.some(d => String(d.id) === String(this.form.dosenId))) {
+        NeuAlert.error('Dosen yang dipilih tidak lagi tersedia. Pilih dosen lain atau lepaskan pilihan dosen.');
+        return;
+      }
+      this.pilihDosen();
       if(!this.form.nama || !this.form.jabatan){ NeuAlert.error('Nama dan Jabatan wajib diisi.'); return; }
+      const savedForm = { ...this.form };
       if(this.editing){
         const idx = this.rows.findIndex(x=>x.id===this.editing);
         const prev = this.rows[idx];
-        this.rows[idx] = { ...this.form };
+        this.rows[idx] = savedForm;
         if(!this.persist()){ this.rows[idx] = prev; NeuAlert.storageFull(); return; }
-        logActivity(`Memperbarui struktur organisasi: ${this.form.nama}`, '\u{270F}\u{FE0F}');
+        logActivity(`Memperbarui struktur organisasi: ${savedForm.nama}`, '\u{270F}\u{FE0F}');
         NeuAlert.updated();
       } else {
-        this.form.id = Date.now();
-        this.rows.push({ ...this.form });
+        savedForm.id = Date.now();
+        this.rows.push(savedForm);
         if(!this.persist()){ this.rows.pop(); NeuAlert.storageFull(); return; }
-        logActivity(`Menambahkan struktur organisasi: ${this.form.nama}`, '\u{2795}');
+        logActivity(`Menambahkan struktur organisasi: ${savedForm.nama}`, '\u{2795}');
         NeuAlert.success();
       }
       this.showModal = false;
@@ -403,7 +454,7 @@
         const prevList = this.rows;
         this.rows = this.rows.filter(x=>x.id!==r.id);
         if(!this.persist()){ this.rows = prevList; NeuAlert.storageFull(); return; }
-        logActivity(`Menghapus struktur organisasi: ${r.nama}`, '\u{1F5D1}\u{FE0F}');
+        logActivity(`Menghapus struktur organisasi: ${this.namaUntuk(r)}`, '\u{1F5D1}\u{FE0F}');
         NeuAlert.deleted();
       }
     }
@@ -416,26 +467,36 @@
             <div class="space-y-3">
               <template x-for="r in rows" :key="r.id">
                 <div class="neu-raised-sm p-3 flex items-center gap-3">
-                  <img :src="r.foto || 'https://placehold.co/80x80/EEF1F5/0B1F3A?text=Foto'"
+                  <img :src="fotoUntuk(r) || 'https://placehold.co/80x80/EEF1F5/0B1F3A?text=Foto'"
                     class="w-12 h-12 rounded-xl object-cover shrink-0">
                   <div class="flex-1 min-w-0">
-                    <p class="text-sm font-medium text-navy dark:text-white truncate" x-text="r.nama"></p>
+                    <p class="text-sm font-medium text-navy dark:text-white truncate" x-text="namaUntuk(r)"></p>
                     <p class="text-xs text-text-muted truncate" x-text="r.jabatan"></p>
+                    <p x-show="r.dosenId && !dosenUntuk(r)" class="text-[11px] text-amber-600">Dosen tidak lagi tersedia</p>
                   </div>
-                  <button @click="openEdit(r)"
-                    class="neu-btn w-9 h-9 rounded-lg flex items-center justify-center text-xs shrink-0">Ubah</button>
-                  <button @click="remove(r)"
-                    class="neu-btn w-9 h-9 rounded-lg flex items-center justify-center text-xs text-red-500 shrink-0">Hapus</button>
+                  <button @click="openEdit(r)" type="button"
+                    class="neu-btn w-10 h-10 rounded-xl flex items-center justify-center text-royal hover:text-red focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-royal shrink-0 transition-colors"
+                    :aria-label="'Ubah struktur: ' + namaUntuk(r)" :title="'Ubah struktur: ' + namaUntuk(r)">
+                    <span class="text-lg" x-html="iconSvg('edit')"></span>
+                  </button>
+                  <button @click="remove(r)" type="button"
+                    class="neu-btn w-10 h-10 rounded-xl flex items-center justify-center text-red-600 hover:text-red-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red shrink-0 transition-colors"
+                    :aria-label="'Hapus struktur: ' + namaUntuk(r)" :title="'Hapus struktur: ' + namaUntuk(r)">
+                    <span class="text-lg" x-html="iconSvg('trash')"></span>
+                  </button>
                 </div>
               </template>
               <p x-show="rows.length === 0" class="text-xs text-text-muted text-center py-4">Belum ada data.</p>
             </div>
           </div>
 
-          <div x-show="showModal" x-cloak
-            class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-navy/40 backdrop-blur-sm" x-transition>
-            <div class="neu-raised p-6 sm:p-8 w-full max-w-md bg-bg" @click.outside="showModal=false">
-              <h3 class="font-display font-semibold text-lg text-navy dark:text-white mb-6"
+          <template x-teleport="body">
+          <div x-show="showModal" x-cloak class="modal-backdrop-neu modal-backdrop-viewport" x-transition
+            @keydown.escape.window="showModal=false">
+            <div class="neu-raised admin-modal-panel p-6 sm:p-8 w-full max-w-md bg-bg" role="dialog" aria-modal="true"
+              aria-labelledby="structure-modal-title"
+              @click.outside="showModal=false">
+              <h3 id="structure-modal-title" class="font-display font-semibold text-lg text-navy dark:text-white mb-6"
                 x-text="editing ? 'Ubah Struktur' : 'Tambah Struktur'"></h3>
               <div class="space-y-4">
                 <div class="flex items-center gap-4">
@@ -450,7 +511,17 @@
                   <p class="text-xs text-text-muted">Foto opsional. Otomatis dikompres agar tidak memenuhi penyimpanan.
                   </p>
                 </div>
-                <input x-model="form.nama" type="text" placeholder="Nama &amp; Gelar" class="neu-input w-full">
+                <div>
+                  <label class="text-xs font-semibold text-text-muted mb-2 block">Hubungkan ke data dosen (opsional)</label>
+                  <select x-model="form.dosenId" @change="pilihDosen()" class="neu-input w-full">
+                    <option value="">Anggota non-dosen / isi manual</option>
+                    <template x-for="d in dosen" :key="d.id">
+                      <option :value="String(d.id)" x-text="d.nama + ' (' + (d.kode || 'kode tidak tercantum') + ')'"></option>
+                    </template>
+                  </select>
+                  <p x-show="form.dosenId" class="text-[11px] text-text-muted mt-1">Nama dan foto mengikuti data dosen yang dipilih.</p>
+                </div>
+                <input x-model="form.nama" :readonly="Boolean(form.dosenId)" type="text" placeholder="Nama &amp; Gelar" class="neu-input w-full">
                 <input x-model="form.jabatan" type="text" placeholder="Jabatan" class="neu-input w-full">
               </div>
               <div class="flex gap-3 mt-6">
@@ -459,6 +530,7 @@
               </div>
             </div>
           </div>
+          </template>
         </div>
 
       </main>

@@ -272,7 +272,7 @@
             </nav>
             <div class="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-white/10 text-white/90 border border-white/15 mb-2"><span x-html="iconSvg('graduation')"></span> Jejaring Alumni</span>
+                <span class="admin-header-badge inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-white/10 text-white/90 border border-white/15 mb-2"><span x-html="iconSvg('graduation')"></span> Jejaring Alumni</span>
                 <h1 class="admin-header-title">Database <span class="text-gold">Alumni</span> Hukum</h1>
                 <span class="admin-header-underline"></span>
                 <p class="admin-header-desc">Pendataan profil alumni, rekam jejak karier di instansi penegak hukum, dan kontribusi lulusan bagi almamater.</p>
@@ -365,10 +365,13 @@
             </div>
           </div>
 
-          <div x-show="showModal" x-cloak class="modal-backdrop-neu" x-transition>
-            <div class="neu-raised p-6 sm:p-8 w-full max-w-lg bg-bg max-h-[85vh] overflow-y-auto"
+          <template x-teleport="body">
+          <div x-show="showModal" x-cloak class="modal-backdrop-neu modal-backdrop-viewport" x-transition
+            @keydown.escape.window="showModal=false">
+            <div class="neu-raised admin-modal-panel p-6 sm:p-8 w-full max-w-lg bg-bg"
+              role="dialog" aria-modal="true" aria-labelledby="alumni-modal-title"
               @click.outside="showModal=false">
-              <h3 class="font-display font-semibold text-lg text-navy dark:text-white mb-6"
+              <h3 id="alumni-modal-title" class="font-display font-semibold text-lg text-navy dark:text-white mb-6"
                 x-text="editing ? 'Edit Data Alumni' : 'Tambah Alumni'"></h3>
               <div class="space-y-4">
 
@@ -436,6 +439,7 @@
               </div>
             </div>
           </div>
+          </template>
         </div>
 
       </main>

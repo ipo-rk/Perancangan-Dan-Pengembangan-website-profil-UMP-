@@ -2,7 +2,7 @@
 
 ## Website Profil & Panel Admin Program Studi Hukum — Universitas Muhammadiyah Papua (UMP)
 
-> Dokumen ini adalah **kumpulan lengkap diagram rekayasa perangkat lunak dalam format Mermaid (`.md`) dan analisis perancangan sistem** untuk Website Profil dan Panel Administrasi Program Studi Hukum Universitas Muhammadiyah Papua. Seluruh kode Mermaid di bawah ini diverifikasi 100% konsisten dan akurat terhadap basis kode frontend (`assets/js/app.js`, `assets/css/style.css`, 36 berkas HTML).
+> Dokumen ini adalah **kumpulan lengkap diagram rekayasa perangkat lunak dalam format Mermaid** dan analisis perancangan sistem untuk Website Profil dan Panel Administrasi Program Studi Hukum Universitas Muhammadiyah Papua. Seluruh kode Mermaid di bawah ini diverifikasi konsisten dan akurat terhadap basis kode frontend (`assets/js/app.js`, `assets/css/style.css`, 36 berkas HTML) berdasarkan audit Oktober 2026.
 
 ---
 
@@ -11,12 +11,33 @@
 1. [1. Data Flow Diagram (DFD) Level 0 — Diagram Konteks](#1-data-flow-diagram-dfd-level-0--diagram-konteks)
 2. [2. Data Flow Diagram (DFD) Level 1 — Dekomposisi Proses Utama](#2-data-flow-diagram-dfd-level-1--dekomposisi-proses-utama)
 3. [3. Flowchart Sistem — Logika Navigasi Publik & Panel Admin](#3-flowchart-sistem--logika-navigasi-publik--panel-admin)
-4. [4. Entity Relationship Diagram (ERD) — 17 Entitas Data](#4-entity-relationship-diagram-erd--17-entitas-data)
+4. [4. Entity Relationship Diagram (ERD) — 18 Entitas Data](#4-entity-relationship-diagram-erd--18-entitas-data)
 5. [5. Component Diagram — Arsitektur 4-Layer Client-Side](#5-component-diagram--arsitektur-4-layer-client-side)
-6. [6. Sequence Diagram — 3 Skenario Krusial Transaksi Data](#6-sequence-diagram--3-skenario-krusial-transaksi-data)
-7. [7. Use Case Diagram — 4 Aktor & 16 Use Cases](#7-use-case-diagram--4-aktor--16-use-cases)
+6. [6. Sequence Diagram — 4 Skenario Krusial Transaksi Data](#6-sequence-diagram--4-skenario-krusial-transaksi-data)
+7. [7. Use Case Diagram — Aktor & Use Cases](#7-use-case-diagram--aktor--use-cases)
 8. [8. Deployment Diagram — Topologi Fisik & Runtime CDN](#8-deployment-diagram--topologi-fisik--runtime-cdn)
-9. [9. Panduan Penggunaan Berkas Draw.io XML](#9-panduan-penggunaan-berkas-drawio-xml)
+9. [9. Activity Diagram — Interaksi Publik, Admin, dan Persistensi](#9-activity-diagram--interaksi-publik-admin-dan-persistensi)
+10. [10. Panduan Penggunaan Berkas Draw.io XML](#10-panduan-penggunaan-berkas-drawio-xml)
+
+---
+
+## Catatan Audit (Oktober 2026)
+
+| Aspek | Nilai Terverifikasi |
+|-------|-------------------|
+| Total SEED entities | **18** (SEED_AKTIVITAS, SEED_ALUMNI, SEED_ARTIKEL, SEED_BERITA, SEED_DOKUMEN, SEED_DOSEN, SEED_GALERI, SEED_KEGIATAN, SEED_KURIKULUM, SEED_NOTIFIKASI, SEED_PENDAFTAR, SEED_PENGATURAN, SEED_PENGGUNA, SEED_PENGUMUMAN, SEED_PESAN, SEED_PRESTASI, SEED_PROFIL, SEED_STRUKTUR) |
+| Total MK Kurikulum | **57 MK** dari workbook MK Baru |
+| Total SKS | **154 SKS** |
+| Distribusi semester | S1=9, S2=8, S3=10, S4=10, S5=8, S6=9, S7=2, S8=1 MK |
+| MK tanpa dosen pengampu | **10 MK** (dikosongkan by design) |
+| Total Dosen | **11 dosen** (10 berkode HKM001–HKM010, 1 tanpa kode) |
+| Alpine.js functions | **28 functions** |
+| Total halaman HTML | **36 files** (13 publik + 5 detail + 18 admin) |
+| DOSEN fields aktual | `id, nama, kode, jabatan, pendidikan, spesialisasi, foto, email, telepon` |
+| KURIKULUM fields aktual | `id, kode, nama, sks, semester, kategori, deskripsi, pengampu, kodeDosen` |
+| PENGATURAN social media | `facebook, instagram, youtube, linkedin, tiktok` |
+| Bad chars di app.js | 0 |
+| DB.save/DB.load parity | ✅ Semua 18 key konsisten |
 
 ---
 
@@ -24,133 +45,46 @@
 
 ### 1.1 Deskripsi & Batasan Sistem
 
-DFD Level 0 (Diagram Konteks) menggambarkan batas terluar (_system boundary_) dari Sistem Informasi Profil & Panel Admin Program Studi Hukum UMP, memetakan seluruh entitas eksternal (Pengunjung Publik, Sivitas Akademika, Pengguna Admin, serta Layanan Eksternal Cloud CDN & Google Maps API) dan pertukaran aliran data global ke dalam sistem utama.
+DFD Level 0 menggambarkan batas terluar sistem — seluruh entitas eksternal (Pengunjung Publik, Administrator) dan pertukaran aliran data global dengan sistem utama. Sistem berjalan **murni di sisi browser** tanpa API server atau backend.
 
 ### 1.2 Kode Mermaid (DFD Level 0)
 
 ```mermaid
-flowchart TB
-    %% ==========================================
-    %% 1. PRESENTATION & UI LAYER
-    %% ==========================================
-    subgraph PRESENTATION["🌐 1. Presentation & Styling Layer (Client Browser)"]
-        subgraph PUB_VIEWS["📄 Public View Components (18 Halaman HTML)"]
-            PUB_PAGES["<b>Public Pages</b><br/>• index.html, profil.html, dosen.html<br/>• kurikulum.html, berita.html, pengumuman.html<br/>• kegiatan.html, artikel.html, prestasi.html<br/>• alumni.html, galeri.html, dokumen.html, kontak.html"]
-            PUB_DETAIL["<b>Detail Views</b><br/>• detail-berita.html, detail-artikel.html<br/>• detail-pengumuman.html, detail-kegiatan.html<br/>• detail-galeri.html"]
-        end
+flowchart LR
+    %% Entitas Eksternal
+    E_VISITOR["Pengunjung\nCalon mahasiswa, mahasiswa, alumni, dan masyarakat"]
+    E_ADMIN["Administrator\nSuper Admin, Editor, atau Operator"]
+    E_CDN["Layanan eksternal\nCDN pustaka dan Google Fonts"]
+    E_MAPS["Layanan eksternal\nGoogle Maps Embed"]
 
-        subgraph ADM_VIEWS["🔐 Admin View Components (18 Halaman HTML)"]
-            ADM_AUTH["<b>Auth Views</b><br/>• login.html, lupa-sandi.html"]
-            ADM_DASH["<b>Dashboard & Config</b><br/>• dashboard.html, pengaturan.html<br/>• profil-prodi.html, aktivitas.html"]
-            ADM_CRUD["<b>CRUD Management Views</b><br/>• berita.html, pengumuman.html, kegiatan.html<br/>• artikel.html, prestasi.html, dosen.html<br/>• kurikulum.html, alumni.html, galeri.html<br/>• dokumen.html, pengguna.html"]
-        end
+    %% Proses Konteks Utama
+    P0(("0\nWebsite Profil\nProgram Studi Hukum UMP"))
 
-        subgraph DESIGN_SYSTEM["🎨 Neumorphism Design System"]
-            CSS_TOKENS["<b>style.css</b><br/>• Neumorphic Tokens (--neu-light, --neu-dark)<br/>• Theme Tokens (Light & Dark Mode)<br/>• Component Classes (.neu-raised, .neu-pressed, .neu-btn)"]
-            TW_ENGINE["<b>Tailwind CSS 3.4 & Bootstrap 5.3</b><br/>• tailwind.min.css (Utility Classes)<br/>• Responsive Grid Subsystem"]
-        end
-    end
+    %% Data Store Sistem Klien
+    D1[("D1 Data aplikasi dan sesi\n(localStorage pada origin browser)")]
+    D2[("D2 Salinan data best-effort\n(IndexedDB: ProdiHukumDB / entities)")]
 
-    %% ==========================================
-    %% 2. CONTROLLER & REACTIVE LOGIC LAYER
-    %% ==========================================
-    subgraph CONTROLLER["⚡ 2. Reactive Controller Layer (Alpine.js Components)"]
-        HEADER_CTRL["<b>siteHeader & themeStore</b><br/>• Dark/Light Mode Switcher<br/>• Mobile Drawer Navigation<br/>• syncThemeColorMeta()"]
-        SEARCH_CTRL["<b>globalSearch Controller</b><br/>• Realtime Query Filter<br/>• getSearchIndex() Connector"]
-        DETAIL_CTRL["<b>Public Detail Controllers</b><br/>• detailBeritaPage(), detailKegiatanPage()<br/>• daftarKegiatan() & Form Pendaftaran<br/>• contactForm() & detailContentPage()"]
-        
-        ADM_SHELL_CTRL["<b>adminShell Controller</b><br/>• Sesi State & Logout Trigger<br/>• Sidebar Responsive Toggle<br/>• Notifikasi Polling & Badge Counter"]
-        ADM_CRUD_CTRL["<b>adminCrudTable & Data Controllers</b><br/>• Generic CRUD Manager (rows, filter, paginate)<br/>• Image Compression Trigger<br/>• adminPenggunaTable() & adminDokumenTable()"]
-        ALERT_WRAPPER["<b>NeuAlert (SweetAlert2 Wrapper)</b><br/>• Modal Konfirmasi Hapus & Dialog Sukses<br/>• Alert Quota Storage Penuh (storageFull)"]
-    end
+    %% Aliran Data Pengunjung (Data Flows)
+    E_VISITOR -->|"Permintaan halaman dan pencarian"| P0
+    E_VISITOR -->|"Data formulir kontak"| P0
+    E_VISITOR -->|"Data pendaftaran kegiatan"| P0
+    P0 -->|"Konten, hasil pencarian, dan dokumen"| E_VISITOR
+    P0 -->|"Konfirmasi formulir dan pendaftaran"| E_VISITOR
 
-    %% ==========================================
-    %% 3. BUSINESS LOGIC & PERSISTENCE ENGINE
-    %% ==========================================
-    subgraph CORE_ENGINE["⚙️ 3. Core Logic & Persistence Engine (assets/js/app.js)"]
-        subgraph AUTH_MODULE["🔑 Authentication & Access Control Subsystem"]
-            AUTH_CORE["<b>AUTH Engine</b><br/>• AUTH.login(matchedUser)<br/>• AUTH.logout()<br/>• AUTH.current() & AUTH.isLoggedIn()<br/>• AUTH.guard(requiredRole)"]
-            RBAC_RULES["<b>Role-Based Access Control (RBAC)</b><br/>• Super Admin: Akses Penuh<br/>• Editor: Kelola Konten & Publikasi<br/>• Operator: Entri Data Terbatas"]
-        end
+    %% Aliran Data Administrator (Data Flows)
+    E_ADMIN -->|"Kredensial, permintaan reset, dan data kelola"| P0
+    E_ADMIN -->|"Pengaturan serta berkas backup/restore JSON"| P0
+    P0 -->|"Dashboard, modul admin, dan notifikasi"| E_ADMIN
+    P0 -->|"Status operasi dan riwayat aktivitas"| E_ADMIN
 
-        subgraph DB_ENGINE["🗄️ Database Management Subsystem (DB Engine)"]
-            DB_CORE["<b>DB Interface</b><br/>• DB.load(entityKey, seedFallback)<br/>• DB.save(entityKey, payload)<br/>• DB.reset(entityKey) & DB.resetAll()<br/>• DB.optimizeStorage()"]
-            PRUNE_SYS["<b>Storage Optimization & Pruning</b><br/>• QuotaExceededError Handler<br/>• pruneStorage() (Pangkas Pageview & Log Lama)<br/>• compressImageFile() (Otomatis Kompres Gambar)"]
-            AUDIT_SYS["<b>Audit Trail & Activity Logger</b><br/>• logActivity(aksi, icon)<br/>• logPublicEvent(aksi, icon)"]
-        end
+    %% Aliran Data Penyimpanan (Read / Write)
+    P0 -->|"Simpan data, sesi, dan pageview"| D1
+    D1 -->|"Baca data aplikasi dan sesi"| P0
+    P0 -.->|"Salinan tulis asinkron best-effort"| D2
 
-        subgraph IDB_MODULE["📦 Unlimited Media Backing Store (IDB Engine)"]
-            IDB_CORE["<b>IndexedDB Connector (ProdiHukumDB)</b><br/>• IDB.get(key)<br/>• IDB.set(key, val)<br/>• IDB.clear()"]
-        end
-
-        subgraph SEED_REPO["🌱 Seed Fixtures Repository"]
-            SEED_DATA["<b>Default Fixtures (16 Entitas)</b><br/>• SEED_BERITA, SEED_DOSEN, SEED_PENGUMUMAN<br/>• SEED_KEGIATAN, SEED_KURIKULUM, SEED_ALUMNI<br/>• SEED_PENGGUNA, SEED_PROFIL, SEED_PENGATURAN, dll."]
-        end
-    end
-
-    %% ==========================================
-    %% 4. STORAGE & EXTERNAL SERVICES LAYER
-    %% ==========================================
-    subgraph STORAGE_EXT["💾 4. Client Storage & External Integrations"]
-        subgraph BROWSER_STORAGE["💽 Local Client Storage Subsystem"]
-            LOCAL_STORAGE[("<b>Web Storage API (localStorage)</b><br/>• prodihukum_db_v1_&lt;entity&gt;<br/>• prodihukum_admin_session<br/>• prodihukum_pageviews_v1<br/>• theme (light/dark)")]
-            INDEXED_DB[("<b>IndexedDB Storage</b><br/>• DB Name: ProdiHukumDB<br/>• ObjectStore: entities<br/>• Unlimited Media & Blob Storage")]
-        end
-
-        subgraph EXT_SERVICES["☁️ External CDN & Web Services"]
-            MAPS_API["<b>Google Maps Embed Service</b><br/>• Iframe Peta Lokasi Kampus / Kegiatan"]
-            CDN_FONTS["<b>Google Fonts API</b><br/>• Inter (Sans-serif) & Poppins (Display)"]
-            CDN_LIBS["<b>JavaScript CDN Providers</b><br/>• Alpine.js 3.14.8, SweetAlert2 v11, Bootstrap 5.3.3"]
-        end
-    end
-
-    %% ==========================================
-    %% INTER-COMPONENT RELATIONSHIPS & DEPENDENCIES
-    %% ==========================================
-    
-    %% Styling Dependencies
-    PUB_VIEWS -.-> DESIGN_SYSTEM
-    ADM_VIEWS -.-> DESIGN_SYSTEM
-    DESIGN_SYSTEM -.-> CDN_FONTS
-    DESIGN_SYSTEM -.-> CDN_LIBS
-
-    %% View -> Controller Bindings
-    PUB_PAGES --> HEADER_CTRL
-    PUB_PAGES --> SEARCH_CTRL
-    PUB_DETAIL --> DETAIL_CTRL
-    PUB_PAGES -. "Embeds iframe" .-> MAPS_API
-    
-    ADM_AUTH --> AUTH_CORE
-    ADM_DASH --> ADM_SHELL_CTRL
-    ADM_CRUD --> ADM_CRUD_CTRL
-    ADM_CRUD_CTRL --> ALERT_WRAPPER
-    ADM_SHELL_CTRL --> ALERT_WRAPPER
-
-    %% Controller -> Core Logic Dependencies
-    HEADER_CTRL -- "Write theme preference" --> LOCAL_STORAGE
-    SEARCH_CTRL -- "Request aggregate index" --> DB_CORE
-    DETAIL_CTRL -- "Load/Save Data (Pendaftar, dll.)" --> DB_CORE
-    DETAIL_CTRL -- "Trigger logPublicEvent()" --> AUDIT_SYS
-
-    ADM_SHELL_CTRL -- "Check session status" --> AUTH_CORE
-    ADM_CRUD_CTRL -- "Read / Write Data" --> DB_CORE
-    ADM_CRUD_CTRL -- "Trigger logActivity()" --> AUDIT_SYS
-    ADM_CRUD_CTRL -- "Request image compression" --> PRUNE_SYS
-    ADM_AUTH -- "Submit credentials" --> AUTH_CORE
-
-    %% Core Logic Internal Interactions
-    AUTH_CORE -- "Verify role permissions" --> RBAC_RULES
-    AUTH_CORE -- "Read user list ('pengguna')" --> DB_CORE
-    AUTH_CORE -- "Write/Delete prodihukum_admin_session" --> LOCAL_STORAGE
-    
-    DB_CORE -- "Initial load if store empty" --> SEED_DATA
-    DB_CORE -- "Auto-invoke on QuotaExceeded" --> PRUNE_SYS
-    DB_CORE -- "Primary synchronous I/O (prodihukum_db_v1_*)" --> LOCAL_STORAGE
-    DB_CORE -- "Async backup storage" --> IDB_CORE
-    IDB_CORE -- "Store heavy media / base64" --> INDEXED_DB
-
-    AUDIT_SYS -- "Persist audit trail ('aktivitas' & 'notifikasi')" --> DB_CORE
-    PRUNE_SYS -- "Prune old logs & pageviews" --> LOCAL_STORAGE
+    %% Aliran Data Layanan Eksternal
+    E_CDN -->|"Pustaka UI, skrip, dan font"| P0
+    E_MAPS -->|"Konten peta tertanam"| P0
 ```
 
 ---
@@ -159,89 +93,89 @@ flowchart TB
 
 ### 2.1 Deskripsi Proses & Media Penyimpanan
 
-DFD Level 1 membedah proses utama `0.0` menjadi **10 Sub-Proses Fungsional** dan menghubungkannya dengan **17 Data Store** berbasis `localStorage` yang terisolasi _namespace_ `prodihukum_db_v1_<entity>` serta cadangan asinkron `IndexedDB (ProdiHukumDB)`.
+DFD Level 1 membedah proses utama menjadi **10 Sub-Proses Fungsional** dan menghubungkannya dengan **18 Data Store** berbasis `localStorage` dengan namespace `prodihukum_db_v1_<entity>` serta cadangan asinkron IndexedDB.
 
 ### 2.2 Kode Mermaid (DFD Level 1)
 
 ```mermaid
 flowchart TB
-    subgraph ENTITAS["👥 Entitas Eksternal"]
-        P["👤 Pengunjung Publik"]
-        A["🔐 Admin (Super Admin / Editor / Operator)"]
+    %% Entitas Eksternal
+    EXT_VISITOR["Entitas Eksternal:\nPengunjung (Publik)"]
+    EXT_ADMIN["Entitas Eksternal:\nAdministrator (Editor / Operator / Super Admin)"]
+    EXT_SUPER["Entitas Eksternal:\nSuper Admin"]
+
+    %% Data Stores
+    subgraph STORES["Data Stores Sistem (localStorage & IndexedDB)"]
+        DS_MASTER[("D1 Basis Data 18 Entitas\n(localStorage: prodihukum_db_v1_*)")]
+        DS_SESSION[("D2 Sesi Administrator\n(localStorage: prodihukum_admin_session)")]
+        DS_VIEWS[("D3 Statistik Kunjungan\n(localStorage: prodihukum_pageviews_v1)")]
+        DS_IDB[("D4 Salinan data best-effort\n(IndexedDB: ProdiHukumDB / entities)")]
     end
 
-    subgraph PROSES["⚙️ Proses Sistem (Level 1)"]
-        P1["1.0<br/>Manajemen Tampilan Konten Publik"]
-        P2["2.0<br/>Pencarian Global Realtime"]
-        P3["3.0<br/>Pendaftaran Kegiatan Akademik"]
-        P4["4.0<br/>Pengiriman Formulir Kontak"]
-        P5["5.0<br/>Autentikasi & Guard RBAC"]
-        P6["6.0<br/>Manajemen Konten CRUD (11 Modul)"]
-        P7["7.0<br/>Manajemen Akun Pengguna & Peran"]
-        P8["8.0<br/>Pencatatan Audit Trail & Notifikasi"]
-        P9["9.0<br/>Pengaturan Situs & Backup / Restore"]
-        P10["10.0<br/>Agregasi Statistik & Tren Dashboard"]
-    end
+    %% Sub-proses DFD Level 1
+    P1(("1.0\nAutentikasi & Manajemen Sesi"))
+    P2(("2.0\nPenjelajahan Konten Publik & Pageviews"))
+    P3(("3.0\nPenanganan Formulir Publik"))
+    P4(("4.0\nPengelolaan Data Akademik & Dosen"))
+    P5(("5.0\nPengelolaan Konten Publikasi & Profil"))
+    P6(("6.0\nKonfigurasi Sistem, Akun & Backup/Restore"))
+    P7(("7.0\nPencatatan Log Aktivitas & Notifikasi"))
+    P8(("8.0\nPersistensi Klien (DB.save)"))
 
-    subgraph DATASTORES["🗄️ Data Store (localStorage & IndexedDB)"]
-        DS1[("D1 · berita")]
-        DS2[("D2 · dosen")]
-        DS3[("D3 · dokumen")]
-        DS4[("D4 · galeri")]
-        DS5[("D5 · pengumuman")]
-        DS6[("D6 · kegiatan")]
-        DS7[("D7 · pendaftar")]
-        DS8[("D8 · artikel")]
-        DS9[("D9 · prestasi")]
-        DS10[("D10 · kurikulum")]
-        DS11[("D11 · alumni")]
-        DS12[("D12 · pengguna")]
-        DS13[("D13 · aktivitas")]
-        DS14[("D14 · notifikasi")]
-        DS15[("D15 · profil & struktur")]
-        DS16[("D16 · pengaturan")]
-        DSPV[("PV · prodihukum_pageviews_v1")]
-    end
+    %% ==========================================
+    %% ALIRAN DATA (DATA FLOWS)
+    %% ==========================================
 
-    P -- "Akses Halaman & Filter Kategori" --> P1
-    P1 -- "Read Data" --> DS1 & DS2 & DS3 & DS4 & DS5 & DS6 & DS8 & DS9 & DS10 & DS11 & DS15 & DS16
-    P1 -- "Write Hit (trackPageView)" --> DSPV
-    P1 -- "Render Halaman / Detail" --> P
+    %% 1.0 Autentikasi
+    EXT_ADMIN -->|"Email & Password login / Permintaan reset"| P1
+    DS_MASTER -->|"Data kredensial pengguna (SEED_PENGGUNA)"| P1
+    P1 -->|"Simpan token sesi aktif"| DS_SESSION
+    P1 -->|"Data password baru"| P8
+    P1 -->|"Status login / pesan validasi"| EXT_ADMIN
 
-    P -- "Input Kueri Pencarian" --> P2
-    P2 -- "Read Index Gabungan" --> DS1 & DS2 & DS3 & DS5 & DS6 & DS8 & DS9 & DS10 & DS11
-    P2 -- "Daftar Hasil Pencarian" --> P
+    %% 2.0 Penjelajahan Publik
+    EXT_VISITOR -->|"Request buka halaman / keyword pencarian"| P2
+    DS_MASTER -->|"Data terbitan (berita, artikel, kurikulum, dosen)"| P2
+    P2 -->|"Render halaman & data hasil pencarian"| EXT_VISITOR
+    P2 -->|"Inkrementasi hitungan tayangan lokal"| DS_VIEWS
 
-    P -- "Submit Data Pendaftar" --> P3
-    P3 -- "Write Data Peserta" --> DS7
-    P3 -- "Trigger Log Publik" --> P8
-    P3 -- "Konfirmasi Sukses" --> P
+    %% 3.0 Formulir Publik
+    EXT_VISITOR -->|"Form pesan kontak (nama, email, pesan)"| P3
+    EXT_VISITOR -->|"Form pendaftaran kegiatan (nama, email, wa, instansi)"| P3
+    DS_MASTER -->|"Cek duplikasi email pendaftar pada kegiatan"| P3
+    P3 -->|"Data pesan & pendaftar"| P8
+    P3 -->|"Feedback notifikasi sukses/gagal (SweetAlert)"| EXT_VISITOR
+    P3 -->|"Event kontak / pendaftaran (logPublicEvent)"| P7
 
-    P -- "Submit Pesan" --> P4
-    P4 -- "Validasi & Feedback" --> P
+    %% 4.0 Data Akademik
+    EXT_ADMIN -->|"Input/Edit/Hapus data dosen, kurikulum, struktur, alumni"| P4
+    P4 -->|"Data akademik yang berubah"| P8
+    DS_MASTER -->|"Baca data akademik untuk form edit"| P4
+    P4 -->|"Konfirmasi penyimpanan & update tampilan"| EXT_ADMIN
+    P4 -->|"Trigger log perubahan data akademik"| P7
 
-    A -- "Input Email & Password" --> P5
-    P5 -- "Read Kredensial" --> DS12
-    P5 -- "Set Sesi Admin & Guard" --> A
+    %% 5.0 Konten Publikasi
+    EXT_ADMIN -->|"Input/Edit/Hapus berita, artikel, kegiatan, galeri, prestasi, dokumen, profil"| P5
+    P5 -->|"Konten dan profil yang berubah"| P8
+    DS_MASTER -->|"Baca data konten untuk form edit"| P5
+    P5 -->|"Konfirmasi penyimpanan & reload tabel"| EXT_ADMIN
+    P5 -->|"Trigger log perubahan konten"| P7
 
-    A -- "Create / Update / Delete" --> P6
-    P6 -- "Write Data Koleksi" --> DS1 & DS2 & DS3 & DS4 & DS5 & DS6 & DS8 & DS9 & DS10 & DS11 & DS15
-    P6 -- "Catat Aksi Admin" --> P8
+    %% 6.0 Konfigurasi & Backup
+    EXT_SUPER -->|"Kelola pengaturan/akun dan unggah backup JSON"| P6
+    P6 -->|"Perubahan pengaturan, akun, atau data pulihan"| P8
+    DS_MASTER -->|"Export seluruh 18 entitas ke file JSON unduhan"| P6
+    P6 -->|"Unduh backup JSON dan status operasi"| EXT_SUPER
+    P6 -->|"Trigger log konfigurasi/backup"| P7
 
-    A -- "Kelola Akun (Super Admin)" --> P7
-    P7 -- "Write Akun Admin" --> DS12
-    P7 -- "Catat Aksi Admin" --> P8
+    %% 7.0 Logging & Sync
+    P7 -->|"Data aktivitas & notifikasi"| P8
+    DS_MASTER -->|"Data notifikasi belum dibaca & riwayat dasbor"| P7
+    P7 -->|"Tampilkan ringkasan aktivitas di dasbor"| EXT_ADMIN
 
-    P8 -- "Write Log" --> DS13
-    P8 -- "Write Notif" --> DS14
-
-    A -- "Ubah Identitas / Backup / Reset" --> P9
-    P9 -- "Write Pengaturan" --> DS15 & DS16
-    P9 -- "Catat Aksi Admin" --> P8
-
-    A -- "Akses Dashboard" --> P10
-    P10 -- "Hitung Metrik & Tren" --> DS1 & DS2 & DS11 & DS12 & DSPV & DS13
-    P10 -- "Render Widget Statistik" --> A
+    %% DB.save menulis ke sumber utama dan meminta salinan asinkron best-effort.
+    P8 -->|"Simpan sinkron (18 key entitas)"| DS_MASTER
+    P8 -.->|"Salinan asinkron best-effort"| DS_IDB
 ```
 
 ---
@@ -252,306 +186,387 @@ flowchart TB
 
 Flowchart Sistem membagi alur logika menjadi dua modul terpisah:
 
-1. **Alur Pengunjung Publik**: Membuka landing page, navigasi konten, pencarian instan, pengisian form registrasi kegiatan dengan validasi anti-duplikasi email, unduh dokumen, dan pergantian tema mode gelap/terang.
-2. **Alur Panel Administrasi**: Pengecekan sesi login, validasi otentikasi kredensial pengguna, otorisasi RBAC guard (Super Admin vs Editor vs Operator), eksekusi transaksi CRUD, pencatatan otomatis jejak audit log (`logActivity`), dan pemutusan sesi (_logout_).
+1. **Alur Pengunjung Publik**: Buka halaman, navigasi konten, pencarian instan, registrasi kegiatan (validasi email unik per kegiatanId), pengiriman pesan kontak (ditulis ke `pesan` store), unduh dokumen, dan pergantian tema.
+2. **Alur Panel Administrasi**: Pengecekan sesi, validasi autentikasi, otorisasi RBAC guard (Super Admin untuk pengguna/pengaturan), CRUD, pencatatan `logActivity`, auto-pruning bila kuota penuh, dan logout.
 
 ### 3.2 Kode Mermaid (Flowchart Sistem)
 
 ```mermaid
 flowchart TD
-    %% SUB-FLOW 1: PENGUNJUNG PUBLIK
-    subgraph PUBLIC_FLOW["🌐 ALUR INTERAKSI PENGUNJUNG PUBLIK"]
-        P_Start([Mulai: Pengunjung Buka Website]) -->|Inisialisasi Aplikasi| P_Choice{Pilih Menu / Fitur}
+    START([Mulai])
+    ROUTE{Area yang dibuka?}
+    FINISH([Selesai])
+    START --> ROUTE
 
-        P_Choice -->|1. Akses Informasi| P_Load[Muat Data dari LocalStorage & IndexedDB]
-        P_Load -->|Koleksi Dimuat| P_PV[Catat Pageview Harian otomatis]
-        P_PV -->|Hit Tercatat| P_Render[Render Tampilan Responsif & Interaktif]
+    subgraph PUBLIC["Alur Pengunjung"]
+        direction TD
+        LOAD_PUBLIC["Muat halaman dan data dari localStorage; gunakan seed bila key belum tersedia"]
+        PUBLISHED["Tampilkan konten sesuai modul; berita dan artikel hanya berstatus Published"]
+        PAGEVIEW["Catat pageview pada browser"]
+        PUBLIC_ACTION{Aksi pengunjung?}
+        BROWSE["Jelajahi konten, cari informasi, atau unduh dokumen"]
+        CONTACT_FORM["Isi formulir kontak"]
+        CONTACT_VALIDATE{Nama, email, dan pesan valid?}
+        CONTACT_SAVE["Simpan pesan ke localStorage melalui DB.save('pesan')"]
+        CONTACT_ERROR["Tampilkan validasi atau kegagalan penyimpanan"]
+        CONTACT_CONFIRM["Catat event publik dan tampilkan konfirmasi"]
+        REG_FORM["Isi formulir pendaftaran kegiatan"]
+        REG_VALIDATE{Data pendaftaran valid?}
+        DUPLICATE{Email sudah terdaftar pada kegiatan ini?}
+        REG_SAVE["Simpan pendaftar melalui DB.save('pendaftar')"]
+        REG_ERROR["Tampilkan validasi atau kegagalan penyimpanan"]
+        REG_CONFIRM["Catat event publik dan tampilkan konfirmasi"]
 
-        P_Choice -->|2. Pencarian Global| P_Search[/Input Kata Kunci/]
-        P_Search -->|Kueri Dikirim| P_ExecSearch[Cari pada Indeks 9 Entitas Data]
-        P_ExecSearch -->|Hasil Ditemukan| P_RenderSearch[Tampilkan Hasil & Tautan Langsung]
+        LOAD_PUBLIC --> PUBLISHED --> PAGEVIEW --> PUBLIC_ACTION
+        PUBLIC_ACTION -->|Jelajah / cari / unduh| BROWSE --> FINISH
+        PUBLIC_ACTION -->|Kirim pesan| CONTACT_FORM --> CONTACT_VALIDATE
+        CONTACT_VALIDATE -->|Tidak| CONTACT_ERROR --> FINISH
+        CONTACT_VALIDATE -->|Ya| CONTACT_SAVE
+        CONTACT_SAVE -->|Gagal| CONTACT_ERROR
+        CONTACT_SAVE -->|Berhasil| CONTACT_CONFIRM --> FINISH
+        PUBLIC_ACTION -->|Daftar kegiatan| REG_FORM --> REG_VALIDATE
+        REG_VALIDATE -->|Tidak| REG_ERROR --> FINISH
+        REG_VALIDATE -->|Ya| DUPLICATE
+        DUPLICATE -->|Ya| REG_ERROR
+        DUPLICATE -->|Tidak| REG_SAVE
+        REG_SAVE -->|Gagal| REG_ERROR
+        REG_SAVE -->|Berhasil| REG_CONFIRM --> FINISH
+    end
+    ROUTE -->|Halaman publik| LOAD_PUBLIC
 
-        P_Choice -->|3. Pendaftaran Kegiatan| P_OpenKeg[Buka detail-kegiatan.html?id=...]
-        P_OpenKeg -->|Submit Form Event| P_FillKeg[/Isi Formulir Pendaftaran/]
-        P_FillKeg -->|Cek Duplikasi| P_ValEmail{Email Sudah Terdaftar?}
-        P_ValEmail -- Ya (Duplikat) --> P_ErrEmail[Tampilkan SweetAlert Error]
-        P_ValEmail -- Tidak (Valid) --> P_SaveKeg[Simpan ke 'pendaftar' & Catat Log]
-        P_SaveKeg -->|Commit Berhasil| P_OkKeg[Tampilkan SweetAlert Sukses]
+    subgraph AUTH["Autentikasi Administrator"]
+        direction TD
+        ADMIN_ROUTE{Jenis halaman admin?}
+        LOGIN_FORM["Masukkan email dan kata sandi"]
+        LOGIN_CHECK{Akun aktif dan kredensial cocok?}
+        LOGIN_DENIED["Tampilkan pesan login gagal"]
+        LOGIN_SESSION["Simpan sesi lokal prodihukum_admin_session"]
+        LOGIN_HOME["Buka dashboard admin"]
+        RESET_FORM["Masukkan email terdaftar"]
+        RESET_CHECK{Email ditemukan dan akun aktif?}
+        RESET_PASSWORD["Masukkan kata sandi baru dan konfirmasi"]
+        RESET_PASSWORD_CHECK{Minimal 4 karakter dan konfirmasi cocok?}
+        RESET_SAVE["Simpan kata sandi melalui DB.save('pengguna')"]
+        RESET_SAVE_CHECK{Penyimpanan berhasil?}
+        RESET_DONE["Tampilkan konfirmasi dan kembali ke login"]
+        GUARD["Jalankan AUTH.guard()"]
+        SESSION_CHECK{Sesi admin valid?}
+        REDIRECT_LOGIN["Arahkan ke halaman login"]
+        ROLE_CHECK{Halaman hanya untuk Super Admin?}
+        SUPER_CHECK{Peran sesi adalah Super Admin?}
+        ROLE_DENIED["Tolak akses dan arahkan ke dashboard"]
+        ADMIN_HOME["Buka modul admin"]
 
-        P_Choice -->|4. Ganti Tema| P_ToggleDark[Klik Tombol Mode Gelap/Terang]
-        P_ToggleDark -->|Simpan Preferensi| P_ApplyTheme[Toggle Class .dark & Simpan ke localStorage]
+        ADMIN_ROUTE -->|login.html| LOGIN_FORM --> LOGIN_CHECK
+        LOGIN_CHECK -->|Tidak| LOGIN_DENIED --> FINISH
+        LOGIN_CHECK -->|Ya| LOGIN_SESSION --> LOGIN_HOME --> FINISH
+        ADMIN_ROUTE -->|lupa-sandi.html| RESET_FORM --> RESET_CHECK
+        RESET_CHECK -->|Tidak, tampilkan pesan| RESET_FORM
+        RESET_CHECK -->|Ya| RESET_PASSWORD --> RESET_PASSWORD_CHECK
+        RESET_PASSWORD_CHECK -->|Tidak, tampilkan validasi| RESET_PASSWORD
+        RESET_PASSWORD_CHECK -->|Ya| RESET_SAVE --> RESET_SAVE_CHECK
+        RESET_SAVE_CHECK -->|Tidak, storage penuh| RESET_PASSWORD
+        RESET_SAVE_CHECK -->|Ya| RESET_DONE --> FINISH
+        ADMIN_ROUTE -->|Halaman admin lain| GUARD --> SESSION_CHECK
+        SESSION_CHECK -->|Tidak| REDIRECT_LOGIN --> FINISH
+        SESSION_CHECK -->|Ya| ROLE_CHECK
+        ROLE_CHECK -->|Tidak| ADMIN_HOME
+        ROLE_CHECK -->|Ya| SUPER_CHECK
+        SUPER_CHECK -->|Tidak| ROLE_DENIED --> FINISH
+        SUPER_CHECK -->|Ya| ADMIN_HOME
+    end
+    ROUTE -->|Halaman admin| ADMIN_ROUTE
 
-        P_Render -->|Navigasi Selesai| P_End([Selesai])
-        P_RenderSearch -->|Buka Detail Konten| P_End
-        P_ErrEmail -->|Tutup Alert Error| P_End
-        P_OkKeg -->|Unduh Tiket PDF| P_End
-        P_ApplyTheme -->|Terapkan Tema Baru| P_End
+    subgraph MANAGE["Operasi Admin"]
+        direction TD
+        ADMIN_ACTION{Aksi admin?}
+        CRUD["Tambah, ubah, atau hapus data"]
+        SAVE["DB.save(): tulis sinkron ke localStorage"]
+        SAVE_RESULT{Penulisan berhasil?}
+        RETRY["Pangkas log internal yang dibatasi, lalu coba sekali lagi"]
+        RETRY_RESULT{Percobaan ulang berhasil?}
+        SAVE_FAIL["Batalkan perubahan dan beri tahu admin"]
+        ASYNC_COPY["Minta salinan IndexedDB secara asinkron (best-effort)"]
+        ACTIVITY["Catat aktivitas dan notifikasi"]
+        UPDATE_VIEW["Pancarkan db-update; tab lain menerima storage event"]
+        SAVE_OK["Perbarui tampilan dan tampilkan hasil"]
+        BACKUP["Backup atau restore JSON data aplikasi"]
+        EXPORT["Ekspor CSV kurikulum sesuai pencarian dan filter aktif"]
+        LOGOUT["Hapus sesi lokal dan kembali ke login"]
+
+        ADMIN_HOME --> ADMIN_ACTION
+        ADMIN_ACTION -->|CRUD| CRUD --> SAVE --> SAVE_RESULT
+        SAVE_RESULT -->|Ya| ASYNC_COPY --> ACTIVITY --> UPDATE_VIEW --> SAVE_OK --> FINISH
+        SAVE_RESULT -->|Tidak| RETRY --> RETRY_RESULT
+        RETRY_RESULT -->|Ya| ASYNC_COPY
+        RETRY_RESULT -->|Tidak| SAVE_FAIL --> FINISH
+        ADMIN_ACTION -->|Backup / restore| BACKUP --> FINISH
+        ADMIN_ACTION -->|Ekspor kurikulum| EXPORT --> FINISH
+        ADMIN_ACTION -->|Logout| LOGOUT --> FINISH
     end
 
-    %% SUB-FLOW 2: PANEL ADMINISTRASI
-    subgraph ADMIN_FLOW["🔐 ALUR AUTENTIKASI & KONTROL AKSES (RBAC) ADMIN"]
-        A_Start([Mulai: Buka Panel Admin]) -->|Akses URL /admin/*| A_CheckLogin{Halaman Login?}
-
-        A_CheckLogin -- Ya (Halaman Login) --> A_HasSession{Ada Sesi Aktif?}
-        A_HasSession -- Ya (Sesi Valid) --> A_DirectDash[Redirect ke dashboard.html]
-        A_HasSession -- Tidak (Belum Login) --> A_ShowForm[Tampilkan Form Login]
-        A_ShowForm -->|Kirim Kredensial| A_SubmitCreds[/Input Email & Password/]
-        A_SubmitCreds -->|Validasi Hash SHA-256| A_VerifyAcc{Verifikasi Kredensial & Status}
-        A_VerifyAcc -- Gagal / Nonaktif --> A_AlertFail[SweetAlert: Kredensial Tidak Valid]
-        A_AlertFail -->|Ulangi Login| A_ShowForm
-        A_VerifyAcc -- Sukses --> A_CreateSession[Simpan Sesi ke prodihukum_admin_session]
-        A_CreateSession -->|Masuk Dashboard| A_DirectDash
-
-        A_CheckLogin -- Tidak (Halaman CRUD/Modul) --> A_RunGuard["Eksekusi AUTH.guard()"]
-        A_RunGuard -->|Periksa sessionStorage| A_CheckAuth{Sesi Valid?}
-        A_CheckAuth -- Tidak (Tidak Ada Sesi) --> A_RedirectLogin[Redirect ke login.html]
-        A_CheckAuth -- Ya (Terotentikasi) --> A_CheckRole{Halaman Khusus Super Admin?}
-
-        A_CheckRole -- Ya (pengguna/pengaturan) --> A_IsSuper{Role === 'Super Admin'?}
-        A_IsSuper -- Tidak (Hak Ditolak) --> A_DenyAlert[SweetAlert: Hak Akses Ditolak]
-        A_DenyAlert -->|Kembali ke Dashboard| A_DirectDash
-        A_IsSuper -- Ya (Otorisasi Penuh) --> A_AllowSuper[Buka Manajemen Pengguna/Pengaturan]
-
-        A_CheckRole -- Tidak (Modul CRUD Umum) --> A_AllowGeneral[Buka Modul CRUD Sesuai Role]
-
-        A_AllowSuper -->|Akses Penuh Super Admin| A_ExecCRUD[Operasi: Tambah / Edit / Hapus / Backup]
-        A_AllowGeneral -->|Akses Terbatas Editor/Operator| A_ExecCRUD
-        A_ExecCRUD -->|Commit Transaksi| A_SaveData[Simpan ke LocalStorage & Cadangkan ke IDB]
-        A_SaveData -->|Trigger Audit Trail| A_WriteLog[Pencatatan Otomatis Log Audit]
-        A_WriteLog -->|Perbarui Tampilan| A_RefreshTable[Pembaruan Tabel Reaktif]
-
-        A_DirectDash -->|Sesi Berjalan| A_End([Selesai])
-        A_RedirectLogin -->|Kembali ke Login| A_End
-        A_RefreshTable -->|Operasi Selesai| A_End
-    end
+    NOTE["Catatan: autentikasi, reset kata sandi, dan penyimpanan berjalan di browser; tidak ada server autentikasi atau sinkronisasi antarperangkat."]
+    AUTH -.-> NOTE
 ```
 
 ---
 
-## 4. Entity Relationship Diagram (ERD) — 17 Entitas Data
+## 4. Entity Relationship Diagram (ERD) — 18 Entitas Data
 
 ### 4.1 Deskripsi Struktur Skema & Relasi
 
-ERD mendefinisikan 17 model data entitas secara lengkap beserta atribut tipe data, primary key, dan foreign key:
+ERD mendefinisikan **18 entitas data** (16 array record + 2 objek tunggal) yang disimpan di localStorage dengan namespace `prodihukum_db_v1_<key>`:
 
-- **Relasi Utama**: `KEGIATAN (1) ──── (N) PENDAFTAR` melalui kunci tamu `PENDAFTAR.kegiatanId`.
-- **Relasi Jejak Audit**: `PENGGUNA (1) ──── (N) AKTIVITAS` melalui field `AKTIVITAS.user`.
-- **Relasi Notifikasi**: `PENGGUNA (1) ──── (N) NOTIFIKASI`.
+- **Relasi Lookup 1**: `KEGIATAN.id ← PENDAFTAR.kegiatanId` — pendaftar menyimpan snapshot `kegiatanNama` sebagai teks.
+- **Relasi Lookup 2**: `DOSEN.id ← STRUKTUR.dosenId` — opsional; baris STRUKTUR boleh tanpa dosenId.
+- **Relasi Lookup 3**: `DOSEN.nama ↔ KURIKULUM.pengampu` — pencocokan nama ternormalisasi; `kodeDosen` hanya teks informatif, bukan FK.
+- **PESAN**: ditulis oleh `contactForm()`, tidak memiliki relasi FK ke entitas lain.
+- **PROFIL & PENGATURAN**: objek tunggal (bukan array); PENGATURAN menyimpan identitas situs, SEO, dan **5 akun sosial media**.
 
-### 4.2 Kode Mermaid (ERD)
+### 4.2 Field Aktual per Entitas (Terverifikasi dari SEED_*)
+
+| Entitas | Fields Kunci |
+|---------|-------------|
+| DOSEN | `id, nama, kode, jabatan, pendidikan, spesialisasi, foto, email, telepon` |
+| KURIKULUM | `id, kode, nama, sks, semester, kategori, deskripsi, pengampu, kodeDosen` |
+| PENGATURAN | `namaWebsite, deskripsi, logo, favicon, theme, primaryColor, darkMode, metaTitle, metaDesc, keywords, facebook, instagram, youtube, linkedin, tiktok, email, telepon, alamat, mapEmbed, mapLink, koordinat, mahasiswaAktif` |
+| STRUKTUR | `id, dosenId (opsional), nama, jabatan, foto` |
+
+### 4.3 Kode Mermaid (ERD — 18 Entitas)
 
 ```mermaid
 erDiagram
-    KEGIATAN ||--o{ PENDAFTAR : "memiliki pendaftar (kegiatanId)"
-    KEGIATAN ||--o{ GALERI : "dokumentasi kegiatan"
-    PENGGUNA ||--o{ AKTIVITAS : "mencatat log aktivitas (user)"
-    PENGGUNA ||--o{ NOTIFIKASI : "menerima notifikasi"
-    PENGGUNA ||--o{ BERITA : "menerbitkan warta (penulis)"
-    PENGGUNA ||--o{ ARTIKEL : "membuat publikasi (penulis)"
-    PENGGUNA ||--o{ PENGUMUMAN : "merilis pengumuman"
-    PENGGUNA ||--o{ DOKUMEN : "mengunggah dokumen"
-    PROFIL ||--|{ STRUKTUR : "memiliki struktur organisasi"
-    DOSEN ||--o| STRUKTUR : "penugasan jabatan struktural"
-    DOSEN ||--o{ KURIKULUM : "dosen pengampu matakuliah"
-    DOSEN ||--o{ PRESTASI : "penghargaan dosen"
-    ALUMNI ||--o{ PRESTASI : "rekam jejak prestasi"
-    PROFIL ||--|| PENGATURAN : "konfigurasi situs & prodi"
-    PROFIL ||--|{ DOKUMEN : "dokumen SK & akreditasi"
-    PROFIL ||--|{ KURIKULUM : "struktur kurikulum prodi"
+    %% Asosiasi berikut adalah lookup aplikasi; tidak ada foreign-key enforcement.
+    KEGIATAN o|--o{ PENDAFTAR : "lookup opsional melalui kegiatanId"
+    DOSEN o|--o{ STRUKTUR : "lookup opsional melalui dosenId"
+    DOSEN o|--o{ KURIKULUM : "pencocokan nama pengampu"
 
-    BERITA {
-        int id PK
-        string slug
-        string judul
-        string kategori
-        string tanggal
-        string penulis FK "Mereferensi PENGGUNA.nama"
-        string excerpt
-        string konten
-        string status "Draft | Review | Published"
-        bool featured
-        string gambar "Path / Base64"
-    }
-
+    %% ==========================================
+    %% DOMAIN 1: AKADEMIK & STRUKTUR ORGANISASI
+    %% ==========================================
     DOSEN {
-        int id PK
-        string nama
-        string jabatan
-        string keahlian
-        string pendidikan
-        string email
-        string nidn
-        string profil
-        string status "Aktif | Cuti | Tugas Belajar"
-        string foto "Path / Base64"
-    }
-
-    DOKUMEN {
-        int id PK
-        string nama
-        string kategori "Kurikulum | Panduan | SK | Formulir"
-        string format "PDF | DOCX | XLS"
-        string ukuran
-        int tahun
-        string fileUrl
-        int downloads
-    }
-
-    GALERI {
-        int id PK
-        string judul
-        string album "Seminar | Kuliah Umum | Praktikum | Wisuda | dll"
-        string src "Path / Base64"
-        string tanggal
-    }
-
-    PENGUMUMAN {
-        int id PK
-        string judul
-        string status "Penting | Baru | Aktif | Berakhir"
-        string badge "badge-important | badge-new | badge-active"
-        string tanggal
-        string isi
-        string lampiran
-    }
-
-    KEGIATAN {
-        int id PK
-        string nama
-        string tanggal
-        string hari
-        string bulan
-        string waktu
-        string lokasi
-        string penyelenggara
-        string deskripsi
-        string gambar "Path / Base64"
-    }
-
-    PENDAFTAR {
-        int id PK
-        int kegiatanId FK "Mereferensi KEGIATAN.id"
-        string kegiatanNama
-        string nama
-        string email
-        string whatsapp
-        string instansi
-        string waktuDaftar
-    }
-
-    ARTIKEL {
-        int id PK
-        string judul
-        string penulis FK "Mereferensi PENGGUNA / DOSEN"
-        string kategori "Hukum Pidana | Tata Negara | Adat | Bisnis"
-        string tanggal
-        string isi
-        string referensi
-        string tags
-        string status "Draft | Review | Published"
-        string thumbnail "Path / Base64"
-    }
-
-    PRESTASI {
-        int id PK
-        string nama
-        string kategori "Mahasiswa | Dosen | Alumni | Program Studi"
-        string tingkat "Provinsi | Regional | Nasional | Internasional"
-        string tahun
-        string foto "Path / Base64"
-    }
-
-    KURIKULUM {
-        int id PK
-        string kode
-        string nama
-        int sks
-        string jenis "Wajib | Pilihan"
-        int semester
-        string silabusUrl
-        string deskripsi
-    }
-
-    ALUMNI {
-        int id PK
-        string nama
-        string angkatan
-        string pekerjaan
-        string instansi
-        string kategori "Bekerja | Studi Lanjut | Wirausaha"
-        string email
-        string linkedin
-        string status "Terverifikasi | Menunggu"
-        string foto "Path / Base64"
-    }
-
-    PENGGUNA {
-        int id PK
-        string nama
-        string email
-        string password
-        string role "Super Admin | Editor | Operator"
-        string status "Aktif | Nonaktif"
-    }
-
-    AKTIVITAS {
-        int id PK
-        string user FK "Mereferensi PENGGUNA.nama"
-        string aksi
-        string waktu
-        string tanggalIso
-        string icon
-    }
-
-    NOTIFIKASI {
-        int id PK
-        string judul
-        string pesan
-        string waktu
-        bool read
-        string icon
-    }
-
-    PROFIL {
-        string nama
-        string kode
-        string fakultas
-        string universitas
-        string akreditasi
-        string deskripsi
-        string sejarah
-        string visi
-        string misi
-        string tujuan
-        string lulusan
+        number id PK "ID unik dosen"
+        string nama "Nama lengkap beserta gelar"
+        string kode "Kode dosen (contoh: HKM001; dapat kosong)"
+        string jabatan "Jabatan akademik"
+        string pendidikan "Riwayat pendidikan terakhir"
+        string spesialisasi "Bidang keahlian hukum"
+        string foto "Path file foto dosen"
+        string email "Email resmi dosen"
+        string telepon "Nomor kontak telepon"
     }
 
     STRUKTUR {
-        int id PK
-        string nama
-        string jabatan
-        string foto
+        number id PK "ID posisi struktur"
+        number dosenId "Lookup opsional ke DOSEN.id"
+        string nama "Nama pejabat struktural"
+        string jabatan "Nama jabatan struktural"
+        string foto "Path file foto pejabat"
+    }
+
+    KURIKULUM {
+        number id PK "ID mata kuliah"
+        string kode "Kode mata kuliah"
+        string nama "Nama mata kuliah"
+        number sks "Bobot SKS (1-6)"
+        number semester "Semester sajian (1-8)"
+        string kategori "Wajib / Pilihan / MBKM"
+        string deskripsi "Deskripsi singkat capaian MK"
+        string pengampu "Nama pengampu; dicocokkan setelah normalisasi"
+        string kodeDosen "Kode dosen opsional; teks biasa, bukan relasi"
+    }
+
+    ALUMNI {
+        number id PK "ID data alumni"
+        string nama "Nama alumni"
+        string angkatan "Tahun angkatan masuk"
+        string pekerjaan "Pekerjaan/profesi saat ini"
+        string instansi "Nama tempat bekerja/kantor"
+        string kategori "Kategori karir alumni"
+        string email "Email kontak alumni"
+        string linkedin "Tautan profil LinkedIn"
+        string status "Status verifikasi (Aktif/Pending)"
+        string foto "Path file foto alumni"
+    }
+
+    PROFIL {
+        string nama "Nama Program Studi [SINGLETON]"
+        string kode "Kode Prodi Dikti"
+        string fakultas "Nama Fakultas"
+        string universitas "Nama Universitas"
+        string akreditasi "Peringkat Akreditasi BAN-PT"
+        string deskripsi "Deskripsi profil program studi"
+        string sejarah "Sejarah pendirian prodi"
+        string visi "Pernyataan visi keilmuan"
+        string misi "Pernyataan butir-butir misi"
+        string tujuan "Tujuan pendidikan prodi"
+        string lulusan "Profil lulusan sarjana"
+    }
+
+    %% ==========================================
+    %% DOMAIN 2: INFORMASI & PUBLIKASI
+    %% ==========================================
+    BERITA {
+        number id PK "ID unik berita"
+        string slug "Slug URL ramah SEO"
+        string judul "Judul berita"
+        string kategori "Kategori berita"
+        string tanggal "Tanggal publikasi (DD MMMM YYYY)"
+        string penulis "Nama penulis berita"
+        string excerpt "Ringkasan pembuka"
+        string konten "Isi lengkap berita (HTML)"
+        string status "Status publikasi, misalnya Published atau Draft"
+        boolean featured "Status sorotan di beranda"
+        string gambar "Path atau URL file gambar"
+    }
+
+    ARTIKEL {
+        number id PK "ID artikel ilmiah/populer"
+        string judul "Judul artikel"
+        string penulis "Nama penulis artikel"
+        string kategori "Kategori hukum"
+        string tanggal "Tanggal terbit"
+        string isi "Konten artikel lengkap"
+        string referensi "Daftar rujukan pustaka"
+        string tags "Daftar tag pemisah koma"
+        string status "Published / Draft"
+        string thumbnail "Path gambar miniatur"
+    }
+
+    PENGUMUMAN {
+        number id PK "ID pengumuman"
+        string judul "Judul pengumuman akademik"
+        string status "Penting / Info / Urgent"
+        string badge "Teks label badge visual"
+        string tanggal "Tanggal rilis"
+        string isi "Informasi detail pengumuman"
+        string lampiran "Nama atau tautan file lampiran"
+    }
+
+    KEGIATAN {
+        number id PK "ID kegiatan/event"
+        string nama "Nama kegiatan atau seminar"
+        string tanggal "Tanggal kegiatan"
+        string hari "Nama hari pelaksanaan"
+        string bulan "Bulan pelaksanaan"
+        string waktu "Waktu pelaksanaan (WIB/WIT)"
+        string lokasi "Tempat atau media online"
+        string penyelenggara "Panitia pelaksana"
+        string deskripsi "Deskripsi lengkap acara"
+        string gambar "Poster atau banner acara"
+    }
+
+    GALERI {
+        number id PK "ID foto galeri"
+        string judul "Judul foto kegiatan"
+        string album "Nama album kegiatan"
+        string src "Path gambar atau URL data"
+    }
+
+    PRESTASI {
+        number id PK "ID prestasi mahasiswa/prodi"
+        string nama "Nama prestasi atau kejuaraan"
+        string kategori "Akademik / Non-Akademik"
+        string tingkat "Lokal / Regional / Nasional / Internasional"
+        string tahun "Tahun perolehan prestasi"
+        string foto "Dokumentasi foto sertifikat/trofi"
+    }
+
+    DOKUMEN {
+        number id PK "ID dokumen unduhan"
+        string nama "Nama resmi dokumen"
+        string kategori "Panduan / Formulir / SK / Kurikulum"
+        string format "Format ekstensi file (PDF/DOCX)"
+        string ukuran "Ukuran file (contoh: 2.4 MB)"
+        string fileName "Nama berkas fisik"
+        string fileData "Base64 data URI atau path file"
+    }
+
+    %% ==========================================
+    %% DOMAIN 3: INTERAKSI PUBLIK
+    %% ==========================================
+    PENDAFTAR {
+        number id PK "ID pendaftaran"
+        number kegiatanId "Lookup aplikasi ke KEGIATAN.id"
+        string kegiatanNama "Snapshot teks nama kegiatan saat mendaftar"
+        string nama "Nama lengkap pendaftar"
+        string email "Email; duplikasi dicek per kegiatan oleh aplikasi"
+        string whatsapp "Nomor WhatsApp aktif"
+        string instansi "Asal kampus/sekolah/instansi"
+        string waktuDaftar "Timestamp ISO pendaftaran"
+    }
+
+    PESAN {
+        number id PK "ID pesan masuk"
+        string nama "Nama pengirim pesan"
+        string email "Email pengirim"
+        string subjek "Topik atau perihal pesan"
+        string pesan "Isi pesan kontak"
+        string waktu "Timestamp waktu kirim pesan"
+        boolean read "Status sudah dibaca oleh admin"
+    }
+
+    %% ==========================================
+    %% DOMAIN 4: SISTEM & ADMINISTRASI
+    %% ==========================================
+    PENGGUNA {
+        number id PK "ID pengguna sistem"
+        string nama "Nama staf / administrator"
+        string email "Email login"
+        string password "Kata sandi yang dicocokkan di sisi klien"
+        string role "Super Admin / Editor / Operator"
+        string status "Aktif / Nonaktif"
+    }
+
+    AKTIVITAS {
+        number id PK "ID log aktivitas"
+        string user "Nama pelaku aksi / sistem"
+        string aksi "Deskripsi tindakan yang dilakukan"
+        string waktu "Waktu relatif (contoh: 5 menit lalu)"
+        string tanggalIso "Waktu absolut ISO 8601"
+        string icon "Nama ikon representasi visual"
+    }
+
+    NOTIFIKASI {
+        number id PK "ID notifikasi sistem"
+        string judul "Judul pemberitahuan"
+        string pesan "Rincian pesan notifikasi"
+        string waktu "Waktu pemberitahuan"
+        boolean read "Status dibaca (true/false)"
+        string icon "Ikon kategori notifikasi"
     }
 
     PENGATURAN {
-        string namaWebsite
-        string deskripsi
-        string logo
-        string favicon
-        string theme
-        string primaryColor
-        bool darkMode
-        string metaTitle
-        string metaDesc
-        string keywords
-        string email
-        string telepon
-        string alamat
-        string mapEmbed
-        string mapLink
-        string koordinat
-        int mahasiswaAktif
+        string namaWebsite "Judul situs web [SINGLETON]"
+        string deskripsi "Deskripsi meta website"
+        string logo "Path gambar logo instansi"
+        string favicon "Path icon favicon browser"
+        string theme "Tema warna aktif"
+        string primaryColor "Kode warna hex primer"
+        boolean darkMode "Status mode gelap"
+        string metaTitle "SEO meta title"
+        string metaDesc "SEO meta description"
+        string keywords "SEO kata kunci"
+        string facebook "URL profil Facebook"
+        string instagram "URL profil Instagram"
+        string youtube "URL kanal YouTube"
+        string linkedin "URL profil LinkedIn"
+        string tiktok "URL profil TikTok"
+        string email "Email resmi prodi"
+        string telepon "Nomor telepon prodi"
+        string alamat "Alamat fisik kampus"
+        string mapEmbed "HTML iframe embed peta Google"
+        string mapLink "Tautan langsung Google Maps"
+        string koordinat "Koordinat lintang/bujur"
+        number mahasiswaAktif "Jumlah mahasiswa aktif terkini"
     }
+
+    %% =========================================================================
+    %% Model mencakup 18 key data aplikasi: 16 daftar dan dua objek tunggal
+    %% (PROFIL, PENGATURAN). Key sesi admin dan statistik pageview disimpan
+    %% terpisah. ID dan tiga asosiasi di atas dikelola aplikasi; tidak ada
+    %% constraint, cascade delete, atau transaksi basis data relasional.
+    %% =========================================================================
 ```
 
 ---
@@ -560,329 +575,265 @@ erDiagram
 
 ### 5.1 Deskripsi Lapisan Perangkat Lunak
 
-Sistem dirancang dengan arsitektur 4-Layer murni di sisi peramban (_client-side_):
+Sistem dirancang dengan arsitektur **4-Layer murni di sisi peramban**:
 
-1. **Presentation & Styling Layer**: 36 berkas HTML (18 Publik + 18 Admin), Neumorphism Design System (`style.css`), Tailwind CSS 3.4, dan Bootstrap 5.3.3.
-2. **Reactive Controller Layer**: Alpine.js komponen (`siteHeader`, `globalSearch`, `detailKegiatanPage`, `adminCrudTable`, `adminShell`, `NeuAlert`).
-3. **Core Engine & Business Logic Layer**: `AUTH` module, `DB` engine interface, `IDB` IndexedDB module, `SEED_*` data fixtures, auto-pruning memory manager, dan activity logging engine.
-4. **Storage & External Services Layer**: Web Storage API (`localStorage`), IndexedDB (`ProdiHukumDB`), Google Maps Embed API, Google Fonts, dan CDN Providers.
+1. **Presentation & Styling Layer**: 36 berkas HTML (13 publik + 5 detail + 18 admin), Neumorphism Design System (`style.css`), Tailwind CSS pre-built.
+2. **Reactive Controller Layer**: Alpine.js 3.14.8 — **28 functions** (`siteHeader`, `homeStats`, `kurikulumPage`, `dosenPage`, `contactForm`, `adminShell`, `adminDosenPage`, `adminCrudTable`, `adminGaleriPage`, `adminPenggunaTable`, `adminDokumenTable`, `kegiatanAdminPage`, `adminAktivitasPage`, dll.)
+3. **Core Engine & Business Logic Layer**: `AUTH` module, `DB` engine, `IDB` module, `SEED_*` 18 fixtures, pruning manager, activity logger.
+4. **Storage & External Services Layer**: `localStorage` (~5 MB quota), IndexedDB (write-through only), Google Maps Embed, Google Fonts, CDN providers.
 
 ### 5.2 Kode Mermaid (Component Diagram)
 
 ```mermaid
 flowchart TB
     %% ==========================================
-    %% 1. PRESENTATION & UI LAYER
+    %% LAYER 1: PRESENTATION LAYER (BROWSER UI)
     %% ==========================================
-    subgraph PRESENTATION["🌐 1. Presentation & Styling Layer (Client Browser)"]
-        subgraph PUB_VIEWS["📄 Public View Components (18 Halaman HTML)"]
-            PUB_PAGES["<b>Public Pages</b><br/>• index.html, profil.html, dosen.html<br/>• kurikulum.html, berita.html, pengumuman.html<br/>• kegiatan.html, artikel.html, prestasi.html<br/>• alumni.html, galeri.html, dokumen.html, kontak.html"]
-            PUB_DETAIL["<b>Detail Views</b><br/>• detail-berita.html, detail-artikel.html<br/>• detail-pengumuman.html, detail-kegiatan.html<br/>• detail-galeri.html"]
-        end
-
-        subgraph ADM_VIEWS["🔐 Admin View Components (18 Halaman HTML)"]
-            ADM_AUTH["<b>Auth Views</b><br/>• login.html, lupa-sandi.html"]
-            ADM_DASH["<b>Dashboard & Config</b><br/>• dashboard.html, pengaturan.html<br/>• profil-prodi.html, aktivitas.html"]
-            ADM_CRUD["<b>CRUD Management Views</b><br/>• berita.html, pengumuman.html, kegiatan.html<br/>• artikel.html, prestasi.html, dosen.html<br/>• kurikulum.html, alumni.html, galeri.html<br/>• dokumen.html, pengguna.html"]
-        end
-
-        subgraph DESIGN_SYSTEM["🎨 Neumorphism Design System"]
-            CSS_TOKENS["<b>style.css</b><br/>• Neumorphic Tokens (--neu-light, --neu-dark)<br/>• Theme Tokens (Light & Dark Mode)<br/>• Component Classes (.neu-raised, .neu-pressed, .neu-btn)"]
-            TW_ENGINE["<b>Tailwind CSS 3.4 & Bootstrap 5.3</b><br/>• tailwind.min.css (Utility Classes)<br/>• Responsive Grid Subsystem"]
-        end
+    subgraph PRESENTATION["Lapisan Presentasi (Browser UI)"]
+        PUB_UI["Halaman Publik\n(index.html, dosen.html, kurikulum.html, dll)"]
+        ADMIN_UI["Halaman Admin\n(dashboard.html, dosen.html, kurikulum.html, dll)"]
+        ALPINE["Alpine.js Controllers & Directives\n(x-data, x-model, x-show, event handlers)"]
     end
 
     %% ==========================================
-    %% 2. CONTROLLER & REACTIVE LOGIC LAYER
+    %% LAYER 2: APPLICATION LOGIC LAYER (app.js)
     %% ==========================================
-    subgraph CONTROLLER["⚡ 2. Reactive Controller Layer (Alpine.js Components)"]
-        HEADER_CTRL["<b>siteHeader & themeStore</b><br/>• Dark/Light Mode Switcher<br/>• Mobile Drawer Navigation<br/>• syncThemeColorMeta()"]
-        SEARCH_CTRL["<b>globalSearch Controller</b><br/>• Realtime Query Filter<br/>• getSearchIndex() Connector"]
-        DETAIL_CTRL["<b>Public Detail Controllers</b><br/>• detailBeritaPage(), detailKegiatanPage()<br/>• daftarKegiatan() & Form Pendaftaran<br/>• contactForm() & detailContentPage()"]
-        
-        ADM_SHELL_CTRL["<b>adminShell Controller</b><br/>• Sesi State & Logout Trigger<br/>• Sidebar Responsive Toggle<br/>• Notifikasi Polling & Badge Counter"]
-        ADM_CRUD_CTRL["<b>adminCrudTable & Data Controllers</b><br/>• Generic CRUD Manager (rows, filter, paginate)<br/>• Image Compression Trigger<br/>• adminPenggunaTable() & adminDokumenTable()"]
-        ALERT_WRAPPER["<b>NeuAlert (SweetAlert2 Wrapper)</b><br/>• Modal Konfirmasi Hapus & Dialog Sukses<br/>• Alert Quota Storage Penuh (storageFull)"]
+    subgraph LOGIC["Lapisan Logika Aplikasi (assets/js/app.js)"]
+        AUTH_MOD["Modul Autentikasi (AUTH)\n- login(), current(), isLoggedIn(), logout(), guard()"]
+        DB_MOD["Modul Database (DB)\n- load(), save(), pruneStorage()"]
+        LOG_MOD["Modul Pencatatan Log\n- logActivity(), logPublicEvent()"]
+        BUS_MOD["Event Bus & Sinkronisasi\n- CustomEvent db-update & storage event"]
     end
 
     %% ==========================================
-    %% 3. BUSINESS LOGIC & PERSISTENCE ENGINE
+    %% LAYER 3: STORAGE LAYER (CLIENT PERSISTENCE)
     %% ==========================================
-    subgraph CORE_ENGINE["⚙️ 3. Core Logic & Persistence Engine (assets/js/app.js)"]
-        subgraph AUTH_MODULE["🔑 Authentication & Access Control Subsystem"]
-            AUTH_CORE["<b>AUTH Engine</b><br/>• AUTH.login(matchedUser)<br/>• AUTH.logout()<br/>• AUTH.current() & AUTH.isLoggedIn()<br/>• AUTH.guard(requiredRole)"]
-            RBAC_RULES["<b>Role-Based Access Control (RBAC)</b><br/>• Super Admin: Akses Penuh<br/>• Editor: Kelola Konten & Publikasi<br/>• Operator: Entri Data Terbatas"]
-        end
-
-        subgraph DB_ENGINE["🗄️ Database Management Subsystem (DB Engine)"]
-            DB_CORE["<b>DB Interface</b><br/>• DB.load(entityKey, seedFallback)<br/>• DB.save(entityKey, payload)<br/>• DB.reset(entityKey) & DB.resetAll()<br/>• DB.optimizeStorage()"]
-            PRUNE_SYS["<b>Storage Optimization & Pruning</b><br/>• QuotaExceededError Handler<br/>• pruneStorage() (Pangkas Pageview & Log Lama)<br/>• compressImageFile() (Otomatis Kompres Gambar)"]
-            AUDIT_SYS["<b>Audit Trail & Activity Logger</b><br/>• logActivity(aksi, icon)<br/>• logPublicEvent(aksi, icon)"]
-        end
-
-        subgraph IDB_MODULE["📦 Unlimited Media Backing Store (IDB Engine)"]
-            IDB_CORE["<b>IndexedDB Connector (ProdiHukumDB)</b><br/>• IDB.get(key)<br/>• IDB.set(key, val)<br/>• IDB.clear()"]
-        end
-
-        subgraph SEED_REPO["🌱 Seed Fixtures Repository"]
-            SEED_DATA["<b>Default Fixtures (16 Entitas)</b><br/>• SEED_BERITA, SEED_DOSEN, SEED_PENGUMUMAN<br/>• SEED_KEGIATAN, SEED_KURIKULUM, SEED_ALUMNI<br/>• SEED_PENGGUNA, SEED_PROFIL, SEED_PENGATURAN, dll."]
-        end
+    subgraph STORAGE["Lapisan Penyimpanan Klien (Client Storage)"]
+        LS[("localStorage\n- 18 key entitas (prodihukum_db_v1_*)\n- Key sesi, pageview, dan preferensi tema")]
+        IDB[("IndexedDB (ProdiHukumDB / entities)\n- Salinan asinkron best-effort; bukan sumber baca")]
     end
 
     %% ==========================================
-    %% 4. STORAGE & EXTERNAL SERVICES LAYER
+    %% LAYER 4: EXTERNAL SERVICES
     %% ==========================================
-    subgraph STORAGE_EXT["💾 4. Client Storage & External Integrations"]
-        subgraph BROWSER_STORAGE["💽 Local Client Storage Subsystem"]
-            LOCAL_STORAGE[("<b>Web Storage API (localStorage)</b><br/>• prodihukum_db_v1_&lt;entity&gt;<br/>• prodihukum_admin_session<br/>• prodihukum_pageviews_v1<br/>• theme (light/dark)")]
-            INDEXED_DB[("<b>IndexedDB Storage</b><br/>• DB Name: ProdiHukumDB<br/>• ObjectStore: entities<br/>• Unlimited Media & Blob Storage")]
-        end
-
-        subgraph EXT_SERVICES["☁️ External CDN & Web Services"]
-            MAPS_API["<b>Google Maps Embed Service</b><br/>• Iframe Peta Lokasi Kampus / Kegiatan"]
-            CDN_FONTS["<b>Google Fonts API</b><br/>• Inter (Sans-serif) & Poppins (Display)"]
-            CDN_LIBS["<b>JavaScript CDN Providers</b><br/>• Alpine.js 3.14.8, SweetAlert2 v11, Bootstrap 5.3.3"]
-        end
+    subgraph EXTERNAL["Layanan Eksternal (External CDN & Embed)"]
+        CDN["CDN Libraries & Fonts\n- Alpine.js 3.14.8\n- SweetAlert2 v11\n- Google Fonts (Inter)"]
+        MAPS["Google Maps Embed\n- Iframe peta lokasi kampus"]
     end
 
-    %% ==========================================
-    %% INTER-COMPONENT RELATIONSHIPS & DEPENDENCIES
-    %% ==========================================
-    
-    %% Styling Dependencies
-    PUB_VIEWS -.-> DESIGN_SYSTEM
-    ADM_VIEWS -.-> DESIGN_SYSTEM
-    DESIGN_SYSTEM -.-> CDN_FONTS
-    DESIGN_SYSTEM -.-> CDN_LIBS
+    %% Hubungan Antar Komponen
+    PUB_UI --> ALPINE
+    ADMIN_UI --> ALPINE
+    ALPINE --> AUTH_MOD
+    ALPINE --> DB_MOD
+    ALPINE --> LOG_MOD
 
-    %% View -> Controller Bindings
-    PUB_PAGES --> HEADER_CTRL
-    PUB_PAGES --> SEARCH_CTRL
-    PUB_DETAIL --> DETAIL_CTRL
-    PUB_PAGES -. "Embeds iframe" .-> MAPS_API
-    
-    ADM_AUTH --> AUTH_CORE
-    ADM_DASH --> ADM_SHELL_CTRL
-    ADM_CRUD --> ADM_CRUD_CTRL
-    ADM_CRUD_CTRL --> ALERT_WRAPPER
-    ADM_SHELL_CTRL --> ALERT_WRAPPER
+    AUTH_MOD --> LS
+    DB_MOD <-->|"Baca & Tulis Utama (Sinkron)"| LS
+    DB_MOD -.->|"Salinan asinkron best-effort"| IDB
+    LOG_MOD --> DB_MOD
 
-    %% Controller -> Core Logic Dependencies
-    HEADER_CTRL -- "Write theme preference" --> LOCAL_STORAGE
-    SEARCH_CTRL -- "Request aggregate index" --> DB_CORE
-    DETAIL_CTRL -- "Load/Save Data (Pendaftar, dll.)" --> DB_CORE
-    DETAIL_CTRL -- "Trigger logPublicEvent()" --> AUDIT_SYS
+    DB_MOD --> BUS_MOD
+    BUS_MOD -.->|"Kirim event pembaruan tampilan"| ALPINE
 
-    ADM_SHELL_CTRL -- "Check session status" --> AUTH_CORE
-    ADM_CRUD_CTRL -- "Read / Write Data" --> DB_CORE
-    ADM_CRUD_CTRL -- "Trigger logActivity()" --> AUDIT_SYS
-    ADM_CRUD_CTRL -- "Request image compression" --> PRUNE_SYS
-    ADM_AUTH -- "Submit credentials" --> AUTH_CORE
+    CDN --> PRESENTATION
+    MAPS --> PUB_UI
 
-    %% Core Logic Internal Interactions
-    AUTH_CORE -- "Verify role permissions" --> RBAC_RULES
-    AUTH_CORE -- "Read user list ('pengguna')" --> DB_CORE
-    AUTH_CORE -- "Write/Delete prodihukum_admin_session" --> LOCAL_STORAGE
-    
-    DB_CORE -- "Initial load if store empty" --> SEED_DATA
-    DB_CORE -- "Auto-invoke on QuotaExceeded" --> PRUNE_SYS
-    DB_CORE -- "Primary synchronous I/O (prodihukum_db_v1_*)" --> LOCAL_STORAGE
-    DB_CORE -- "Async backup storage" --> IDB_CORE
-    IDB_CORE -- "Store heavy media / base64" --> INDEXED_DB
-
-    AUDIT_SYS -- "Persist audit trail ('aktivitas' & 'notifikasi')" --> DB_CORE
-    PRUNE_SYS -- "Prune old logs & pageviews" --> LOCAL_STORAGE
+    %% Catatan Arsitektur
+    NOTE_COMP["Catatan arsitektur\nAplikasi dan persistensi berjalan di browser. Tidak ada backend aplikasi atau API data. Pembaruan lintas tab memakai event browser pada origin yang sama."]
+    LOGIC -.- NOTE_COMP
 ```
 
 ---
 
-## 6. Sequence Diagram — 3 Skenario Krusial Transaksi Data
+## 6. Sequence Diagram — 4 Skenario Krusial Transaksi Data
 
-### 6.1 Deskripsi Skenario Urutan Pesan
+### 6.1 Deskripsi Skenario
 
-Sequence diagram memodelkan urutan interaksi objek (_lifelines_) pada 3 skenario inti:
-
-1. **Skenario 1**: Registrasi Kegiatan Seminar oleh Pengunjung Publik (validasi duplikasi email & pencatatan peserta).
-2. **Skenario 2**: Autentikasi Login Admin & Validasi Hak Akses RBAC Guard (`AUTH.guard`).
-3. **Skenario 3**: Transaksi CRUD Penyimpanan Gambar & Penanganan Otomatis Kuota Penuh (_Auto-Pruning Storage_).
+1. **Skenario 1**: Registrasi Kegiatan oleh Pengunjung Publik (validasi email unik per kegiatanId + logPublicEvent).
+2. **Skenario 2**: Autentikasi Login Admin & RBAC Guard.
+3. **Skenario 3**: CRUD dengan Auto-Pruning Storage (QuotaExceededError handler).
+4. **Skenario 4**: Pengiriman Pesan Kontak ke pesan store.
 
 ### 6.2 Kode Mermaid (Sequence Diagram)
 
 ```mermaid
 sequenceDiagram
     autonumber
-    actor User as Pengunjung Publik / Admin
-    participant UI as Web Browser View
-    participant Alpine as Alpine.js Controller
-    participant AUTH as AUTH Module
-    participant DB as DB Engine (app.js)
-    participant LS as LocalStorage (prodihukum_db_v1_*)
-    participant IDB as IndexedDB (ProdiHukumDB)
-    participant Alert as NeuAlert (SweetAlert2)
+    actor Admin as Administrator
+    actor Public as Pengunjung
+    participant Page as Browser DOM / Alpine.js
+    participant App as app.js (Modul Inti)
+    participant Store as localStorage (Klien)
+    participant IDB as IndexedDB (Salinan Best-Effort)
+    participant OtherTab as Tab Browser Lain
 
-    %% ----------------------------------------------------
-    %% SKENARIO 1: PENDAFTARAN KEGIATAN OLEH PUBLIK
-    %% ----------------------------------------------------
-    rect rgb(240, 248, 255)
-        Note over User, Alert: SKENARIO 1: Pendaftaran Kegiatan Akademik (Publik)
-        User->>UI: Akses detail-kegiatan.html?id=1
-        UI->>Alpine: Inisialisasi detailKegiatanPage()
-        Alpine->>DB: DB.load('kegiatan') & DB.load('pendaftar')
-        DB->>LS: getItem('prodihukum_db_v1_kegiatan')
-        LS-->>DB: Data Koleksi Kegiatan
-        DB-->>Alpine: Objek Detail Kegiatan (id: 1)
-        Alpine-->>UI: Render Detail & Form Pendaftaran
-
-        User->>UI: Input Formulir & Submit
-        UI->>Alpine: Trigger daftarKegiatan()
-        Alpine->>Alpine: Validasi Duplikasi Email pada Kegiatan Ini
-        alt Email Sudah Terdaftar
-            Alpine->>Alert: NeuAlert.error('Email sudah terdaftar')
-            Alert-->>User: Tampilkan Modal Peringatan
-        else Validasi Berhasil
-            Alpine->>DB: DB.save('pendaftar', dataPendaftar)
-            DB->>LS: setItem('prodihukum_db_v1_pendaftar', JSON)
-            Alpine->>DB: logPublicEvent('Pendaftaran Baru...', '📝')
-            DB->>LS: setItem('prodihukum_db_v1_aktivitas', JSON)
-            Alpine->>Alert: NeuAlert.success('Pendaftaran Berhasil')
-            Alert-->>User: Tampilkan Modal Sukses
+    %% ==========================================
+    %% SKENARIO 1: AUTENTIKASI ADMIN & SESI
+    %% ==========================================
+    rect rgb(239, 246, 255)
+        Note over Admin,Store: SKENARIO 1 - Autentikasi Login Admin & Pembuatan Sesi Klien
+        App->>Store: Baca prodihukum_db_v1_pengguna saat halaman dimuat
+        Store-->>App: Data daftar pengguna (fallback ke SEED_PENGGUNA jika kosong)
+        Admin->>Page: Kirim email dan kata sandi pada login.html
+        Page->>App: Cocokkan email, status, dan kata sandi dengan data pengguna lokal
+        alt Akun Ditemukan, Status 'Aktif', dan Password Cocok
+            Page->>App: Panggil AUTH.login(matchedUser)
+            App->>Store: Simpan data sesi ke prodihukum_admin_session
+            App-->>Page: Login Berhasil (true)
+            Page-->>Admin: Arahkan ke admin/dashboard.html
+        else Kredensial Tidak Cocok / Akun Nonaktif
+            App-->>Page: Login Ditolak (false)
+            Page-->>Admin: Tampilkan Notifikasi Error (SweetAlert)
         end
     end
 
-    %% ----------------------------------------------------
-    %% SKENARIO 2: AUTENTIKASI & GUARD RBAC ADMIN
-    %% ----------------------------------------------------
-    rect rgb(255, 250, 240)
-        Note over User, Alert: SKENARIO 2: Autentikasi Login & Guard RBAC Admin
-        User->>UI: Akses admin/login.html & Submit Kredensial
-        UI->>AUTH: AUTH.login({ email, password })
-        AUTH->>DB: DB.load('pengguna')
-        DB->>LS: getItem('prodihukum_db_v1_pengguna')
-        LS-->>DB: Data Akun Admin
-        DB-->>AUTH: List Akun
-        AUTH->>AUTH: Verifikasi Email, Status, & Password
-        alt Kredensial Tidak Cocok
-            AUTH-->>UI: false
-            UI->>Alert: NeuAlert.error('Kredensial tidak valid')
-        else Kredensial Cocok
-            AUTH->>LS: setItem('prodihukum_admin_session', Sesi)
-            AUTH-->>UI: true
-            UI->>Alert: NeuAlert.success('Login Berhasil')
-            UI-->>User: Redirect ke admin/dashboard.html
-        end
-
-        User->>UI: Navigasi ke admin/pengguna.html (Khusus Super Admin)
-        UI->>AUTH: AUTH.guard('Super Admin')
-        AUTH->>LS: getItem('prodihukum_admin_session')
-        alt Sesi Tidak Memenuhi Syarat
-            AUTH-->>UI: Access Denied
-            UI-->>User: Redirect ke dashboard.html / login.html
-        else Sesi Super Admin Valid
-            AUTH-->>UI: Access Granted
-            UI-->>User: Tampilkan Antarmuka Pengguna
-        end
-    end
-
-    %% ----------------------------------------------------
-    %% SKENARIO 3: CRUD & AUTO-PRUNING STORAGE
-    %% ----------------------------------------------------
-    rect rgb(245, 255, 250)
-        Note over User, Alert: SKENARIO 3: Simpan Data CRUD & Fallback Auto-Pruning
-        User->>UI: Submit Form CRUD (Upload Gambar)
-        UI->>Alpine: adminCrudTable.saveForm()
-        Alpine->>DB: DB.save(entity, newArray)
-        DB->>LS: setItem('prodihukum_db_v1_' + entity, payload)
-        alt Normal (Kapasitas Cukup)
-            LS-->>DB: Sukses
-            DB->>IDB: set(entity, payload) [Cadangan Asinkron]
-            DB-->>Alpine: true
-            Alpine->>Alert: NeuAlert.success('Data tersimpan')
-        else Kuota Penuh (QuotaExceededError)
-            LS-->>DB: Error Kuota
-            Note over DB: Jalankan pruneStorage():<br/>Hapus log & pageview lama
-            DB->>LS: Pangkas key internal
-            DB->>LS: Retry setItem(...)
-            alt Retry Berhasil
-                DB->>IDB: set(entity, payload)
-                DB-->>Alpine: true
-                Alpine->>Alert: NeuAlert.success('Data tersimpan setelah optimasi ruang')
+    %% ==========================================
+    %% SKENARIO 2: OPERASI CRUD KONTEN & SYNC
+    %% ==========================================
+    rect rgb(240, 253, 244)
+        Note over Admin,OtherTab: SKENARIO 2 - Simpan Konten dan Perbarui Tampilan Lintas Tab
+        Admin->>Page: Simpan formulir data (Tambah/Edit/Hapus)
+        Page->>App: Panggil DB.save(entityKey, dataArray)
+        App-)IDB: Minta IDB.set() secara asinkron (best-effort)
+        App->>Store: setItem('prodihukum_db_v1_' + entityKey, JSON.stringify(dataArray))
+        alt Penyimpanan localStorage Berhasil
+            App->>App: Panggil logActivity() -> catat ke store 'aktivitas' & 'notifikasi'
+            App-->>Page: Dispatch CustomEvent 'db-update' pada tab aktif
+            Store-->>OtherTab: Browser memancarkan 'storage' event secara otomatis
+            OtherTab->>OtherTab: Dispatch event 'db-update' pada komponen Alpine lokal
+            OtherTab-->>Public: Halaman publik memuat ulang setelah storage event
+            Page-->>Admin: Tampilkan SweetAlert sukses & perbarui tabel
+        else QuotaExceededError (Kapasitas Penyimpanan Penuh)
+            App->>App: Panggil pruneStorage() -> pangkas riwayat lama
+            App->>Store: Coba ulang setItem() setelah pemangkasan
+            alt Coba Ulang Berhasil
+                App-->>Page: Simpan terkonfirmasi setelah optimasi ruang
+                Page-->>Admin: Tampilkan notifikasi berhasil dengan optimasi
             else Tetap Gagal
-                DB-->>Alpine: false (Rollback State)
-                Alpine->>Alert: NeuAlert.storageFull()
+                App-->>Page: Kembalikan false (Rollback status form)
+                Page-->>Admin: Tampilkan NeuAlert.storageFull (Kapasitas Browser Penuh)
             end
+        end
+    end
+
+    %% ==========================================
+    %% SKENARIO 3: PENDAFTARAN KEGIATAN PUBLIK
+    %% ==========================================
+    rect rgb(255, 251, 235)
+        Note over Public,Store: SKENARIO 3 - Pendaftaran Kegiatan dan Cek Email per Kegiatan
+        Public->>Page: Isi formulir pendaftaran pada detail-kegiatan.html
+        Page->>App: Panggil daftarKegiatan(kegiatanId, kegiatanNama, form)
+        App->>Store: Baca data dari prodihukum_db_v1_pendaftar
+        Store-->>App: Daftar seluruh pendaftar
+        App->>App: Validasi: Cek apakah email sudah terdaftar pada kegiatanId ini
+        alt Email Sudah Terdaftar untuk Kegiatan Tersebut
+            App-->>Page: Validasi gagal (duplikat email)
+            Page-->>Public: Tampilkan peringatan: Email sudah terdaftar untuk kegiatan ini
+        else Data Baru & Valid
+            App->>Store: Simpan data pendaftar baru via DB.save('pendaftar')
+            App->>App: Panggil logPublicEvent() -> catat aktivitas pendaftar baru
+            Store-->>App: Konfirmasi simpan data
+            App-->>Page: Registrasi berhasil
+            Page-->>Public: Tampilkan konfirmasi pendaftaran berhasil & reset form
+        end
+    end
+
+    %% ==========================================
+    %% SKENARIO 4: FORMULIR KONTAK PUBLIK
+    %% ==========================================
+    rect rgb(254, 242, 242)
+        Note over Public,Store: SKENARIO 4 - Pengiriman Pesan Kontak ke Penyimpanan Lokal
+        Public->>Page: Isi formulir kontak pada kontak.html & klik Kirim
+        Page->>App: Validasi dan simpan pesan melalui contactForm()
+        App->>App: Jalankan DB.save('pesan', SAMPLE_PESAN)
+        App-)IDB: Minta salinan IndexedDB secara asinkron (best-effort)
+        App->>Store: Simpan pesan ke localStorage
+        alt Penyimpanan localStorage Berhasil
+            Store-->>App: DB.save('pesan') berhasil
+            App->>App: Panggil logPublicEvent() untuk aktivitas dan notifikasi
+            App-->>Page: Kembalikan status berhasil
+            Page-->>Public: Reset formulir dan tampilkan konfirmasi
+        else Penyimpanan Gagal
+            App-->>Page: Kembalikan false dan pulihkan data sebelumnya
+            Page-->>Public: Tampilkan peringatan kapasitas penyimpanan
         end
     end
 ```
 
 ---
 
-## 7. Use Case Diagram — 4 Aktor & 16 Use Cases
+## 7. Use Case Diagram — Aktor & Use Cases
 
 ### 7.1 Pemetaan Aktor & Hak Akses
 
-- **Pengunjung Publik**: Menjalankan UC-01 sampai UC-06 (Eksplorasi Profil, Berita, Dosen, Dokumen, Registrasi Kegiatan, dan Ganti Tema).
-- **Operator**: Mengelola UC-07 sampai UC-10 (Login, Dashboard, Kelola Pendaftar, Dokumen & Alumni).
-- **Editor**: Mengelola UC-07 sampai UC-12 (Menambah Berita, Artikel, Pengumuman, Galeri, Prestasi, Kurikulum, dan Dosen).
-- **Super Admin**: Memiliki hak akses penuh ke seluruh 16 Use Case, termasuk UC-15 (Manajemen Pengguna & RBAC) serta UC-16 (Konfigurasi Sistem, Reset & Backup/Restore JSON).
+- **Pengunjung Publik**: Eksplorasi konten, pencarian global, pendaftaran kegiatan, kirim pesan kontak, ganti tema, unduh dokumen.
+- **Admin (Editor / Operator)**: Login, dashboard, kelola modul konten umum (berita, artikel, kegiatan, pengumuman, alumni, prestasi, galeri, dokumen, dosen, kurikulum, profil).
+- **Super Admin**: Semua hak admin + manajemen pengguna (RBAC) + konfigurasi pengaturan situs (identitas, SEO, sosmed, kontak, peta).
 
 ### 7.2 Kode Mermaid (Use Case Diagram)
 
 ```mermaid
 flowchart LR
-    subgraph AKTOR["👥 Aktor Sistem"]
-        P["👤 Pengunjung Publik"]
-        OP["👨‍💼 Operator"]
-        ED["✍️ Editor"]
-        SA["👑 Super Admin"]
+    %% Aktor Sistem
+    VISITOR["Pengunjung (Publik)"]
+    ADMIN["Administrator\n(Super Admin, Editor, Operator)"]
+    SUPER["Super Admin"]
+
+    %% Generalisasi Aktor
+    SUPER -- "|pewarisan peran|" --> ADMIN
+
+    %% Batas Sistem (System Boundary)
+    subgraph SISTEM["Website Profil Program Studi Hukum UMP"]
+        %% Modul Publik
+        UC_BROWSE(["Jelajahi Konten & Informasi Publik"])
+        UC_SEARCH(["Pencarian Konten & Filter Kategori"])
+        UC_CONTACT(["Kirim Pesan Kontak"])
+        UC_REGISTER(["Daftar Kegiatan / Seminar"])
+
+        %% Modul Autentikasi Admin
+        UC_LOGIN(["Login Administrator"])
+        UC_LOGOUT(["Logout Sistem"])
+        UC_FORGOT(["Reset Password (Lupa Password)"])
+
+        %% Modul Kelola Master & Konten (Admin & Super Admin)
+        UC_BERITA(["Kelola Berita, Artikel & Pengumuman"])
+        UC_AKADEMIK(["Kelola Dosen, Kurikulum & Struktur"])
+        UC_MEDIA(["Kelola Galeri, Dokumen & Prestasi"])
+        UC_INBOX(["Kelola Pesan Masuk & Pendaftar Kegiatan"])
+        UC_PROFIL(["Kelola Data Profil & Sejarah Prodi"])
+
+        %% Modul khusus yang dibatasi AUTH.guard() untuk Super Admin
+        UC_USERS(["Kelola Akun Pengguna & Hak Akses"])
+        UC_SETTINGS(["Kelola Pengaturan Website & Media Sosial"])
+        UC_BACKUP(["Backup & Restore Basis Data JSON"])
     end
 
-    subgraph SYSTEM_BOUNDARY["🏛️ SISTEM INFORMASI PRODI HUKUM UMP"]
-        UC1(["UC-01: Eksplorasi Informasi & Profil"])
-        UC2(["UC-02: Pencarian Global Realtime"])
-        UC3(["UC-03: Pendaftaran Kegiatan"])
-        UC4(["UC-04: Kirim Pesan Kontak"])
-        UC5(["UC-05: Ganti Tema Dark/Light"])
-        UC6(["UC-06: Unduh Dokumen Akademik"])
+    %% Relasi Pengunjung ke Use Case Publik
+    VISITOR --- UC_BROWSE
+    VISITOR --- UC_SEARCH
+    VISITOR --- UC_CONTACT
+    VISITOR --- UC_REGISTER
 
-        UC7(["UC-07: Otentikasi Login & Reset Sandi"])
-        UC8(["UC-08: Pantau Statistik & Tren Dashboard"])
-        UC9(["UC-09: Kelola Pendaftar Kegiatan"])
-        UC10(["UC-10: Kelola Dokumen & Alumni"])
-        UC11(["UC-11: Kelola Berita, Artikel & Pengumuman"])
-        UC12(["UC-12: Kelola Galeri & Prestasi"])
-        UC13(["UC-13: Kelola Kurikulum & Dosen"])
-        UC14(["UC-14: Kelola Profil & Struktur"])
-        UC15(["UC-15: Manajemen Pengguna & Hak Akses (RBAC)"])
-        UC16(["UC-16: Konfigurasi Situs, Backup & Restore JSON"])
-    end
+    %% Relasi Admin ke Use Case Manajemen Umum
+    ADMIN --- UC_LOGIN
+    ADMIN --- UC_LOGOUT
+    ADMIN --- UC_FORGOT
+    ADMIN --- UC_BERITA
+    ADMIN --- UC_AKADEMIK
+    ADMIN --- UC_MEDIA
+    ADMIN --- UC_INBOX
+    ADMIN --- UC_PROFIL
 
-    %% Pengunjung
-    P -->|«initiates» Eksplorasi Info| UC1
-    P -->|«initiates» Pencarian Global| UC2
-    P -->|«initiates» Daftar Kegiatan| UC3
-    P -->|«initiates» Kirim Pesan| UC4
-    P -->|«initiates» Pengalihan Tema| UC5
-    P -->|«initiates» Unduh Berkas| UC6
+    %% Relasi Khusus Super Admin
+    SUPER --- UC_USERS
+    SUPER --- UC_SETTINGS
+    SUPER --- UC_BACKUP
 
-    %% Operator
-    OP -->|«executes» Login Sistem| UC7
-    OP -->|«views» Pantau Metrik| UC8
-    OP -->|«manages» Verifikasi Peserta| UC9
-    OP -->|«manages» Berkas & Alumni| UC10
-
-    %% Editor
-    ED -->|«executes» Login Sistem| UC7
-    ED -->|«views» Pantau Metrik| UC8
-    ED -->|«manages» Berita & Artikel| UC11
-    ED -->|«manages» Galeri Media| UC12
-    ED -->|«manages» Kurikulum & Dosen| UC13
-    ED -->|«manages» Profil Kelembagaan| UC14
-
-    %% Super Admin
-    SA -->|«executes» Login Sistem| UC7
-    SA -->|«views» Pantau Metrik| UC8
-    SA -->|«controls» Manajemen Akun RBAC| UC15
-    SA -->|«controls» Konfigurasi & Backup| UC16
+    %% Catatan Arsitektural Sistem (Non-Use Case)
+    NOTE_STORAGE["Catatan sistem\nData utama dan sesi disimpan pada browser. Reset kata sandi tidak memakai verifikasi email. Backup/restore JSON tersedia bagi Super Admin; ekspor kurikulum mengunduh CSV sesuai filter, sedangkan import masih simulasi."]
+    UC_AKADEMIK -.- NOTE_STORAGE
+    UC_SETTINGS -.- NOTE_STORAGE
 ```
 
 ---
@@ -891,69 +842,211 @@ flowchart LR
 
 ### 8.1 Arsitektur Komputasi & Jaringan
 
-Sistem beroperasi di bawah model _Jamstack / Static Hosting_ modern:
+Sistem beroperasi di bawah model **Static Hosting / Jamstack**:
 
-1. **Client Node (Workstation/Mobile)**: Menjalankan Modern Web Browser (DOM Engine HTML5 + CSS + V8 JS Engine Alpine.js & Core DB Engine `app.js`).
-2. **Static Web Server**: Melayani 36 berkas HTML dan folder aset statis (`assets/css/`, `assets/js/`, `assets/image/`).
-3. **Cloud CDN Services**: Menyediakan library JavaScript dan Font global (Tailwind, Alpine.js, SweetAlert2, Google Fonts).
+1. **Static Web Server**: Menyajikan 36 berkas HTML dan folder aset statis (`assets/`).
+2. **Client Node**: Browser modern menjalankan Alpine.js 3.14.8, `app.js` (core engine), dan menyimpan data di localStorage.
+3. **Cloud CDN**: Alpine.js 3.14.8, SweetAlert2 v11, Google Fonts (Inter + Poppins), Tailwind CSS.
 
 ### 8.2 Kode Mermaid (Deployment Diagram)
 
 ```mermaid
 flowchart TB
-    subgraph CLIENT_NODE["💻 Client Node (User / Admin Workstation)"]
-        subgraph BROWSER_ENV["🌐 Modern Web Browser (Chrome, Edge, Firefox, Safari)"]
-            DOM["<b>HTML5 DOM Engine</b><br/>• 36 Halaman Web Profil & Admin"]
-            CSS_ENGINE["<b>Rendering Engine</b><br/>• Tailwind Utility + Neumorphism style.css"]
-            JS_RUNTIME["<b>JavaScript V8 / SpiderMonkey Engine</b><br/>• Alpine.js 3.14.8 Runtime<br/>• Core DB Engine & AUTH (app.js)"]
+    %% ==========================================
+    %% NODE 1: STATIC WEB SERVER
+    %% ==========================================
+    subgraph WEB_SERVER["Server Web Statis (opsi hosting)"]
+        HTML_FILES["Berkas web statis\n- 18 halaman publik dan detail\n- 18 berkas admin, termasuk satu redirect\n- CSS dan aset gambar"]
+        JS_BUNDLE["Skrip klien\n- assets/js/app.js (logika dan data seed)"]
+    end
 
-            subgraph LOCAL_DATA["🗄️ Client-Side Storage Subsystem"]
-                LS_STORE[("<b>Web Storage API (localStorage)</b><br/>• Quota: ~5MB<br/>• Primary Source of Truth")]
-                IDB_STORE[("<b>IndexedDB Engine (ProdiHukumDB)</b><br/>• Quota: Unlimited / Storage Quota<br/>• Heavy Media Base64 Store")]
+    %% ==========================================
+    %% NODE 2: CLIENT DEVICE (PERANGKAT PENGGUNA)
+    %% ==========================================
+    subgraph CLIENT_DEVICE["Node: Perangkat Klien (PC / Laptop / Smartphone)"]
+        subgraph BROWSER["Lingkungan Eksekusi: Web Browser Modern (Chrome, Edge, Firefox, Safari)"]
+            subgraph RUNTIME["Mesin JavaScript & Render Engine DOM"]
+                DOM_UI["Antarmuka DOM & Alpine.js Runtime"]
+                APP_LOGIC["Eksekusi app.js (AUTH, DB, Logger)"]
+            end
+            subgraph LOCAL_STORAGE_NODE["Media Penyimpanan Browser (Origin Storage)"]
+                LS_STORE[("localStorage Browser\n- 18 Kunci Entitas (prodihukum_db_v1_*)\n- Sesi: prodihukum_admin_session\n- Metrik: prodihukum_pageviews_v1")]
+                IDB_STORE[("IndexedDB browser\n- ProdiHukumDB / entities\n- Salinan asinkron best-effort")]
             end
         end
     end
 
-    subgraph WEB_SERVER["☁️ Web Hosting / Static File Server (GitHub Pages / Nginx / Apache)"]
-        STATIC_FILES["<b>Static Web Assets</b><br/>• *.html (36 files)<br/>• assets/css/*.css<br/>• assets/js/*.js<br/>• assets/image/* (Media Files)"]
+    %% ==========================================
+    %% NODE 3: EXTERNAL SERVICES
+    %% ==========================================
+    subgraph CDN_SERVER["Node: Content Delivery Network (CDN)"]
+        CDN_ASSETS["Pustaka dan font eksternal\n- jsDelivr: Alpine.js, SweetAlert2\n- Google Fonts"]
     end
 
-    subgraph CLOUD_SERVICES["🌍 Third-Party Cloud CDN & API Services"]
-        MAPS_SRV["<b>Google Maps Embed Service</b><br/>• Iframe Map Rendering"]
-        FONTS_SRV["<b>Google Fonts CDN</b><br/>• Inter & Poppins Fonts"]
-        CDN_SRV["<b>jsDelivr / cdnjs CDN</b><br/>• Bootstrap 5.3.3<br/>• SweetAlert2 v11<br/>• Alpine.js 3.14.8"]
+    subgraph MAPS_SERVER["Node: Server Google Maps"]
+        MAPS_SERVICE["Google Maps Embed"]
     end
 
-    STATIC_FILES -- "HTTP/HTTPS GET (Statis)" --> BROWSER_ENV
-    JS_RUNTIME <--> LOCAL_DATA
-    DOM <--> JS_RUNTIME
-    DOM <--> CSS_ENGINE
+    %% Jalur Distribusi & Komunikasi Protokol
+    HTML_FILES -->|"Protokol: HTTPS / HTTP\n(Pengiriman Dokumen Statis)"| DOM_UI
+    JS_BUNDLE -->|"Protokol: HTTPS / HTTP\n(Pengunduhan Kode Sumber JS)"| APP_LOGIC
+    CDN_ASSETS -->|"Protokol: HTTPS\n(Pengunduhan Script CDN & Stylesheet)"| DOM_UI
+    MAPS_SERVICE -->|"Protokol: HTTPS\n(Penyematan Konten Iframe Peta)"| DOM_UI
 
-    BROWSER_ENV -- "Async Request" --> MAPS_SRV
-    BROWSER_ENV -- "Fetch Stylesheet" --> FONTS_SRV
-    BROWSER_ENV -- "Fetch Script/CSS" --> CDN_SRV
+    %% Akses Internal Browser
+    DOM_UI <--> APP_LOGIC
+    APP_LOGIC <-->|"Penyimpanan Lokal Sinkron (Read/Write)"| LS_STORE
+    APP_LOGIC -.->|"Replikasi Cadangan Asinkron (Write Only)"| IDB_STORE
+
+    %% Catatan arsitektur client-only
+    NOTE_DEPLOY["Arsitektur client-side\nServer statis hanya menyajikan berkas. Data aplikasi dan sesi tersimpan di origin browser; tidak ada backend aplikasi, basis data terpusat, atau sinkronisasi antarperangkat."]
+    CLIENT_DEVICE -.- NOTE_DEPLOY
 ```
 
 ---
 
-## 9. Panduan Penggunaan Berkas Draw.io XML
+## 9. Activity Diagram — Interaksi Publik, Admin, dan Persistensi
 
-Untuk mengedit atau membuka diagram di aplikasi **[draw.io (diagrams.net)](https://app.diagrams.net)**, gunakan berkas XML yang telah disediakan di folder [`docs/diagrams/drawio/`](docs/diagrams/drawio/):
+Activity diagram merangkum validasi formulir publik, pemeriksaan login dan guard admin, operasi CRUD, serta perilaku `DB.save()` saat penulisan lokal berhasil atau gagal. Salinan IndexedDB hanya best-effort. Tab lain menerima `storage` event, tetapi halaman publik hanya memuat ulang untuk perubahan data konten yang relevan.
 
-| Nama Diagram                     | Berkas XML Draw.io                                                                                         | Tipe & Kapasitas         |
-| -------------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------ |
-| **DFD Level 0**                  | [`docs/diagrams/drawio/dfd-level-0.drawio.xml`](docs/diagrams/drawio/dfd-level-0.drawio.xml)               | `.drawio.xml` (7,4 KB)   |
-| **DFD Level 1**                  | [`docs/diagrams/drawio/dfd-level-1.drawio.xml`](docs/diagrams/drawio/dfd-level-1.drawio.xml)               | `.drawio.xml` (15,4 KB)  |
-| **Flowchart Sistem**             | [`docs/diagrams/drawio/flowchart-sistem.drawio.xml`](docs/diagrams/drawio/flowchart-sistem.drawio.xml)     | `.drawio.xml` (12,0 KB)  |
-| **ER Diagram (17 Entitas)**      | [`docs/diagrams/drawio/er-diagram.drawio.xml`](docs/diagrams/drawio/er-diagram.drawio.xml)                 | `.drawio.xml` (37,1 KB)  |
-| **Component Diagram**            | [`docs/diagrams/drawio/component-diagram.drawio.xml`](docs/diagrams/drawio/component-diagram.drawio.xml)   | `.drawio.xml` (8,8 KB)   |
-| **Sequence Diagram**             | [`docs/diagrams/drawio/sequence-diagram.drawio.xml`](docs/diagrams/drawio/sequence-diagram.drawio.xml)     | `.drawio.xml` (12,2 KB)  |
-| **Use Case Diagram**             | [`docs/diagrams/drawio/usecase-diagram.drawio.xml`](docs/diagrams/drawio/usecase-diagram.drawio.xml)       | `.drawio.xml` (12,2 KB)  |
-| **Deployment Diagram**           | [`docs/diagrams/drawio/deployment-diagram.drawio.xml`](docs/diagrams/drawio/deployment-diagram.drawio.xml) | `.drawio.xml` (7,6 KB)   |
-| **Master Semua Diagram (8 Tab)** | [`docs/diagrams/drawio/all-diagrams.drawio.xml`](docs/diagrams/drawio/all-diagrams.drawio.xml)             | `.drawio.xml` (111,7 KB) |
+Sumber Mermaid: [`activity-diagram.mmd`](docs/diagrams/activity-diagram.mmd). Draw.io: [`activity-diagram.drawio.xml`](docs/diagrams/drawio/activity-diagram.drawio.xml).
 
-### Cara Buka di Draw.io:
+### 9.1 Kode Mermaid (Activity Diagram)
 
-1. **Opsi 1 (File)**: Buka [app.diagrams.net](https://app.diagrams.net) ➔ Pilih **"Open Existing Diagram"** ➔ Pilih file `.drawio.xml`.
-2. **Opsi 2 (Copy-Paste)**: Buka file `.drawio.xml` di VS Code ➔ Salin (Ctrl+A, Ctrl+C) ➔ Di draw.io klik menu **Extras** ➔ **Edit Diagram...** ➔ Tempel (Ctrl+V) ➔ Klik **Apply**.
-3. **Opsi 3 (Viewer Interaktif)**: Buka [`preview.html`](preview.html) di peramban ➔ Klik tombol **"📋 Salin Draw.io XML"** ➔ Tempel di draw.io.
+```mermaid
+flowchart TD
+    START((Mulai)) --> OPEN["Buka halaman pada browser"]
+    OPEN --> AREA{Area yang diakses?}
+
+    subgraph PUBLIC["Alur Pengunjung"]
+        direction TB
+        LOAD["Muat data dari localStorage; seed dipakai hanya jika key belum ada"]
+        VIEW["Tampilkan konten; berita dan artikel publik berstatus Published"]
+        ACTION{Aksi pengunjung?}
+        BROWSE["Jelajah, cari, atau unduh dokumen"]
+        CONTACT["Isi formulir kontak"]
+        CONTACT_VALID{Nama, email valid, dan pesan terisi?}
+        CONTACT_ERROR["Tampilkan validasi; perbaiki formulir"]
+        REGISTER["Isi formulir pendaftaran kegiatan"]
+        REGISTER_VALID{Nama, email, dan WhatsApp valid?}
+        DUPLICATE{Email sudah terdaftar untuk kegiatan ini?}
+        REGISTER_ERROR["Tampilkan validasi atau penolakan duplikat"]
+
+        LOAD --> VIEW --> ACTION
+        ACTION -->|Jelajah| BROWSE
+        ACTION -->|Kirim pesan| CONTACT --> CONTACT_VALID
+        CONTACT_VALID -->|Tidak| CONTACT_ERROR --> CONTACT
+        CONTACT_VALID -->|Ya| CONTACT_SAVE["Siapkan record pesan"]
+        ACTION -->|Daftar kegiatan| REGISTER --> REGISTER_VALID
+        REGISTER_VALID -->|Tidak| REGISTER_ERROR --> REGISTER
+        REGISTER_VALID -->|Ya| DUPLICATE
+        DUPLICATE -->|Ya| REGISTER_ERROR
+        DUPLICATE -->|Tidak| REG_SAVE["Siapkan record pendaftar"]
+    end
+    AREA -->|Publik| LOAD
+    BROWSE --> FINISH([Selesai])
+
+    subgraph ADMIN["Alur Administrator"]
+        direction TB
+        ENTRY{Login atau buka modul admin?}
+        LOGIN["Masukkan email dan kata sandi"]
+        CREDENTIALS{Email dan sandi cocok, akun aktif, serta data sesi valid?}
+        LOGIN_ERROR["Tampilkan kegagalan login"]
+        SESSION["AUTH.login(): simpan sesi pada localStorage"]
+        GUARD["AUTH.guard(): periksa sesi"]
+        SESSION_VALID{Sesi valid?}
+        REDIRECT["Arahkan ke halaman login"]
+        ROLE_PAGE{Halaman Pengguna atau Pengaturan?}
+        SUPER_ADMIN{Peran Super Admin?}
+        DENY["Tolak akses; arahkan ke dashboard"]
+        ADMIN_ACTION["Kelola data (CRUD)"]
+        ADMIN_SAVE["Siapkan perubahan data"]
+
+        ENTRY -->|Login| LOGIN --> CREDENTIALS
+        CREDENTIALS -->|Tidak| LOGIN_ERROR --> LOGIN
+        CREDENTIALS -->|Ya| SESSION --> ADMIN_ACTION
+        ENTRY -->|Modul admin| GUARD --> SESSION_VALID
+        SESSION_VALID -->|Tidak| REDIRECT
+        SESSION_VALID -->|Ya| ROLE_PAGE
+        ROLE_PAGE -->|Tidak| ADMIN_ACTION
+        ROLE_PAGE -->|Ya| SUPER_ADMIN
+        SUPER_ADMIN -->|Tidak| DENY
+        SUPER_ADMIN -->|Ya| ADMIN_ACTION
+        ADMIN_ACTION --> ADMIN_SAVE
+    end
+    AREA -->|Admin| ENTRY
+    REDIRECT --> LOGIN
+    DENY --> FINISH
+
+    subgraph PERSISTENCE["Penyimpanan dan pembaruan"]
+        direction TB
+        BACKUP["Minta salinan IndexedDB secara asinkron (best-effort)"]
+        WRITE["DB.save(): tulis sinkron ke localStorage"]
+        SAVED{Penulisan berhasil?}
+        PRUNE["Pangkas aktivitas/pageview yang dibatasi; coba sekali lagi"]
+        RETRY{Percobaan ulang berhasil?}
+        ROLLBACK["Pulihkan state di memori dan tampilkan kegagalan"]
+        LOG["Jalankan logger aktivitas/notifikasi sesuai alur"]
+        RESULT["Tampilkan konfirmasi dan perbarui tampilan"]
+        UPDATE["Pancarkan db-update pada tab aktif"]
+        STORAGE_EVENT["Tab lain menerima storage event"]
+        CONTENT_CHANGED{Tab penerima publik dan key termasuk konten?}
+        RELOAD["Halaman publik memuat ulang"]
+
+        BACKUP --> WRITE --> SAVED
+        SAVED -->|Tidak| PRUNE --> RETRY
+        RETRY -->|Tidak| ROLLBACK
+        SAVED -->|Ya| LOG
+        RETRY -->|Ya| LOG
+        LOG --> RESULT --> UPDATE
+        UPDATE --> STORAGE_EVENT --> CONTENT_CHANGED
+        CONTENT_CHANGED -->|Ya| RELOAD
+        CONTENT_CHANGED -->|Tidak| FINISH
+    end
+    CONTACT_SAVE --> BACKUP
+    REG_SAVE --> BACKUP
+    ADMIN_SAVE --> BACKUP
+    BROWSE --> FINISH
+    ROLLBACK --> FINISH
+    RELOAD --> FINISH
+
+    NOTE["Cakupan: CRUD administrator dan formulir publik. Semua proses berjalan di browser; tidak ada backend atau sinkronisasi antarperangkat."]
+    PERSISTENCE -.-> NOTE
+
+    classDef terminal fill:#e0f2fe,stroke:#0284c7,color:#0c4a6e,stroke-width:2px;
+    classDef action fill:#f8fafc,stroke:#64748b,color:#0f172a,stroke-width:1.5px;
+    classDef decision fill:#fff7ed,stroke:#f97316,color:#7c2d12,stroke-width:1.5px;
+    classDef warning fill:#fef2f2,stroke:#ef4444,color:#7f1d1d,stroke-width:1.5px;
+    classDef storage fill:#eff6ff,stroke:#3b82f6,color:#1e3a8a,stroke-width:1.5px;
+    classDef note fill:#fffbeb,stroke:#d97706,color:#78350f,stroke-dasharray:4 3;
+    class START,FINISH terminal;
+    class OPEN,VIEW,BROWSE,CONTACT,REGISTER,CONTACT_SAVE,REG_SAVE,LOGIN,SESSION,GUARD,ADMIN_ACTION,ADMIN_SAVE,LOG,RESULT,UPDATE,STORAGE_EVENT,RELOAD action;
+    class AREA,ACTION,CONTACT_VALID,REGISTER_VALID,DUPLICATE,ENTRY,CREDENTIALS,SESSION_VALID,ROLE_PAGE,SUPER_ADMIN,SAVED,RETRY,CONTENT_CHANGED decision;
+    class BACKUP,WRITE storage;
+    class CONTACT_ERROR,REGISTER_ERROR,LOGIN_ERROR,REDIRECT,DENY,PRUNE,ROLLBACK warning;
+    class NOTE note;
+```
+
+## 10. Panduan Penggunaan Berkas Draw.io XML
+
+Untuk mengedit atau membuka diagram di aplikasi **[draw.io (diagrams.net)](https://app.diagrams.net)**, gunakan berkas XML yang tersedia di folder [`docs/diagrams/drawio/`](docs/diagrams/drawio/):
+
+| Nama Diagram | Berkas XML Draw.io | Tipe |
+| --- | --- | --- |
+| **DFD Level 0** | [`dfd-level-0.drawio.xml`](docs/diagrams/drawio/dfd-level-0.drawio.xml) | `.drawio.xml` |
+| **DFD Level 1** | [`dfd-level-1.drawio.xml`](docs/diagrams/drawio/dfd-level-1.drawio.xml) | `.drawio.xml` |
+| **Flowchart Sistem** | [`flowchart-sistem.drawio.xml`](docs/diagrams/drawio/flowchart-sistem.drawio.xml) | `.drawio.xml` |
+| **ER Diagram (18 Entitas)** | [`er-diagram.drawio.xml`](docs/diagrams/drawio/er-diagram.drawio.xml) | `.drawio.xml` |
+| **Component Diagram** | [`component-diagram.drawio.xml`](docs/diagrams/drawio/component-diagram.drawio.xml) | `.drawio.xml` |
+| **Sequence Diagram** | [`sequence-diagram.drawio.xml`](docs/diagrams/drawio/sequence-diagram.drawio.xml) | `.drawio.xml` |
+| **Use Case Diagram** | [`usecase-diagram.drawio.xml`](docs/diagrams/drawio/usecase-diagram.drawio.xml) | `.drawio.xml` |
+| **Deployment Diagram** | [`deployment-diagram.drawio.xml`](docs/diagrams/drawio/deployment-diagram.drawio.xml) | `.drawio.xml` |
+| **Activity Diagram** | [`activity-diagram.drawio.xml`](docs/diagrams/drawio/activity-diagram.drawio.xml) | `.drawio.xml` |
+| **Master Semua Diagram (9 Tab)** | [`all-diagrams.drawio.xml`](docs/diagrams/drawio/all-diagrams.drawio.xml) | `.drawio.xml` |
+
+### Cara Buka di Draw.io
+
+1. **Via File**: Buka [app.diagrams.net](https://app.diagrams.net) → **Open Existing Diagram** → pilih file `.drawio.xml`.
+2. **Via Copy-Paste**: Buka file `.drawio.xml` di VS Code → Ctrl+A, Ctrl+C → di draw.io klik **Extras** → **Edit Diagram...** → Ctrl+V → **Apply**.
+
+> **Catatan:** Berkas Draw.io XML (`.drawio.xml`) adalah representasi visual dari diagram yang sama dengan file `.mmd` di `docs/diagrams/`. Sumber kebenaran terbaru adalah file `.mmd` — update draw.io XML setelah perubahan signifikan pada data.

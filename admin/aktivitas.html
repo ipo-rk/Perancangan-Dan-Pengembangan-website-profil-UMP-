@@ -286,7 +286,7 @@
             <div class="flex flex-wrap items-center justify-between gap-4 mt-2">
               <div>
                 <span
-                  class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-white/10 text-white/90 border border-white/15 mb-2"><span x-html="iconSvg('file')"></span>
+                  class="admin-header-badge inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-white/10 text-white/90 border border-white/15 mb-2"><span x-html="iconSvg('file')"></span>
                   Rekam Jejak Audit</span>
                 <h1 class="admin-header-title">Log <span class="text-gold">Aktivitas</span> Sistem</h1>
                 <span class="admin-header-underline"></span>
@@ -306,6 +306,44 @@
         <!-- ══ END ADMIN PREMIUM PAGE HEADER ══ -->
 
         <div x-data="adminAktivitasPage()" class="space-y-6">
+
+          <section class="neu-raised p-5 sm:p-6 space-y-4" aria-labelledby="contact-inbox-title">
+            <div class="flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h2 id="contact-inbox-title" class="font-display font-semibold text-navy dark:text-white">Pesan dari Formulir Kontak</h2>
+                <p class="text-xs text-text-muted mt-1">Pesan disimpan di browser ini dan dapat dibalas melalui email.</p>
+              </div>
+              <span class="neu-badge badge-important" x-text="unreadPesan + ' belum dibaca'"></span>
+            </div>
+            <template x-for="item in pesan" :key="item.id">
+              <article class="neu-pressed p-4 rounded-xl space-y-2">
+                <div class="flex flex-wrap items-start justify-between gap-3">
+                  <div class="min-w-0">
+                    <h3 class="text-sm font-semibold text-navy dark:text-white" x-text="item.subjek"></h3>
+                    <p class="text-xs text-text-muted">
+                      <span x-text="item.nama"></span>
+                      <span aria-hidden="true"> · </span>
+                      <a class="text-red hover:underline" :href="'mailto:' + item.email" x-text="item.email"></a>
+                      <span aria-hidden="true"> · </span>
+                      <time x-text="item.waktu"></time>
+                    </p>
+                  </div>
+                  <div class="flex items-center gap-2 shrink-0">
+                    <span class="neu-badge" :class="item.read ? 'badge-ended' : 'badge-new'"
+                      x-text="item.read ? 'Dibaca' : 'Baru'"></span>
+                    <button x-show="!item.read" @click="markPesanRead(item)"
+                      class="neu-btn px-3 py-1.5 rounded-lg text-xs">Tandai dibaca</button>
+                    <button @click="hapusPesan(item)"
+                      class="neu-btn px-3 py-1.5 rounded-lg text-xs text-red-500">Hapus</button>
+                  </div>
+                </div>
+                <p class="text-sm text-text-muted whitespace-pre-wrap break-words" x-text="item.pesan"></p>
+              </article>
+            </template>
+            <p x-show="pesan.length === 0" class="text-sm text-text-muted text-center py-5">
+              Belum ada pesan masuk melalui formulir kontak.
+            </p>
+          </section>
 
           <!-- ══ STATS SUMMARY CARDS ══ -->
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">

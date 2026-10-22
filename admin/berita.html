@@ -284,7 +284,7 @@
             </nav>
             <div class="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-white/10 text-white/90 border border-white/15 mb-2"><span x-html="iconSvg('news')"></span> Publikasi & Media</span>
+                <span class="admin-header-badge inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-white/10 text-white/90 border border-white/15 mb-2"><span x-html="iconSvg('news')"></span> Publikasi & Media</span>
                 <h1 class="admin-header-title">Manajemen <span class="text-gold">Berita</span> & Informasi</h1>
                 <span class="admin-header-underline"></span>
                 <p class="admin-header-desc">Publikasikan warta terkini, liputan kegiatan ilmiah, rilis pers, dan perkembangan akademik Program Studi Hukum UMP.</p>
@@ -299,6 +299,13 @@
         // Sumber data sama dengan yang dipakai halaman publik berita.html (SAMPLE_BERITA di app.js,
         // dimuat dari localStorage) supaya berita di admin & frontend selalu konsisten dan akurat.
         berita: [...SAMPLE_BERITA],
+        init() {
+          window.addEventListener('db-update', event => {
+            if (event.detail?.key === 'berita' && Array.isArray(event.detail.data)) {
+              this.berita = [...event.detail.data];
+            }
+          });
+        },
         persist() { SAMPLE_BERITA = this.berita; return DB.save('berita', this.berita); },
         emptyForm() { return { judul:'', slug:'', kategori:'Akademik', excerpt:'', konten:'', status:'Draft', gambar:'' }; },
         form: {},

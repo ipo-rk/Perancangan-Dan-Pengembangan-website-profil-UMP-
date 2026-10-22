@@ -1,669 +1,492 @@
-# 🏛️ DOKUMENTASI SISTEM & SPESIFIKASI FINAL (HASIL AUDIT)
+# 🏛️ Website Profil Program Studi Hukum — Universitas Muhammadiyah Papua (UMP)
 
-## Website Profil & Panel Admin Program Studi Hukum — Universitas Muhammadiyah Papua (UMP)
-
-> Dokumen ini adalah **versi final hasil audit menyeluruh** terhadap seluruh berkas proyek (`36 berkas HTML`, `assets/js/app.js`, `assets/css/style.css`, `package.json`, `tailwind.config.js`, `sitemap.xml`, serta dokumen diagram pendukung). Seluruh angka, daftar halaman, entitas data, ERD, DFD Level 0/1, Sequence Diagram, dan Flowchart Sistem di bawah ini **diverifikasi langsung dari kode sumber sesungguhnya**, sehingga dijamin 100% konsisten dan akurat dengan implementasi yang berjalan.
-
----
-
-## 📋 DAFTAR ISI
-
-1. [Ringkasan Proyek & Arsitektur Sistem](#1-ringkasan-proyek-arsitektur-sistem)
-2. [Teknologi & Design System](#2-teknologi-design-system)
-3. [Struktur Berkas Proyek (36 Halaman HTML)](#3-struktur-berkas-proyek)
-4. [Spesifikasi Model Data & ERD](#4-spesifikasi-model-data-erd)
-5. [Data Flow Diagram (DFD Level 0 & Level 1)](#5-data-flow-diagram-dfd)
-6. [Flowchart Sistem](#6-flowchart-sistem)
-7. [Hasil Audit & Perbaikan (Log Perbaikan)](#7-hasil-audit-perbaikan)
-8. [Fitur Utama & Panduan Pengoperasian](#8-fitur-utama-panduan-pengoperasian)
-9. [Dokumentasi Diagram & Viewer Interaktif](#9-dokumentasi-diagram--viewer-interaktif)
+> Website resmi Program Studi Hukum UMP berbasis teknologi **frontend-only** (tanpa server/database backend).  
+> Semua data dikelola melalui **localStorage** dan **IndexedDB** langsung di browser pengguna.
 
 ---
 
-## 1. 🏛️ RINGKASAN PROYEK & ARSITEKTUR SISTEM
+## 📋 Daftar Isi
 
-Website Program Studi Hukum UMP adalah **prototipe front-end murni** (_client-side dynamic prototype_). Seluruh transaksi data berjalan di sisi browser memakai **Web Storage API (`localStorage`) sebagai Single Source of Truth utama**, dicadangkan secara otomatis dan asinkron ke **IndexedDB** (`ProdiHukumDB`) agar aman dari batas kapasitas memori browser (± 5 MB), terutama untuk media foto dan poster hasil unggahan admin yang disimpan dalam format base64.
+- [Fitur Utama](#-fitur-utama)
+- [Teknologi](#-teknologi)
+- [Struktur Proyek](#-struktur-proyek)
+- [Arsitektur Data (SEED & SAMPLE)](#-arsitektur-data-seed--sample)
+- [18 Modul Data](#-18-modul-data)
+- [Data Dosen](#-data-dosen-11-orang)
+- [Data Kurikulum](#-data-kurikulum-57-mk--154-sks)
+- [Sistem Admin](#-sistem-admin)
+- [Alpine.js Functions](#-alpinejs-functions-28-fungsi)
+- [Diagram & Dokumentasi](#-diagram--dokumentasi)
+- [Cara Menjalankan](#-cara-menjalankan)
+- [Reset Data](#️-reset-data)
+- [Catatan Pengembang](#-catatan-pengembang)
+
+---
+
+## ✨ Fitur Utama
+
+- 🎨 **Desain Neumorphism** — tampilan modern dengan efek raised/inset shadows
+- 🌙 **Dark Mode** — toggle otomatis, preferensi tersimpan di localStorage
+- 📱 **Responsive** — mobile-first, mendukung semua ukuran layar
+- 🔍 **Pencarian Global** — di header, mencari berita/artikel/kegiatan
+- 🗂️ **18 Modul Data** — dosen, kurikulum, alumni, berita, galeri, hingga pengaturan situs
+- 🔐 **Panel Admin** — CRUD penuh untuk semua entitas data dengan guard autentikasi
+- 💾 **Persistensi Lokal** — localStorage (primer) + IndexedDB (async write-through)
+- 🔔 **Notifikasi** — sistem notifikasi internal untuk admin
+- 📨 **Form Kontak** — pesan tersimpan ke store `pesan` (localStorage)
+- 📝 **Pendaftaran Kegiatan** — registrasi publik tersimpan ke store `pendaftar`
+
+---
+
+## 🛠️ Teknologi
+
+| Teknologi | Versi | Keterangan |
+|-----------|-------|------------|
+| **Alpine.js** | 3.14.8 | Reaktivitas UI & komponen halaman (28 fungsi) |
+| **Tailwind CSS** | pre-built CDN | Utility-first CSS framework |
+| **SweetAlert2** | v11 | Dialog konfirmasi & notifikasi interaktif |
+| **Google Fonts** | CDN | Tipografi |
+| **localStorage** | Native Browser | Penyimpanan data utama — 18 JSON key |
+| **IndexedDB** | Native Browser | Async write-through (best-effort duplicate) |
+
+> **Catatan:** Tidak ada npm, build tool, atau framework backend. Semua berjalan langsung di browser tanpa instalasi.
+
+---
+
+## 📁 Struktur Proyek
 
 ```
-                 ┌───────────────────────────────────────────────────┐
-                 │        PENGUNJUNG PUBLIK / MAHASISWA / ALUMNI      │
-                 └───────────────────────────┬───────────────────────┘
-                                              │  HTTP GET (statis)
-                                              ▼
-                 ┌───────────────────────────────────────────────────┐
-                 │        FRONTEND PORTAL PUBLIK (18 HALAMAN)         │
-                 │  index · profil · dosen · kurikulum · berita       │
-                 │  pengumuman · kegiatan · artikel · prestasi        │
-                 │  alumni · galeri · dokumen · kontak + 5 halaman    │
-                 │  detail (berita/pengumuman/kegiatan/artikel/galeri)│
-                 └───────────────────────────┬───────────────────────┘
-                                              │  baca (GET) & tulis terbatas
-                                              │  (form Kontak, Daftar Kegiatan)
-                                              ▼
-┌──────────────────────────────┐   login   ┌────────────────────────────────┐
-│ SUPER ADMIN / EDITOR /        │ ────────► │   ADMIN PANEL (18 HALAMAN)     │
-│ OPERATOR (role-based access)  │           │  Dashboard · CRUD 11 modul     │
-│                                │ ◄──────── │  Pengguna & Peran · Aktivitas  │
-└──────────────────────────────┘   redirect │  Pengaturan (Backup/Restore)   │
-                                    (guard)  └───────────────┬────────────────┘
-                                                              │ CRUD (create/read/
-                                                              │ update/delete)
-                                                              ▼
-                 ┌───────────────────────────────────────────────────┐
-                 │   PERSISTENCE & REACTION ENGINE (assets/js/app.js) │
-                 │  • DB Engine  — namespace `prodihukum_db_v1_*`     │
-                 │  • IDB Engine — cadangan IndexedDB (ProdiHukumDB)  │
-                 │  • AUTH       — sesi login + role guard client-side│
-                 │  • Alpine.js reactive state + custom event bus     │
-                 │    (`notif-update`) untuk sinkron lintas komponen  │
-                 └───────────────────────────────────────────────────┘
-```
-
-**Poin arsitektur penting (terverifikasi dari kode sumber):**
-
-- **Tanpa Ketergantungan Backend**: `AUTH`, `DB Engine`, `IDB`, dan seluruh pengontrol modul berjalan di `assets/js/app.js` yang dimuat seragam oleh seluruh 36 berkas HTML.
-- **Auto-Pruning Memory Guard**: `DB.save()` menulis data ke localStorage; bila kuota penuh (`QuotaExceededError`), sistem secara otomatis menjalankan `pruneStorage()` untuk **memangkas log internal (`aktivitas`, `pageviews`) terlebih dahulu**, lalu mencoba menyimpan ulang tanpa pernah menghapus data master modul lain (Dosen, Berita, dll.).
-- **Normalisasi Path Aset**: Fungsi `assetPath()` menormalkan lokasi berkas gambar bawaan (`assets/image/...`) agar valid diakses dari root maupun subfolder `/admin/`.
-- **Role-Based Access Control (RBAC)**: `AUTH.guard()` dipanggil di setiap halaman admin untuk melindungi rute dan mengunci modul sensitif (`pengguna.html` dan `pengaturan.html`) **khusus bagi Super Admin**.
-
----
-
-## 2. 🎨 TEKNOLOGI & DESIGN SYSTEM
-
-| Layer                     | Teknologi                                                                          | Fungsi & Peran Teknis                                                                                                                                                                                                                                                                                                                                                                         |
-| ------------------------- | ---------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Struktur Semantik**     | HTML5                                                                              | Struktur semantik standar (`header`, `nav`, `main`, `section`, `article`, `aside`, `footer`) di seluruh 36 halaman.                                                                                                                                                                                                                                                                           |
-| **Grid & Layout**         | Bootstrap 5.3.3 (CDN)                                                              | Grid responsif dan utilitas tata letak, dipadukan bersama Tailwind CSS.                                                                                                                                                                                                                                                                                                                       |
-| **Styling & Neumorphism** | Tailwind CSS 3.4 (`tailwind.min.css`) + `assets/css/style.css` (880+ baris kustom) | Sistem desain _Neumorphic_ (`.neu-raised`, `.neu-pressed`, `.neu-flat`, `.neu-btn`), palet 4 warna resmi Prodi Hukum: **Merah** (`#B91C1C` / `#EF4444`), **Kuning** (`#D97706` / `#FACC15`), **Putih** (`#F4F6F9` / `#FFFFFF`), dan **Biru** (`#1D4ED8` Royal Blue & `#0B1F3A` Deep Navy UMP), dengan varian penuh untuk **Mode Gelap** (`.dark { --bg: #0B1322; --surface: #14213D; ... }`). |
-| **Reaktivitas UI**        | Alpine.js 3.14.8                                                                   | Manajemen state reaktif tanpa reload: filter/pencarian langsung, modal CRUD, direktif kustom `x-countup` (animasi angka statistik), dan binding dua arah.                                                                                                                                                                                                                                     |
-| **Dialog Interaktif**     | SweetAlert2 v11 (`NeuAlert` wrapper di `app.js`)                                   | Modal konfirmasi hapus, alert sukses/gagal, dan peringatan kuota memori browser.                                                                                                                                                                                                                                                                                                              |
-| **Peta & Lokasi**         | Google Maps Embed API                                                              | Peta kampus interaktif di `index.html`, `kontak.html`, dan lokasi kegiatan dinamis di `detail-kegiatan.html`.                                                                                                                                                                                                                                                                                 |
-| **Penyimpanan Data**      | Web Storage API (`localStorage`) + IndexedDB (`ProdiHukumDB`)                      | Penyimpanan primer terisolasi namespace dan cadangan media base64 tak terbatas.                                                                                                                                                                                                                                                                                                               |
-
----
-
-## 3. 📁 STRUKTUR BERKAS PROYEK
-
-Proyek terdiri dari **36 halaman HTML**: **18 halaman Publik** (13 indeks/statis + 5 halaman detail) dan **18 halaman Admin** (17 halaman kerja aktif + 1 redirect resmi).
-
-```
-Perancangan-Dan-Pengembangan-website-profil-UMP/
-├── index.html                  # Beranda (Hero, Statistik x-countup, Berita Utama, Agenda, Peta)
-├── profil.html                 # Profil Prodi (Tab: Visi/Misi, Sejarah, Tujuan, Struktur Organisasi)
-├── dosen.html                  # Direktori Dosen (Filter jabatan/keahlian, modal profil dosen)
-├── kurikulum.html              # Struktur Mata Kuliah per Semester (Filter Wajib/Pilihan)
-├── berita.html                 # Indeks Berita (Kategori, status Published)
-├── pengumuman.html             # Indeks Pengumuman (Badge status: Penting/Baru/Aktif/Berakhir)
-├── kegiatan.html                # Indeks Agenda & tombol "Daftar Kegiatan"
-├── artikel.html                 # Indeks Artikel Hukum (Status Published)
-├── prestasi.html                # Galeri Prestasi (Mahasiswa/Dosen/Alumni/Prodi)
-├── alumni.html                 # Direktori Alumni (Filter: Bekerja/Studi Lanjut/Wirausaha)
-├── galeri.html                 # Galeri Foto per Album Dokumentasi
-├── dokumen.html                # Pusat Unduhan Dokumen & Panduan Akademik
-├── kontak.html                 # Form Pesan + Peta Lokasi Kampus
-├── detail-berita.html          # Detail Berita + Berita Terkait (?id=)
-├── detail-pengumuman.html       # Detail Pengumuman + Lampiran Unduhan (?id=)
-├── detail-kegiatan.html        # Detail Kegiatan + Form Pendaftaran Peserta (?id=)
-├── detail-artikel.html         # Detail Artikel Hukum (?id=)
-├── detail-galeri.html          # Slideshow & Detail Album Galeri (?id=)
+Perancangan-Dan-Pengembangan-website-profil-UMP-/
 │
-├── admin/                      # PORTAL ADMINISTRASI (ROLE-BASED ACCESS CONTROL)
-│   ├── login.html              # Autentikasi Pengguna Admin (Email + Password)
-│   ├── lupa-sandi.html         # Alur Reset Kata Sandi Admin
-│   ├── dashboard.html          # Statistik Ringkas + Tren Konten + 4 Aktivitas Terbaru
-│   ├── profil-prodi.html       # Kelola Profil Prodi (`profil`) & Struktur Organisasi (`struktur`)
-│   ├── dosen.html              # CRUD Data Dosen (`dosen`)
-│   ├── kurikulum.html          # CRUD Mata Kuliah (`kurikulum`)
-│   ├── berita.html             # CRUD Berita (`berita`)
-│   ├── pengumuman.html         # CRUD Pengumuman (`pengumuman`)
-│   ├── kegiatan.html           # CRUD Kegiatan (`kegiatan`) + Kelola Pendaftar (`pendaftar`)
-│   ├── prestasi.html           # CRUD Prestasi Civitas Akademika (`prestasi`)
-│   ├── artikel.html            # CRUD Artikel Hukum (`artikel`)
-│   ├── galeri.html             # CRUD Foto Galeri per Album (`galeri`)
-│   ├── dokumen.html            # CRUD Dokumen Akademik (`dokumen`)
-│   ├── alumni.html             # CRUD Data Alumni & Tracer Study (`alumni`)
-│   ├── pengguna.html           # CRUD Akun & Hak Akses — Khusus Super Admin (`pengguna`)
-│   ├── aktivitas.html          # Log Audit Trail Sistem (`aktivitas`) — Halaman Resmi
-│   ├── activity-log.html       # Redirect Resmi ke aktivitas.html (Pembersihan Orphan File)
-│   └── pengaturan.html         # Identitas Situs, Peta, Backup/Restore JSON — Khusus Super Admin
+├── 📄 Halaman Publik Utama (13 halaman)
+│   ├── index.html                  # Beranda — slider hero, statistik, berita terbaru
+│   ├── profil.html                 # Profil Program Studi & visi-misi
+│   ├── dosen.html                  # Direktori Dosen (11 dosen)
+│   ├── kurikulum.html              # Kurikulum per semester (57 MK / 154 SKS)
+│   ├── berita.html                 # Daftar Berita
+│   ├── artikel.html                # Daftar Artikel Akademik
+│   ├── kegiatan.html               # Daftar Kegiatan & Event
+│   ├── pengumuman.html             # Daftar Pengumuman Resmi
+│   ├── alumni.html                 # Direktori Alumni
+│   ├── prestasi.html               # Prestasi Mahasiswa & Prodi
+│   ├── galeri.html                 # Galeri Foto
+│   ├── dokumen.html                # Dokumen Unduhan
+│   └── kontak.html                 # Halaman Kontak (form → pesan store)
 │
-├── assets/
-│   ├── css/
-│   │   ├── style.css           # 785 baris — Neumorphism tokens, Dark Mode, kelas kustom
-│   │   └── tailwind.min.css    # Build utilitas Tailwind CSS 3.4
+├── 📄 Halaman Detail (5 halaman)
+│   ├── detail-berita.html          # Detail satu berita
+│   ├── detail-artikel.html         # Detail satu artikel
+│   ├── detail-kegiatan.html        # Detail satu kegiatan
+│   ├── detail-pengumuman.html      # Detail satu pengumuman
+│   └── detail-galeri.html          # Detail satu item galeri
+│
+├── 📁 admin/ (18 halaman)
+│   ├── login.html                  # Login admin (kredensial statis)
+│   ├── lupa-sandi.html             # Halaman lupa sandi
+│   ├── dashboard.html              # Dashboard ringkasan statistik
+│   ├── dosen.html                  # CRUD data dosen (form khusus)
+│   ├── kurikulum.html              # CRUD kurikulum
+│   ├── berita.html                 # CRUD berita
+│   ├── artikel.html                # CRUD artikel
+│   ├── kegiatan.html               # CRUD kegiatan
+│   ├── pengumuman.html             # CRUD pengumuman
+│   ├── alumni.html                 # CRUD data alumni
+│   ├── prestasi.html               # CRUD prestasi
+│   ├── galeri.html                 # Upload & kelola galeri
+│   ├── dokumen.html                # Kelola dokumen PDF
+│   ├── pengguna.html               # Kelola akun admin (Super Admin only)
+│   ├── pengaturan.html             # Pengaturan situs lengkap (Super Admin only)
+│   ├── profil-prodi.html           # Edit profil program studi
+│   ├── aktivitas.html              # Log aktivitas admin (read-only)
+│   └── activity.html               # Alias aktivitas
+│
+├── 📁 assets/
 │   ├── js/
-│   │   └── app.js              # 2.027 baris — DB Engine, AUTH, Controller Alpine.js, Seed Data
-│   └── image/                  # Direktori resmi gambar dosen, alumni, berita, logo, kegiatan
+│   │   └── app.js                  # ⭐ Core — SEED data, DB layer, 28 Alpine components
+│   ├── css/
+│   │   └── style.css               # Custom CSS (neumorphism, dark mode, utilitas)
+│   └── image/
+│       └── logo-ump.png            # Logo UMP
 │
-├── docs/                       # DOKUMENTASI & DIAGRAM SISTEM LENGKAP
-│   ├── spesifikasi-sistem.md   # Spesifikasi kebutuhan & model data
-│   ├── analisa-perancangan-sistem.md # Master Analisa & 8 Diagram Mermaid Terpadu
-│   └── diagrams/               # Berkas Diagram MMD, Draw.io XML, & Viewer
-│       ├── preview-diagrams.html # Viewer interaktif offline dengan Zoom In/Out & Draw.io Export
-│       ├── dfd-level-0.mmd     # DFD Level 0 (Context Diagram)
-│       ├── dfd-level-1.mmd     # DFD Level 1 (Dekomposisi Proses Utama)
-│       ├── er-diagram.mmd      # Entity Relationship Diagram (17 Model Data)
-│       ├── sequence-diagram.mmd # Sequence Diagram
-│       ├── flowchart-sistem.mmd # Flowchart Sistem
-│       ├── component-diagram.mmd# UML Component Diagram
-│       ├── usecase-diagram.mmd # Use Case Diagram
-│       ├── deployment-diagram.mmd# Deployment Diagram
-│       └── drawio/             # Berkas Standar Draw.io XML (.drawio.xml & .xml)
-│           ├── all-diagrams.drawio.xml # Master 8-Page Draw.io XML
-│           ├── dfd-level-0.drawio.xml
-│           ├── dfd-level-1.drawio.xml
-│           ├── er-diagram.drawio.xml
-│           ├── sequence-diagram.drawio.xml
-│           ├── flowchart-sistem.drawio.xml
-│           ├── component-diagram.drawio.xml
-│           ├── usecase-diagram.drawio.xml
-│           └── deployment-diagram.drawio.xml
+├── 📁 docs/
+│   ├── diagrams/
+│   │   ├── *.mmd                   # 8 diagram Mermaid (source)
+│   │   └── drawio/
+│   │       ├── all-diagrams.drawio.xml     # Master — semua 8 diagram (multi-tab)
+│   │       ├── component-diagram.drawio.xml
+│   │       ├── deployment-diagram.drawio.xml
+│   │       ├── dfd-level-0.drawio.xml
+│   │       ├── dfd-level-1.drawio.xml
+│   │       ├── er-diagram.drawio.xml
+│   │       ├── flowchart-sistem.drawio.xml
+│   │       ├── sequence-diagram.drawio.xml
+│   │       └── usecase-diagram.drawio.xml
+│   ├── mermaid.md                  # Semua diagram Mermaid inline
+│   ├── analisa-perancangan.md      # Dokumen analisa
+│   └── spesifikasi-sistem.md       # Spesifikasi teknis
 │
-├── package.json                # Metadata proyek npm
-├── tailwind.config.js          # Konfigurasi palet warna & content path Tailwind CSS
-├── tailwind.input.css          # Berkas input sumber Tailwind CSS
-├── sitemap.xml                 # Peta situs resmi (13 URL publik non-detail)
-└── README.md                   # Dokumen ini
+├── mermaid.md                      # Ringkasan diagram (root)
+├── sitemap.xml                     # Sitemap HTML
+├── package.json                    # Metadata proyek
+└── README.md                       # File ini
 ```
 
 ---
 
-## 4. 🗄️ SPESIFIKASI MODEL DATA & ERD
+## 🗄️ Arsitektur Data (SEED & SAMPLE)
 
-### 4.1 Mesin Penyimpanan (Storage Engine)
-
-Setiap entitas disimpan secara terisolasi pada _key_ localStorage dengan pola:
+### Konsep
 
 ```
-prodihukum_db_v1_<nama_entitas>          →  Dikelola oleh DB.load() / DB.save() di app.js
-prodihukum_admin_session                 →  Sesi login admin aktif (dikelola AUTH)
-prodihukum_pageviews_v1                  →  Statistik kunjungan harian (maks. 14 hari)
+SEED_*    →  Data default / awal (hardcoded dalam app.js)
+SAMPLE_*  →  Data aktif (dimuat dari localStorage, fallback ke SEED_* jika kosong)
 ```
 
-### 4.2 Daftar 17 Entitas Data
+Setiap entitas mengikuti pola yang konsisten:
 
-| #      | Entitas (`dbKey`) | Tipe Record  | Deskripsi & Field Utama                                                                                                                                                     |
-| ------ | ----------------- | :----------: | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **1**  | `berita`          | Multi-Record | `id, slug, judul, kategori, tanggal, penulis, excerpt, konten, status, featured, gambar`                                                                                    |
-| **2**  | `dosen`           | Multi-Record | `id, nama, jabatan, keahlian, pendidikan, email, nidn, profil, status, foto`                                                                                                |
-| **3**  | `dokumen`         | Multi-Record | `id, nama, kategori, format, ukuran`                                                                                                                                        |
-| **4**  | `galeri`          | Multi-Record | `id, judul, album, src`                                                                                                                                                     |
-| **5**  | `pengumuman`      | Multi-Record | `id, judul, status, badge, tanggal, isi, lampiran`                                                                                                                          |
-| **6**  | `kegiatan`        | Multi-Record | `id, nama, tanggal, hari, bulan, waktu, lokasi, penyelenggara, deskripsi, gambar`                                                                                           |
-| **7**  | `pendaftar`       | Multi-Record | `id, kegiatanId (FK), kegiatanNama, nama, email, whatsapp, instansi, waktuDaftar`                                                                                           |
-| **8**  | `artikel`         | Multi-Record | `id, judul, penulis, kategori, tanggal, isi, referensi, tags, status, thumbnail`                                                                                            |
-| **9**  | `prestasi`        | Multi-Record | `id, nama, kategori, tingkat, tahun, foto`                                                                                                                                  |
-| **10** | `kurikulum`       | Multi-Record | `id, kode, nama, sks, jenis, semester`                                                                                                                                      |
-| **11** | `alumni`          | Multi-Record | `id, nama, angkatan, pekerjaan, instansi, kategori, email, linkedin, status, foto`                                                                                          |
-| **12** | `pengguna`        | Multi-Record | `id, nama, email, password, role, status`                                                                                                                                   |
-| **13** | `aktivitas`       | Multi-Record | `id, user, aksi, waktu, tanggalIso, icon`                                                                                                                                   |
-| **14** | `notifikasi`      | Multi-Record | `id, judul, pesan, waktu, read, icon`                                                                                                                                       |
-| **15** | `profil`          |  Singleton   | `nama, kode, fakultas, universitas, akreditasi, deskripsi, sejarah, visi, misi, tujuan, lulusan`                                                                            |
-| **16** | `struktur`        | Multi-Record | `id, nama, jabatan, foto`                                                                                                                                                   |
-| **17** | `pengaturan`      |  Singleton   | `namaWebsite, deskripsi, logo, favicon, theme, primaryColor, darkMode, metaTitle, metaDesc, keywords, email, telepon, alamat, mapEmbed, mapLink, koordinat, mahasiswaAktif` |
+```javascript
+const SEED_DOSEN = [ /* data default */ ];
+let SAMPLE_DOSEN = DB.load('dosen', SEED_DOSEN);
+//                  ↑ Cek localStorage dulu, pakai SEED jika kosong
+```
+
+### Layer Penyimpanan (`DB` object)
+
+| Method | Fungsi |
+|--------|--------|
+| `DB.load(key, fallback)` | Ambil dari localStorage; pakai `fallback` jika kosong |
+| `DB.save(key, data)` | Simpan ke localStorage (sync) + IndexedDB (async write-through) |
+
+### Kunci localStorage (prefix: `prodihukum_db_v1_`)
+
+Format key lengkap: `prodihukum_db_v1_<entity>`, contoh: `prodihukum_db_v1_dosen`
+
+### Sesi Admin
+
+Sesi admin disimpan di: `prodihukum_admin_session` (localStorage)
 
 ---
 
-### 4.3 Entity Relationship Diagram (ERD)
+## 📊 18 Modul Data
 
-```mermaid
-erDiagram
-    KEGIATAN ||--o{ PENDAFTAR : "memiliki pendaftar (kegiatanId)"
-    KEGIATAN ||--o{ GALERI : "dokumentasi kegiatan"
-    PENGGUNA ||--o{ AKTIVITAS : "mencatat log aktivitas (user)"
-    PENGGUNA ||--o{ NOTIFIKASI : "menerima notifikasi"
-    PENGGUNA ||--o{ BERITA : "menerbitkan warta (penulis)"
-    PENGGUNA ||--o{ ARTIKEL : "membuat publikasi (penulis)"
-    PENGGUNA ||--o{ PENGUMUMAN : "merilis pengumuman"
-    PENGGUNA ||--o{ DOKUMEN : "mengunggah dokumen"
-    PROFIL ||--|{ STRUKTUR : "memiliki struktur organisasi"
-    DOSEN ||--o| STRUKTUR : "penugasan jabatan struktural"
-    DOSEN ||--o{ KURIKULUM : "dosen pengampu matakuliah"
-    DOSEN ||--o{ PRESTASI : "penghargaan dosen"
-    ALUMNI ||--o{ PRESTASI : "rekam jejak prestasi"
-    PROFIL ||--|| PENGATURAN : "konfigurasi situs & prodi"
-    PROFIL ||--|{ DOKUMEN : "dokumen SK & akreditasi"
-    PROFIL ||--|{ KURIKULUM : "struktur kurikulum prodi"
+| No | SEED Constant | localStorage Key | Keterangan |
+|----|---------------|-----------------|------------|
+| 1 | `SEED_AKTIVITAS` | `aktivitas` | Log aktivitas admin |
+| 2 | `SEED_ALUMNI` | `alumni` | Data alumni |
+| 3 | `SEED_ARTIKEL` | `artikel` | Artikel akademik |
+| 4 | `SEED_BERITA` | `berita` | Berita program studi |
+| 5 | `SEED_DOKUMEN` | `dokumen` | Dokumen unduhan |
+| 6 | `SEED_DOSEN` | `dosen` | Data dosen tetap (11 dosen) |
+| 7 | `SEED_GALERI` | `galeri` | Galeri foto |
+| 8 | `SEED_KEGIATAN` | `kegiatan` | Kegiatan & event |
+| 9 | `SEED_KURIKULUM` | `kurikulum` | Mata kuliah (57 MK / 154 SKS) |
+| 10 | `SEED_NOTIFIKASI` | `notifikasi` | Notifikasi sistem |
+| 11 | `SEED_PENDAFTAR` | `pendaftar` | Data pendaftar kegiatan (publik) |
+| 12 | `SEED_PENGATURAN` | `pengaturan` | Pengaturan situs lengkap |
+| 13 | `SEED_PENGGUNA` | `pengguna` | Akun admin |
+| 14 | `SEED_PENGUMUMAN` | `pengumuman` | Pengumuman resmi |
+| 15 | `SEED_PESAN` | `pesan` | Pesan kontak masuk (publik) |
+| 16 | `SEED_PRESTASI` | `prestasi` | Prestasi mahasiswa & prodi |
+| 17 | `SEED_PROFIL` | `profil` | Profil program studi |
+| 18 | `SEED_STRUKTUR` | `struktur` | Struktur organisasi |
 
-    BERITA {
-        int id PK
-        string slug
-        string judul
-        string kategori
-        string tanggal
-        string penulis FK "Mereferensi PENGGUNA.nama"
-        string excerpt
-        string konten
-        string status "Draft | Review | Published"
-        bool featured
-        string gambar "Path / Base64"
-    }
+---
 
-    DOSEN {
-        int id PK
-        string nama
-        string jabatan
-        string keahlian
-        string pendidikan
-        string email
-        string nidn
-        string profil
-        string status "Aktif | Cuti | Tugas Belajar"
-        string foto "Path / Base64"
-    }
+## 👨‍🏫 Data Dosen (11 Orang)
 
-    DOKUMEN {
-        int id PK
-        string nama
-        string kategori "Kurikulum | Panduan | SK | Formulir"
-        string format "PDF | DOCX | XLS"
-        string ukuran
-        int tahun
-        string fileUrl
-        int downloads
-    }
+| Kode | Nama Dosen |
+|------|-----------|
+| HKM001 | Sitti Rahmawati Talango, S.H., M.H. |
+| HKM002 | Muhamad Yamin, S.H., M.H. |
+| HKM003 | Ernestin Manganang, S.H., M.H. |
+| HKM004 | Hendra, S.H., M.H. |
+| HKM005 | Muh. Rizal Rustam, S.H., M.H. |
+| HKM006 | Erisnawati, S.H., M.H. |
+| HKM007 | Dg. Fajar Wahyu Sejati, S.H., M.H. |
+| HKM008 | Ahmad Mustanir, S.H., M.H. |
+| HKM009 | Sugimanto, S.H., M.Kn. |
+| HKM010 | Ridwan, S.H., M.H. |
+| *(tanpa kode)* | Yohanis Tamatjita, S.H., M.H. |
 
-    GALERI {
-        int id PK
-        string judul
-        string album "Seminar | Kuliah Umum | Praktikum | Wisuda | dll"
-        string src "Path / Base64"
-        string tanggal
-    }
+**Field `SEED_DOSEN`:** `id, kode, nama, jabatan, pendidikan, spesialisasi, foto, email, telepon`
 
-    PENGUMUMAN {
-        int id PK
-        string judul
-        string status "Penting | Baru | Aktif | Berakhir"
-        string badge "badge-important | badge-new | badge-active"
-        string tanggal
-        string isi
-        string lampiran
-    }
+---
 
-    KEGIATAN {
-        int id PK
-        string nama
-        string tanggal
-        string hari
-        string bulan
-        string waktu
-        string lokasi
-        string penyelenggara
-        string deskripsi
-        string gambar "Path / Base64"
-    }
+## 📚 Data Kurikulum (57 MK / 154 SKS)
 
-    PENDAFTAR {
-        int id PK
-        int kegiatanId FK "Mereferensi KEGIATAN.id"
-        string kegiatanNama
-        string nama
-        string email
-        string whatsapp
-        string instansi
-        string waktuDaftar
-    }
+### Distribusi per Semester
 
-    ARTIKEL {
-        int id PK
-        string judul
-        string penulis FK "Mereferensi PENGGUNA / DOSEN"
-        string kategori "Hukum Pidana | Tata Negara | Adat | Bisnis"
-        string tanggal
-        string isi
-        string referensi
-        string tags
-        string status "Draft | Review | Published"
-        string thumbnail "Path / Base64"
-    }
+| Semester | Jumlah MK | Total SKS |
+|----------|-----------|-----------|
+| 1 | 9 MK | ~20 SKS |
+| 2 | 8 MK | ~20 SKS |
+| 3 | 10 MK | ~22 SKS |
+| 4 | 10 MK | ~22 SKS |
+| 5 | 8 MK | ~20 SKS |
+| 6 | 9 MK | ~20 SKS |
+| 7 | 2 MK | ~6 SKS |
+| 8 | 1 MK | ~4 SKS |
+| **Total** | **57 MK** | **154 SKS** |
 
-    PRESTASI {
-        int id PK
-        string nama
-        string kategori "Mahasiswa | Dosen | Alumni | Program Studi"
-        string tingkat "Provinsi | Regional | Nasional | Internasional"
-        string tahun
-        string foto "Path / Base64"
-    }
+> **Catatan:** 10 mata kuliah memiliki `pengampu: '-'` dan `kodeDosen: '-'` secara sengaja (data belum tersedia).
 
-    KURIKULUM {
-        int id PK
-        string kode
-        string nama
-        int sks
-        string jenis "Wajib | Pilihan"
-        int semester
-        string silabusUrl
-        string deskripsi
-    }
+### Field `SEED_KURIKULUM`
 
-    ALUMNI {
-        int id PK
-        string nama
-        string angkatan
-        string pekerjaan
-        string instansi
-        string kategori "Bekerja | Studi Lanjut | Wirausaha"
-        string email
-        string linkedin
-        string status "Terverifikasi | Menunggu"
-        string foto "Path / Base64"
-    }
+```javascript
+{
+  id:        Number,
+  kode:      String,   // Contoh: 'HKM1101'
+  nama:      String,   // Nama mata kuliah
+  sks:       Number,   // Jumlah SKS
+  semester:  Number,   // 1 – 8
+  kategori:  String,   // 'Wajib' | 'Pilihan'
+  deskripsi: String,
+  pengampu:  String,   // Nama dosen (string), '-' jika belum ada
+  kodeDosen: String    // Kode dosen 'HKM001'–'HKM010', atau '-'
+}
+```
 
-    PENGGUNA {
-        int id PK
-        string nama
-        string email
-        string password
-        string role "Super Admin | Editor | Operator"
-        string status "Aktif | Nonaktif"
-    }
+### Pencocokan Dosen
 
-    AKTIVITAS {
-        int id PK
-        string user FK "Mereferensi PENGGUNA.nama"
-        string aksi
-        string waktu
-        string tanggalIso
-        string icon
-    }
+Fungsi `coursesForLecturer()` mencocokkan `dosen.nama` dengan `kurikulum.pengampu` (string match).  
+→ Nama di `SEED_KURIKULUM.pengampu` **harus persis sama** dengan `SEED_DOSEN.nama`.
 
-    NOTIFIKASI {
-        int id PK
-        string judul
-        string pesan
-        string waktu
-        bool read
-        string icon
-    }
+### Import/Export Kurikulum
 
-    PROFIL {
-        string nama
-        string kode
-        string fakultas
-        string universitas
-        string akreditasi
-        string deskripsi
-        string sejarah
-        string visi
-        string misi
-        string tujuan
-        string lulusan
-    }
+Tombol Import/Export di `admin/kurikulum.html` adalah **simulasi** — menampilkan pesan informasi, tidak ada transfer file nyata.
 
-    STRUKTUR {
-        int id PK
-        string nama
-        string jabatan
-        string foto
-    }
+---
 
-    PENGATURAN {
-        string namaWebsite
-        string deskripsi
-        string logo
-        string favicon
-        string theme
-        string primaryColor
-        bool darkMode
-        string metaTitle
-        string metaDesc
-        string keywords
-        string email
-        string telepon
-        string alamat
-        string mapEmbed
-        string mapLink
-        string koordinat
-        int mahasiswaAktif
-    }
+## 🔐 Sistem Admin
+
+### Login
+
+Akses panel admin: `admin/login.html`
+
+| Field | Nilai Default |
+|-------|--------------|
+| Username | `admin` |
+| Password | `admin123` |
+
+> ⚠️ Kredensial disimpan di `SEED_PENGGUNA` dalam `app.js`. **Ubah sebelum deploy ke publik.**
+
+### Guard Autentikasi
+
+- Semua halaman admin dicek via `AUTH.guard()` saat load
+- Session tersimpan di `prodihukum_admin_session` (localStorage)
+- Halaman `pengguna.html` dan `pengaturan.html` memerlukan role **Super Admin**
+
+### Halaman Admin & Alpine Component
+
+| Halaman | Alpine Component | Akses |
+|---------|-----------------|-------|
+| `admin/dashboard.html` | `adminShell()` | Semua admin |
+| `admin/dosen.html` | `adminDosenPage()` | Semua admin |
+| `admin/kurikulum.html` | `adminCrudTable()` | Semua admin |
+| `admin/berita.html` | `adminCrudTable()` | Semua admin |
+| `admin/artikel.html` | `adminCrudTable()` | Semua admin |
+| `admin/kegiatan.html` | `kegiatanAdminPage()` | Semua admin |
+| `admin/pengumuman.html` | `adminCrudTable()` | Semua admin |
+| `admin/alumni.html` | `adminCrudTable()` | Semua admin |
+| `admin/prestasi.html` | `adminCrudTable()` | Semua admin |
+| `admin/galeri.html` | `adminGaleriPage()` | Semua admin |
+| `admin/dokumen.html` | `adminDokumenTable()` | Semua admin |
+| `admin/aktivitas.html` | `adminAktivitasPage()` | Semua admin |
+| `admin/profil-prodi.html` | `adminCrudTable()` | Semua admin |
+| `admin/pengguna.html` | `adminPenggunaTable()` | **Super Admin** |
+| `admin/pengaturan.html` | *(inline Alpine)* | **Super Admin** |
+| `admin/login.html` | *(form login)* | Publik |
+| `admin/lupa-sandi.html` | *(form)* | Publik |
+
+### Pengaturan Situs (`SEED_PENGATURAN`)
+
+| Kategori | Field |
+|----------|-------|
+| Identitas | `namaWebsite`, `deskripsi`, `logo`, `favicon` |
+| SEO | `metaTitle`, `metaDesc`, `keywords` |
+| Sosial Media | `facebook`, `instagram`, `youtube`, `linkedin`, `tiktok` |
+| Kontak | `email`, `telepon`, `alamat` |
+| Peta | `mapEmbed`, `mapLink`, `koordinat` |
+| Statistik | `mahasiswaAktif` |
+
+---
+
+## 🏔️ Alpine.js Functions (28 Fungsi)
+
+### Halaman Publik (20 fungsi)
+
+| Fungsi | File | Keterangan |
+|--------|------|------------|
+| `siteHeader()` | Semua halaman | Header: dark mode, search global |
+| `homePage()` | `index.html` | Beranda: slider hero, statistik, berita terbaru |
+| `homeStats()` | `index.html` | Statistik: mahasiswa aktif, dosen, alumni, MK |
+| `dosenPage()` | `dosen.html` | Direktori & filter dosen |
+| `kurikulumPage()` | `kurikulum.html` | Tampilan kurikulum per semester |
+| `profilPage()` | `profil.html` | Profil prodi & struktur organisasi |
+| `beritaPage()` | `berita.html` | List & filter berita |
+| `artikelPage()` | `artikel.html` | List artikel akademik |
+| `kegiatanPage()` | `kegiatan.html` | List kegiatan & pendaftaran event |
+| `pengumumanPage()` | `pengumuman.html` | List pengumuman resmi |
+| `alumniPage()` | `alumni.html` | Direktori alumni |
+| `prestasiPage()` | `prestasi.html` | List prestasi |
+| `galeriPage()` | `galeri.html` | Grid galeri foto |
+| `dokumenPage()` | `dokumen.html` | List dokumen unduhan |
+| `contactForm()` | `kontak.html` | Form kontak → DB.save('pesan') |
+| `detailBeritaPage()` | `detail-berita.html` | Detail satu berita |
+| `detailArtikelPage()` | `detail-artikel.html` | Detail satu artikel |
+| `detailKegiatanPage()` | `detail-kegiatan.html` | Detail satu kegiatan |
+| `detailPengumumanPage()` | `detail-pengumuman.html` | Detail satu pengumuman |
+| `detailGaleriPage()` | `detail-galeri.html` | Detail satu item galeri |
+
+### Admin (8 fungsi)
+
+| Fungsi | Keterangan |
+|--------|-----------|
+| `adminShell()` | Shell admin: sidebar, auth guard, notifikasi |
+| `adminDosenPage()` | CRUD dosen dengan form field khusus |
+| `adminGaleriPage()` | Upload & kelola galeri foto |
+| `adminDokumenTable()` | Kelola dokumen PDF/file |
+| `adminPenggunaTable()` | Kelola akun admin (Super Admin only) |
+| `adminCrudTable()` | CRUD generik (berita, artikel, alumni, dll) |
+| `kegiatanAdminPage()` | CRUD kegiatan + lihat pendaftar |
+| `adminAktivitasPage()` | Log aktivitas admin (read-only) |
+
+### Cara Kerja `adminCrudTable()` (Generic CRUD)
+
+Dikonfigurasi via atribut HTML data:
+
+```html
+<div x-data="adminCrudTable()"
+     data-db-key="berita"
+     data-columns='["judul","tanggal","kategori"]'>
 ```
 
 ---
 
-## 5. 🔄 DATA FLOW DIAGRAM (DFD)
+## 📐 Diagram & Dokumentasi
 
-### 5.1 DFD Level 0 (Diagram Konteks)
+Semua diagram tersedia dalam 2 format: **Mermaid** (`.mmd`) dan **Draw.io** (`.drawio.xml`).
 
-```mermaid
-flowchart TB
-    P["👤 Pengunjung Publik<br/>(Mahasiswa, Calon Mahasiswa, Alumni, Umum)"]
-    A["🔐 Pengguna Admin<br/>(Super Admin, Editor, Operator)"]
-    SYS[["🏛️ SISTEM INFORMASI WEBSITE PROFIL & ADMIN PANEL<br/>PRODI HUKUM UNIVERSITAS MUHAMMADIYAH PAPUA"]]
-    MAP["🗺️ Google Maps Embed API"]
-    CDN["📦 CDN External Services<br/>(Tailwind, Alpine.js, SweetAlert2, Google Fonts)"]
+| Diagram | Mermaid | Draw.io | Keterangan |
+|---------|---------|---------|------------|
+| ER Diagram | `er-diagram.mmd` | `er-diagram.drawio.xml` | 18 entitas, relasi lengkap |
+| DFD Level 0 | `dfd-level-0.mmd` | `dfd-level-0.drawio.xml` | Aliran data sistem keseluruhan |
+| DFD Level 1 | `dfd-level-1.mmd` | `dfd-level-1.drawio.xml` | Aliran data detail |
+| Flowchart Sistem | `flowchart-sistem.mmd` | `flowchart-sistem.drawio.xml` | Alur logika aplikasi |
+| Sequence Diagram | `sequence-diagram.mmd` | `sequence-diagram.drawio.xml` | 4 skenario interaksi |
+| Component Diagram | `component-diagram.mmd` | `component-diagram.drawio.xml` | Komponen teknis |
+| Usecase Diagram | `usecase-diagram.mmd` | `usecase-diagram.drawio.xml` | Aktor & use case |
+| Deployment Diagram | `deployment-diagram.mmd` | `deployment-diagram.drawio.xml` | Arsitektur deployment |
 
-    P -- "1. Request halaman & kata kunci pencarian<br/>2. Submit formulir kontak & pendaftaran kegiatan" --> SYS
-    SYS -- "1. Tampilan informasi akademik, berita, dosen, dokumen<br/>2. Feedback konfirmasi & notifikasi SweetAlert2" --> P
+> File master multi-tab: `docs/diagrams/drawio/all-diagrams.drawio.xml` (semua 8 diagram dalam satu file)
 
-    A -- "1. Kredensial login (email & password)<br/>2. Input data CRUD 11 modul & manajemen akun<br/>3. Konfigurasi identitas & backup/restore database" --> SYS
-    SYS -- "1. Sesi login & verifikasi hak akses (RBAC)<br/>2. Dashboard statistik, tren konten, & audit log<br/>3. Status notifikasi keberhasilan transaksi" --> A
+### Skenario Sequence Diagram (4 skenario)
 
-    SYS -- "Request embed peta lokasi" --> MAP
-    MAP -- "Iframe visualisasi peta interaktif" --> SYS
-
-    CDN -- "Style utilitas, library reaktif, & webfonts" --> SYS
-```
-
----
-
-### 5.2 DFD Level 1 (Dekomposisi Proses Utama)
-
-```mermaid
-flowchart TB
-    subgraph ENTITAS["👥 Entitas Eksternal"]
-        P["👤 Pengunjung Publik"]
-        A["🔐 Admin (Super Admin / Editor / Operator)"]
-    end
-
-    subgraph PROSES["⚙️ Proses Sistem (Level 1)"]
-        P1["1.0<br/>Manajemen Tampilan Konten Publik"]
-        P2["2.0<br/>Pencarian Global Realtime"]
-        P3["3.0<br/>Pendaftaran Kegiatan Akademik"]
-        P4["4.0<br/>Pengiriman Formulir Kontak"]
-        P5["5.0<br/>Autentikasi & Guard RBAC"]
-        P6["6.0<br/>Manajemen Konten CRUD (11 Modul)"]
-        P7["7.0<br/>Manajemen Akun Pengguna & Peran"]
-        P8["8.0<br/>Pencatatan Audit Trail & Notifikasi"]
-        P9["9.0<br/>Pengaturan Situs & Backup / Restore"]
-        P10["10.0<br/>Agregasi Statistik & Tren Dashboard"]
-    end
-
-    subgraph DATASTORES["🗄️ Data Store (localStorage & IndexedDB)"]
-        DS1[("D1 · berita")]
-        DS2[("D2 · dosen")]
-        DS3[("D3 · dokumen")]
-        DS4[("D4 · galeri")]
-        DS5[("D5 · pengumuman")]
-        DS6[("D6 · kegiatan")]
-        DS7[("D7 · pendaftar")]
-        DS8[("D8 · artikel")]
-        DS9[("D9 · prestasi")]
-        DS10[("D10 · kurikulum")]
-        DS11[("D11 · alumni")]
-        DS12[("D12 · pengguna")]
-        DS13[("D13 · aktivitas")]
-        DS14[("D14 · notifikasi")]
-        DS15[("D15 · profil & struktur")]
-        DS16[("D16 · pengaturan")]
-        DSPV[("PV · prodihukum_pageviews_v1")]
-    end
-
-    %% Aliran Pengunjung
-    P -- "Akses Halaman & Filter Kategori" --> P1
-    P1 -- "Read Data" --> DS1 & DS2 & DS3 & DS4 & DS5 & DS6 & DS8 & DS9 & DS10 & DS11 & DS15 & DS16
-    P1 -- "Write Hit (trackPageView)" --> DSPV
-    P1 -- "Render Halaman / Detail" --> P
-
-    P -- "Input Kueri Pencarian" --> P2
-    P2 -- "Read Index Gabungan" --> DS1 & DS2 & DS3 & DS5 & DS6 & DS8 & DS9 & DS10 & DS11
-    P2 -- "Daftar Hasil Pencarian" --> P
-
-    P -- "Submit Data Pendaftar" --> P3
-    P3 -- "Write Data Peserta" --> DS7
-    P3 -- "Trigger Log Publik" --> P8
-    P3 -- "Konfirmasi Sukses" --> P
-
-    P -- "Submit Pesan" --> P4
-    P4 -- "Validasi & Feedback" --> P
-
-    %% Aliran Admin
-    A -- "Input Email & Password" --> P5
-    P5 -- "Read Kredensial" --> DS12
-    P5 -- "Set Sesi Admin & Guard" --> A
-
-    A -- "Create / Update / Delete" --> P6
-    P6 -- "Write Data Koleksi" --> DS1 & DS2 & DS3 & DS4 & DS5 & DS6 & DS8 & DS9 & DS10 & DS11 & DS15
-    P6 -- "Catat Aksi Admin" --> P8
-
-    A -- "Kelola Akun (Super Admin)" --> P7
-    P7 -- "Write Akun Admin" --> DS12
-    P7 -- "Catat Aksi Admin" --> P8
-
-    P8 -- "Write Log" --> DS13
-    P8 -- "Write Notif" --> DS14
-
-    A -- "Ubah Identitas / Backup / Reset" --> P9
-    P9 -- "Write Pengaturan" --> DS15 & DS16
-    P9 -- "Catat Aksi Admin" --> P8
-
-    A -- "Akses Dashboard" --> P10
-    P10 -- "Hitung Metrik & Tren" --> DS1 & DS2 & DS11 & DS12 & DSPV & DS13
-    P10 -- "Render Widget Statistik" --> A
-```
+| Skenario | Alur |
+|----------|------|
+| 1 | Admin login → AUTH.check → session → dashboard |
+| 2 | Admin CRUD + penyimpanan localStorage + IDB |
+| 3 | Cross-tab update via storage event |
+| 4 | Publik kirim form kontak → DB.save('pesan') → SweetAlert |
 
 ---
 
-## 6. 🧭 FLOWCHART SISTEM
+## 🚀 Cara Menjalankan
 
-### 6.1 Flowchart Interaksi Pengunjung Publik
+### Metode 1: Live Server (VS Code) ⭐ Direkomendasikan
 
-```mermaid
-flowchart TD
-    P_Start([Mulai: Pengunjung Buka Website]) --> P_Choice{Pilih Menu / Fitur}
+1. Install ekstensi **Live Server** di VS Code
+2. Klik kanan `index.html` → **Open with Live Server**
+3. Browser otomatis buka di `http://127.0.0.1:5500`
 
-    P_Choice -->|Akses Halaman Informasi| P_Load[Muat Data dari LocalStorage & IndexedDB]
-    P_Load --> P_PV[Catat Pageview Harian otomatis]
-    P_PV --> P_Render[Render Tampilan Responsif & Interaktif]
-
-    P_Choice -->|Pencarian Global| P_Search[/Input Kata Kunci/]
-    P_Search --> P_ExecSearch[Cari pada Indeks 9 Entitas Data]
-    P_ExecSearch --> P_RenderSearch[Tampilkan Hasil & Tautan Langsung]
-
-    P_Choice -->|Pendaftaran Kegiatan| P_OpenKeg[Buka detail-kegiatan.html?id=...]
-    P_OpenKeg --> P_FillKeg[/Isi Formulir Pendaftaran/]
-    P_FillKeg --> P_ValEmail{Email Sudah Terdaftar?}
-    P_ValEmail -- Ya --> P_ErrEmail[Tampilkan SweetAlert Error]
-    P_ValEmail -- Tidak --> P_SaveKeg[Simpan ke 'pendaftar' & Catat Log Aktivitas]
-    P_SaveKeg --> P_OkKeg[Tampilkan SweetAlert Sukses]
-
-    P_Choice -->|Ganti Tema| P_ToggleDark[Klik Tombol Mode Gelap/Terang]
-    P_ToggleDark --> P_ApplyTheme[Toggle Class .dark & Simpan ke localStorage]
-
-    P_Render --> P_End([Selesai])
-    P_RenderSearch --> P_End
-    P_ErrEmail --> P_End
-    P_OkKeg --> P_End
-    P_ApplyTheme --> P_End
-```
-
----
-
-### 6.2 Flowchart Autentikasi & Hak Akses Admin Panel (RBAC)
-
-```mermaid
-flowchart TD
-    A_Start([Mulai: Buka Panel Admin]) --> A_CheckLogin{Halaman Login?}
-
-    A_CheckLogin -- Ya --> A_HasSession{Ada Sesi Aktif?}
-    A_HasSession -- Ya --> A_DirectDash[Redirect ke dashboard.html]
-    A_HasSession -- Tidak --> A_ShowForm[Tampilkan Form Login]
-    A_ShowForm --> A_SubmitCreds[/Input Email & Password/]
-    A_SubmitCreds --> A_VerifyAcc{Verifikasi Kredensial & Status}
-    A_VerifyAcc -- Gagal / Nonaktif --> A_AlertFail[SweetAlert: Kredensial Tidak Valid]
-    A_AlertFail --> A_ShowForm
-    A_VerifyAcc -- Sukses --> A_CreateSession[Simpan Sesi ke prodihukum_admin_session]
-    A_CreateSession --> A_DirectDash
-
-    A_CheckLogin -- Tidak --> A_RunGuard["Eksekusi AUTH.guard()"]
-    A_RunGuard --> A_CheckAuth{Sesi Valid?}
-    A_CheckAuth -- Tidak --> A_RedirectLogin[Redirect ke login.html]
-    A_CheckAuth -- Ya --> A_CheckRole{Halaman Khusus Super Admin?}
-
-    A_CheckRole -- Ya (pengguna/pengaturan) --> A_IsSuper{Role === 'Super Admin'?}
-    A_IsSuper -- Tidak --> A_DenyAlert[SweetAlert: Hak Akses Ditolak]
-    A_DenyAlert --> A_DirectDash
-    A_IsSuper -- Ya --> A_AllowSuper[Buka Halaman Manajemen Pengguna/Pengaturan]
-
-    A_CheckRole -- Tidak (Modul CRUD Umum) --> A_AllowGeneral[Buka Modul CRUD Sesuai Hak Akses]
-
-    A_AllowSuper --> A_ExecCRUD[Operasi: Tambah / Edit / Hapus / Backup]
-    A_AllowGeneral --> A_ExecCRUD
-    A_ExecCRUD --> A_SaveData[Simpan ke LocalStorage & Cadangkan ke IDB]
-    A_SaveData --> A_WriteLog[Pencatatan Otomatis Log Audit]
-    A_WriteLog --> A_RefreshTable[Pembaruan Tabel Reaktif]
-
-    A_DirectDash --> A_End([Selesai])
-    A_RedirectLogin --> A_End
-    A_RefreshTable --> A_End
-```
-
----
-
-## 7. 🛠️ HASIL AUDIT & PERBAIKAN
-
-Audit dilakukan secara komprehensif terhadap **seluruh 36 berkas HTML**, `assets/js/app.js` (2.027 baris), `assets/css/style.css` (785 baris), `package.json`, `tailwind.config.js`, dan `sitemap.xml`.
-
-### Rangkuman Temuan & Status Perbaikan:
-
-1. **Sinkronisasi Sidebar Admin (`admin/dashboard.html`)**: Menu `Activity Log` (`aktivitas.html`) telah ditambahkan pada sidebar `admin/dashboard.html` sehingga seluruh 15 halaman kerja panel admin memiliki sidebar yang 100% seragam.
-2. **Pembersihan Orphan File (`admin/activity-log.html`)**: Halaman duplikat lama `activity-log.html` telah diganti menjadi _redirect_ bersih ke `aktivitas.html`.
-3. **Deskripsi `package.json`**: Diperbarui menjadi deskripsi proyek resmi yang ringkas dan akurat.
-4. **Verifikasi Integritas Link & Aset**: 0 _broken links_ dan 0 _broken image paths_ di seluruh 36 berkas HTML.
-5. **Integritas Navigasi TOC Markdown**: 100% tautan Daftar Isi pada seluruh berkas Markdown telah diverifikasi melompat ke judul tujuan tanpa galat.
-
----
-
-## 8. ✨ FITUR UTAMA & PANDUAN PENGOPERASIAN
-
-### 8.1 Sisi Publik
-
-- **Statistik Beranimasi (`x-countup`)**: Menampilkan jumlah dosen, mahasiswa, alumni, dan prestasi secara live dari data `SAMPLE_*`.
-- **Pencarian Global Realtime**: Menyaring data instan pada 9 entitas melalui komponen `globalSearch()`.
-- **Pendaftaran Kegiatan Online**: Validasi otomatis untuk mencegah pendaftaran ganda per email/kegiatan.
-- **Mode Gelap / Terang**: Tersimpan di `localStorage.theme` dan disinkronkan ke _meta address-bar_ perangkat mobile.
-
-### 8.2 Sisi Admin & Akun Demo
-
-- **Kredensial Default Panel Admin**:
-  - **Super Admin**: `admin@ump.ac.id` / Password: `admin`
-  - **Editor**: `editor.rina@ump.ac.id` / Password: `editor123`
-  - **Operator**: `operator.yusuf@ump.ac.id` / Password: `operator123`
-- **Backup & Restore Database**: Fitur ekspor/impor seluruh basis data dalam bentuk berkas JSON di menu Pengaturan.
-
-### 8.3 Menjalankan Proyek Secara Lokal
-
-Karena berarsitektur murni _front-end static_, proyek dapat dijalankan menggunakan web server lokal mana pun:
+### Metode 2: Python HTTP Server
 
 ```bash
-# Menggunakan Node.js npx
-npx serve .
-
-# Atau menggunakan Python 3
+cd "Perancangan-Dan-Pengembangan-website-profil-UMP-"
 python -m http.server 8080
+# Buka: http://localhost:8080
 ```
 
-Buka peramban di `http://localhost:8080/index.html` (portal publik) atau `http://localhost:8080/admin/login.html` (panel admin).
+### Metode 3: Node.js `serve`
+
+```bash
+npx serve .
+# Buka: http://localhost:3000
+```
+
+> ⚠️ **Jangan buka langsung via `file://`** — path relatif CSS/JS dan beberapa API browser tidak bekerja tanpa HTTP server.
 
 ---
 
-## 9. 🌐 DOKUMENTASI DIAGRAM & VIEWER INTERAKTIF
+## ♻️ Reset Data
 
-Untuk kemudahan eksplorasi diagram arsitektur sistem secara visual dan offline tanpa memerlukan login akun:
+Ketika `app.js` diperbarui (data SEED berubah), localStorage di browser **tidak otomatis ter-update**. Lakukan reset manual:
 
-- 🌐 **Aplikasi Viewer Interaktif**: [`docs/diagrams/preview-diagrams.html`](docs/diagrams/preview-diagrams.html) _(Fitur Zoom In/Out hingga 400%, Pan Drag, Salin Draw.io XML, Download SVG, & Dark Mode)_
-- 📐 **Koleksi Format Draw.io XML**: Folder [`docs/diagrams/drawio/`](docs/diagrams/drawio/) _(Siap buka dan di-paste langsung ke [app.diagrams.net](https://app.diagrams.net))_
-- 📑 **Dokumen Master Analisa Sistem**: [`docs/analisa-perancangan-sistem.md`](docs/analisa-perancangan-sistem.md)
-- 📄 **Spesifikasi Kebutuhan Sistem**: [`docs/spesifikasi-sistem.md`](docs/spesifikasi-sistem.md)
-- 📁 **Koleksi 8 Kode Sumber MMD**: Folder [`docs/diagrams/`](docs/diagrams/)
+### Via Console Browser (F12)
+
+```javascript
+// Reset semua 18 entitas sekaligus
+localStorage.clear();
+location.reload();
+
+// Reset satu entitas saja
+localStorage.removeItem('prodihukum_db_v1_kurikulum');
+location.reload();
+```
+
+### Via DevTools
+
+`F12` → **Application** → **Local Storage** → klik kanan → **Clear All**
+
+---
+
+## 📝 Catatan Pengembang
+
+### Konsistensi Field Kode Dosen
+
+| Konteks | Nama Field |
+|---------|-----------|
+| `SEED_DOSEN` | `kode` (contoh: `"HKM001"`) |
+| `SEED_KURIKULUM` | `kodeDosen` (contoh: `"HKM001"` atau `"-"`) |
+| `SEED_STRUKTUR` | `dosenId` (merujuk ke `SEED_DOSEN.id`) |
+| Form `admin/dosen.html` | `kode` ✅ |
+| Form `admin/kurikulum.html` | `kodeDosen` ✅ |
+
+### LEGACY_SEED (Bukan Dead Code)
+
+`LEGACY_SEED_DOSEN` dan `LEGACY_SEED_KURIKULUM` digunakan untuk **deteksi migrasi data format lama**.  
+Jika localStorage masih berisi data format lama, sistem mereset otomatis ke SEED terbaru.  
+**Jangan hapus** — biarkan tetap ada di `app.js`.
+
+### Penyimpanan Write-Through
+
+Setiap `DB.save()` melakukan:
+1. **Sync**: `localStorage.setItem(key, JSON.stringify(data))`
+2. **Async**: IndexedDB async write-through (best-effort duplicate, tidak memblokir UI)
+3. **Event**: Dispatch `db-update` di tab aktif + `storage` event ke tab lain
+
+### Logging Aktivitas Publik
+
+- Pendaftaran kegiatan → `logPublicEvent()` → dicatat di store `aktivitas`
+- Aktivitas admin (CRUD) → `logActivity()` → dicatat di store `aktivitas`
+
+### Asosiasi Antar Entitas (Logical Lookup)
+
+Tidak ada foreign key nyata. Semua relasi adalah **logical lookup** di JavaScript:
+
+| Relasi | Cara |
+|--------|------|
+| `pendaftar` ↔ `kegiatan` | `pendaftar.kegiatanId === kegiatan.id` |
+| `struktur` ↔ `dosen` | `struktur.dosenId === dosen.id` (opsional) |
+| `kurikulum` ↔ `dosen` | `kurikulum.pengampu === dosen.nama` (string match) |
+
+---
+
+## 👥 Tim Pengembang
+
+**Program Studi Hukum — Universitas Muhammadiyah Papua (UMP)**  
+Sacode 2025 — Latihan Perancangan & Pengembangan Website Profil
+
+---
+
+*Terakhir diperbarui: Oktober 2026*

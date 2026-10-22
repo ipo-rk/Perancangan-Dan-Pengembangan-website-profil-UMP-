@@ -285,7 +285,7 @@
             </nav>
             <div class="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-white/10 text-white/90 border border-white/15 mb-2"><span x-html="iconSvg('gear')"></span> Konfigurasi Global</span>
+                <span class="admin-header-badge inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-white/10 text-white/90 border border-white/15 mb-2"><span x-html="iconSvg('gear')"></span> Konfigurasi Global</span>
                 <h1 class="admin-header-title">Pengaturan <span class="text-gold">Situs Web</span></h1>
                 <span class="admin-header-underline"></span>
                 <p class="admin-header-desc">Kelola parameter website, kontak sekretariat, tautan media sosial, alamat kampus, dan preferensi umum.</p>
@@ -301,6 +301,14 @@
     storage: DB.getStorageUsage(),
     uploadingLogo: false,
     uploadingFavicon: false,
+    init() {
+      window.addEventListener('db-update', event => {
+        if (event.detail?.key === 'pengaturan' && event.detail.data && !Array.isArray(event.detail.data)) {
+          this.form = { ...event.detail.data };
+        }
+        if (event.detail?.key === 'pengaturan') this.refreshStorage();
+      });
+    },
     refreshStorage() { this.storage = DB.getStorageUsage(); },
     async onLogo(e) {
       const file = e.target.files && e.target.files[0];
@@ -484,7 +492,9 @@
                 <input x-model="form.instagram" type="text" placeholder="URL Instagram" class="neu-input w-full">
                 <input x-model="form.youtube" type="text" placeholder="URL YouTube" class="neu-input w-full">
                 <input x-model="form.linkedin" type="text" placeholder="URL LinkedIn" class="neu-input w-full">
+                <input x-model="form.tiktok" type="url" placeholder="URL TikTok" class="neu-input w-full">
               </div>
+              <p class="text-[11px] text-text-muted">Logo, favicon, dan tautan sosial diterapkan pada halaman publik setelah pengaturan disimpan dan halaman dimuat ulang.</p>
             </div>
 
             <div x-show="tab==='contact'" class="space-y-4">

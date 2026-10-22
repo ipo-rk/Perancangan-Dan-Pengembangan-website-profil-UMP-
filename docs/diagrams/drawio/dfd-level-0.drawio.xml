@@ -1,44 +1,175 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<mxfile host="app.diagrams.net" modified="2026-09-08T08:55:34.170Z" agent="Mozilla/5.0" version="21.0.0" type="device">
-  <diagram id="dfd_level_0___diagram_konteks" name="DFD Level 0 - Diagram Konteks">
-    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2000" pageHeight="1400" math="0" shadow="0">
+<?xml version="1.0" encoding="utf-8"?>
+<mxfile host="app.diagrams.net" modified="2026-10-21T09:25:00.000Z" agent="Antigravity Architect" version="24.7.17" type="device">
+  <diagram id="dfd-level-0" name="DFD Level 0 (Context Diagram)">
+    <mxGraphModel dx="1450" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1450" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <!-- External Entity: Pengunjung Publik -->
-        <mxCell id="ent_pengunjung" value="&lt;b&gt;Pengunjung Publik&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 11px;&quot;&gt;(Calon Mahasiswa, Alumni, Publik)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e0f2fe;strokeColor=#0284c7;strokeWidth=2;arcSize=12;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="60" y="240" width="220" height="90" as="geometry" />
+
+        <!-- ============================================================= -->
+        <!-- PROSES KONTEKS UTAMA (NOMOR 0)                                -->
+        <!-- ============================================================= -->
+        <mxCell id="p_context" value="&lt;b&gt;0&lt;/b&gt;&lt;br&gt;Website Profil Program Studi Hukum UMP" style="ellipse;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#2563eb;fontColor=#0f172a;fontSize=13;fontStyle=1;align=center;verticalAlign=middle;fontFamily=Arial;" parent="1" vertex="1">
+          <mxGeometry x="580" y="320" width="280" height="280" as="geometry" />
         </mxCell>
 
-        <!-- Process 0.0: Sistem Informasi Profil UMP -->
-        <mxCell id="proc_0" value="&lt;b style=&quot;font-size: 14px;&quot;&gt;0.0&lt;/b&gt;&lt;br&gt;&lt;b style=&quot;font-size: 13px;&quot;&gt;Sistem Informasi Profil &amp;amp; Portal&lt;br&gt;Program Studi Hukum UMP&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 11px; color: #94a3b8;&quot;&gt;(SPA Pure Vanilla JS + LocalStorage SSOT)&lt;/font&gt;" style="ellipse;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#0f172a;strokeWidth=2.5;fontColor=#ffffff;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="420" y="160" width="340" height="250" as="geometry" />
+        <!-- ============================================================= -->
+        <!-- ENTITAS EKSTERNAL (TERMINATOR DFD)                            -->
+        <!-- ============================================================= -->
+        <mxCell id="e_visitor" value="&lt;b&gt;Pengunjung&lt;/b&gt;&lt;br&gt;Calon mahasiswa, mahasiswa, alumni, dan masyarakat" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#16a34a;fontColor=#0f172a;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;fontFamily=Arial;" parent="1" vertex="1">
+          <mxGeometry x="60" y="240" width="240" height="90" as="geometry" />
         </mxCell>
 
-        <!-- External Entity: Administrator -->
-        <mxCell id="ent_admin" value="&lt;b&gt;Pengelola / Administrator&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 11px;&quot;&gt;(Super Admin, Editor, Operator)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef3c7;strokeColor=#d97706;strokeWidth=2;arcSize=12;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="900" y="240" width="220" height="90" as="geometry" />
+        <mxCell id="e_admin" value="&lt;b&gt;Administrator&lt;/b&gt;&lt;br&gt;Super Admin, Editor, atau Operator" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#2563eb;fontColor=#0f172a;fontSize=12;fontStyle=1;align=center;verticalAlign=middle;fontFamily=Arial;" parent="1" vertex="1">
+          <mxGeometry x="1140" y="240" width="240" height="90" as="geometry" />
         </mxCell>
 
-        <!-- Flow: Pengunjung -> Sistem -->
-        <mxCell id="flow_p_in" value="Pencarian, Filter Data, Unduh Dokumen, Pendaftaran Kegiatan, Kirim Pesan" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.3;entryX=0;entryY=0.35;strokeColor=#0284c7;strokeWidth=2;fontSize=11;labelBackgroundColor=#ffffff;labelBorderColor=#0284c7;fontColor=#0369a1;fontStyle=1;" edge="1" parent="1" source="ent_pengunjung" target="proc_0">
+        <mxCell id="e_cdn" value="&lt;b&gt;Layanan eksternal&lt;/b&gt;&lt;br&gt;CDN pustaka dan Google Fonts" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fefce8;strokeColor=#ca8a04;fontColor=#0f172a;fontSize=11;align=center;verticalAlign=middle;fontFamily=Arial;" parent="1" vertex="1">
+          <mxGeometry x="60" y="60" width="240" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e_maps" value="&lt;b&gt;Layanan eksternal&lt;/b&gt;&lt;br&gt;Google Maps Embed" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fefce8;strokeColor=#ca8a04;fontColor=#0f172a;fontSize=11;align=center;verticalAlign=middle;fontFamily=Arial;" parent="1" vertex="1">
+          <mxGeometry x="1140" y="60" width="240" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================================= -->
+        <!-- DATA STORES (STANDAR DFD OPEN RECTANGLE)                      -->
+        <!-- ============================================================= -->
+        <mxCell id="ds_ls" value="&lt;b&gt;D1 | localStorage&lt;/b&gt;&lt;br&gt;18 key entitas aplikasi dan key runtime pada origin browser" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;fillColor=#ffffff;strokeColor=#475569;fontColor=#0f172a;fontSize=12;align=center;verticalAlign=middle;fontFamily=Arial;" parent="1" vertex="1">
+          <mxGeometry x="470" y="720" width="500" height="60" as="geometry" />
+        </mxCell>
+
+        <mxCell id="ds_idb" value="&lt;b&gt;D4 | IndexedDB&lt;/b&gt;&lt;br&gt;ProdiHukumDB / entities; salinan best-effort" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;fillColor=#ffffff;strokeColor=#475569;fontColor=#0f172a;fontSize=12;align=center;verticalAlign=middle;dashed=1;fontFamily=Arial;" parent="1" vertex="1">
+          <mxGeometry x="470" y="830" width="500" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================================= -->
+        <!-- ALIRAN DATA PENGUNJUNG (DATA FLOWS)                           -->
+        <!-- ============================================================= -->
+        <mxCell id="df_v1" value="Permintaan Halaman &amp;amp; Kata Kunci Pencarian" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#16a34a;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=11;fontColor=#16a34a;fontFamily=Arial;" parent="1" edge="1" source="e_visitor" target="p_context">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="360" y="260" />
+              <mxPoint x="360" y="380" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="df_v2" value="Data Form Kontak (Pesan) &amp;amp; Pendaftaran Kegiatan" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#16a34a;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=11;fontColor=#16a34a;fontFamily=Arial;" parent="1" edge="1" source="e_visitor" target="p_context">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="360" y="310" />
+              <mxPoint x="360" y="440" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="df_v3" value="Penyajian Informasi Halaman, Detail Berita &amp;amp; Dokumen Unduhan" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#16a34a;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=11;fontColor=#16a34a;fontFamily=Arial;" parent="1" edge="1" source="p_context" target="e_visitor">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="400" y="490" />
+              <mxPoint x="400" y="300" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="df_v4" value="Feedback Notifikasi &amp;amp; Status Pendaftaran (SweetAlert)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#16a34a;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=11;fontColor=#16a34a;fontFamily=Arial;" parent="1" edge="1" source="p_context" target="e_visitor">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="360" y="540" />
+              <mxPoint x="200" y="540" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ============================================================= -->
+        <!-- ALIRAN DATA ADMINISTRATOR (DATA FLOWS)                        -->
+        <!-- ============================================================= -->
+        <mxCell id="df_a1" value="Kredensial Login &amp;amp; Reset Password" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563eb;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=11;fontColor=#1e3a8a;fontFamily=Arial;" parent="1" edge="1" source="e_admin" target="p_context">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1080" y="260" />
+              <mxPoint x="1080" y="380" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="df_a2" value="Data Entri/Edit/Hapus (Berita, Dosen, Kurikulum, dll)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563eb;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=11;fontColor=#1e3a8a;fontFamily=Arial;" parent="1" edge="1" source="e_admin" target="p_context">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1080" y="310" />
+              <mxPoint x="1080" y="440" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="df_a3" value="Penyajian Dasbor, Halaman Kelola Data &amp;amp; Notifikasi" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563eb;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=11;fontColor=#1e3a8a;fontFamily=Arial;" parent="1" edge="1" source="p_context" target="e_admin">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1040" y="490" />
+              <mxPoint x="1040" y="300" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="df_a4" value="Status Eksekusi CRUD &amp;amp; Berkas Ekspor JSON" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563eb;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=11;fontColor=#1e3a8a;fontFamily=Arial;" parent="1" edge="1" source="p_context" target="e_admin">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1080" y="540" />
+              <mxPoint x="1240" y="540" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ============================================================= -->
+        <!-- ALIRAN DATA KE DATA STORE (BACA / TULIS)                      -->
+        <!-- ============================================================= -->
+        <mxCell id="df_store_write" value="Tulis Data Entitas, Sesi &amp;amp; Hitungan Pageviews" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#475569;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=11;fontColor=#475569;fontFamily=Arial;" parent="1" edge="1" source="p_context" target="ds_ls">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="670" y="660" />
+              <mxPoint x="670" y="720" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="df_store_read" value="Baca Data Master &amp;amp; Status Sesi Aktif" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#475569;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=11;fontColor=#475569;fontFamily=Arial;" parent="1" edge="1" source="ds_ls" target="p_context">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="770" y="720" />
+              <mxPoint x="770" y="660" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="df_idb_sync" value="Salinan Cadangan Asinkron (Write-Through)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#475569;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;fontSize=10;fontColor=#64748b;fontFamily=Arial;" parent="1" edge="1" source="ds_ls" target="ds_idb">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
 
-        <!-- Flow: Sistem -> Pengunjung -->
-        <mxCell id="flow_p_out" value="Katalog Berita, Profil Dosen, Kurikulum, Pengumuman, Galeri, Prestasi, Tiket" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.65;entryX=1;entryY=0.7;strokeColor=#0284c7;strokeWidth=2;dashed=1;fontSize=11;labelBackgroundColor=#ffffff;labelBorderColor=#0284c7;fontColor=#0369a1;fontStyle=1;" edge="1" parent="1" source="proc_0" target="ent_pengunjung">
-          <mxGeometry relative="1" as="geometry" />
+        <!-- Layanan Eksternal -->
+        <mxCell id="df_cdn" value="Pengiriman File Library &amp;amp; Font" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#ca8a04;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#713f12;fontFamily=Arial;" parent="1" edge="1" source="e_cdn" target="p_context">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="480" y="95" />
+              <mxPoint x="480" y="340" />
+            </Array>
+          </mxGeometry>
         </mxCell>
 
-        <!-- Flow: Admin -> Sistem -->
-        <mxCell id="flow_a_in" value="Kredensial Login, CRUD Konten (17 Entitas), Backup &amp;amp; Restore Data JSON" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.3;entryX=1;entryY=0.35;strokeColor=#d97706;strokeWidth=2;fontSize=11;labelBackgroundColor=#ffffff;labelBorderColor=#d97706;fontColor=#b45309;fontStyle=1;" edge="1" parent="1" source="ent_admin" target="proc_0">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="df_maps" value="Penyedia Iframe Peta" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#ca8a04;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#713f12;fontFamily=Arial;" parent="1" edge="1" source="e_maps" target="p_context">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="960" y="95" />
+              <mxPoint x="960" y="340" />
+            </Array>
+          </mxGeometry>
         </mxCell>
 
-        <!-- Flow: Sistem -> Admin -->
-        <mxCell id="flow_a_out" value="Status CRUD, Rekap Pendaftar, Log Aktivitas Audit, Notifikasi, Export CSV" style="edgeStyle=orthogonalEdgeStyle;rounded=1;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.65;entryX=0;entryY=0.7;strokeColor=#d97706;strokeWidth=2;dashed=1;fontSize=11;labelBackgroundColor=#ffffff;labelBorderColor=#d97706;fontColor=#b45309;fontStyle=1;" edge="1" parent="1" source="proc_0" target="ent_admin">
-          <mxGeometry relative="1" as="geometry" />
+        <!-- Catatan DFD Context -->
+        <mxCell id="n_note_dfd0" value="&lt;b&gt;Diagram konteks&lt;/b&gt;&lt;br&gt;Satu proses sistem berinteraksi dengan pengunjung, administrator, layanan eksternal, dan penyimpanan di browser. Tidak ada server aplikasi di antara proses dan data." style="shape=note;whiteSpace=wrap;html=1;size=15;align=left;verticalAlign=middle;fillColor=#fefce8;strokeColor=#ca8a04;fontColor=#713f12;fontSize=11;fontFamily=Arial;" parent="1" vertex="1">
+          <mxGeometry x="60" y="940" width="1320" height="60" as="geometry" />
         </mxCell>
+
       </root>
     </mxGraphModel>
   </diagram>

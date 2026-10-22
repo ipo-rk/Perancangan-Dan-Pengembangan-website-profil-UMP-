@@ -116,7 +116,7 @@ document.addEventListener('alpine:init', () => {
    satu-satunya sumber kebenaran adalah localStorage.
    ========================================================= */
 /* =========================================================
-   INDEXEDDB BACKING STORE (Unlimited Media Capacity)
+   INDEXEDDB BEST-EFFORT SECONDARY COPY
    ========================================================= */
 const IDB = (() => {
   const DB_NAME = 'ProdiHukumDB';
@@ -190,7 +190,7 @@ const IDB = (() => {
 })();
 
 /* =========================================================
-   DB ENGINE — Penyimpanan Multi-Layer (LocalStorage + IDB)
+   DB ENGINE — localStorage utama dengan salinan IDB best-effort
    ========================================================= */
 const DB = (() => {
   const NS = 'prodihukum_db_v1_';
@@ -284,6 +284,9 @@ const DB = (() => {
     // 2. Simpan ke localStorage.
     try {
       localStorage.setItem(NS + key, serialized);
+      window.dispatchEvent(new CustomEvent('db-update', {
+        detail: { key, data }
+      }));
       return true;
     } catch (e) {
       // 3. localStorage penuh. Satu-satunya pembersihan otomatis yang aman
@@ -294,6 +297,9 @@ const DB = (() => {
       pruneStorage();
       try {
         localStorage.setItem(NS + key, serialized);
+        window.dispatchEvent(new CustomEvent('db-update', {
+          detail: { key, data }
+        }));
         return true;
       } catch (e2) {
         // Tetap gagal setelah pruning. JANGAN menghapus data key modul lain.
@@ -334,6 +340,13 @@ const DB = (() => {
 
 /* ---- Log aktivitas & notifikasi real-time: dicatat otomatis setiap ada aksi CRUD ---- */
 const ADMIN_ICON_PATHS = {
+  home: '<path d="m3 10 9-7 9 7M5 9v12h5v-7h4v7h5V9"/>',
+  logout: '<path d="M10 17l5-5-5-5m5 5H3m9-7V4a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2h-6a2 2 0 0 1-2-2v-2"/>',
+  activity: '<path d="M3 12h4l3-8 4 16 3-8h4"/>',
+  edit: '<path d="m16 4 4 4M4 20l4-.8L19 8a2.8 2.8 0 0 0-4-4L4 15z"/>',
+  menu: '<path d="M4 6h16M4 12h16M4 18h16"/>',
+  moon: '<path d="M20.4 15.4A9 9 0 0 1 8.6 3.6 9 9 0 1 0 20.4 15.4Z"/>',
+  sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/>',
   '\u{1F4DD}': '<path d="M8 4H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-3M8 2h8v4H8zM8 11h8M8 15h5M16 8l4-4 2 2-4 4-3 1z"/>',
   '\u{1F514}': '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/>',
   '\u{1F4C4}': '<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8zM14 2v6h6M8 13h8M8 17h8"/>',
@@ -363,6 +376,7 @@ const ADMIN_ICON_PATHS = {
   '\u2715': '<path d="m6 6 12 12M18 6 6 18"/>',
   '\u{1F50D}': '<circle cx="11" cy="11" r="7"/><path d="m20 20-4-4"/>',
   '\u{1F4F7}': '<path d="M4 7h3l2-3h6l2 3h3a2 2 0 0 1 2 2v10H2V9a2 2 0 0 1 2-2Z"/><circle cx="12" cy="13" r="4"/>',
+  '\u{1F4BE}': '<path d="M5 3h12l4 4v14H3V3h2Zm2 0v6h10V3M7 21v-8h10v8"/>',
   '\u{1F4F0}': '<path d="M4 4h16v16H4zM8 8h8v4H8zm0 7h3m2 0h3m-8 3h8"/>',
   '\u{1F4CA}': '<path d="M4 20V10m5 10V4m6 16v-7m5 7H2"/>',
   '\u{1F464}': '<circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/>',
@@ -379,6 +393,26 @@ const ADMIN_ICON_PATHS = {
 };
 
 const ADMIN_ICON_ALIASES = {
+  dashboard: 'home',
+  menu: 'menu',
+  moon: 'moon',
+  sun: 'sun',
+  profile: '\u{1F3EB}',
+  teacher: '\u{1F465}',
+  curriculum: '\u{1F4DA}',
+  announcement: '\u{1F4E3}',
+  event: '\u{1F4C5}',
+  achievement: '\u{1F3C6}',
+  article: '\u{1F4C4}',
+  gallery: '\u{1F5BC}\u{FE0F}',
+  document: '\u{1F4C1}',
+  alumni: '\u{1F393}',
+  applicants: '\u{1F4CB}',
+  users: '\u{1F465}',
+  activity: 'activity',
+  settings: '\u2699',
+  logout: 'logout',
+  search: '\u{1F50D}',
   bell: '\u{1F514}',
   note: '\u{1F4DD}',
   lock: '\u{1F510}',
@@ -388,7 +422,7 @@ const ADMIN_ICON_ALIASES = {
   folder: '\u{1F4C1}',
   trash: '\u{1F5D1}\u{FE0F}',
   add: '\u{2795}',
-  edit: '\u{270F}\u{FE0F}',
+  edit: 'edit',
   rocket: '\u{1F680}',
   book: '\u{1F4DA}',
   camera: '\u{1F4F7}',
@@ -461,6 +495,15 @@ function logActivity(aksi, icon) {
 const AUTH = (() => {
   const KEY = 'prodihukum_admin_session';
   function login(user) {
+    const roles = ['Super Admin', 'Editor', 'Operator'];
+    if (
+      !user ||
+      typeof user.nama !== 'string' || !user.nama.trim() ||
+      typeof user.email !== 'string' || !user.email.trim() ||
+      !roles.includes(user.role)
+    ) {
+      throw new Error('Data akun admin tidak lengkap atau perannya tidak dikenali.');
+    }
     const session = { nama: user.nama, email: user.email, role: user.role, loginAt: new Date().toISOString() };
     localStorage.setItem(KEY, JSON.stringify(session));
     return session;
@@ -468,12 +511,26 @@ const AUTH = (() => {
   function current() {
     try {
       const raw = localStorage.getItem(KEY);
-      if (raw) return JSON.parse(raw);
+      if (!raw) return { nama: '', email: '', role: '' };
+      const session = JSON.parse(raw);
+      if (!session || typeof session !== 'object' || Array.isArray(session)) {
+        return { nama: '', email: '', role: '' };
+      }
+      return {
+        nama: typeof session.nama === 'string' ? session.nama : '',
+        email: typeof session.email === 'string' ? session.email : '',
+        role: typeof session.role === 'string' ? session.role : ''
+      };
     } catch (e) { /* noop */ }
-    return { nama: 'Admin Prodi', email: '', role: 'Super Admin' };
+    return { nama: '', email: '', role: '' };
   }
   function isLoggedIn() {
-    return localStorage.getItem(KEY) !== null;
+    const session = current();
+    return Boolean(
+      session.nama &&
+      session.email &&
+      ['Super Admin', 'Editor', 'Operator'].includes(session.role)
+    );
   }
   function logout() {
     localStorage.removeItem(KEY);
@@ -506,9 +563,8 @@ const AUTH = (() => {
 /* =========================================================
    KOMPRESI GAMBAR RINGAN & EFISIEN
    ---------------------------------------------------------
-   Memperkecil dimensi foto dan mengompres ke JPEG ringan (10-25KB)
-   sehingga ratusan foto dapat tersimpan tanpa melebihi batas
-   kuota 5MB browser.
+   Memperkecil dimensi foto dan mengompres ke JPEG. Ukuran hasil bergantung
+   pada gambar sumber, dimensi, kualitas kompresi, dan kuota browser.
    ========================================================= */
 function compressImageFile(file, { maxWidth = 480, maxHeight = 480, quality = 0.62 } = {}) {
   return new Promise((resolve, reject) => {
@@ -740,6 +796,20 @@ const SEED_BERITA = [
 let SAMPLE_BERITA = DB.load('berita', SEED_BERITA);
 
 const SEED_DOSEN = [
+  { id: 1, nama: 'Dr. Muhammad Yusuf, S.H., M.H', kode: 'HKM001' },
+  { id: 2, nama: 'Dr. Hendrik Dengah, S.H., M.H', kode: 'HKM002' },
+  { id: 3, nama: 'Dr. Tri Mulyadi, S.H., M.H', kode: 'HKM003' },
+  { id: 4, nama: 'Ismail Maswatu, S.E., S.H., M.H', kode: 'HKM004' },
+  { id: 5, nama: 'Irfun, M.Pd', kode: 'HKM005' },
+  { id: 6, nama: 'Adimas Reza Prayudi M, S.H., M.H.', kode: 'HKM006' },
+  { id: 7, nama: 'Mursani, S.H., M.H.', kode: 'HKM007' },
+  { id: 8, nama: 'Rizki Wisudawan Katjong, S.H., M.H.', kode: 'HKM008' },
+  { id: 9, nama: 'Rifqi Anan Pratama, S.H., M.H', kode: 'HKM009' },
+  { id: 10, nama: 'Ratna Jaya, S.H., M.H', kode: 'HKM010' },
+  { id: 11, nama: 'Midah Nurhidayah', kode: '-' }
+];
+let SAMPLE_DOSEN = DB.load('dosen', SEED_DOSEN);
+const LEGACY_SEED_DOSEN = [
   { id: 1, nama: 'Dr. Ahmad Fauzi, S.H., M.H.', jabatan: 'Lektor Kepala', keahlian: 'Hukum Pidana', pendidikan: 'S3 Ilmu Hukum', email: 'ahmad.fauzi@ump.ac.id', nidn: '1234567890', profil: 'Dosen dengan pengalaman praktik hukum pidana dan penelitian sistem peradilan.', status: 'Aktif', foto: 'assets/image/dosen/Dosen 1.png' },
   { id: 2, nama: 'Rina Marlina, S.H., M.H.', jabatan: 'Lektor', keahlian: 'Hukum Perdata', pendidikan: 'S2 Kenotariatan', email: 'rina.marlina@ump.ac.id', nidn: '1234567891', profil: 'Spesialis hukum kontrak dan praktik kenotariatan.', status: 'Aktif', foto: 'assets/image/dosen/Dosen 2.png' },
   { id: 3, nama: 'Yusuf Kamal, S.H., M.Kn.', jabatan: 'Lektor', keahlian: 'Hukum Tata Negara', pendidikan: 'S2 Hukum', email: 'yusuf.kamal@ump.ac.id', nidn: '1234567892', profil: 'Fokus pada studi konstitusi dan otonomi daerah.', status: 'Aktif', foto: 'assets/image/dosen/Dosen 3.png' },
@@ -751,7 +821,28 @@ const SEED_DOSEN = [
   { id: 9, nama: 'Yohanes Sroyer, S.H., M.H.', jabatan: 'Dosen', keahlian: 'Hukum Acara', pendidikan: 'S2 Hukum', email: 'yohanes.sroyer@ump.ac.id', nidn: '1234567898', profil: 'Mengajar hukum acara pidana dan perdata praktik peradilan.', status: 'Aktif', foto: 'assets/image/dosen/Dosen 9.png' },
   { id: 10, nama: 'Dr. Herlina Yaung, S.H., M.H.', jabatan: 'Lektor Kepala', keahlian: 'Hukum Ketenagakerjaan', pendidikan: 'S3 Ilmu Hukum', email: 'herlina.yaung@ump.ac.id', nidn: '1234567899', profil: 'Peneliti hubungan industrial dan perlindungan tenaga kerja.', status: 'Aktif', foto: 'assets/image/dosen/Dosen 10.png' }
 ];
-let SAMPLE_DOSEN = DB.load('dosen', SEED_DOSEN);
+if (JSON.stringify(SAMPLE_DOSEN) === JSON.stringify(LEGACY_SEED_DOSEN)) {
+  SAMPLE_DOSEN = SEED_DOSEN;
+  if (!DB.save('dosen', SAMPLE_DOSEN)) {
+    console.error('DB: gagal memperbarui daftar dosen bawaan dari lembar Dosen.');
+  }
+} else if (Array.isArray(SAMPLE_DOSEN)) {
+  let lecturerCodeChanged = false;
+  const normalizedDosen = SAMPLE_DOSEN.map(dosen => {
+    if (dosen.nama === 'Midah Nurhidayah' && !String(dosen.kode || '').trim()) {
+      lecturerCodeChanged = true;
+      return { ...dosen, kode: '-' };
+    }
+    return dosen;
+  });
+  if (lecturerCodeChanged) {
+    if (DB.save('dosen', normalizedDosen)) {
+      SAMPLE_DOSEN = normalizedDosen;
+    } else {
+      console.error('DB: gagal menormalkan kode dosen Midah Nurhidayah.');
+    }
+  }
+}
 
 const SEED_DOKUMEN = [
   { id: 1, nama: 'Panduan Akademik 2026/2027', kategori: 'Pedoman Akademik', format: 'PDF', ukuran: '2.4 MB' },
@@ -778,7 +869,7 @@ let SAMPLE_GALERI = DB.load('galeri', SEED_GALERI);
 function getSearchIndex() {
   return [
     ...SAMPLE_BERITA.filter(b => b.status === 'Published').map(b => ({ title: b.judul, url: `detail-berita.html?id=${b.id}`, type: 'Berita', keywords: `${b.judul} ${b.kategori} ${b.penulis || ''}` })),
-    ...SAMPLE_DOSEN.map(d => ({ title: d.nama, url: 'dosen.html', type: 'Dosen', keywords: `${d.nama} ${d.keahlian} ${d.jabatan}` })),
+    ...SAMPLE_DOSEN.map(d => ({ title: d.nama, url: 'dosen.html', type: 'Dosen', keywords: `${d.nama} ${d.kode || ''}` })),
     ...SAMPLE_DOKUMEN.map(d => ({ title: d.nama, url: 'dokumen.html', type: 'Dokumen', keywords: `${d.nama} ${d.kategori}` })),
     ...SAMPLE_KEGIATAN.map(k => ({ title: k.nama, url: `detail-kegiatan.html?id=${k.id}`, type: 'Kegiatan', keywords: `${k.nama} ${k.lokasi} ${k.deskripsi || ''}` })),
     ...SAMPLE_PENGUMUMAN.map(p => ({ title: p.judul, url: `detail-pengumuman.html?id=${p.id}`, type: 'Pengumuman', keywords: `${p.judul} ${p.status} ${p.isi || ''}` })),
@@ -851,8 +942,103 @@ function siteHeader() {
     ...themeStore(),
     doSearch() {
       globalSearch(this.searchQ);
+    },
+    init() {
+      const currentPath = window.location.pathname.replace(/\/+$/, '') || '/index.html';
+      const detailRoutes = {
+        'detail-artikel.html': 'artikel.html',
+        'detail-berita.html': 'berita.html',
+        'detail-galeri.html': 'galeri.html',
+        'detail-kegiatan.html': 'kegiatan.html',
+        'detail-pengumuman.html': 'pengumuman.html'
+      };
+
+      document.querySelectorAll('nav.main').forEach((nav) => {
+        nav.querySelectorAll('.on').forEach((item) => item.classList.remove('on'));
+        nav.querySelectorAll('[aria-current]').forEach((item) => item.removeAttribute('aria-current'));
+
+        nav.querySelectorAll('a[href]').forEach((link) => {
+          const linkPath = new URL(link.getAttribute('href'), window.location.href).pathname.replace(/\/+$/, '');
+          const isCurrentPage = linkPath === currentPath;
+          const currentSectionPath = detailRoutes[currentPath.split('/').pop()];
+          const isCurrentSection = currentSectionPath &&
+            linkPath.split('/').pop() === currentSectionPath;
+
+          if (isCurrentPage || isCurrentSection) {
+            link.classList.add('on');
+            link.setAttribute('aria-current', isCurrentPage ? 'page' : 'location');
+          }
+        });
+
+        nav.querySelectorAll('.drop').forEach((dropdown) => {
+          const hasCurrentLink = dropdown.querySelector('a.on');
+          if (!hasCurrentLink) return;
+          const menuItem = dropdown.closest('li');
+          const trigger = menuItem && menuItem.querySelector(':scope > button');
+          if (trigger) trigger.classList.add('on');
+        });
+      });
+
+      const settings = SAMPLE_PENGATURAN || {};
+      const logo = publicAssetPath(settings.logo);
+      if (logo) {
+        document.querySelectorAll('.brand img.logo').forEach((image) => {
+          image.src = logo;
+        });
+      }
+
+      document.querySelectorAll('.soc a').forEach((link) => {
+        const socialKey = {
+          fb: 'facebook',
+          ig: 'instagram',
+          yt: 'youtube',
+          tt: 'tiktok'
+        }[Array.from(link.classList).find((name) => ['fb', 'ig', 'yt', 'tt'].includes(name))];
+        if (!socialKey) return;
+
+        const url = safeExternalUrl(settings[socialKey]);
+        link.hidden = !url;
+        if (url) {
+          link.href = url;
+          link.target = '_blank';
+          link.rel = 'noopener noreferrer';
+        }
+      });
+
+      const favicon = document.querySelector('link[rel~="icon"]');
+      const faviconUrl = publicAssetPath(settings.favicon);
+      if (favicon && faviconUrl) favicon.href = faviconUrl;
+
+      const isHome = /\/(?:index\.html)?$/.test(window.location.pathname);
+      if (isHome && settings.metaTitle) {
+        document.title = settings.metaTitle;
+      } else if (settings.namaWebsite) {
+        document.title = document.title.replace(/\|.*$/, `| ${settings.namaWebsite}`);
+      }
+      if (isHome) {
+        const description = document.querySelector('meta[name="description"]');
+        const keywords = document.querySelector('meta[name="keywords"]');
+        if (description && (settings.metaDesc || settings.deskripsi)) {
+          description.content = settings.metaDesc || settings.deskripsi;
+        }
+        if (keywords && settings.keywords) keywords.content = settings.keywords;
+      }
     }
   };
+}
+
+function publicAssetPath(path) {
+  if (!path || /^(https?:)?\/\//i.test(path) || /^(data:|\/)/i.test(path)) return path || '';
+  return path.replace(/^(\.\.\/)+/, '');
+}
+
+function safeExternalUrl(value) {
+  try {
+    const url = new URL(String(value || '').trim());
+    return ['http:', 'https:'].includes(url.protocol) ? url.href : '';
+  } catch (e) {
+    return '';
+  }
 }
 
 // ---- Statistik & Konten Beranda (index.html) ----
@@ -884,6 +1070,7 @@ function adminShell() {
     sidebarOpen: false,
     notifOpen: false,
     q: '',
+    _dataRevision: 0,
     // Reactive owned array — Alpine detects mutations here
     _notifications: [...(SAMPLE_NOTIFIKASI || [])],
     ...themeStore(),
@@ -894,6 +1081,9 @@ function adminShell() {
       // Listen for new notifications from logActivity() or any source
       window.addEventListener('notif-update', () => {
         this._notifications = [...(SAMPLE_NOTIFIKASI || [])];
+      });
+      window.addEventListener('db-update', () => {
+        this._dataRevision += 1;
       });
     },
     get currentUser() {
@@ -927,7 +1117,9 @@ function adminShell() {
     },
     get stats() {
       return {
+        _revision: this._dataRevision,
         dosen: SAMPLE_DOSEN.length,
+        kurikulum: SAMPLE_KURIKULUM.length,
         mahasiswa: SAMPLE_PENGATURAN.mahasiswaAktif,
         alumni: SAMPLE_ALUMNI.length,
         berita: SAMPLE_BERITA.length,
@@ -939,9 +1131,11 @@ function adminShell() {
       };
     },
     get recentActivity() {
+      this._dataRevision;
       return SAMPLE_AKTIVITAS.slice(0, 4);
     },
     get activityLog() {
+      this._dataRevision;
       return SAMPLE_AKTIVITAS;
     },
     get contentTrend() {
@@ -983,12 +1177,43 @@ function contactForm() {
     loading: false,
     form: { nama: '', email: '', subjek: '', pesan: '' },
     async submit() {
-      if (!this.form.nama || !this.form.email || !this.form.pesan) {
+      const nama = String(this.form.nama || '').trim();
+      const email = String(this.form.email || '').trim();
+      const subjek = String(this.form.subjek || '').trim();
+      const pesan = String(this.form.pesan || '').trim();
+      if (!nama || !email || !pesan) {
         NeuAlert.error('Mohon lengkapi Nama, Email, dan Pesan.');
         return;
       }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        NeuAlert.error('Format email tidak valid.');
+        return;
+      }
+
       this.loading = true;
-      await new Promise(r => setTimeout(r, 700));
+      const message = {
+        id: Date.now(),
+        nama,
+        email,
+        subjek: subjek || 'Pesan dari halaman kontak',
+        pesan,
+        waktu: new Date().toLocaleString('id-ID', {
+          day: '2-digit', month: 'short', year: 'numeric',
+          hour: '2-digit', minute: '2-digit'
+        }),
+        read: false
+      };
+      const previous = SAMPLE_PESAN;
+      SAMPLE_PESAN = [message, ...previous];
+      const saved = DB.save('pesan', SAMPLE_PESAN);
+      if (!saved) {
+        SAMPLE_PESAN = previous;
+        this.loading = false;
+        NeuAlert.storageFull();
+        return;
+      }
+
+      logPublicEvent(`Pesan kontak baru dari ${nama}`, '\u{1F4DD}', 'Dikirim melalui formulir kontak.');
       this.loading = false;
       NeuAlert.sent();
       this.form = { nama: '', email: '', subjek: '', pesan: '' };
@@ -1040,12 +1265,12 @@ function filterableGrid(items, options = {}) {
 }
 
 function dosenPage() {
-  const jabatanFilters = ['Semua', 'Profesor', 'Lektor Kepala', 'Lektor', 'Asisten Ahli', 'Dosen'];
   return mergeReactive(
-    filterableGrid(SAMPLE_DOSEN, { searchKeys: ['nama', 'keahlian'], filterKey: 'jabatan', filters: jabatanFilters }),
+    filterableGrid(SAMPLE_DOSEN, { searchKeys: ['nama', 'kode'] }),
     {
       showDetail: false,
       selected: null,
+      coursesFor: coursesForLecturer,
       openDetail(d) {
         this.selected = d;
         this.showDetail = true;
@@ -1056,6 +1281,113 @@ function dosenPage() {
       }
     }
   );
+}
+
+function coursesForLecturer(dosen) {
+  const normalizeName = value => String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+  const lecturerName = normalizeName(dosen.nama);
+  if (!lecturerName) return [];
+  return SAMPLE_KURIKULUM.filter(course =>
+    course.pengampu && normalizeName(course.pengampu) === lecturerName
+  );
+}
+
+function adminDosenPage() {
+  return {
+    showModal: false,
+    editing: null,
+    dosen: [...SAMPLE_DOSEN],
+    form: { id: null, nama: '', kode: '' },
+    q: '',
+    curriculumRevision: 0,
+    init() {
+      window.addEventListener('db-update', event => {
+        if (event.detail?.key === 'dosen' && Array.isArray(event.detail.data)) {
+          this.dosen = [...event.detail.data];
+        }
+        if (event.detail?.key === 'kurikulum' && Array.isArray(event.detail.data)) {
+          this.curriculumRevision += 1;
+        }
+      });
+    },
+    get filtered() {
+      const query = this.q.trim().toLowerCase();
+      return this.dosen.filter(d =>
+        String(d.nama || '').toLowerCase().includes(query) ||
+        String(d.kode || '').toLowerCase().includes(query)
+      );
+    },
+    coursesFor(dosen) {
+      this.curriculumRevision;
+      return coursesForLecturer(dosen);
+    },
+    emptyForm() {
+      return { id: null, nama: '', kode: '' };
+    },
+    openAdd() {
+      this.editing = null;
+      this.form = this.emptyForm();
+      this.showModal = true;
+    },
+    openEdit(dosen) {
+      this.editing = dosen.id;
+      this.form = { ...dosen };
+      this.showModal = true;
+    },
+    persist() {
+      if (!DB.save('dosen', this.dosen)) return false;
+      SAMPLE_DOSEN = this.dosen;
+      return true;
+    },
+    save() {
+      if (!String(this.form.nama || '').trim()) {
+        NeuAlert.error('Nama dosen wajib diisi.');
+        return;
+      }
+      this.form.nama = this.form.nama.trim();
+
+      if (this.editing !== null) {
+        const index = this.dosen.findIndex(dosen => dosen.id === this.editing);
+        if (index < 0) {
+          NeuAlert.error('Data dosen yang akan diperbarui tidak ditemukan. Muat ulang halaman lalu coba lagi.');
+          return;
+        }
+        const previous = this.dosen[index];
+        this.dosen[index] = { ...this.form };
+        if (!this.persist()) {
+          this.dosen[index] = previous;
+          NeuAlert.storageFull();
+          return;
+        }
+        logActivity(`Memperbarui data dosen: ${this.form.nama}`, '\u{270F}\u{FE0F}');
+        NeuAlert.updated('Data dosen berhasil diperbarui.');
+      } else {
+        this.form.id = Date.now();
+        this.dosen.unshift({ ...this.form });
+        if (!this.persist()) {
+          this.dosen.shift();
+          NeuAlert.storageFull();
+          return;
+        }
+        logActivity(`Menambahkan dosen baru: ${this.form.nama}`, '\u{2795}');
+        NeuAlert.success('Data dosen berhasil disimpan.');
+      }
+      this.showModal = false;
+    },
+    async remove(dosen) {
+      const confirmed = await NeuAlert.confirmDelete('data dosen ini');
+      if (!confirmed) return;
+      const previous = this.dosen;
+      this.dosen = this.dosen.filter(item => item.id !== dosen.id);
+      if (!this.persist()) {
+        this.dosen = previous;
+        NeuAlert.storageFull();
+        return;
+      }
+      logActivity(`Menghapus data dosen: ${dosen.nama}`, '\u{1F5D1}\u{FE0F}');
+      NeuAlert.deleted('Data dosen berhasil dihapus.');
+    }
+  };
 }
 
 function beritaPage() {
@@ -1241,11 +1573,14 @@ const SEED_PENDAFTAR = [
 ];
 let SAMPLE_PENDAFTAR = DB.load('pendaftar', SEED_PENDAFTAR);
 
+const SEED_PESAN = [];
+let SAMPLE_PESAN = DB.load('pesan', SEED_PESAN);
+
 /* Log aktivitas dari halaman PUBLIK (bukan Admin) — dipisah dari
    logActivity() karena logActivity mengasumsikan ada admin yang sedang
    login (AUTH.current()). Notifikasi tetap masuk ke Admin Panel supaya
    pendaftaran baru langsung terlihat oleh admin. */
-function logPublicEvent(aksi, icon) {
+function logPublicEvent(aksi, icon, pesan) {
   const entry = {
     id: Date.now(),
     user: 'Pengunjung Website',
@@ -1260,7 +1595,7 @@ function logPublicEvent(aksi, icon) {
   const notif = {
     id: Date.now() + 1,
     judul: aksi,
-    pesan: 'Dikirim melalui formulir pendaftaran di halaman publik.',
+    pesan: pesan || 'Dikirim melalui formulir pendaftaran di halaman publik.',
     waktu: 'Baru saja',
     read: false,
     icon: icon || '\u{1F514}'
@@ -1339,6 +1674,73 @@ const SEED_PRESTASI = [
 let SAMPLE_PRESTASI = DB.load('prestasi', SEED_PRESTASI);
 
 const SEED_KURIKULUM = [
+  // Semester 1 — MK Baru (dosen dari referensi Excel)
+  { id: 1,  kode: 'UMP1002', nama: 'AI Islam dan Kemuhammadiyahan 1', sks: 2, semester: 1, pengampu: 'Dr. Tri Mulyadi, S.H., M.H', kodeDosen: 'HKM003', sumber: 'MK Baru' },
+  { id: 2,  kode: 'UMP1001', nama: 'Pendidikan Pancasila', sks: 2, semester: 1, pengampu: 'Ismail Maswatu, S.E., S.H., M.H', kodeDosen: 'HKM004', sumber: 'MK Baru' },
+  { id: 3,  kode: 'UMP1004', nama: 'Teknologi dan Informasi', sks: 2, semester: 1, pengampu: 'Irfun, M.Pd', kodeDosen: 'HKM005', sumber: 'MK Baru' },
+  { id: 4,  kode: 'UMP1005', nama: 'Bahasa Indonesia', sks: 2, semester: 1, pengampu: 'Irfun, M.Pd', kodeDosen: 'HKM005', sumber: 'MK Baru' },
+  { id: 5,  kode: 'UMP1003', nama: 'Bahasa Inggris 1', sks: 2, semester: 1, pengampu: 'Irfun, M.Pd', kodeDosen: 'HKM005', sumber: 'MK Baru' },
+  { id: 6,  kode: 'HKM1301', nama: 'Pengantar Hukum Indonesia', sks: 3, semester: 1, pengampu: 'Dr. Hendrik Dengah, S.H., M.H', kodeDosen: 'HKM002', sumber: 'MK Baru' },
+  { id: 7,  kode: 'HKM1302', nama: 'Pengantar Ilmu Hukum', sks: 3, semester: 1, pengampu: 'Mursani, S.H., M.H.', kodeDosen: 'HKM007', sumber: 'MK Baru' },
+  { id: 8,  kode: 'HKM1203', nama: 'Pendidikan Anti Korupsi', sks: 2, semester: 1, pengampu: 'Dr. Muhammad Yusuf, S.H., M.H', kodeDosen: 'HKM001', sumber: 'MK Baru' },
+  { id: 9,  kode: 'HKM1204', nama: 'Ilmu Negara', sks: 2, semester: 1, pengampu: 'Rifqi Anan Pratama, S.H., M.H', kodeDosen: 'HKM009', sumber: 'MK Baru' },
+  // Semester 2 — MK Baru (dosen dari referensi Excel)
+  { id: 10, kode: 'UMP1203', nama: 'AI Islam dan Kemuhammadiyahan (AIK) 2', sks: 3, semester: 2, pengampu: 'Dr. Tri Mulyadi, S.H., M.H', kodeDosen: 'HKM003', sumber: 'MK Baru' },
+  { id: 11, kode: 'UMP2005', nama: 'Bahasa Inggris 2', sks: 2, semester: 2, pengampu: 'Irfun, M.Pd', kodeDosen: 'HKM005', sumber: 'MK Baru' },
+  { id: 12, kode: 'HKM2305', nama: 'Hukum Pidana', sks: 3, semester: 2, pengampu: 'Adimas Reza Prayudi M, S.H., M.H.', kodeDosen: 'HKM006', sumber: 'MK Baru' },
+  { id: 13, kode: 'HKM2306', nama: 'Hukum Perdata', sks: 3, semester: 2, pengampu: 'Ismail Maswatu, S.E., S.H., M.H', kodeDosen: 'HKM004', sumber: 'MK Baru' },
+  { id: 14, kode: 'HKM2307', nama: 'Hukum Tata Negara', sks: 3, semester: 2, pengampu: 'Rifqi Anan Pratama, S.H., M.H', kodeDosen: 'HKM009', sumber: 'MK Baru' },
+  { id: 15, kode: 'HKM2208', nama: 'Hukum Islam', sks: 2, semester: 2, pengampu: 'Dr. Tri Mulyadi, S.H., M.H', kodeDosen: 'HKM003', sumber: 'MK Baru' },
+  { id: 16, kode: 'UMP2007', nama: 'Pendidikan Kewarganegaraan', sks: 2, semester: 2, pengampu: 'Ismail Maswatu, S.E., S.H., M.H', kodeDosen: 'HKM004', sumber: 'MK Baru' },
+  { id: 17, kode: 'HKM2209', nama: 'Pengantar Sosiologi Hukum', sks: 2, semester: 2, pengampu: 'Mursani, S.H., M.H.', kodeDosen: 'HKM007', sumber: 'MK Baru' },
+  // Semester 3 — MK Baru, dosen dicocokkan dari MK Lama
+  { id: 18, kode: 'UMP1303', nama: 'AI Islam dan Kemuhammadiyahan 3', sks: 3, semester: 3, pengampu: 'Dr. Tri Mulyadi, S.H., M.H', kodeDosen: 'HKM003', sumber: 'MK Baru' },
+  { id: 19, kode: 'HKM3210', nama: 'Hukum Perkawinan di Indonesia', sks: 2, semester: 3, pengampu: 'Adimas Reza Prayudi M, S.H., M.H.', kodeDosen: 'HKM006', sumber: 'MK Baru' },
+  { id: 20, kode: 'HKM3311', nama: 'Hukum Dagang', sks: 3, semester: 3, pengampu: 'Rifqi Anan Pratama, S.H., M.H', kodeDosen: 'HKM009', sumber: 'MK Baru' },
+  { id: 21, kode: 'HKM3312', nama: 'Hukum Agraria', sks: 3, semester: 3, kodeDosen: '-', sumber: 'MK Baru' },
+  { id: 22, kode: 'HKM3313', nama: 'Hukum Adat', sks: 3, semester: 3, pengampu: 'Adimas Reza Prayudi M, S.H., M.H.', kodeDosen: 'HKM006', sumber: 'MK Baru' },
+  { id: 23, kode: 'HKM3214', nama: 'Hukum dan Hak Asasi Manusia', sks: 2, semester: 3, pengampu: 'Rifqi Anan Pratama, S.H., M.H', kodeDosen: 'HKM009', sumber: 'MK Baru' },
+  { id: 24, kode: 'HKM3215', nama: 'Filsafat Hukum', sks: 2, semester: 3, pengampu: 'Dr. Muhammad Yusuf, S.H., M.H', kodeDosen: 'HKM001', sumber: 'MK Baru' },
+  { id: 25, kode: 'HKM3216', nama: 'Etnografi Papua', sks: 2, semester: 3, pengampu: 'Irfun, M.Pd', kodeDosen: 'HKM005', sumber: 'MK Baru' },
+  { id: 26, kode: 'HKM3217', nama: 'Tindak Pidana Di Dalam KUHP', sks: 2, semester: 3, pengampu: 'Mursani, S.H., M.H.', kodeDosen: 'HKM007', sumber: 'MK Baru' },
+  { id: 27, kode: 'HKM3218', nama: 'Sosiologi Hukum', sks: 2, semester: 3, pengampu: 'Mursani, S.H., M.H.', kodeDosen: 'HKM007', sumber: 'MK Baru' },
+  // Semester 4 — MK Baru, dosen dicocokkan dari MK Lama
+  { id: 28, kode: 'HKM4319', nama: 'Hukum Adminstrasi Negara', sks: 3, semester: 4, pengampu: 'Rizki Wisudawan Katjong, S.H., M.H.', kodeDosen: 'HKM008', sumber: 'MK Baru' },
+  { id: 29, kode: 'HKM4220', nama: 'Hukum Kesehatan', sks: 2, semester: 4, kodeDosen: '-', sumber: 'MK Baru' },
+  { id: 30, kode: 'HKM4321', nama: 'Hukum Internasional', sks: 3, semester: 4, kodeDosen: '-', sumber: 'MK Baru' },
+  { id: 31, kode: 'HKM4222', nama: 'Hukum Atas Kekayaan Intelektual', sks: 2, semester: 4, pengampu: 'Rizki Wisudawan Katjong, S.H., M.H.', kodeDosen: 'HKM008', sumber: 'MK Baru' },
+  { id: 32, kode: 'HKM4223', nama: 'Hukum Perpajakan', sks: 2, semester: 4, kodeDosen: '-', sumber: 'MK Baru' },
+  { id: 33, kode: 'HKM4224', nama: 'Hukum Ketenagakerjaan', sks: 2, semester: 4, pengampu: 'Ismail Maswatu, S.E., S.H., M.H', kodeDosen: 'HKM004', sumber: 'MK Baru' },
+  { id: 34, kode: 'HKM4225', nama: 'Hukum Siber', sks: 2, semester: 4, pengampu: 'Dr. Muhammad Yusuf, S.H., M.H', kodeDosen: 'HKM001', sumber: 'MK Baru' },
+  { id: 35, kode: 'HKM4326', nama: 'Hukum Perjanjian dan Perikatan', sks: 3, semester: 4, pengampu: 'Dr. Tri Mulyadi, S.H., M.H', kodeDosen: 'HKM003', sumber: 'MK Baru' },
+  { id: 36, kode: 'HKM4277', nama: 'Tindak Pidana Di Luar KUHP', sks: 2, semester: 4, pengampu: 'Mursani, S.H., M.H.', kodeDosen: 'HKM007', sumber: 'MK Baru' },
+  { id: 37, kode: 'HKM4328', nama: 'Kriminologi dan Viktimologi', sks: 3, semester: 4, pengampu: 'Dr. Hendrik Dengah, S.H., M.H', kodeDosen: 'HKM002', sumber: 'MK Baru' },
+  // Semester 5 — MK Baru, dosen dicocokkan dari MK Lama
+  { id: 38, kode: 'HKM5229', nama: 'Hukum Perlindungan Anak dan Perempuan', sks: 2, semester: 5, pengampu: 'Adimas Reza Prayudi M, S.H., M.H.', kodeDosen: 'HKM006', sumber: 'MK Baru' },
+  { id: 39, kode: 'HKM5330', nama: 'Hukum Konstitusi', sks: 3, semester: 5, pengampu: 'Dr. Hendrik Dengah, S.H., M.H', kodeDosen: 'HKM002', sumber: 'MK Baru' },
+  { id: 40, kode: 'HKM5431', nama: 'Hukum Acara Peradilan Agama dan Praktek Peradilan Agama', sks: 4, semester: 5, kodeDosen: '-', sumber: 'MK Baru' },
+  { id: 41, kode: 'HKM5232', nama: 'Hukum Perlindungan Konsumen', sks: 2, semester: 5, pengampu: 'Mursani, S.H., M.H.', kodeDosen: 'HKM007', sumber: 'MK Baru' },
+  { id: 42, kode: 'HKM5333', nama: 'Hukum Lingkungan', sks: 3, semester: 5, pengampu: 'Dr. Tri Mulyadi, S.H., M.H', kodeDosen: 'HKM003', sumber: 'MK Baru' },
+  { id: 43, kode: 'HKM5434', nama: 'Hukum Acara Pidana dan Praktek Peradilan Pidana', sks: 4, semester: 5, pengampu: 'Dr. Hendrik Dengah, S.H., M.H', kodeDosen: 'HKM002', sumber: 'MK Baru' },
+  { id: 44, kode: 'HKM5435', nama: 'Hukum Acara Perdata dan Praktek Peradilan Perdata', sks: 4, semester: 5, pengampu: 'Ismail Maswatu, S.E., S.H., M.H', kodeDosen: 'HKM004', sumber: 'MK Baru' },
+  { id: 45, kode: 'HKM5236', nama: 'Hukum Perbankan', sks: 2, semester: 5, pengampu: 'Mursani, S.H., M.H.', kodeDosen: 'HKM007', sumber: 'MK Baru' },
+  // Semester 6 — MK Baru, dosen dicocokkan dari MK Lama
+  { id: 46, kode: 'HKM6337', nama: 'Hukum Pembuktian', sks: 2, semester: 6, pengampu: 'Dr. Tri Mulyadi, S.H., M.H', kodeDosen: 'HKM003', sumber: 'MK Baru' },
+  { id: 47, kode: 'HKM6338', nama: 'Hukum Pertambangan & Sumber Daya Mineral', sks: 3, semester: 6, pengampu: 'Mursani, S.H., M.H.', kodeDosen: 'HKM007', sumber: 'MK Baru' },
+  { id: 48, kode: 'HKM6239', nama: 'Etika Profesi Hukum', sks: 2, semester: 6, pengampu: 'Ismail Maswatu, S.E., S.H., M.H', kodeDosen: 'HKM004', sumber: 'MK Baru' },
+  { id: 49, kode: 'HKM6240', nama: 'Metode Penelitian Hukum', sks: 3, semester: 6, pengampu: 'Adimas Reza Prayudi M, S.H., M.H.', kodeDosen: 'HKM006', sumber: 'MK Baru' },
+  { id: 50, kode: 'HKM6241', nama: 'Alternative Dispute Resolution', sks: 2, semester: 6, kodeDosen: '-', sumber: 'MK Baru' },
+  { id: 51, kode: 'HKM6442', nama: 'Hukum Acara Peradilan PTUN dan Praktek Peradilan TUN', sks: 4, semester: 6, pengampu: 'Ratna Jaya, S.H., M.H', kodeDosen: 'HKM010', sumber: 'MK Baru' },
+  { id: 52, kode: 'HKM6343', nama: 'Hukum Pidana Adat', sks: 3, semester: 6, pengampu: 'Dr. Hendrik Dengah, S.H., M.H', kodeDosen: 'HKM002', sumber: 'MK Baru' },
+  { id: 53, kode: 'HKM6244', nama: 'Penologi dan Permasyarakatan', sks: 2, semester: 6, kodeDosen: '-', sumber: 'MK Baru' },
+  { id: 54, kode: 'HKM6345', nama: 'Ilmu Perundang-Undangan', sks: 3, semester: 6, pengampu: 'Rizki Wisudawan Katjong, S.H., M.H.', kodeDosen: 'HKM008', sumber: 'MK Baru' },
+  // Semester 7 — MK Baru (pelaksanaan mandiri/institusional)
+  { id: 55, kode: 'UMP7009', nama: 'Magang', sks: 6, semester: 7, kodeDosen: '-', sumber: 'MK Baru' },
+  { id: 56, kode: 'UMP7010', nama: 'Kuliah Kerja Nyata (KKN)', sks: 6, semester: 7, kodeDosen: '-', sumber: 'MK Baru' },
+  // Semester 8 — MK Baru
+  { id: 57, kode: 'HKM8648', nama: 'Tugas Akhir', sks: 6, semester: 8, kodeDosen: '-', sumber: 'MK Baru' }
+];
+const LEGACY_SEED_KURIKULUM = [
   { id: 1, kode: 'HK101', nama: 'Pengantar Ilmu Hukum', sks: 3, jenis: 'Wajib', semester: 1 },
   { id: 2, kode: 'HK102', nama: 'Pengantar Hukum Indonesia', sks: 3, jenis: 'Wajib', semester: 1 },
   { id: 3, kode: 'HK103', nama: 'Ilmu Negara', sks: 2, jenis: 'Wajib', semester: 1 },
@@ -1355,7 +1757,69 @@ const SEED_KURIKULUM = [
   { id: 14, kode: 'HK702', nama: 'Praktik Peradilan Semu', sks: 2, jenis: 'Wajib', semester: 7 },
   { id: 15, kode: 'HK801', nama: 'Skripsi', sks: 6, jenis: 'Wajib', semester: 8 }
 ];
+function curriculumSignature(courses) {
+  const snapshot = JSON.stringify(courses.map(course => [
+    course.id, course.kode, course.nama, course.sks, course.semester, course.pengampu || ''
+  ]));
+  let first = 0x811c9dc5;
+  let second = 0x12345678;
+  for (let i = 0; i < snapshot.length; i += 1) {
+    const code = snapshot.charCodeAt(i);
+    first = Math.imul(first ^ code, 0x01000193);
+    second = Math.imul(second ^ code, 0x01000193);
+  }
+  return (first >>> 0).toString(16).padStart(8, '0') +
+    (second >>> 0).toString(16).padStart(8, '0');
+}
+const CURRICULUM_MIGRATION_KEY = 'kurikulumMkBaruAllSemestersV3';
+// Signature seed kurikulum versi sebelumnya (termasuk yang masih memuat kode
+// UMP1002 duplikat pada id 4 "Bahasa Indonesia") — dijadikan "known default"
+// agar migrasi otomatis mengganti data tersebut dengan seed terbaru (UMP1005).
+const PREVIOUS_MK_BARU_SIGNATURES = ['72b369af881db03a', '8b7326c6e85421d1', '0fc79d6fa11de2e2', 'bb4ff1d968acffbe'];
+const PREVIOUS_NORMALIZED_CURRICULUM_SIGNATURES = [];
 let SAMPLE_KURIKULUM = DB.load('kurikulum', SEED_KURIKULUM);
+if (Array.isArray(SAMPLE_KURIKULUM) &&
+    SAMPLE_KURIKULUM.some(course => course && ('sumber' in course || 'catatan' in course))) {
+  const curriculumWithoutMetadata = SAMPLE_KURIKULUM.map(course => {
+    if (!course || typeof course !== 'object') return course;
+    const cleanCourse = { ...course };
+    delete cleanCourse.sumber;
+    delete cleanCourse.catatan;
+    return cleanCourse;
+  });
+  if (DB.save('kurikulum', curriculumWithoutMetadata)) {
+    SAMPLE_KURIKULUM = curriculumWithoutMetadata;
+  } else {
+    console.error('DB: gagal menghapus metadata sumber dan keterangan dari kurikulum tersimpan.');
+  }
+}
+const curriculumMigrationStatus = DB.load(CURRICULUM_MIGRATION_KEY, '');
+if (!curriculumMigrationStatus) {
+  const savedSignature = Array.isArray(SAMPLE_KURIKULUM) ? curriculumSignature(SAMPLE_KURIKULUM) : '';
+  const isKnownDefault = JSON.stringify(SAMPLE_KURIKULUM) === JSON.stringify(LEGACY_SEED_KURIKULUM) ||
+    PREVIOUS_MK_BARU_SIGNATURES.includes(savedSignature) ||
+    PREVIOUS_NORMALIZED_CURRICULUM_SIGNATURES.includes(savedSignature);
+  const isNormalizedDefault = savedSignature === curriculumSignature(SEED_KURIKULUM);
+  if (isKnownDefault) {
+    if (DB.save('kurikulum', SEED_KURIKULUM)) {
+      SAMPLE_KURIKULUM = SEED_KURIKULUM;
+      if (!DB.save(CURRICULUM_MIGRATION_KEY, 'normalized')) {
+        console.error('DB: gagal menandai normalisasi kurikulum sebagai selesai.');
+      }
+    } else {
+      console.error('DB: gagal memperbarui kurikulum bawaan dari workbook normalisasi.');
+    }
+  } else if (isNormalizedDefault) {
+    if (!DB.save(CURRICULUM_MIGRATION_KEY, 'normalized')) {
+      console.error('DB: gagal menandai normalisasi kurikulum sebagai selesai.');
+    }
+  } else {
+    if (!DB.save(CURRICULUM_MIGRATION_KEY, 'preserved-admin-data')) {
+      console.error('DB: gagal menandai kurikulum yang dikelola admin.');
+    }
+    console.warn('DB: kurikulum tersimpan berbeda dari data bawaan; migrasi otomatis dilewati untuk mempertahankan perubahan admin.');
+  }
+}
 
 // Log aktivitas admin — satu sumber data yang dipakai bersama oleh Dashboard
 // (menampilkan 4 teraktual) dan halaman Activity Log (menampilkan semua).
@@ -1374,7 +1838,7 @@ let SAMPLE_AKTIVITAS = DB.load('aktivitas', SEED_AKTIVITAS);
 const SEED_NOTIFIKASI = [
   { id: 1, judul: 'Pembaruan Sistem', pesan: 'Sistem Website Prodi Hukum telah disinkronkan secara dinamis.', waktu: '5 menit lalu', read: false, icon: '\u{1F680}' },
   { id: 2, judul: 'Pemberitahuan Akademik', pesan: 'Data alumni, dosen, dan kurikulum aktif terverifikasi.', waktu: '1 jam lalu', read: false, icon: '\u{1F4C4}' },
-  { id: 3, judul: 'Backup Siap', pesan: 'Database lokal dan IndexedDB sinkron dan aman.', waktu: '2 jam lalu', read: true, icon: '\u{1F4BE}' }
+  { id: 3, judul: 'Cadangan Penyimpanan', pesan: 'IndexedDB menerima salinan tambahan secara best-effort; localStorage tetap menjadi penyimpanan utama.', waktu: '2 jam lalu', read: true, icon: '\u{1F4BE}' }
 ];
 let SAMPLE_NOTIFIKASI = DB.load('notifikasi', SEED_NOTIFIKASI);
 
@@ -1431,7 +1895,7 @@ let SAMPLE_PENGGUNA = DB.load('pengguna', SEED_PENGGUNA);
       } else {
         fixed.password = 'ubah' + (fixed.id || Date.now());
         console.warn('DB: akun pengguna "' + fixed.email + '" tidak memiliki password tersimpan. ' +
-          'Password sementara dibuat otomatis: ' + fixed.password + '. Segera ubah lewat menu Pengguna.');
+          'Password sementara dibuat otomatis. Segera ubah lewat menu Pengguna.');
       }
       changed = true;
     }
@@ -1457,23 +1921,55 @@ const SEED_PROFIL = {
   akreditasi: 'B',
   deskripsi: 'Program Studi Hukum Universitas Muhammadiyah Papua hadir untuk menjawab kebutuhan sumber daya hukum yang kompeten di wilayah timur Indonesia. Kami memadukan kajian hukum nasional dengan konteks hukum adat dan sosial masyarakat Papua.',
   sejarah: 'Didirikan sebagai bagian dari komitmen universitas dalam pengembangan ilmu hukum di Papua, Program Studi Hukum terus bertumbuh melalui penguatan kurikulum, kualitas dosen, dan kerja sama kelembagaan.',
-  visi: 'Menjadi program studi hukum yang unggul, islami, dan berdaya saing dalam menghasilkan sarjana hukum yang berintegritas di kawasan timur Indonesia.',
-  misi: 'Menyelenggarakan pendidikan hukum yang berkualitas\nMengembangkan penelitian hukum yang aplikatif\nMelaksanakan pengabdian masyarakat berbasis hukum\nMembangun kerja sama dengan lembaga hukum',
+  visi: 'Universitas unggul, berbudaya, dan berwawasan lingkungan tahun 2030.',
+  misi: 'Menyelenggarakan pembinaan dan pengembangan Al-Islam dan Kemuhammadiyahan\nMenyelenggarakan pendidikan dan pengajaran berdasarkan Tri Dharma Perguruan Tinggi\nMengembangkan ilmu pengetahuan, teknologi, dan seni (IPTEKS) dalam bidang sosial humaniora serta sains dan teknologi yang berwawasan budaya dan lingkungan\nMembudayakan kegiatan penelitian dan pengabdian kepada masyarakat dalam bidang IPTEK yang berwawasan budaya dan lingkungan\nMemperluas akses kerja sama dengan instansi, dunia usaha, dan industri',
   tujuan: 'Menghasilkan lulusan yang menguasai ilmu hukum, memiliki keterampilan praktik hukum, serta berkarakter amanah dan berkeadilan dalam menjalankan profesinya.',
   lulusan: 'Praktisi hukum, aparatur negara, akademisi, dan wirausaha hukum.'
 };
+const LEGACY_PROFIL_VISI = 'Menjadi program studi hukum yang unggul, islami, dan berdaya saing dalam menghasilkan sarjana hukum yang berintegritas di kawasan timur Indonesia.';
+const LEGACY_PROFIL_MISI = 'Menyelenggarakan pendidikan hukum yang berkualitas\nMengembangkan penelitian hukum yang aplikatif\nMelaksanakan pengabdian masyarakat berbasis hukum\nMembangun kerja sama dengan lembaga hukum';
 let SAMPLE_PROFIL = DB.load('profil', SEED_PROFIL);
+let profilNeedsMigration = false;
+if (SAMPLE_PROFIL.visi === LEGACY_PROFIL_VISI) {
+  SAMPLE_PROFIL.visi = SEED_PROFIL.visi;
+  profilNeedsMigration = true;
+}
+if (SAMPLE_PROFIL.misi === LEGACY_PROFIL_MISI) {
+  SAMPLE_PROFIL.misi = SEED_PROFIL.misi;
+  profilNeedsMigration = true;
+}
+if (profilNeedsMigration) DB.save('profil', SAMPLE_PROFIL);
 
 // Struktur Organisasi — sebelumnya 3 kartu (nama, jabatan, foto) hardcode
 // langsung di profil.html tanpa terhubung ke data apapun. Sekarang dikelola
 // lewat Admin (admin/profil-prodi.html) dan disimpan di DB seperti entitas
 // lain, supaya halaman publik menampilkan data yang sesungguhnya dikelola.
 const SEED_STRUKTUR = [
-  { id: 1, nama: 'Dr. Ahmad Fauzi, S.H., M.H.', jabatan: 'Kepala Program Studi', foto: '' },
-  { id: 2, nama: 'Rina Marlina, S.H., M.H.', jabatan: 'Sekretaris Program Studi', foto: '' },
-  { id: 3, nama: 'Yusuf Kamal, S.H., M.Kn.', jabatan: 'Koordinator Kemahasiswaan', foto: '' }
+  { id: 1, nama: 'Dr. Muhammad Yusuf, S.H., M.H', jabatan: 'Kepala Program Studi', foto: '', dosenId: 1 },
+  { id: 2, nama: 'Dr. Hendrik Dengah, S.H., M.H', jabatan: 'Sekretaris Program Studi', foto: '', dosenId: 2 },
+  { id: 3, nama: 'Ismail Maswatu, S.E., S.H., M.H', jabatan: 'Koordinator Kemahasiswaan', foto: '', dosenId: 4 }
 ];
+// Nama-nama lama dari LEGACY_SEED_DOSEN — dipakai untuk mendeteksi seed usang
+// yang belum ditautkan ke SEED_DOSEN terkini, supaya migrasi tidak menimpa
+// perubahan yang sudah dibuat admin melalui panel.
+const LEGACY_STRUKTUR_NAMES = ['Dr. Ahmad Fauzi, S.H., M.H.', 'Rina Marlina, S.H., M.H.', 'Yusuf Kamal, S.H., M.Kn.'];
 let SAMPLE_STRUKTUR = DB.load('struktur', SEED_STRUKTUR);
+// Migrasi: apabila semua record struktur masih menggunakan nama lama DAN tidak
+// ada satu pun yang memiliki dosenId, ganti dengan seed terbaru yang sudah
+// terhubung ke SEED_DOSEN. Jika admin sudah mengubah struktur (berbeda nama
+// atau sudah ada dosenId), migrasi dilewati untuk menjaga perubahan admin.
+(function migrateStruktur() {
+  if (!Array.isArray(SAMPLE_STRUKTUR) || SAMPLE_STRUKTUR.length === 0) return;
+  const isLegacy =
+    SAMPLE_STRUKTUR.every(s => !s.dosenId) &&
+    SAMPLE_STRUKTUR.some(s => LEGACY_STRUKTUR_NAMES.includes(s.nama));
+  if (!isLegacy) return;
+  if (DB.save('struktur', SEED_STRUKTUR)) {
+    SAMPLE_STRUKTUR = SEED_STRUKTUR;
+  } else {
+    console.error('DB: gagal memperbarui seed struktur organisasi ke roster dosen terkini.');
+  }
+})();
 
 // Pengaturan Website — dipakai admin/pengaturan.html (form) dan ditampilkan
 // di header, footer + halaman Kontak pada seluruh halaman publik.
@@ -1482,7 +1978,7 @@ const SEED_PENGATURAN = {
   logo: '../assets/image/logo-ump.png', favicon: '../assets/image/logo-ump.png',
   theme: 'Neumorphism', primaryColor: '#2A4E9E', darkMode: true,
   metaTitle: 'Program Studi Hukum — UMP', metaDesc: 'Informasi akademik Program Studi Hukum UMP.', keywords: 'hukum, UMP, program studi hukum',
-  facebook: '', instagram: '', youtube: '', linkedin: '',
+  facebook: '', instagram: '', youtube: '', linkedin: '', tiktok: '',
   email: 'hukum@ump.ac.id', telepon: '(0967) 123-456', alamat: 'Jl. Yap Thiam Hien, Kel. Yobe, Jayapura Utara',
   mapEmbed: 'https://maps.google.com/maps?q=Universitas%20Muhammadiyah%20Papua,%20Jayapura&t=&z=15&ie=UTF8&iwloc=&output=embed',
   mapLink: 'https://maps.google.com/?q=Universitas+Muhammadiyah+Papua,+Jayapura',
@@ -1495,6 +1991,53 @@ if (!SAMPLE_PENGATURAN.mapEmbed) {
   SAMPLE_PENGATURAN.mapLink = SEED_PENGATURAN.mapLink;
   SAMPLE_PENGATURAN.koordinat = SEED_PENGATURAN.koordinat;
 }
+
+const CONTENT_DB_KEYS = new Set([
+  'berita', 'dosen', 'dokumen', 'galeri', 'pengumuman', 'kegiatan',
+  'artikel', 'prestasi', 'kurikulum', 'alumni', 'profil', 'struktur', 'pengaturan'
+]);
+function applyDatabaseUpdate(key, data) {
+  if (key === 'berita' && Array.isArray(data)) SAMPLE_BERITA = data;
+  if (key === 'dosen' && Array.isArray(data)) SAMPLE_DOSEN = data;
+  if (key === 'dokumen' && Array.isArray(data)) SAMPLE_DOKUMEN = data;
+  if (key === 'galeri' && Array.isArray(data)) SAMPLE_GALERI = data;
+  if (key === 'pengumuman' && Array.isArray(data)) SAMPLE_PENGUMUMAN = data;
+  if (key === 'kegiatan' && Array.isArray(data)) SAMPLE_KEGIATAN = data;
+  if (key === 'artikel' && Array.isArray(data)) SAMPLE_ARTIKEL = data;
+  if (key === 'prestasi' && Array.isArray(data)) SAMPLE_PRESTASI = data;
+  if (key === 'kurikulum' && Array.isArray(data)) SAMPLE_KURIKULUM = data;
+  if (key === 'alumni' && Array.isArray(data)) SAMPLE_ALUMNI = data;
+  if (key === 'profil' && data && typeof data === 'object' && !Array.isArray(data)) SAMPLE_PROFIL = data;
+  if (key === 'struktur' && Array.isArray(data)) SAMPLE_STRUKTUR = data;
+  if (key === 'pengaturan' && data && typeof data === 'object' && !Array.isArray(data)) SAMPLE_PENGATURAN = data;
+  if (key === 'pengguna' && Array.isArray(data)) SAMPLE_PENGGUNA = data;
+  if (key === 'pendaftar' && Array.isArray(data)) SAMPLE_PENDAFTAR = data;
+  if (key === 'pesan' && Array.isArray(data)) SAMPLE_PESAN = data;
+  if (key === 'aktivitas' && Array.isArray(data)) SAMPLE_AKTIVITAS = data;
+  if (key === 'notifikasi' && Array.isArray(data)) SAMPLE_NOTIFIKASI = data;
+}
+window.addEventListener('db-update', (event) => {
+  if (!event.detail || typeof event.detail.key !== 'string') return;
+  const { key, data } = event.detail;
+  applyDatabaseUpdate(key, data);
+  if (key === 'notifikasi') window.dispatchEvent(new CustomEvent('notif-update'));
+  if (CONTENT_DB_KEYS.has(key) && !/\/admin\//.test(window.location.pathname)) {
+    window.location.reload();
+  }
+});
+window.addEventListener('storage', (event) => {
+  if (!event.key || !event.key.startsWith(DB.NS)) return;
+  const key = event.key.slice(DB.NS.length);
+  let data;
+  try {
+    data = event.newValue === null ? [] : JSON.parse(event.newValue);
+  } catch (error) {
+    console.warn(`DB: data lintas-tab "${key}" tidak valid.`, error);
+    return;
+  }
+
+  window.dispatchEvent(new CustomEvent('db-update', { detail: { key, data } }));
+});
 
 function profilPage() {
   return {
@@ -1540,18 +2083,12 @@ function profilPage() {
         .filter(Boolean)
         .map(s => s.charAt(0).toUpperCase() + s.slice(1));
     },
+    dosenStruktur(member) {
+      return SAMPLE_DOSEN.find(dosen => String(dosen.id) === String(member.dosenId)) || null;
+    },
     struktur: SAMPLE_STRUKTUR
   };
 }
-
-const SEARCH_INDEX = [
-  ...SAMPLE_BERITA.map(b => ({ title: b.judul, url: `detail-berita.html?id=${b.id}`, type: 'Berita', keywords: `${b.judul} ${b.kategori}` })),
-  ...SAMPLE_DOSEN.map(d => ({ title: d.nama, url: 'dosen.html', type: 'Dosen', keywords: `${d.nama} ${d.keahlian} ${d.jabatan}` })),
-  ...SAMPLE_DOKUMEN.map(d => ({ title: d.nama, url: 'dokumen.html', type: 'Dokumen', keywords: `${d.nama} ${d.kategori}` })),
-  ...SAMPLE_KEGIATAN.map(k => ({ title: k.nama, url: `detail-kegiatan.html?id=${k.id}`, type: 'Kegiatan', keywords: `${k.nama} ${k.lokasi}` })),
-  ...SAMPLE_PENGUMUMAN.map(p => ({ title: p.judul, url: `detail-pengumuman.html?id=${p.id}`, type: 'Pengumuman', keywords: `${p.judul} ${p.status}` })),
-  ...SAMPLE_ARTIKEL.map(a => ({ title: a.judul, url: `detail-artikel.html?id=${a.id}`, type: 'Artikel', keywords: `${a.judul} ${a.kategori} ${a.penulis}` }))
-];
 
 function pengumumanPage() {
   return {
@@ -1604,10 +2141,32 @@ function kurikulumPage() {
     semester: 1,
     all: SAMPLE_KURIKULUM,
     get results() {
-      return this.all.filter(m => m.semester === this.semester);
+      return this.all.filter(m => Number(m.semester) === Number(this.semester));
+    },
+    get semesterSks() {
+      return this.results.reduce((total, course) => total + Number(course.sks || 0), 0);
+    },
+    get totalSks() {
+      return this.all.reduce((total, course) => total + Number(course.sks || 0), 0);
     },
     download() {
-      NeuAlert.success('Unduhan kurikulum dimulai (simulasi).');
+      const quote = value => '"' + String(value).replace(/"/g, '""') + '"';
+      const rows = [
+        ['Semester', 'Kode MK', 'Mata Kuliah', 'SKS', 'Dosen Pengampu', 'Kode Dosen'],
+        ...this.all.map(course => [
+          course.semester, course.kode, course.nama, course.sks,
+          course.pengampu || '', course.kodeDosen || '-'
+        ])
+      ];
+      const csv = '\uFEFF' + rows.map(row => row.map(quote).join(',')).join('\r\n');
+      const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'kurikulum-prodi-hukum-mk-baru.csv';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 0);
     }
   };
 }
@@ -1630,8 +2189,12 @@ function detailKegiatanPage() {
     item: detailFromQuery(SAMPLE_KEGIATAN),
     daftarOpen: false,
     submitting: false,
+    participantRevision: 0,
     form: { nama: '', email: '', whatsapp: '', instansi: '' },
     init() {
+      window.addEventListener('db-update', event => {
+        if (event.detail?.key === 'pendaftar') this.participantRevision += 1;
+      });
       // Dukungan tautan langsung `detail-kegiatan.html?id=..#daftar` dari
       // halaman kegiatan.html supaya formulir pendaftaran otomatis terbuka.
       if (window.location.hash === '#daftar') {
@@ -1641,6 +2204,7 @@ function detailKegiatanPage() {
     // Jumlah pendaftar dihitung langsung dari data sungguhan (bukan angka
     // statis) supaya selalu konsisten dengan yang tercatat di Admin Panel.
     get jumlahPendaftar() {
+      this.participantRevision;
       return pesertaKegiatan(this.item.id).length;
     },
     openDaftar() {
@@ -1699,6 +2263,13 @@ const ALBUM_ICONS = {
 function adminGaleriPage() {
   return {
     foto: [...SAMPLE_GALERI],
+    init() {
+      window.addEventListener('db-update', event => {
+        if (event.detail?.key === 'galeri' && Array.isArray(event.detail.data)) {
+          this.foto = [...event.detail.data];
+        }
+      });
+    },
     albumIcon(album) {
       return ALBUM_ICONS[album] || '\u{1F5BC}\uFE0F';
     },
@@ -1803,6 +2374,13 @@ function adminDokumenTable() {
     uploading: false,
     q: '',
     form: { ...emptyForm },
+    init() {
+      window.addEventListener('db-update', event => {
+        if (event.detail?.key === 'dokumen' && Array.isArray(event.detail.data)) {
+          this.rows = [...event.detail.data];
+        }
+      });
+    },
     get filtered() {
       return this.rows.filter(r => (r.nama || '').toLowerCase().includes(this.q.toLowerCase()));
     },
@@ -1908,6 +2486,13 @@ function adminPenggunaTable(config) {
     q: '',
     rows: [...config.rows],
     form: { ...config.emptyForm },
+    init() {
+      window.addEventListener('db-update', event => {
+        if (event.detail?.key === 'pengguna' && Array.isArray(event.detail.data)) {
+          this.rows = [...event.detail.data];
+        }
+      });
+    },
     get filtered() {
       const keys = config.searchKeys || ['nama', 'email'];
       return this.rows.filter(row =>
@@ -1977,13 +2562,45 @@ function adminCrudTable(config) {
     editing: null,
     uploadingFoto: false,
     q: '',
+    filterValue: 'all',
     rows: [...config.rows],
     form: { ...config.emptyForm },
     get filtered() {
       const keys = config.searchKeys || ['nama'];
       return this.rows.filter(row =>
-        keys.some(k => String(row[k] || '').toLowerCase().includes(this.q.toLowerCase()))
+        keys.some(k => String(row[k] || '').toLowerCase().includes(this.q.toLowerCase())) &&
+        (!config.filter || config.filter(row, this.filterValue))
       );
+    },
+    clearFilters() {
+      this.q = '';
+      this.filterValue = 'all';
+    },
+    exportCsv() {
+      if (!Array.isArray(config.exportColumns) || config.exportColumns.length === 0) {
+        NeuAlert.error('Kolom ekspor belum dikonfigurasi.');
+        return;
+      }
+
+      const quote = value => {
+        const text = String(value == null ? '' : value);
+        const safe = /^[\t\r ]*[=+\-@]/.test(text) ? "'" + text : text;
+        return '"' + safe.replace(/"/g, '""') + '"';
+      };
+      const rows = [
+        config.exportColumns.map(column => column[0]),
+        ...this.filtered.map(row => config.exportColumns.map(column => row[column[1]]))
+      ];
+      const csv = '\uFEFF' + rows.map(row => row.map(quote).join(',')).join('\r\n');
+      const url = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = config.exportFilename || 'data.csv';
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 0);
+      NeuAlert.success(`${this.filtered.length} mata kuliah diekspor ke CSV.`);
     },
     async onFoto(e, field = 'foto') {
       const file = e.target.files && e.target.files[0];
@@ -2010,6 +2627,8 @@ function adminCrudTable(config) {
     // perubahan di memori kalau ternyata gagal disimpan (mis. localStorage penuh).
     persist() {
       if (config.dbKey) {
+        const saved = DB.save(config.dbKey, this.rows);
+        if (!saved) return false;
         if (config.dbKey === 'alumni') SAMPLE_ALUMNI = this.rows;
         else if (config.dbKey === 'kurikulum') SAMPLE_KURIKULUM = this.rows;
         else if (config.dbKey === 'dokumen') SAMPLE_DOKUMEN = this.rows;
@@ -2017,9 +2636,15 @@ function adminCrudTable(config) {
         else if (config.dbKey === 'pengguna') SAMPLE_PENGGUNA = this.rows;
         else if (config.dbKey === 'pengumuman') SAMPLE_PENGUMUMAN = this.rows;
         else if (config.dbKey === 'prestasi') SAMPLE_PRESTASI = this.rows;
-        return DB.save(config.dbKey, this.rows);
+        return true;
       }
       return true;
+    },
+    init() {
+      window.addEventListener('db-update', (event) => {
+        if (!event.detail || event.detail.key !== config.dbKey || !Array.isArray(event.detail.data)) return;
+        this.rows = [...event.detail.data];
+      });
     },
     openAdd() {
       this.editing = null;
@@ -2090,14 +2715,23 @@ function kegiatanAdminPage() {
     }
   });
   return mergeReactive(base, {
+    participantRevision: 0,
     showPeserta: false,
     pesertaOf: null, // kegiatan yang sedang dilihat daftar pesertanya
+    init() {
+      if (typeof base.init === 'function') base.init.call(this);
+      window.addEventListener('db-update', event => {
+        if (event.detail?.key === 'pendaftar') this.participantRevision += 1;
+      });
+    },
     // Dipanggil dari template lewat `jumlahPeserta(r)` — dihitung langsung
     // dari data pendaftar sungguhan (bukan angka statis).
     jumlahPeserta(row) {
+      this.participantRevision;
       return pesertaKegiatan(row.id).length;
     },
     get pesertaList() {
+      this.participantRevision;
       return this.pesertaOf ? pesertaKegiatan(this.pesertaOf.id) : [];
     },
     lihatPeserta(row) {
@@ -2130,7 +2764,52 @@ function adminAktivitasPage() {
     q: '',
     filterUser: 'Semua',
     filterType: 'Semua',
+    revision: 0,
+    pesan: [...(SAMPLE_PESAN || [])],
+    init() {
+      window.addEventListener('db-update', (event) => {
+        if (event.detail && event.detail.key === 'pesan') {
+          this.pesan = [...(SAMPLE_PESAN || [])];
+        }
+        if (event.detail && event.detail.key === 'aktivitas') {
+          this.revision += 1;
+        }
+      });
+    },
+    get unreadPesan() {
+      return this.pesan.filter((item) => !item.read).length;
+    },
+    markPesanRead(item) {
+      if (item.read) return;
+      const previous = this.pesan;
+      this.pesan = this.pesan.map((message) =>
+        message.id === item.id ? { ...message, read: true } : message
+      );
+      SAMPLE_PESAN = this.pesan;
+      if (!DB.save('pesan', SAMPLE_PESAN)) {
+        this.pesan = previous;
+        SAMPLE_PESAN = previous;
+        NeuAlert.storageFull();
+        return;
+      }
+    },
+    async hapusPesan(item) {
+      const ok = await NeuAlert.confirmDelete('pesan ini');
+      if (!ok) return;
+      const previous = this.pesan;
+      this.pesan = this.pesan.filter((message) => message.id !== item.id);
+      SAMPLE_PESAN = this.pesan;
+      if (!DB.save('pesan', SAMPLE_PESAN)) {
+        this.pesan = previous;
+        SAMPLE_PESAN = previous;
+        NeuAlert.storageFull();
+        return;
+      }
+      logActivity(`Menghapus pesan kontak dari ${item.nama}`, '\u{1F5D1}\u{FE0F}');
+      NeuAlert.deleted('Pesan berhasil dihapus.');
+    },
     get list() {
+      this.revision;
       return (typeof SAMPLE_AKTIVITAS !== 'undefined' && Array.isArray(SAMPLE_AKTIVITAS)) ? SAMPLE_AKTIVITAS : [];
     },
     get userOptions() {

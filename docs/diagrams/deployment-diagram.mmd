@@ -1,33 +1,50 @@
 flowchart TB
-    subgraph CLIENT_NODE["💻 Client Node (User / Admin Workstation)"]
-        subgraph BROWSER_ENV["🌐 Modern Web Browser (Chrome, Edge, Firefox, Safari)"]
-            DOM["<b>HTML5 DOM Engine</b><br/>• 36 Halaman Web Profil & Admin"]
-            CSS_ENGINE["<b>Rendering Engine</b><br/>• Tailwind Utility + Neumorphism style.css"]
-            JS_RUNTIME["<b>JavaScript V8 / SpiderMonkey Engine</b><br/>• Alpine.js 3.14.8 Runtime<br/>• Core DB Engine & AUTH (app.js)"]
-            
-            subgraph LOCAL_DATA["🗄️ Client-Side Storage Subsystem"]
-                LS_STORE[("<b>Web Storage API (localStorage)</b><br/>• Quota: ~5MB<br/>• Primary Source of Truth")]
-                IDB_STORE[("<b>IndexedDB Engine (ProdiHukumDB)</b><br/>• Quota: Unlimited / Storage Quota<br/>• Heavy Media Base64 Store")]
+    %% ==========================================
+    %% NODE 1: STATIC WEB SERVER
+    %% ==========================================
+    subgraph WEB_SERVER["Server Web Statis (opsi hosting)"]
+        HTML_FILES["Berkas web statis\n- 18 halaman publik dan detail\n- 18 berkas admin, termasuk satu redirect\n- CSS dan aset gambar"]
+        JS_BUNDLE["Skrip klien\n- assets/js/app.js (logika dan data seed)"]
+    end
+
+    %% ==========================================
+    %% NODE 2: CLIENT DEVICE (PERANGKAT PENGGUNA)
+    %% ==========================================
+    subgraph CLIENT_DEVICE["Node: Perangkat Klien (PC / Laptop / Smartphone)"]
+        subgraph BROWSER["Lingkungan Eksekusi: Web Browser Modern (Chrome, Edge, Firefox, Safari)"]
+            subgraph RUNTIME["Mesin JavaScript & Render Engine DOM"]
+                DOM_UI["Antarmuka DOM & Alpine.js Runtime"]
+                APP_LOGIC["Eksekusi app.js (AUTH, DB, Logger)"]
+            end
+            subgraph LOCAL_STORAGE_NODE["Media Penyimpanan Browser (Origin Storage)"]
+                LS_STORE[("localStorage Browser\n- 18 Kunci Entitas (prodihukum_db_v1_*)\n- Sesi: prodihukum_admin_session\n- Metrik: prodihukum_pageviews_v1")]
+                IDB_STORE[("IndexedDB browser\n- ProdiHukumDB / entities\n- Salinan asinkron best-effort")]
             end
         end
     end
 
-    subgraph WEB_SERVER["☁️ Web Hosting / Static File Server (GitHub Pages / Nginx / Apache)"]
-        STATIC_FILES["<b>Static Web Assets</b><br/>• *.html (36 files)<br/>• assets/css/*.css<br/>• assets/js/*.js<br/>• assets/image/* (Media Files)"]
+    %% ==========================================
+    %% NODE 3: EXTERNAL SERVICES
+    %% ==========================================
+    subgraph CDN_SERVER["Node: Content Delivery Network (CDN)"]
+        CDN_ASSETS["Pustaka dan font eksternal\n- jsDelivr: Alpine.js, SweetAlert2\n- Google Fonts"]
     end
 
-    subgraph CLOUD_SERVICES["🌍 Third-Party Cloud CDN & API Services"]
-        MAPS_SRV["<b>Google Maps Embed Service</b><br/>• Iframe Map Rendering"]
-        FONTS_SRV["<b>Google Fonts CDN</b><br/>• Inter & Poppins Fonts"]
-        CDN_SRV["<b>jsDelivr / cdnjs CDN</b><br/>• Bootstrap 5.3.3<br/>• SweetAlert2 v11<br/>• Alpine.js 3.14.8"]
+    subgraph MAPS_SERVER["Node: Server Google Maps"]
+        MAPS_SERVICE["Google Maps Embed"]
     end
 
-    STATIC_FILES -- "HTTP/HTTPS GET (Statis)" --> BROWSER_ENV
-    JS_RUNTIME <--> LOCAL_DATA
-    DOM <--> JS_RUNTIME
-    DOM <--> CSS_ENGINE
-    
-    BROWSER_ENV -- "Async Request" --> MAPS_SRV
-    BROWSER_ENV -- "Fetch Stylesheet" --> FONTS_SRV
-    BROWSER_ENV -- "Fetch Script/CSS" --> CDN_SRV
+    %% Jalur Distribusi & Komunikasi Protokol
+    HTML_FILES -->|"Protokol: HTTPS / HTTP\n(Pengiriman Dokumen Statis)"| DOM_UI
+    JS_BUNDLE -->|"Protokol: HTTPS / HTTP\n(Pengunduhan Kode Sumber JS)"| APP_LOGIC
+    CDN_ASSETS -->|"Protokol: HTTPS\n(Pengunduhan Script CDN & Stylesheet)"| DOM_UI
+    MAPS_SERVICE -->|"Protokol: HTTPS\n(Penyematan Konten Iframe Peta)"| DOM_UI
 
+    %% Akses Internal Browser
+    DOM_UI <--> APP_LOGIC
+    APP_LOGIC <-->|"Penyimpanan Lokal Sinkron (Read/Write)"| LS_STORE
+    APP_LOGIC -.->|"Replikasi Cadangan Asinkron (Write Only)"| IDB_STORE
+
+    %% Catatan arsitektur client-only
+    NOTE_DEPLOY["Arsitektur client-side\nServer statis hanya menyajikan berkas. Data aplikasi dan sesi tersimpan di origin browser; tidak ada backend aplikasi, basis data terpusat, atau sinkronisasi antarperangkat."]
+    CLIENT_DEVICE -.- NOTE_DEPLOY

@@ -1,100 +1,194 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<mxfile host="app.diagrams.net" modified="2026-09-08T08:55:34.185Z" agent="Mozilla/5.0" version="21.0.0" type="device">
-  <diagram id="component_diagram___4_layer_arsitektur" name="Component Diagram - 4 Layer Arsitektur">
-    <mxGraphModel dx="1422" dy="794" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="2000" pageHeight="1400" math="0" shadow="0">
+<?xml version="1.0" encoding="utf-8"?>
+<mxfile host="app.diagrams.net" modified="2026-10-21T09:24:00.000Z" agent="Antigravity Architect" version="24.7.17" type="device">
+  <diagram id="component-diagram" name="Component Diagram">
+    <mxGraphModel dx="1450" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1450" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <!-- Layer 1: Presentation Layer -->
-        <mxCell id="l_pres" value="&lt;b style=&quot;font-size:12px;&quot;&gt;1. Presentation &amp;amp; Styling Layer&lt;/b&gt; (Client Browser)" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=15;spacingTop=10;fillColor=#e0f2fe;strokeColor=#0284c7;strokeWidth=2;dashed=1;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="40" y="40" width="340" height="390" as="geometry" />
-        </mxCell>
-        <mxCell id="c_pub_pages" value="«component»&lt;br&gt;&lt;b&gt;Public Views (18 HTML)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;(index, profil, dosen, berita, dll)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#0284c7;strokeWidth=1.5;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="70" y="85" width="280" height="65" as="geometry" />
-        </mxCell>
-        <mxCell id="c_adm_pages" value="«component»&lt;br&gt;&lt;b&gt;Admin Views (18 HTML)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;(dashboard, users, settings, dll)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#0284c7;strokeWidth=1.5;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="70" y="170" width="280" height="65" as="geometry" />
-        </mxCell>
-        <mxCell id="c_neu_design" value="«component»&lt;br&gt;&lt;b&gt;Neumorphism Design System&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;(style.css tokens + Tailwind 3.4)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#0284c7;strokeWidth=1.5;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="70" y="255" width="280" height="65" as="geometry" />
-        </mxCell>
-        <mxCell id="c_neu_alert" value="«component»&lt;br&gt;&lt;b&gt;NeuAlert SweetAlert2&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;(Modal dialog konfirmasi &amp;amp; alert)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#0284c7;strokeWidth=1.5;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="70" y="340" width="280" height="65" as="geometry" />
+
+        <!-- ============================================================= -->
+        <!-- LAYER 1: LAPISAN PRESENTASI (PRESENTATION LAYER)              -->
+        <!-- ============================================================= -->
+        <mxCell id="layer_pres" value="Lapisan Presentasi (Presentation Layer - Browser DOM)" style="swimlane;whiteSpace=wrap;html=1;startSize=26;fontSize=13;fontStyle=1;fillColor=#f0fdf4;strokeColor=#16a34a;fontColor=#0f172a;arcSize=6;rounded=1;fontFamily=Arial;" parent="1" vertex="1">
+          <mxGeometry x="50" y="40" width="1350" height="150" as="geometry" />
         </mxCell>
 
-        <!-- Layer 2: Reactive Controller Layer -->
-        <mxCell id="l_app" value="&lt;b style=&quot;font-size:12px;&quot;&gt;2. Reactive Controller Layer&lt;/b&gt; (Alpine.js Components)" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=15;spacingTop=10;fillColor=#fef3c7;strokeColor=#d97706;strokeWidth=2;dashed=1;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="440" y="40" width="340" height="390" as="geometry" />
+        <mxCell id="c_pub_ui" value="&lt;b&gt;Halaman publik&lt;/b&gt;&lt;br&gt;18 halaman: 13 utama dan 5 detail" style="html=1;dropTarget=0;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#16a34a;fontSize=11;align=center;verticalAlign=middle;fontFamily=Arial;" parent="layer_pres" vertex="1">
+          <mxGeometry x="40" y="45" width="230" height="75" as="geometry" />
         </mxCell>
-        <mxCell id="c_header_ctrl" value="«component»&lt;br&gt;&lt;b&gt;siteHeader &amp;amp; themeStore&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;(Dark mode switch, drawer menu)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d97706;strokeWidth=1.5;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="470" y="85" width="280" height="65" as="geometry" />
-        </mxCell>
-        <mxCell id="c_search_ctrl" value="«component»&lt;br&gt;&lt;b&gt;globalSearch Controller&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;(Realtime query filter 9 entitas)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d97706;strokeWidth=1.5;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="470" y="170" width="280" height="65" as="geometry" />
-        </mxCell>
-        <mxCell id="c_crud_ctrl" value="«component»&lt;br&gt;&lt;b&gt;adminCrudTable Controller&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;(CRUD generic, paginate, filter)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d97706;strokeWidth=1.5;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="470" y="255" width="280" height="65" as="geometry" />
-        </mxCell>
-        <mxCell id="c_detail_ctrl" value="«component»&lt;br&gt;&lt;b&gt;Public Detail Controllers&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;(detailKegiatanPage, daftarKegiatan)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#d97706;strokeWidth=1.5;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="470" y="340" width="280" height="65" as="geometry" />
+        <mxCell id="c_pub_ui_icon" value="" style="shape=component;jettyWidth=8;jettyHeight=4;fontFamily=Arial;" parent="c_pub_ui" vertex="1">
+          <mxGeometry x="1" width="20" height="20" relative="1" as="geometry">
+            <mxPoint x="-24" y="4" as="offset" />
+          </mxGeometry>
         </mxCell>
 
-        <!-- Layer 3: Core Logic & Persistence Engine -->
-        <mxCell id="l_core" value="&lt;b style=&quot;font-size:12px;&quot;&gt;3. Core Logic &amp;amp; Persistence Engine&lt;/b&gt; (assets/js/app.js)" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=15;spacingTop=10;fillColor=#fee2e2;strokeColor=#dc2626;strokeWidth=2;dashed=1;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="840" y="40" width="340" height="390" as="geometry" />
+        <mxCell id="c_admin_ui" value="&lt;b&gt;Halaman admin&lt;/b&gt;&lt;br&gt;18 berkas: 17 halaman panel dan 1 redirect" style="html=1;dropTarget=0;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#16a34a;fontSize=11;align=center;verticalAlign=middle;fontFamily=Arial;" parent="layer_pres" vertex="1">
+          <mxGeometry x="340" y="45" width="230" height="75" as="geometry" />
         </mxCell>
-        <mxCell id="c_auth_core" value="«component»&lt;br&gt;&lt;b&gt;AUTH Engine &amp;amp; RBAC Rules&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;(login, logout, guard, permissions)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dc2626;strokeWidth=1.5;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="870" y="85" width="280" height="65" as="geometry" />
-        </mxCell>
-        <mxCell id="c_db_core" value="«component»&lt;br&gt;&lt;b&gt;DB Engine (load, save, reset)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;(Kelola 17 koleksi data SSOT)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dc2626;strokeWidth=1.5;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="870" y="170" width="280" height="65" as="geometry" />
-        </mxCell>
-        <mxCell id="c_audit_core" value="«component»&lt;br&gt;&lt;b&gt;Audit Logger &amp;amp; Notifikasi&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;(logActivity, logPublicEvent)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dc2626;strokeWidth=1.5;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="870" y="255" width="280" height="65" as="geometry" />
-        </mxCell>
-        <mxCell id="c_prune_core" value="«component»&lt;br&gt;&lt;b&gt;Storage Optimizer &amp;amp; Pruning&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;(pruneStorage, compressImage)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#dc2626;strokeWidth=1.5;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="870" y="340" width="280" height="65" as="geometry" />
+        <mxCell id="c_admin_ui_icon" value="" style="shape=component;jettyWidth=8;jettyHeight=4;fontFamily=Arial;" parent="c_admin_ui" vertex="1">
+          <mxGeometry x="1" width="20" height="20" relative="1" as="geometry">
+            <mxPoint x="-24" y="4" as="offset" />
+          </mxGeometry>
         </mxCell>
 
-        <!-- Layer 4: Storage & External Services -->
-        <mxCell id="l_storage" value="&lt;b style=&quot;font-size:12px;&quot;&gt;4. Client Storage &amp;amp; Cloud Services&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;verticalAlign=top;align=left;spacingLeft=15;spacingTop=10;fillColor=#dcfce7;strokeColor=#16a34a;strokeWidth=2;dashed=1;fontStyle=1;" vertex="1" parent="1">
-          <mxGeometry x="1240" y="40" width="340" height="390" as="geometry" />
+        <mxCell id="c_alpine" value="&lt;b&gt;Alpine.js&lt;/b&gt;&lt;br&gt;28 controller halaman; menghubungkan data dan UI" style="html=1;dropTarget=0;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#16a34a;fontSize=11;align=center;verticalAlign=middle;fontFamily=Arial;" parent="layer_pres" vertex="1">
+          <mxGeometry x="640" y="45" width="270" height="75" as="geometry" />
         </mxCell>
-        <mxCell id="c_ls_ssot" value="«component»&lt;br&gt;&lt;b&gt;LocalStorage SSOT&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;(prodihukum_db_v1_*, sesi, tema)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#16a34a;strokeWidth=1.5;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="1270" y="85" width="280" height="65" as="geometry" />
-        </mxCell>
-        <mxCell id="c_idb_store" value="«component»&lt;br&gt;&lt;b&gt;IndexedDB (ProdiHukumDB)&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;(Media base64 &amp;amp; blob storage)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#16a34a;strokeWidth=1.5;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="1270" y="170" width="280" height="65" as="geometry" />
-        </mxCell>
-        <mxCell id="c_cloud_cdn" value="«component»&lt;br&gt;&lt;b&gt;Cloud CDN Providers&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;(Google Fonts, Alpine, FontAwesome)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#16a34a;strokeWidth=1.5;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="1270" y="255" width="280" height="65" as="geometry" />
-        </mxCell>
-        <mxCell id="c_maps_api" value="«component»&lt;br&gt;&lt;b&gt;Google Maps Embed API&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size:10px;&quot;&gt;(Iframe peta lokasi kampus)&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#16a34a;strokeWidth=1.5;shadow=1;" vertex="1" parent="1">
-          <mxGeometry x="1270" y="340" width="280" height="65" as="geometry" />
+        <mxCell id="c_alpine_icon" value="" style="shape=component;jettyWidth=8;jettyHeight=4;fontFamily=Arial;" parent="c_alpine" vertex="1">
+          <mxGeometry x="1" width="20" height="20" relative="1" as="geometry">
+            <mxPoint x="-24" y="4" as="offset" />
+          </mxGeometry>
         </mxCell>
 
-        <!-- Connectors between Layers -->
-        <mxCell id="cc1" value="UI Data Binding" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endFill=1;strokeColor=#0284c7;strokeWidth=2;exitX=1;exitY=0.5;entryX=0;entryY=0.5;fontSize=10;labelBackgroundColor=#ffffff;labelBorderColor=#0284c7;fontColor=#0369a1;" edge="1" parent="1" source="c_pub_pages" target="c_search_ctrl">
+        <mxCell id="c_swal" value="&amp;laquo;component&amp;raquo;&#xa;&lt;b&gt;SweetAlert2 Notification&lt;/b&gt;&#xa;Dialog Konfirmasi &amp;amp; Feedback&#xa;(NeuAlert Wrapper)" style="html=1;dropTarget=0;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#16a34a;fontSize=11;align=center;verticalAlign=middle;fontFamily=Arial;" parent="layer_pres" vertex="1">
+          <mxGeometry x="980" y="45" width="240" height="75" as="geometry" />
+        </mxCell>
+        <mxCell id="c_swal_icon" value="" style="shape=component;jettyWidth=8;jettyHeight=4;fontFamily=Arial;" parent="c_swal" vertex="1">
+          <mxGeometry x="1" width="20" height="20" relative="1" as="geometry">
+            <mxPoint x="-24" y="4" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ============================================================= -->
+        <!-- LAYER 2: LAPISAN LOGIKA APLIKASI (APPLICATION LOGIC - app.js) -->
+        <!-- ============================================================= -->
+        <mxCell id="layer_logic" value="Lapisan Logika Aplikasi (Application Logic Layer - assets/js/app.js)" style="swimlane;whiteSpace=wrap;html=1;startSize=26;fontSize=13;fontStyle=1;fillColor=#eff6ff;strokeColor=#2563eb;fontColor=#0f172a;arcSize=6;rounded=1;fontFamily=Arial;" parent="1" vertex="1">
+          <mxGeometry x="50" y="240" width="1350" height="170" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c_auth" value="&lt;b&gt;Modul autentikasi&lt;/b&gt;&lt;br&gt;login(), current(), isLoggedIn(), logout(), guard()&lt;br&gt;Guard Super Admin hanya untuk Pengguna dan Pengaturan" style="html=1;dropTarget=0;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#2563eb;fontSize=11;align=center;verticalAlign=middle;fontFamily=Arial;" parent="layer_logic" vertex="1">
+          <mxGeometry x="40" y="50" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c_auth_icon" value="" style="shape=component;jettyWidth=8;jettyHeight=4;fontFamily=Arial;" parent="c_auth" vertex="1">
+          <mxGeometry x="1" width="20" height="20" relative="1" as="geometry">
+            <mxPoint x="-24" y="4" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="c_db" value="&lt;b&gt;Layanan data (DB)&lt;/b&gt;&lt;br&gt;localStorage sebagai sumber utama; seed untuk key yang belum tersedia" style="html=1;dropTarget=0;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#2563eb;fontSize=11;align=center;verticalAlign=middle;fontFamily=Arial;" parent="layer_logic" vertex="1">
+          <mxGeometry x="360" y="50" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c_db_icon" value="" style="shape=component;jettyWidth=8;jettyHeight=4;fontFamily=Arial;" parent="c_db" vertex="1">
+          <mxGeometry x="1" width="20" height="20" relative="1" as="geometry">
+            <mxPoint x="-24" y="4" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="c_log" value="&lt;b&gt;Pencatatan aktivitas&lt;/b&gt;&lt;br&gt;Aktivitas admin dan event publik disimpan sebagai data log" style="html=1;dropTarget=0;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#2563eb;fontSize=11;align=center;verticalAlign=middle;fontFamily=Arial;" parent="layer_logic" vertex="1">
+          <mxGeometry x="680" y="50" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c_log_icon" value="" style="shape=component;jettyWidth=8;jettyHeight=4;fontFamily=Arial;" parent="c_log" vertex="1">
+          <mxGeometry x="1" width="20" height="20" relative="1" as="geometry">
+            <mxPoint x="-24" y="4" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <mxCell id="c_bus" value="&lt;b&gt;Event dan pembaruan tab&lt;/b&gt;&lt;br&gt;db-update pada tab aktif; storage event pada origin yang sama" style="html=1;dropTarget=0;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#2563eb;fontSize=11;align=center;verticalAlign=middle;fontFamily=Arial;" parent="layer_logic" vertex="1">
+          <mxGeometry x="1000" y="50" width="260" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="c_bus_icon" value="" style="shape=component;jettyWidth=8;jettyHeight=4;fontFamily=Arial;" parent="c_bus" vertex="1">
+          <mxGeometry x="1" width="20" height="20" relative="1" as="geometry">
+            <mxPoint x="-24" y="4" as="offset" />
+          </mxGeometry>
+        </mxCell>
+
+        <!-- ============================================================= -->
+        <!-- LAYER 3: LAPISAN PENYIMPANAN DATA (CLIENT STORAGE LAYER)      -->
+        <!-- ============================================================= -->
+        <mxCell id="layer_store" value="Lapisan Penyimpanan Klien (Client-Side Persistence Layer)" style="swimlane;whiteSpace=wrap;html=1;startSize=26;fontSize=13;fontStyle=1;fillColor=#f8fafc;strokeColor=#475569;fontColor=#0f172a;arcSize=6;rounded=1;fontFamily=Arial;" parent="1" vertex="1">
+          <mxGeometry x="50" y="460" width="1350" height="170" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c_ls" value="&lt;b&gt;localStorage browser&lt;/b&gt;&lt;br&gt;18 key entitas utama serta key sesi, pageview, dan preferensi tema" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#ffffff;strokeColor=#475569;fontColor=#0f172a;fontSize=11;align=center;fontFamily=Arial;" parent="layer_store" vertex="1">
+          <mxGeometry x="150" y="40" width="360" height="100" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c_idb" value="&lt;b&gt;IndexedDB&lt;/b&gt;&lt;br&gt;ProdiHukumDB / entities&lt;br&gt;Salinan asinkron best-effort; bukan sumber baca" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#ffffff;strokeColor=#475569;fontColor=#0f172a;fontSize=11;align=center;fontFamily=Arial;" parent="layer_store" vertex="1">
+          <mxGeometry x="780" y="40" width="360" height="100" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================================= -->
+        <!-- LAYER 4: LAYANAN EKSTERNAL & ASET (EXTERNAL SERVICES LAYER)   -->
+        <!-- ============================================================= -->
+        <mxCell id="layer_ext" value="Layanan Eksternal (External CDN &amp;amp; Embed Layer)" style="swimlane;whiteSpace=wrap;html=1;startSize=26;fontSize=13;fontStyle=1;fillColor=#fefce8;strokeColor=#ca8a04;fontColor=#0f172a;arcSize=6;rounded=1;fontFamily=Arial;" parent="1" vertex="1">
+          <mxGeometry x="50" y="680" width="1350" height="140" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c_cdn" value="&lt;b&gt;Layanan CDN dan font&lt;/b&gt;&lt;br&gt;jsDelivr: Alpine.js, SweetAlert2; Google Fonts" style="html=1;dropTarget=0;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#ca8a04;fontSize=11;align=center;verticalAlign=middle;fontFamily=Arial;" parent="layer_ext" vertex="1">
+          <mxGeometry x="250" y="45" width="340" height="70" as="geometry" />
+        </mxCell>
+
+        <mxCell id="c_maps" value="&lt;b&gt;Google Maps Embed&lt;/b&gt;&lt;br&gt;Peta dimuat sebagai iframe" style="html=1;dropTarget=0;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#ca8a04;fontSize=11;align=center;verticalAlign=middle;fontFamily=Arial;" parent="layer_ext" vertex="1">
+          <mxGeometry x="780" y="45" width="340" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- ============================================================= -->
+        <!-- INTERFACE & CONNECTIONS ANTAR LAPISAN                         -->
+        <!-- ============================================================= -->
+        <!-- UI -> Alpine -->
+        <mxCell id="e_ui1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#16a34a;strokeWidth=1.5;endArrow=block;endFill=1;fontFamily=Arial;" parent="1" edge="1" source="c_pub_ui" target="c_alpine">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="cc2" value="Admin Shell Bind" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endFill=1;strokeColor=#0284c7;strokeWidth=2;exitX=1;exitY=0.5;entryX=0;entryY=0.5;fontSize=10;labelBackgroundColor=#ffffff;labelBorderColor=#0284c7;fontColor=#0369a1;" edge="1" parent="1" source="c_adm_pages" target="c_crud_ctrl">
+        <mxCell id="e_ui2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#16a34a;strokeWidth=1.5;endArrow=block;endFill=1;fontFamily=Arial;" parent="1" edge="1" source="c_admin_ui" target="c_alpine">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="cc3" value="Auth Check" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endFill=1;strokeColor=#d97706;strokeWidth=2;exitX=1;exitY=0.5;entryX=0;entryY=0.5;fontSize=10;labelBackgroundColor=#ffffff;labelBorderColor=#d97706;fontColor=#b45309;" edge="1" parent="1" source="c_crud_ctrl" target="c_auth_core">
+
+        <!-- Alpine -> Logic Layer -->
+        <mxCell id="e_alp_auth" value="AUTH.guard() / login()" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563eb;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontFamily=Arial;" parent="1" edge="1" source="c_alpine" target="c_auth">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="cc4" value="DB Query / Save" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endFill=1;strokeColor=#d97706;strokeWidth=2;exitX=1;exitY=0.5;entryX=0;entryY=0.5;fontSize=10;labelBackgroundColor=#ffffff;labelBorderColor=#d97706;fontColor=#b45309;" edge="1" parent="1" source="c_detail_ctrl" target="c_db_core">
+        <mxCell id="e_alp_db" value="DB.load() / save()" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563eb;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontFamily=Arial;" parent="1" edge="1" source="c_alpine" target="c_db">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="cc5" value="Synchronous I/O" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endFill=1;strokeColor=#dc2626;strokeWidth=2;exitX=1;exitY=0.5;entryX=0;entryY=0.5;fontSize=10;labelBackgroundColor=#ffffff;labelBorderColor=#dc2626;fontColor=#b91c1c;" edge="1" parent="1" source="c_db_core" target="c_ls_ssot">
+
+        <!-- DB -> Storage -->
+        <mxCell id="e_db_ls" value="Penyimpanan Sinkron Utama (Read / Write)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#475569;strokeWidth=2;endArrow=block;endFill=1;startArrow=block;startFill=1;fontSize=10;fontFamily=Arial;" parent="1" edge="1" source="c_db" target="c_ls">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="cc6" value="Async Mirror" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endFill=1;strokeColor=#64748b;strokeWidth=1.5;dashed=1;exitX=1;exitY=0.5;entryX=0;entryY=0.5;fontSize=10;labelBackgroundColor=#ffffff;labelBorderColor=#64748b;fontColor=#475569;" edge="1" parent="1" source="c_db_core" target="c_idb_store">
+        <mxCell id="e_db_idb" value="IDB.set() Salinan Asinkron (Write Only)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#475569;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;fontSize=10;fontFamily=Arial;" parent="1" edge="1" source="c_db" target="c_idb">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="cc7" value="Alert Modal" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=classic;endFill=1;strokeColor=#0284c7;strokeWidth=1.5;exitX=0;exitY=0.5;entryX=1;entryY=0.5;fontSize=10;labelBackgroundColor=#ffffff;labelBorderColor=#0284c7;fontColor=#0369a1;" edge="1" parent="1" source="c_crud_ctrl" target="c_neu_alert">
+
+        <!-- Event Bus Feedback -->
+        <mxCell id="e_db_bus" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563eb;strokeWidth=1.5;endArrow=block;endFill=1;fontFamily=Arial;" parent="1" edge="1" source="c_db" target="c_bus">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
+        <mxCell id="e_bus_alp" value="Broadcast db-update" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563eb;strokeWidth=1.5;dashed=1;endArrow=block;endFill=1;fontSize=10;fontFamily=Arial;" parent="1" edge="1" source="c_bus" target="c_alpine">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1180" y="220" />
+              <mxPoint x="840" y="220" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- External Connections -->
+        <mxCell id="e_cdn_pres" value="Menyediakan library ke UI" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#ca8a04;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontFamily=Arial;" parent="1" edge="1" source="c_cdn" target="c_alpine">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="420" y="660" />
+              <mxPoint x="20" y="660" />
+              <mxPoint x="20" y="160" />
+              <mxPoint x="720" y="160" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="e_maps_pub" value="Penyematan iframe peta" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#ca8a04;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontFamily=Arial;" parent="1" edge="1" source="c_maps" target="c_pub_ui">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="950" y="660" />
+              <mxPoint x="1420" y="660" />
+              <mxPoint x="1420" y="160" />
+              <mxPoint x="200" y="160" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+
+        <!-- Catatan Arsitektural Komponen -->
+        <mxCell id="n_note_comp" value="&lt;b&gt;Catatan arsitektur&lt;/b&gt;&lt;br&gt;Aplikasi dan persistensi berjalan di browser. Tidak ada backend aplikasi atau API data. IndexedDB hanya menerima salinan best-effort; pembaruan tab memakai event browser pada origin yang sama." style="shape=note;whiteSpace=wrap;html=1;size=15;align=left;verticalAlign=middle;fillColor=#fefce8;strokeColor=#ca8a04;fontColor=#713f12;fontSize=11;fontFamily=Arial;" parent="1" vertex="1">
+          <mxGeometry x="50" y="850" width="1350" height="70" as="geometry" />
+        </mxCell>
+
       </root>
     </mxGraphModel>
   </diagram>

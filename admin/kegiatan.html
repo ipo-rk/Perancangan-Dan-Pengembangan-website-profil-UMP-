@@ -181,7 +181,7 @@
             </nav>
             <div class="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-white/10 text-white/90 border border-white/15 mb-2"><span x-html="iconSvg('calendar')"></span> Agenda Akademik</span>
+                <span class="admin-header-badge inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-white/10 text-white/90 border border-white/15 mb-2"><span x-html="iconSvg('calendar')"></span> Agenda Akademik</span>
                 <h1 class="admin-header-title">Agenda & <span class="text-gold">Kegiatan</span> Hukum</h1>
                 <span class="admin-header-underline"></span>
                 <p class="admin-header-desc">Jadwal seminar, kuliah umum keadvokatan, lokakarya penulisan hukum, dan manajemen pendaftaran peserta.</p>
@@ -246,11 +246,14 @@
   </div>
 
   <!-- Modal: Daftar Pendaftar Kegiatan -->
-  <div x-show="showPeserta" x-cloak class="modal-backdrop-neu" x-transition>
-    <div class="neu-raised p-6 sm:p-8 w-full max-w-2xl bg-bg max-h-[85vh] overflow-y-auto" @click.outside="closePeserta()">
+  <template x-teleport="body">
+  <div x-show="showPeserta" x-cloak class="modal-backdrop-neu modal-backdrop-viewport" x-transition
+    @keydown.escape.window="closePeserta()">
+    <div class="neu-raised admin-modal-panel p-6 sm:p-8 w-full max-w-2xl bg-bg"
+      role="dialog" aria-modal="true" aria-labelledby="participants-modal-title" @click.outside="closePeserta()">
       <div class="flex items-start justify-between gap-4 mb-6">
         <div>
-          <h3 class="font-display font-semibold text-lg text-navy dark:text-white">Pendaftar Kegiatan</h3>
+          <h3 id="participants-modal-title" class="font-display font-semibold text-lg text-navy dark:text-white">Pendaftar Kegiatan</h3>
           <p class="text-xs text-text-muted mt-1" x-text="pesertaOf ? pesertaOf.nama : ''"></p>
         </div>
         <span class="neu-badge badge-active shrink-0" x-text="pesertaList.length + ' Orang'"></span>
@@ -289,10 +292,15 @@
       </div>
     </div>
   </div>
+  </template>
 
-  <div x-show="showModal" x-cloak class="modal-backdrop-neu" x-transition>
-    <div class="neu-raised p-6 sm:p-8 w-full max-w-lg bg-bg max-h-[85vh] overflow-y-auto" @click.outside="showModal=false">
-      <h3 class="font-display font-semibold text-lg text-navy dark:text-white mb-6" x-text="editing ? 'Edit Data' : 'Tambah Kegiatan'"></h3>
+  <template x-teleport="body">
+  <div x-show="showModal" x-cloak class="modal-backdrop-neu modal-backdrop-viewport" x-transition
+    @keydown.escape.window="showModal=false">
+    <div class="neu-raised admin-modal-panel p-6 sm:p-8 w-full max-w-lg bg-bg" role="dialog" aria-modal="true"
+      aria-labelledby="activity-modal-title"
+      @click.outside="showModal=false">
+      <h3 id="activity-modal-title" class="font-display font-semibold text-lg text-navy dark:text-white mb-6" x-text="editing ? 'Edit Data' : 'Tambah Kegiatan'"></h3>
       <div class="space-y-4">
         
         <label
@@ -322,6 +330,7 @@
       </div>
     </div>
   </div>
+  </template>
 </div>
 
         </main>

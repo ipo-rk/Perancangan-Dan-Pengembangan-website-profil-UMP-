@@ -284,7 +284,7 @@
             </nav>
             <div class="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-white/10 text-white/90 border border-white/15 mb-2"><span x-html="iconSvg('image')"></span> Arsip Visual</span>
+                <span class="admin-header-badge inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[11px] font-semibold bg-white/10 text-white/90 border border-white/15 mb-2"><span x-html="iconSvg('image')"></span> Arsip Visual</span>
                 <h1 class="admin-header-title">Galeri <span class="text-gold">Dokumentasi</span> Foto</h1>
                 <span class="admin-header-underline"></span>
                 <p class="admin-header-desc">Koleksi foto kegiatan peradilan semu, wisuda, studi banding, seminar nasional, dan pengabdian masyarakat.</p>
@@ -379,11 +379,13 @@
           </div>
 
           <!-- Upload / Edit Modal -->
-          <div x-show="showModal" x-cloak class="modal-backdrop-neu flex items-center justify-center p-4 z-50"
-            x-transition>
-            <div class="neu-raised p-6 sm:p-8 w-full max-w-md bg-bg max-h-[90vh] overflow-y-auto rounded-3xl"
+          <template x-teleport="body">
+          <div x-show="showModal" x-cloak class="modal-backdrop-neu modal-backdrop-viewport" x-transition
+            @keydown.escape.window="showModal=false">
+            <div class="neu-raised admin-modal-panel p-6 sm:p-8 w-full max-w-md bg-bg"
+              role="dialog" aria-modal="true" aria-labelledby="gallery-modal-title"
               @click.outside="showModal=false">
-              <h3 class="font-display font-semibold text-lg text-navy dark:text-white mb-6"
+              <h3 id="gallery-modal-title" class="font-display font-semibold text-lg text-navy dark:text-white mb-6"
                 x-text="editing ? 'Edit Foto Galeri' : 'Upload Foto Baru'"></h3>
 
               <label
@@ -434,6 +436,7 @@
               </div>
             </div>
           </div>
+          </template>
         </div>
       </main>
     </div>

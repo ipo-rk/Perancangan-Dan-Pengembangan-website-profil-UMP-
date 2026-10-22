@@ -817,6 +817,19 @@ select.neu-input option {
   padding: 1rem;
   overflow-y: auto;
 }
+.modal-backdrop-viewport {
+  align-items: flex-start;
+  padding: max(1rem, env(safe-area-inset-top)) 1rem max(1rem, env(safe-area-inset-bottom));
+}
+.neu-modal-panel,
+.admin-modal-panel {
+  max-height: calc(100vh - 2rem);
+  max-height: calc(100dvh - 2rem);
+  margin-block: auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-radius: var(--r-lg);
+}
 
 /* Admin sidebar: off-canvas di mobile, statis di desktop (CSS murni,
    tidak lagi bergantung pada window.innerWidth yang dibaca sekali saat load) */
@@ -2003,11 +2016,27 @@ tbody tr:hover {
 /* SweetAlert2 Brand Theme Integration (Merah, Kuning, Putih, Biru) */
 .swal2-popup {
   font-family: "Inter", system-ui, sans-serif !important;
-  border-radius: var(--r-xl) !important;
+  background: var(--bg) !important;
+  color: var(--text) !important;
+  border-radius: var(--r-lg) !important;
+  max-height: calc(100vh - 2rem);
+  max-height: calc(100dvh - 2rem);
+  overflow-y: auto;
+  box-shadow:
+    9px 9px 18px var(--neu-dark),
+    -9px -9px 18px var(--neu-light) !important;
+}
+.swal2-container {
+  padding: max(1rem, env(safe-area-inset-top)) 1rem max(1rem, env(safe-area-inset-bottom)) !important;
+  overflow-y: auto !important;
 }
 .swal2-title {
   font-family: "Poppins", sans-serif !important;
   font-weight: 700 !important;
+  color: var(--text) !important;
+}
+.swal2-html-container {
+  color: var(--text-muted) !important;
 }
 .swal2-icon.swal2-success {
   border-color: var(--gold) !important;
@@ -3373,12 +3402,25 @@ article {
     font-size: 1.625rem;
   }
 }
+.admin-page-header .admin-header-title .text-gold,
+.admin-page-header .admin-header-title .dashboard-title-accent {
+  color: var(--gold-soft) !important;
+}
 .admin-page-header .admin-header-desc {
   font-size: 0.8125rem;
   color: rgba(255, 255, 255, 0.82) !important;
   max-width: 48rem;
   margin-top: 0.25rem;
   line-height: 1.5;
+}
+.admin-page-header .admin-header-badge {
+  color: rgba(255, 255, 255, 0.94);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+}
+.admin-page-header .admin-header-badge .admin-ui-icon {
+  color: var(--gold-soft);
 }
 .admin-page-header .admin-header-underline {
   display: block;
@@ -3387,6 +3429,86 @@ article {
   border-radius: 999px;
   background: linear-gradient(90deg, var(--red), var(--gold));
   margin-top: 0.5rem;
+}
+
+.admin-dashboard-header::before {
+  background: linear-gradient(
+    135deg,
+    rgba(11, 31, 58, 0.94) 0%,
+    rgba(11, 31, 58, 0.88) 45%,
+    rgba(140, 15, 15, 0.84) 80%,
+    rgba(185, 28, 28, 0.88) 100%
+  );
+}
+.admin-dashboard-header .admin-breadcrumb {
+  color: rgba(255, 255, 255, 0.7);
+}
+.admin-dashboard-header .admin-breadcrumb a {
+  color: rgba(255, 255, 255, 0.82);
+}
+.admin-dashboard-header .admin-breadcrumb a:hover {
+  color: var(--gold-soft);
+}
+.admin-dashboard-header .admin-breadcrumb .current {
+  color: var(--gold-soft);
+}
+.admin-dashboard-header .admin-header-title {
+  color: #ffffff !important;
+}
+.admin-dashboard-header .dashboard-title-accent {
+  color: var(--gold-soft);
+}
+.admin-dashboard-header .admin-header-desc {
+  color: rgba(255, 255, 255, 0.88) !important;
+}
+.admin-dashboard-header .admin-header-badge {
+  color: rgba(255, 255, 255, 0.94);
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+.admin-dashboard-header .admin-header-badge .admin-ui-icon {
+  color: var(--gold-soft);
+}
+.dark .admin-dashboard-header .admin-breadcrumb {
+  color: rgba(255, 255, 255, 0.65);
+}
+.dark .admin-dashboard-header .admin-breadcrumb a {
+  color: rgba(255, 255, 255, 0.75);
+}
+.dark .admin-dashboard-header .admin-breadcrumb a:hover {
+  color: var(--gold-soft);
+}
+.dark .admin-dashboard-header .admin-breadcrumb .current {
+  color: var(--gold-soft);
+}
+.dark .admin-dashboard-header .admin-header-title {
+  color: #ffffff !important;
+}
+.dark .admin-dashboard-header .dashboard-title-accent {
+  color: var(--gold-soft);
+}
+.dark .admin-dashboard-header .admin-header-desc {
+  color: rgba(255, 255, 255, 0.82) !important;
+}
+.dark .admin-dashboard-header .admin-header-badge {
+  color: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+.dark .admin-dashboard-header .admin-header-badge .admin-ui-icon {
+  color: var(--gold-soft);
+}
+
+.admin-dashboard-stats > .neu-raised,
+.admin-dashboard-panels > .neu-raised {
+  min-width: 0;
+  border-radius: 1rem;
+}
+.admin-dashboard-stats > .neu-raised {
+  min-height: 7.5rem;
+}
+.admin-dashboard-panels canvas {
+  max-width: 100%;
 }
 
 /* ── Fallback guarantee for background images across all pages ── */
@@ -4558,4 +4680,52 @@ footer.footer-premium-admin {
   height: 1em;
   flex: none;
   vertical-align: -0.15em;
+}
+
+/* Admin curriculum filter and action layout */
+.curriculum-filter-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+}
+.curriculum-search-field {
+  min-width: 0;
+}
+.curriculum-toolbar-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.curriculum-toolbar-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  width: 100%;
+}
+.curriculum-toolbar-actions button {
+  min-height: 2.75rem;
+}
+.curriculum-add-action {
+  grid-column: 1 / -1;
+  white-space: nowrap;
+}
+@media (min-width: 1024px) {
+  .curriculum-filter-grid {
+    grid-template-columns: minmax(0, 1fr) 14rem;
+  }
+}
+@media (min-width: 1200px) {
+  .curriculum-toolbar-row {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .curriculum-toolbar-actions {
+    display: flex;
+    flex-wrap: wrap;
+    width: auto;
+  }
+  .curriculum-add-action {
+    grid-column: auto;
+  }
 }
