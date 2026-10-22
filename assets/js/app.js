@@ -1268,9 +1268,50 @@ function dosenPage() {
   return mergeReactive(
     filterableGrid(SAMPLE_DOSEN, { searchKeys: ['nama', 'kode'] }),
     {
+      kodeFilter: 'all',
+      sortOrder: 'az',
       showDetail: false,
       selected: null,
+      hasCode: lecturerHasCode,
       coursesFor: coursesForLecturer,
+      get results() {
+        const normalize = value => String(value || '')
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .toLocaleLowerCase('id-ID')
+          .trim();
+        const query = normalize(this.q).split(/\s+/).filter(Boolean);
+        const searchableKeys = [
+          'nama', 'kode', 'jabatan', 'spesialisasi', 'keahlian',
+          'pendidikan', 'email', 'nidn'
+        ];
+
+        return this.all
+          .filter(dosen => {
+            const hasKode = lecturerHasCode(dosen);
+            const matchesKode = this.kodeFilter === 'all' ||
+              (this.kodeFilter === 'available' ? hasKode : !hasKode);
+            const searchableText = normalize(searchableKeys
+              .map(key => dosen[key])
+              .filter(value => typeof value === 'string' || typeof value === 'number')
+              .join(' '));
+            return matchesKode && query.every(term => searchableText.includes(term));
+          })
+          .sort((a, b) => {
+            const comparison = String(a.nama || '').localeCompare(String(b.nama || ''), 'id', {
+              sensitivity: 'base'
+            });
+            return this.sortOrder === 'za' ? -comparison : comparison;
+          });
+      },
+      get hasActiveFilters() {
+        return Boolean(this.q.trim()) || this.kodeFilter !== 'all' || this.sortOrder !== 'az';
+      },
+      resetSearch() {
+        this.q = '';
+        this.kodeFilter = 'all';
+        this.sortOrder = 'az';
+      },
       openDetail(d) {
         this.selected = d;
         this.showDetail = true;
@@ -1281,6 +1322,11 @@ function dosenPage() {
       }
     }
   );
+}
+
+function lecturerHasCode(dosen) {
+  const code = String(dosen?.kode || '').trim().toLocaleLowerCase('id-ID');
+  return Boolean(code) && !['-', '—', 'tidak tercantum', 'n/a'].includes(code);
 }
 
 function coursesForLecturer(dosen) {

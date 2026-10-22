@@ -4729,3 +4729,366 @@ footer.footer-premium-admin {
     grid-column: auto;
   }
 }
+
+/* Public lecturer directory search and filter toolbar */
+#lecturer-directory .lecturer-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.9rem;
+  padding: clamp(1rem, 2.5vw, 1.35rem);
+  margin-bottom: 1.75rem;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 1.25rem;
+}
+
+#lecturer-directory .lecturer-search {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+  min-height: 3.25rem;
+  padding: 0 0.9rem 0 1rem;
+  color: var(--text-muted);
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 0.9rem;
+  box-shadow: inset 3px 3px 7px var(--neu-dark), inset -3px -3px 7px var(--neu-light);
+  transition: border-color 160ms ease, box-shadow 160ms ease;
+}
+
+#lecturer-directory .lecturer-search:focus-within {
+  border-color: var(--royal);
+  box-shadow: inset 2px 2px 5px var(--neu-dark), inset -2px -2px 5px var(--neu-light),
+    0 0 0 3px color-mix(in srgb, var(--royal) 16%, transparent);
+}
+
+#lecturer-directory .lecturer-search > svg {
+  width: 1.2rem;
+  height: 1.2rem;
+  flex: 0 0 auto;
+}
+
+#lecturer-directory .lecturer-search input {
+  width: 100%;
+  min-width: 0;
+  padding: 0.7rem 0;
+  color: var(--text);
+  background: transparent;
+  border: 0;
+  outline: 0;
+  font: inherit;
+  font-size: 0.9rem;
+}
+
+#lecturer-directory .lecturer-search input::placeholder {
+  color: var(--text-muted);
+  opacity: 0.82;
+}
+
+#lecturer-directory .lecturer-search input::-webkit-search-cancel-button {
+  display: none;
+}
+
+#lecturer-directory .lecturer-clear-search {
+  display: inline-grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 auto;
+  color: var(--text-muted);
+  background: transparent;
+  border: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+#lecturer-directory .lecturer-clear-search:hover {
+  color: var(--red);
+  background: color-mix(in srgb, var(--red) 10%, transparent);
+}
+
+#lecturer-directory .lecturer-clear-search svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+#lecturer-directory .lecturer-search-shortcut {
+  display: none;
+  flex: 0 0 auto;
+  padding: 0.2rem 0.35rem;
+  color: var(--text-muted);
+  border: 1px solid var(--line);
+  border-radius: 0.35rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+#lecturer-directory .lecturer-toolbar-filters {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: end;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+#lecturer-directory .lecturer-select-wrap {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+}
+
+#lecturer-directory .lecturer-control-label {
+  padding-left: 0.15rem;
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+}
+
+#lecturer-directory .lecturer-select-wrap select {
+  width: 100%;
+  min-width: 0;
+  min-height: 2.85rem;
+  padding: 0.65rem 2rem 0.65rem 0.75rem;
+  color: var(--text);
+  background-color: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 0.75rem;
+  font: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+}
+
+#lecturer-directory .lecturer-select-wrap select:focus-visible {
+  border-color: var(--royal);
+  outline: 3px solid color-mix(in srgb, var(--royal) 20%, transparent);
+  outline-offset: 1px;
+}
+
+#lecturer-directory .lecturer-reset-button {
+  grid-column: 1 / -1;
+  min-height: 2.7rem;
+  padding: 0.55rem 0.8rem;
+  color: var(--navy);
+  background: color-mix(in srgb, var(--royal) 8%, var(--surface));
+  border: 1px solid color-mix(in srgb, var(--royal) 20%, var(--line));
+  border-radius: 0.75rem;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 160ms ease, color 160ms ease, border-color 160ms ease;
+}
+
+#lecturer-directory .lecturer-reset-button:hover {
+  color: #fff;
+  background: var(--royal);
+  border-color: var(--royal);
+}
+
+#lecturer-directory .lecturer-toolbar-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--line);
+}
+
+#lecturer-directory .lecturer-result-count {
+  color: var(--navy);
+  font-size: 0.84rem;
+  font-weight: 700;
+}
+
+#lecturer-directory .lecturer-result-hint {
+  color: var(--text-muted);
+  font-size: 0.74rem;
+  line-height: 1.5;
+}
+
+#lecturer-directory .lecturer-card-grid {
+  align-items: stretch;
+}
+
+#lecturer-directory .lecturer-card {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  align-items: flex-start;
+  height: 100%;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+#lecturer-directory .lecturer-card:hover {
+  transform: translateY(-3px);
+  border-color: color-mix(in srgb, var(--royal) 30%, transparent);
+}
+
+#lecturer-directory .lecturer-card-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  min-height: 2.5rem;
+  margin-top: auto;
+  padding: 0.35rem 0;
+  color: var(--red);
+  background: transparent;
+  border: 0;
+  font: inherit;
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+#lecturer-directory .lecturer-card-action:hover {
+  color: var(--royal);
+}
+
+#lecturer-directory .lecturer-card-action svg {
+  width: 1rem;
+  height: 1rem;
+  transition: transform 160ms ease;
+}
+
+#lecturer-directory .lecturer-card-action:hover svg {
+  transform: translateX(3px);
+}
+
+#lecturer-directory .lecturer-empty-state {
+  display: grid;
+  justify-items: center;
+  gap: 0.55rem;
+  padding: clamp(2.25rem, 7vw, 4rem) 1.25rem;
+  color: var(--text-muted);
+  text-align: center;
+  background: color-mix(in srgb, var(--surface) 78%, transparent);
+  border: 1px dashed var(--line);
+  border-radius: 1.25rem;
+}
+
+#lecturer-directory .lecturer-empty-icon {
+  display: grid;
+  width: 3rem;
+  height: 3rem;
+  place-items: center;
+  margin-bottom: 0.35rem;
+  color: var(--royal);
+  background: var(--bg);
+  border-radius: 1rem;
+  box-shadow: 4px 4px 10px var(--neu-dark), -4px -4px 10px var(--neu-light);
+}
+
+#lecturer-directory .lecturer-empty-icon svg {
+  width: 1.35rem;
+  height: 1.35rem;
+}
+
+#lecturer-directory .lecturer-empty-state h3 {
+  margin: 0;
+  color: var(--navy);
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+#lecturer-directory .lecturer-empty-state p {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+#lecturer-directory .lecturer-empty-state button {
+  min-height: 2.65rem;
+  margin-top: 0.55rem;
+  padding: 0.6rem 1rem;
+  color: #fff;
+  background: var(--royal);
+  border: 0;
+  border-radius: 0.75rem;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.dark #lecturer-directory .lecturer-toolbar {
+  border-color: rgba(148, 163, 184, 0.16);
+}
+
+.dark #lecturer-directory .lecturer-reset-button {
+  color: #bfdbfe;
+  background: rgba(59, 130, 246, 0.12);
+  border-color: rgba(96, 165, 250, 0.3);
+}
+
+.dark #lecturer-directory .lecturer-reset-button:hover {
+  color: #fff;
+  background: var(--royal);
+}
+
+.dark #lecturer-directory .lecturer-result-count,
+.dark #lecturer-directory .lecturer-empty-state h3 {
+  color: #e2e8f0;
+}
+
+.dark #lecturer-directory .lecturer-card {
+  border-color: rgba(148, 163, 184, 0.12);
+}
+
+.dark #lecturer-directory .lecturer-card:hover {
+  border-color: rgba(96, 165, 250, 0.45);
+}
+
+.dark #lecturer-directory .lecturer-empty-state {
+  background: rgba(20, 33, 61, 0.55);
+}
+
+.dark #lecturer-directory .lecturer-empty-state button {
+  color: #0b1322;
+  background: #93c5fd;
+}
+
+@media (min-width: 700px) {
+  #lecturer-directory .lecturer-toolbar {
+    grid-template-columns: minmax(0, 1fr) minmax(20rem, 1.15fr);
+    align-items: center;
+  }
+
+  #lecturer-directory .lecturer-toolbar-filters {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) auto;
+  }
+
+  #lecturer-directory .lecturer-reset-button {
+    grid-column: auto;
+    min-width: 6rem;
+  }
+
+  #lecturer-directory .lecturer-toolbar-footer {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+}
+
+@media (min-width: 960px) {
+  #lecturer-directory .lecturer-toolbar {
+    grid-template-columns: minmax(0, 1.25fr) minmax(31rem, 1fr);
+  }
+
+  #lecturer-directory .lecturer-search-shortcut {
+    display: inline-block;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #lecturer-directory .lecturer-search,
+  #lecturer-directory .lecturer-card,
+  #lecturer-directory .lecturer-card-action svg,
+  #lecturer-directory .lecturer-reset-button {
+    transition: none;
+  }
+}
