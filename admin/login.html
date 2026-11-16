@@ -16,314 +16,402 @@
   <link rel="stylesheet" href="../assets/css/tailwind.min.css">
   <script defer src="../assets/js/app.js"></script>
   <link rel="stylesheet" href="../assets/css/style.css">
+  <!-- Desain Neumorphism halaman login (dimuat terakhir) -->
+  <link rel="stylesheet" href="../assets/css/login-neumorphism.css">
   <link rel="icon" type="image/png" href="../assets/image/logo-ump.png">
+  <script>
+    // Logika halaman login. Dideklarasikan sebelum Alpine berjalan;
+    // themeStore() berasal dari app.js dan baru dipanggil saat Alpine init.
+    function loginPage() {
+      return {
+        ...themeStore(),
+        showPass: false,
+        loading: false,
+        form: { email: '', password: '', remember: false },
+
+        init() {
+          // Jika sudah login, langsung arahkan ke dashboard
+          if (typeof AUTH !== 'undefined' && AUTH.isLoggedIn()) {
+            window.location.href = 'dashboard.html';
+            return;
+          }
+          // Membaca email yang diingat sebelumnya
+          try {
+            const savedEmail = localStorage.getItem('prodihukum_remembered_email');
+            if (savedEmail) {
+              this.form.email = savedEmail;
+              this.form.remember = true;
+            }
+          } catch { /* penyimpanan browser tidak tersedia */ }
+          // Email dikirim balik dari halaman Lupa Sandi setelah reset berhasil
+          const emailFromReset = new URLSearchParams(window.location.search).get('email');
+          if (emailFromReset) this.form.email = emailFromReset;
+        },
+
+        /* ── Indikator kekuatan sandi (hanya visual, tidak memblokir login) ── */
+        get checks() {
+          const p = this.form.password || '';
+          return [
+            { key: 'len', label: 'Minimal 12 Karakter', ok: p.length >= 12 },
+            { key: 'letter', label: 'Mengandung huruf', ok: /[A-Za-z]/.test(p) },
+            { key: 'num', label: 'Mengandung angka', ok: /\d/.test(p) },
+            { key: 'sym', label: 'Mengandung simbol', ok: /[^A-Za-z0-9\s]/.test(p) }
+          ];
+        },
+        get score() {
+          return this.form.password ? this.checks.filter(c => c.ok).length : 0;
+        },
+        get strengthLabel() {
+          return ['Belum diisi', 'Lemah', 'Sedang', 'Baik', 'Kuat'][this.score];
+        },
+
+        get demoUser() {
+          return (typeof SAMPLE_PENGGUNA !== 'undefined' ? SAMPLE_PENGGUNA : [])
+            .find(user => user.email && user.email.toLowerCase() === 'admin@ump.ac.id' && user.status === 'Aktif');
+        },
+        fillDemo() {
+          if (!this.demoUser || !this.demoUser.password) {
+            NeuAlert.error('Akun demo tidak tersedia atau tidak aktif.');
+            return;
+          }
+          this.form.email = this.demoUser.email;
+          this.form.password = this.demoUser.password;
+          NeuAlert.base({
+            icon: 'info',
+            title: 'Kredensial Dimuat',
+            text: 'Kredensial akun demo dimuat dari data pengguna saat ini. Silakan klik Masuk.',
+            timer: 1600,
+            showConfirmButton: false
+          });
+        },
+
+        submit() {
+          const email = (this.form.email || '').trim();
+          const pass = (this.form.password || '').trim();
+
+          if (!email || !pass) {
+            NeuAlert.error('Mohon isi email terdaftar dan kata sandi.');
+            return;
+          }
+
+          this.loading = true;
+          setTimeout(() => {
+            this.loading = false;
+
+            // Cocokkan dengan database pengguna admin
+            const users = (typeof SAMPLE_PENGGUNA !== 'undefined') ? SAMPLE_PENGGUNA : [];
+            const matched = users.find(p => p.email && p.email.toLowerCase() === email.toLowerCase());
+
+            if (!matched) {
+              NeuAlert.error('Email tidak terdaftar. Periksa kembali email Anda.');
+              return;
+            }
+            if (matched.status !== 'Aktif') {
+              NeuAlert.error('Akun ini nonaktif. Hubungi Super Admin untuk mengaktifkan kembali.');
+              return;
+            }
+            if (matched.password !== pass) {
+              NeuAlert.error('Password salah. Silakan coba lagi.');
+              return;
+            }
+
+            // Sesi harus tersimpan sebelum login dianggap berhasil.
+            try {
+              AUTH.login(matched);
+            } catch {
+              NeuAlert.error('Akun tidak dapat masuk. Pastikan nama dan peran akun valid serta browser dapat menyimpan sesi login.');
+              return;
+            }
+
+            // Email yang diingat bersifat opsional dan tidak boleh menggagalkan sesi.
+            let rememberEmailSaved = true;
+            try {
+              if (this.form.remember) {
+                localStorage.setItem('prodihukum_remembered_email', email);
+              } else {
+                localStorage.removeItem('prodihukum_remembered_email');
+              }
+            } catch {
+              rememberEmailSaved = false;
+            }
+
+            logActivity('Login ke panel admin', '\u{1F510}');
+
+            NeuAlert.base({
+              icon: 'success',
+              title: 'Login Berhasil',
+              text: rememberEmailSaved
+                ? 'Selamat datang di Panel Manajemen Program Studi Hukum UMP.'
+                : 'Login berhasil, tetapi email tidak dapat disimpan untuk fitur Ingat Saya.',
+              timer: 1100,
+              showConfirmButton: false
+            }).then(() => {
+              window.location.href = 'dashboard.html';
+            });
+          }, 650);
+        }
+      };
+    }
+  </script>
 </head>
 
-<body x-data="{
-    ...themeStore(),
-    showPass: false,
-    loading: false,
-    form: { email: '', password: '', remember: false },
-    init() {
-      // Jika sudah login, langsung arahkan ke dashboard
-      if (typeof AUTH !== 'undefined' && AUTH.isLoggedIn()) {
-        window.location.href = 'dashboard.html';
-        return;
-      }
-      // Membaca email yang diingat sebelumnya
-      const savedEmail = localStorage.getItem('prodihukum_remembered_email');
-      if (savedEmail) {
-        this.form.email = savedEmail;
-        this.form.remember = true;
-      }
-      // Email dikirim balik dari halaman Lupa Sandi setelah reset berhasil,
-      // supaya admin tidak perlu mengetik ulang emailnya.
-      const params = new URLSearchParams(window.location.search);
-      const emailFromReset = params.get('email');
-      if (emailFromReset) this.form.email = emailFromReset;
-    },
-    get demoUser() {
-      return (typeof SAMPLE_PENGGUNA !== 'undefined' ? SAMPLE_PENGGUNA : [])
-        .find(user => user.email && user.email.toLowerCase() === 'admin@ump.ac.id' && user.status === 'Aktif');
-    },
-    fillDemo() {
-      if (!this.demoUser || !this.demoUser.password) {
-        NeuAlert.error('Akun demo tidak tersedia atau tidak aktif.');
-        return;
-      }
-      this.form.email = this.demoUser.email;
-      this.form.password = this.demoUser.password;
-      NeuAlert.base({
-        icon: 'info',
-        title: 'Kredensial Dimuat',
-        text: 'Kredensial akun demo dimuat dari data pengguna saat ini. Silakan klik Masuk.',
-        timer: 1600,
-        showConfirmButton: false
-      });
-    },
-    submit() {
-      const email = (this.form.email || '').trim();
-      const pass = (this.form.password || '').trim();
-      
-      if (!email || !pass) {
-        NeuAlert.error('Mohon isi email terdaftar dan kata sandi.');
-        return;
-      }
-      
-      this.loading = true;
-      setTimeout(() => {
-        this.loading = false;
+<body x-data="loginPage()" class="nl-page">
 
-        // Cocokkan dengan database pengguna admin
-        const users = (typeof SAMPLE_PENGGUNA !== 'undefined') ? SAMPLE_PENGGUNA : [];
-        const matched = users.find(p => p.email && p.email.toLowerCase() === email.toLowerCase());
+  <!-- ═════ Latar: foto gedung, gelombang biru, pola titik ═════ -->
+  <div class="nl-bg" aria-hidden="true">
+    <svg class="nl-rib nl-rib--tr" viewBox="0 0 360 100" fill="none">
+      <polygon points="150,0 185,0 125,100 90,100" fill="#ffc20e" />
+      <polygon points="195,0 235,0 175,100 135,100" fill="#0a3a8f" />
+      <polygon points="245,0 360,0 360,100 185,100" fill="#c8102e" />
+    </svg>
+    <svg class="nl-rib nl-rib--br" viewBox="0 0 360 90" fill="none">
+      <polygon points="205,90 240,90 275,0 240,0" fill="#ffc20e" />
+      <polygon points="255,90 360,90 360,0 290,0" fill="#c8102e" />
+    </svg>
+    <span class="nl-stripe"></span>
+    <span class="nl-dots nl-dots--a"></span>
+    <span class="nl-dots nl-dots--b"></span>
+    <span class="nl-dots nl-dots--c"></span>
 
-        // 1) Email tidak terdaftar -> tolak (sebelumnya tetap login sebagai Super Admin)
-        if (!matched) {
-          NeuAlert.error('Email tidak terdaftar. Periksa kembali email Anda.');
-          return;
-        }
-        // 2) Akun nonaktif -> tolak (sebelumnya status tidak pernah diperiksa)
-        if (matched.status !== 'Aktif') {
-          NeuAlert.error('Akun ini nonaktif. Hubungi Super Admin untuk mengaktifkan kembali.');
-          return;
-        }
-        // 3) Password salah -> tolak (sebelumnya password tidak pernah dicek)
-        if (matched.password !== pass) {
-          NeuAlert.error('Password salah. Silakan coba lagi.');
-          return;
-        }
-
-        // Sesi harus tersimpan sebelum login dianggap berhasil.
-        try {
-          AUTH.login(matched);
-        } catch {
-          NeuAlert.error('Akun tidak dapat masuk. Pastikan nama dan peran akun valid serta browser dapat menyimpan sesi login.');
-          return;
-        }
-
-        // Email yang diingat bersifat opsional dan tidak boleh menggagalkan sesi.
-        let rememberEmailSaved = true;
-        try {
-          if (this.form.remember) {
-            localStorage.setItem('prodihukum_remembered_email', email);
-          } else {
-            localStorage.removeItem('prodihukum_remembered_email');
-          }
-        } catch {
-          rememberEmailSaved = false;
-        }
-
-        logActivity('Login ke panel admin', '\u{1F510}');
-        
-        NeuAlert.base({
-          icon: 'success',
-          title: 'Login Berhasil',
-          text: rememberEmailSaved
-            ? 'Selamat datang di Panel Manajemen Program Studi Hukum UMP.'
-            : 'Login berhasil, tetapi email tidak dapat disimpan untuk fitur Ingat Saya.',
-          timer: 1100,
-          showConfirmButton: false
-        }).then(() => {
-          window.location.href = 'dashboard.html';
-        });
-      }, 650);
-    }
-  }" class="min-h-screen w-full flex items-center justify-center px-4 py-8 relative law-court-bg admin-login-body">
-
-  <!-- Ambient Decorative Lighting
-       Dibungkus dalam wrapper inset-0 + overflow-hidden yang mengikuti kotak
-       body (sama seperti area yang dicakup .law-court-bg::before). Sebelumnya
-       kedua lingkaran blur ini adalah child body langsung dengan offset
-       negatif (-top-24, -bottom-24), sehingga ikut dihitung browser sebagai
-       scrollable overflow halaman meski berada di luar kotak body — akibatnya
-       muncul area scroll tambahan yang transparan (tidak tertutup background)
-       di bawah konten. Wrapper ini mengklip keduanya pas di batas body agar
-       halaman tidak bisa discroll melebihi area yang benar-benar tertutup bg. -->
-  <div class="absolute inset-0 overflow-hidden pointer-events-none z-0">
-    <div class="absolute -top-24 -right-24 w-96 h-96 rounded-full bg-red/15 dark:bg-red/20 blur-3xl"></div>
-    <div class="absolute -bottom-24 -left-24 w-96 h-96 rounded-full bg-gold/15 dark:bg-gold/20 blur-3xl"></div>
+    <!-- Ilustrasi: toga, buku, timbangan keadilan -->
+    <svg class="nl-art" viewBox="0 0 480 470" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#f6dc8a" />
+          <stop offset=".5" stop-color="#c9951f" />
+          <stop offset="1" stop-color="#8a5f0b" />
+        </linearGradient>
+        <linearGradient id="blueTop" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#2f6fd0" />
+          <stop offset="1" stop-color="#0a3a8f" />
+        </linearGradient>
+        <linearGradient id="blueSide" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#0f45a8" />
+          <stop offset="1" stop-color="#06265f" />
+        </linearGradient>
+        <linearGradient id="glass" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#fff" stop-opacity=".7" />
+          <stop offset="1" stop-color="#cfe0ff" stop-opacity=".2" />
+        </linearGradient>
+      </defs>
+      <!-- bola kaca -->
+      <circle class="nl-glass" cx="165" cy="250" r="118" fill="url(#glass)" stroke="#fff" stroke-opacity=".7"
+        stroke-width="2" />
+      <!-- alas -->
+      <ellipse cx="240" cy="418" rx="226" ry="40" fill="#dde5f2" />
+      <ellipse cx="240" cy="408" rx="204" ry="32" fill="#f6f8fc" />
+      <!-- timbangan (di belakang toga) -->
+      <g>
+        <ellipse cx="342" cy="318" rx="46" ry="9" fill="url(#gold)" />
+        <path d="M312 318 L324 288 H360 L372 318Z" fill="url(#gold)" />
+        <rect x="337" y="116" width="10" height="176" rx="4" fill="url(#gold)" />
+        <circle cx="342" cy="104" r="11" fill="url(#gold)" />
+        <path d="M242 142 Q342 120 442 142" stroke="url(#gold)" stroke-width="7" stroke-linecap="round" fill="none" />
+        <circle cx="242" cy="142" r="6" fill="url(#gold)" />
+        <circle cx="442" cy="142" r="6" fill="url(#gold)" />
+        <g stroke="#b98a1e" stroke-width="2" stroke-linecap="round">
+          <path d="M242 148 L206 244M242 148 L278 244M242 148 L242 246" />
+          <path d="M442 148 L406 240M442 148 L478 240M442 148 L442 242" />
+        </g>
+        <path d="M200 244 Q242 282 284 244Z" fill="url(#gold)" />
+        <path d="M400 240 Q442 278 484 240Z" fill="url(#gold)" />
+      </g>
+      <!-- buku bawah -->
+      <path d="M52 352 L98 330 H440 L408 352Z" fill="#4a82d8" />
+      <rect x="52" y="352" width="356" height="44" rx="6" fill="url(#blueSide)" />
+      <rect x="60" y="360" width="340" height="28" rx="3" fill="#f2f7ff" />
+      <path d="M66 368H394M66 376H394M66 383H394" stroke="#cdd9f0" stroke-width="1.4" />
+      <rect x="108" y="352" width="9" height="44" fill="url(#gold)" />
+      <!-- buku atas -->
+      <path d="M86 306 L126 286 H418 L388 306Z" fill="#3f78cf" />
+      <rect x="86" y="306" width="302" height="40" rx="6" fill="url(#blueTop)" />
+      <rect x="94" y="314" width="286" height="24" rx="3" fill="#eaf2ff" />
+      <path d="M100 322H374M100 330H374" stroke="#c4d3ef" stroke-width="1.4" />
+      <rect x="132" y="306" width="9" height="40" fill="url(#gold)" />
+      <path d="M352 346 v36 l9 -8 l9 8 v-36z" fill="#c8102e" />
+      <!-- toga -->
+      <path d="M118 262 V290 Q190 322 262 290 V262Z" fill="#06265f" />
+      <path d="M44 240 L190 196 L336 240 L190 286Z" fill="url(#blueTop)" />
+      <path d="M44 240 L190 196 L336 240" stroke="#9cc0ff" stroke-width="2" fill="none" />
+      <circle cx="190" cy="241" r="6" fill="url(#gold)" />
+      <path d="M190 241 L322 250 V292" stroke="url(#gold)" stroke-width="3.5" stroke-linecap="round" fill="none" />
+      <path d="M314 292 H330 L334 322 H310Z" fill="url(#gold)" />
+    </svg>
   </div>
 
-  <!-- Top Bar Navigation Actions -->
-  <a href="../index.html"
-    class="neu-btn admin-auth-nav-btn px-4 py-2.5 rounded-2xl text-xs font-semibold flex items-center gap-2 absolute top-6 left-6 z-20 transition-all">
-    <span>&larr;</span>
-    <span class="hidden sm:inline">Kembali ke</span> <span>Website</span>
+  <!-- ═════ Tombol atas ═════ -->
+  <a href="../index.html" class="nl-top-btn nl-top-btn--back">
+    <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M19 12H5m6-7-7 7 7 7" />
+    </svg>
+    <span>Kembali ke Website</span>
   </a>
 
-  <button @click="toggle()"
-    class="neu-btn admin-auth-nav-btn w-11 h-11 rounded-2xl flex items-center justify-center absolute top-6 right-6 z-20 transition-all"
-    aria-label="Ganti mode gelap/terang">
-    <svg aria-hidden="true" focusable="false" x-show="!dark" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5"
-      fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-        d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+  <button type="button" @click="toggle()" class="nl-top-btn nl-top-btn--theme"
+    :aria-label="dark ? 'Ganti ke mode terang' : 'Ganti ke mode gelap'" :aria-pressed="dark">
+    <svg x-show="!dark" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4" />
     </svg>
-    <svg aria-hidden="true" focusable="false" x-show="dark" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5"
-      fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+    <svg x-show="dark" x-cloak aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20.4 15.4A9 9 0 0 1 8.6 3.6a9 9 0 1 0 11.8 11.8z" />
     </svg>
   </button>
 
-  <!-- Login Main Card Wrapper -->
-  <div class="w-full max-w-md relative z-10 py-6">
+  <!-- ═════ Konten utama ═════ -->
+  <main class="nl-shell">
 
-    <!-- Branding Header -->
-    <div class="text-center mb-7">
-      <div
-        class="w-20 h-20 admin-auth-logo flex items-center justify-center mx-auto mb-4 overflow-hidden p-2.5 rounded-3xl">
-        <img src="../assets/image/logo-ump-auth.png" alt="Logo Program Studi Hukum UMP"
-          class="w-full h-full object-contain drop-shadow-md">
-      </div>
-
-      <div class="flex flex-wrap items-center justify-center gap-2 mb-2">
-        <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-red/15 text-red">
-          <svg aria-hidden="true" focusable="false" class="admin-ui-icon" viewBox="0 0 24 24" fill="none"
-            stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M12 3v18m-7 0h14M5 7h14M7 7l-3 7h6zm10 0-3 7h6z" />
+    <header class="nl-brand">
+      <img class="nl-logo" src="../assets/image/logo-ump-auth.png" alt="Logo Program Studi Hukum UMP">
+      <div class="nl-chips">
+        <span class="nl-chip nl-chip--navy">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="8" cy="8" r="3.2" />
+            <circle cx="16.5" cy="9" r="2.6" />
+            <path d="M2 19c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5z" />
+            <path d="M14.5 14.2c.7-.3 1.4-.4 2-.4 2.9 0 5 1.8 5 4.7h-5.6c0-1.7-.5-3.2-1.4-4.3z" />
           </svg>
-          <span>Panel Administrasi Akademik</span>
+          Panel Administrasi Akademik
         </span>
-        <span class="px-2.5 py-0.5 rounded-full text-[11px] font-serif italic bg-gold/15 text-gold font-medium">
-          &ldquo;Fiat Justitia Ruat Caelum&rdquo;
-        </span>
+        <span class="nl-chip nl-chip--gold">&ldquo;Fiat Justitia Ruat Caelum&rdquo;</span>
       </div>
+      <h1 class="nl-title">Program Studi <span class="nl-hukum">Hukum</span></h1>
+      <p class="nl-subtitle">Universitas Muhammadiyah Papua</p>
+      <div class="nl-rule" aria-hidden="true"></div>
+    </header>
 
-      <h1 class="font-display font-extrabold text-2xl sm:text-3xl admin-auth-title tracking-tight">Program
-        Studi Hukum</h1>
-      <p class="text-xs sm:text-sm admin-auth-subtitle mt-1 font-medium">Universitas Muhammadiyah Papua</p>
-    </div>
+    <form class="nl-card" @submit.prevent="submit()" novalidate>
 
-    <!-- Login Form Card -->
-    <form @submit.prevent="submit()" class="admin-auth-card p-7 sm:p-9 space-y-5 rounded-3xl backdrop-blur-md">
-
-      <div>
-        <label for="login-email" class="text-xs font-bold text-navy dark:text-white mb-2 flex items-center justify-between">
-          <span>Email Terdaftar</span>
-          <span class="text-[10px] text-text-muted font-normal">Wajib diisi</span>
-        </label>
-        <div class="relative">
-          <input id="login-email" x-model="form.email" type="email" name="email" autocomplete="username"
-            placeholder="admin@ump.ac.id" class="admin-auth-input w-full pl-4 pr-10 text-sm" required autofocus>
-          <div class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none">
-            <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none"
-              viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-            </svg>
-          </div>
+      <div class="nl-welcome">
+        <span class="nl-avatar" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="currentColor">
+            <circle cx="12" cy="8" r="4.2" />
+            <path d="M3.5 21c0-4.6 3.8-7.4 8.5-7.4s8.5 2.8 8.5 7.4z" />
+          </svg>
+        </span>
+        <div>
+          <h2>Selamat Datang</h2>
+          <p>Silakan masuk untuk melanjutkan</p>
         </div>
       </div>
 
-      <div>
-        <label for="login-password" class="text-xs font-bold text-navy dark:text-white mb-2 flex items-center justify-between">
-          <span>Kata Sandi / Password</span>
-          <span class="text-[10px] text-text-muted font-normal">Wajib diisi</span>
-        </label>
-        <div class="relative">
-          <input id="login-password" x-model="form.password" name="password" autocomplete="current-password"
-            :type="showPass ? 'text' : 'password'"
-            placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;"
-            class="admin-auth-input w-full pl-4 pr-11 text-sm font-mono" required>
-          <button type="button" @click="showPass = !showPass"
-            class="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-royal focus:outline-none p-1 transition-colors"
-            :aria-label="showPass ? 'Sembunyikan password' : 'Tampilkan password'">
-            <svg aria-hidden="true" focusable="false" x-show="!showPass" xmlns="http://www.w3.org/2000/svg"
-              class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+      <!-- Email -->
+      <div class="nl-field">
+        <label for="login-email" class="nl-label"><span>Email Terdaftar</span><small>Wajib diisi</small></label>
+        <div class="nl-input-wrap">
+          <svg class="nl-ico nl-ico--l" aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M3 6.5A2.5 2.5 0 0 1 5.5 4h13A2.5 2.5 0 0 1 21 6.5v.4l-9 5.6-9-5.6zM3 9.3v8.2A2.5 2.5 0 0 0 5.5 20h13a2.5 2.5 0 0 0 2.5-2.5V9.3l-8.5 5.3a1 1 0 0 1-1 0z" />
+          </svg>
+          <input id="login-email" class="nl-input" x-model="form.email" type="email" name="email"
+            autocomplete="username" placeholder="admin@ump.ac.id" required autofocus>
+          <svg class="nl-ico nl-ico--r" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+            stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="8" r="4" />
+            <path d="M4.5 21c0-4 3.4-6.5 7.5-6.5s7.5 2.5 7.5 6.5" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Password -->
+      <div class="nl-field">
+        <label for="login-password" class="nl-label"><span>Kata Sandi / Password</span><small>Wajib
+            diisi</small></label>
+        <div class="nl-input-wrap">
+          <svg class="nl-ico nl-ico--l nl-ico--gold" aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M7 10V8a5 5 0 0 1 10 0v2h.5A2.5 2.5 0 0 1 20 12.5v6a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18.5v-6A2.5 2.5 0 0 1 6.5 10zm2 0h6V8a3 3 0 0 0-6 0z" />
+          </svg>
+          <input id="login-password" class="nl-input nl-input--pass" x-model="form.password" name="password"
+            autocomplete="current-password" :type="showPass ? 'text' : 'password'"
+            placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required aria-describedby="pw-strength">
+          <button type="button" class="nl-eye" @click="showPass = !showPass"
+            :aria-label="showPass ? 'Sembunyikan password' : 'Tampilkan password'" :aria-pressed="showPass">
+            <svg x-show="!showPass" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z" />
+              <circle cx="12" cy="12" r="3" />
             </svg>
-            <svg aria-hidden="true" focusable="false" x-show="showPass" xmlns="http://www.w3.org/2000/svg"
-              class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.542-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.878 9.878L3 3m6.878 6.878L21 21" />
+            <svg x-show="showPass" x-cloak aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+              stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+              <path
+                d="M17.9 17.9A10.4 10.4 0 0 1 12 19C5.6 19 2 12 2 12a18 18 0 0 1 4.1-5.1M9.9 5.2A9.5 9.5 0 0 1 12 5c6.4 0 10 7 10 7a18 18 0 0 1-2.2 3.2M14.1 14.1a3 3 0 1 1-4.2-4.2M2 2l20 20" />
             </svg>
           </button>
         </div>
+
+        <!-- Kekuatan sandi -->
+        <div class="nl-strength" id="pw-strength" :data-level="score" aria-live="polite">
+          <div class="nl-strength-head"><span>Kekuatan kata sandi</span><b x-text="strengthLabel">Belum diisi</b></div>
+          <div class="nl-meter" aria-hidden="true"><i :style="'width:' + (score * 25) + '%'"></i></div>
+          <ul class="nl-checks">
+            <template x-for="c in checks" :key="c.key">
+              <li :class="c.ok && 'is-ok'">
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                  stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m5 12.5 4.5 4.5L19 7.5" />
+                </svg>
+                <span x-text="c.label"></span>
+              </li>
+            </template>
+          </ul>
+        </div>
       </div>
 
-      <div class="flex items-center justify-between text-xs pt-1">
-        <label class="flex items-center gap-2 text-text-muted cursor-pointer select-none">
-          <input x-model="form.remember" type="checkbox"
-            class="rounded text-red focus:ring-royal/30 transition-all cursor-pointer">
+      <div class="nl-row">
+        <label class="nl-remember">
+          <input class="nl-check" type="checkbox" x-model="form.remember">
           <span>Ingat Saya</span>
         </label>
-        <a :href="form.email ? ('lupa-sandi.html?email=' + encodeURIComponent(form.email)) : 'lupa-sandi.html'"
-          class="text-red font-semibold hover:underline text-xs transition-colors">
+        <a class="nl-forgot"
+          :href="form.email ? ('lupa-sandi.html?email=' + encodeURIComponent(form.email)) : 'lupa-sandi.html'">
+          <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">
+            <path
+              d="M7 10V8a5 5 0 0 1 10 0v2h.5A2.5 2.5 0 0 1 20 12.5v6a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 18.5v-6A2.5 2.5 0 0 1 6.5 10zm2 0h6V8a3 3 0 0 0-6 0z" />
+          </svg>
           Lupa Password?
         </a>
       </div>
 
-      <button type="submit" :disabled="loading"
-        class="neu-btn-primary w-full py-3.5 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-xl hover:shadow-2xl transition-all disabled:opacity-75 disabled:cursor-not-allowed">
+      <button type="submit" class="nl-submit" :disabled="loading" :aria-busy="loading">
         <template x-if="!loading">
-          <span class="flex items-center gap-2">
-            <span>Masuk ke Panel</span>
-            <span>&rarr;</span>
+          <span style="display:inline-flex;align-items:center;gap:12px">
+            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"
+              stroke-linecap="round" stroke-linejoin="round">
+              <path d="M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4M3 12h11m-4-4 4 4-4 4" />
+            </svg>
+            <span>Masuk ke Panel &rarr;</span>
           </span>
         </template>
         <template x-if="loading">
-          <span class="flex items-center gap-2">
-            <svg aria-hidden="true" focusable="false" class="animate-spin -ml-1 mr-2 h-4 w-4 text-white"
-              xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-              <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-              <path class="opacity-75" fill="currentColor"
-                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-              </path>
-            </svg>
+          <span style="display:inline-flex;align-items:center;gap:12px">
+            <span class="nl-spin" aria-hidden="true"></span>
             <span>Memproses Otentikasi...</span>
           </span>
         </template>
       </button>
 
-      <!-- Interactive Demo Account Fill Box -->
-      <div class="admin-auth-demo p-3.5 text-center text-xs text-text-muted rounded-2xl space-y-1.5">
-        <div class="flex items-center justify-between">
-          <p class="font-bold text-navy dark:text-white flex items-center gap-1.5">
-            <svg aria-hidden="true" focusable="false" class="admin-ui-icon" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="8" cy="15" r="5" />
-              <path d="m12 12 9-9m-4 4 3 3m-6-1 3 3" />
-            </svg>
-            <span>Akun Uji Coba (Demo)</span>
-          </p>
-          <button type="button" @click="fillDemo()"
-            x-show="demoUser" x-cloak
-            class="text-[11px] font-bold text-red hover:underline bg-red/10 hover:bg-red/20 px-2 py-0.5 rounded-md transition-colors">
-            Isi Otomatis
-          </button>
-        </div>
-        <p class="text-[11px] leading-relaxed" x-show="demoUser" x-cloak>
-          Email demo:
-          <button type="button" @click="fillDemo()" x-text="demoUser ? demoUser.email : ''"
-            class="font-mono text-red font-bold hover:underline"></button>
-          <span aria-hidden="true"> · </span>
-          Kata sandi dimuat dari data akun saat ini.
-        </p>
-      </div>
+      <p class="nl-note">
+        <svg aria-hidden="true" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm1 15h-2v-6h2zm0-8h-2V7h2z" />
+        </svg>
+        <span>Gunakan akun administrator yang dibuat melalui proses setup server.</span>
+      </p>
+      <button type="button" class="nl-demo" @click="fillDemo()" x-show="demoUser" x-cloak>Isi akun uji coba
+        (demo)</button>
     </form>
 
-    <!-- Footer Links -->
-    <div class="text-center mt-6 space-y-2">
-      <p class="text-xs text-text-muted">
-        <a href="../index.html" class="text-red font-semibold hover:underline inline-flex items-center gap-1">
-          <span>&larr;</span>
-          <span>Kembali ke Beranda Website</span>
-        </a>
-      </p>
-      <p class="text-[11px] admin-auth-footer-text">
-        Butuh bantuan akses? Hubungi
-        <a href="mailto:it@ump.ac.id" class="text-gold hover:underline font-semibold">Administrator IT Kampus</a>.
-      </p>
-      <p class="text-[11px] admin-auth-footer-text">
-        &copy; 2026 Program Studi Hukum — Universitas Muhammadiyah Papua.
-      </p>
+    <div class="nl-foot">
+      <div class="nl-rule" aria-hidden="true"></div>
+      <a class="nl-home" href="../index.html">&larr; Kembali ke Beranda Website</a>
+      <p class="nl-help">Butuh bantuan akses? Hubungi <a href="mailto:it@ump.ac.id">Administrator IT Kampus</a>.</p>
+      <p>&copy; 2026 Program Studi Hukum — Universitas Muhammadiyah Papua.</p>
     </div>
-  </div>
+  </main>
+
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </body>

@@ -71,7 +71,7 @@ Tiga asosiasi diterapkan sebagai lookup aplikasi saja, tanpa foreign-key enforce
 
 - `pendaftar.kegiatanId` merujuk secara logis ke `kegiatan.id`; `kegiatanNama` adalah salinan teks, bukan relasi kedua.
 - `struktur.dosenId` opsional dicocokkan ke `dosen.id`.
-- `kurikulum.kodeDosen` dicocokkan dengan `dosen.kode` untuk menampilkan nama dosen terkini dan mengaitkan mata kuliah pada direktori dosen. Record tanpa kode memakai pencocokan nama ternormalisasi melalui `pengampu`. Ini lookup aplikasi, bukan foreign key.
+- Jika `kurikulum.kodeDosen` dan `dosen.kode` sama-sama tersedia, aplikasi mencocokkan keduanya untuk menampilkan nama dosen terkini dan mengaitkan mata kuliah pada direktori dosen. Jika salah satu kode kosong atau tidak tercantum, aplikasi memakai pencocokan nama ternormalisasi melalui `pengampu`. Ini lookup aplikasi, bukan foreign key.
 
 Relasi dapat tidak cocok atau menjadi yatim setelah record dihapus; sebagian seed struktur juga belum memiliki `dosenId`. Field penulis, pengguna aktivitas, dan teks serupa tidak menjadi relasi entitas.
 
@@ -81,7 +81,7 @@ Relasi dapat tidak cocok atau menjadi yatim setelah record dihapus; sebagian see
 - Kuota `localStorage` ditentukan browser. Jika penulisan gagal, aplikasi memangkas log aktivitas dan statistik kunjungan yang dibatasi, kemudian mencoba ulang. Data konten entitas lain tidak dihapus untuk memberi ruang.
 - Gambar diubah ke JPEG melalui Canvas; ukuran hasil bergantung pada sumber dan opsi kompresi. Ukuran tertentu tidak dijamin.
 - Unggahan dokumen menerima ekstensi PDF, DOC, atau DOCX dengan batas berkas masukan 5 MB. Representasi base64 dapat lebih besar; penyimpanan tetap dibatasi kuota browser.
-- Event `storage` memperbarui halaman publik dan komponen admin terkait pada tab lain untuk perubahan konten. Semua data hanya tersedia pada origin/profil browser tempat data disimpan; ini bukan sinkronisasi server atau antarperangkat.
+- Event `storage` memperbarui halaman publik dan komponen admin terkait pada tab lain untuk perubahan konten. Jika key entitas dihapus, tab penerima memulihkan seed dengan bentuk data yang sesuai (daftar atau objek) lalu menyebarkan pembaruan. Jika penyimpanan seed gagal, data tetap diperbarui di memori dan error dicatat. Semua data hanya tersedia pada origin/profil browser tempat data disimpan; ini bukan sinkronisasi server atau antarperangkat.
 - Backup berisi key entitas aplikasi ber-prefix `prodihukum_db_v1_`, tidak mencakup tema, email yang diingat, sesi admin, maupun statistik kunjungan.
 
 ### Catatan audit konsistensi (20 Oktober 2026)
@@ -90,9 +90,9 @@ Audit kode dan uji browser menemukan bahwa Admin dan halaman publik membaca data
 
 Temuan data dan perilaku yang perlu diperhitungkan:
 
-1. Tiga record seed struktur organisasi memakai nama lama dan tidak memiliki `dosenId` yang merujuk roster dosen terkini. Pemilihan dan penyimpanan relasi dosen berdasarkan ID didukung oleh Admin, tetapi seed/record lama belum otomatis ditautkan.
+1. Seed struktur organisasi terkini menghubungkan anggota dengan roster dosen melalui `dosenId`; record lokal lama yang tidak cocok dengan pola migrasi otomatis masih dapat ditautkan dari Admin.
 2. Ringkasan beban studi halaman Profil dihitung dari entitas `kurikulum`, sehingga mengikuti perubahan mata kuliah dan SKS.
-3. Tombol Import di Admin Kurikulum masih simulasi. Ekspor Admin mengunduh CSV sesuai hasil pencarian dan filter yang aktif; ekspor CSV di halaman publik merupakan fungsi terpisah.
+3. Admin Kurikulum menyediakan ekspor CSV sesuai hasil pencarian dan filter yang aktif; belum tersedia kontrol impor. Ekspor CSV di halaman publik merupakan fungsi terpisah.
 4. Nilai jumlah mahasiswa aktif disimpan manual dalam objek `pengaturan`; tidak ada tabel/entitas daftar mahasiswa untuk menghitungnya.
 5. Pengampu yang kosong di sumber kurikulum tetap kosong di Admin dan publik, dengan label bahwa pengampu tidak tercantum. Data tidak dilengkapi dari sumber lain.
 6. Berita dan artikel yang ditampilkan/dicari di sisi publik difilter berdasarkan status `Published`.

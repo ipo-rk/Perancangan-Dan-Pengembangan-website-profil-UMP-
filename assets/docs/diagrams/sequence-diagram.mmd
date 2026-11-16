@@ -14,14 +14,19 @@ sequenceDiagram
     rect rgb(239, 246, 255)
         Note over Admin,Store: SKENARIO 1 - Autentikasi Login Admin & Pembuatan Sesi Klien
         App->>Store: Baca prodihukum_db_v1_pengguna saat halaman dimuat
-        Store-->>App: Data daftar pengguna (fallback ke SEED_PENGGUNA jika kosong)
+        Store-->>App: Data pengguna (seed jika key hilang, JSON rusak, atau bentuk tidak sesuai)
         Admin->>Page: Kirim email dan kata sandi pada login.html
         Page->>App: Cocokkan email, status, dan kata sandi dengan data pengguna lokal
         alt Akun Ditemukan, Status 'Aktif', dan Password Cocok
             Page->>App: Panggil AUTH.login(matchedUser)
-            App->>Store: Simpan data sesi ke prodihukum_admin_session
-            App-->>Page: Login Berhasil (true)
-            Page-->>Admin: Arahkan ke admin/dashboard.html
+            alt Data sesi valid dan localStorage berhasil menyimpan sesi
+                App->>Store: Simpan data sesi ke prodihukum_admin_session
+                App-->>Page: Login berhasil
+                Page-->>Admin: Arahkan ke admin/dashboard.html
+            else Validasi sesi atau penyimpanan gagal
+                App-->>Page: AUTH.login() gagal
+                Page-->>Admin: Tampilkan pesan sesi tidak dapat disimpan
+            end
         else Kredensial Tidak Cocok / Akun Nonaktif
             App-->>Page: Login Ditolak (false)
             Page-->>Admin: Tampilkan Notifikasi Error (SweetAlert)
@@ -34,21 +39,22 @@ sequenceDiagram
     rect rgb(240, 253, 244)
         Note over Admin,OtherTab: SKENARIO 2 - Simpan Konten dan Perbarui Tampilan Lintas Tab
         Admin->>Page: Simpan formulir data (Tambah/Edit/Hapus)
-        Page->>App: Panggil DB.save(entityKey, dataArray)
+        Page->>App: Panggil DB.save(entityKey, data sesuai bentuk entitas)
         App-)IDB: Minta IDB.set() secara asinkron (best-effort)
-        App->>Store: setItem('prodihukum_db_v1_' + entityKey, JSON.stringify(dataArray))
+        App->>Store: setItem('prodihukum_db_v1_' + entityKey, JSON.stringify(data))
         alt Penyimpanan localStorage Berhasil
-            App->>App: Panggil logActivity() -> catat ke store 'aktivitas' & 'notifikasi'
             App-->>Page: Dispatch CustomEvent 'db-update' pada tab aktif
             Store-->>OtherTab: Browser memancarkan 'storage' event secara otomatis
             OtherTab->>OtherTab: Dispatch event 'db-update' pada komponen Alpine lokal
-            OtherTab-->>Public: Halaman publik memuat ulang setelah storage event
+            OtherTab-->>Public: Halaman publik memuat ulang jika key konten berubah
+            App->>App: Panggil logActivity() -> catat ke store 'aktivitas' & 'notifikasi'
             Page-->>Admin: Tampilkan SweetAlert sukses & perbarui tabel
         else QuotaExceededError (Kapasitas Penyimpanan Penuh)
             App->>App: Panggil pruneStorage() -> pangkas riwayat lama
             App->>Store: Coba ulang setItem() setelah pemangkasan
             alt Coba Ulang Berhasil
-                App-->>Page: Simpan terkonfirmasi setelah optimasi ruang
+                App-->>Page: Simpan berhasil setelah pemangkasan dan pancarkan db-update
+                App->>App: Panggil logActivity() -> catat aktivitas & notifikasi
                 Page-->>Admin: Tampilkan notifikasi berhasil dengan optimasi
             else Tetap Gagal
                 App-->>Page: Kembalikan false (Rollback status form)
@@ -72,8 +78,8 @@ sequenceDiagram
             Page-->>Public: Tampilkan peringatan: Email sudah terdaftar untuk kegiatan ini
         else Data Baru & Valid
             App->>Store: Simpan data pendaftar baru via DB.save('pendaftar')
+            Store-->>App: DB.save('pendaftar') berhasil
             App->>App: Panggil logPublicEvent() -> catat aktivitas pendaftar baru
-            Store-->>App: Konfirmasi simpan data
             App-->>Page: Registrasi berhasil
             Page-->>Public: Tampilkan konfirmasi pendaftaran berhasil & reset form
         end

@@ -65,7 +65,7 @@
           </mxGeometry>
         </mxCell>
 
-        <mxCell id="c_db" value="&lt;b&gt;Layanan data (DB)&lt;/b&gt;&lt;br&gt;localStorage sebagai sumber utama; seed untuk key yang belum tersedia" style="html=1;dropTarget=0;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#2563eb;fontSize=11;align=center;verticalAlign=middle;fontFamily=Arial;" parent="layer_logic" vertex="1">
+        <mxCell id="c_db" value="Layanan data (DB): localStorage sumber utama; seed untuk key hilang atau JSON/bentuk data tidak valid" style="html=1;dropTarget=0;whiteSpace=wrap;fillColor=#ffffff;strokeColor=#2563eb;fontSize=11;align=center;verticalAlign=middle;fontFamily=Arial;" parent="layer_logic" vertex="1">
           <mxGeometry x="360" y="50" width="260" height="80" as="geometry" />
         </mxCell>
         <mxCell id="c_db_icon" value="" style="shape=component;jettyWidth=8;jettyHeight=4;fontFamily=Arial;" parent="c_db" vertex="1">

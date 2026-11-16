@@ -1458,6 +1458,7 @@ function adminDosenPage() {
         return;
       }
       this.form.nama = this.form.nama.trim();
+      this.form.kode = String(this.form.kode || '').trim();
 
       if (this.editing !== null) {
         if (!hasCurrentRecord(this.dosen, this.editing, 'Data dosen', this.editingSnapshot)) return;
@@ -2108,6 +2109,27 @@ if (!SAMPLE_PENGATURAN.mapEmbed) {
   SAMPLE_PENGATURAN.koordinat = SEED_PENGATURAN.koordinat;
 }
 
+const SEED_DATA_BY_KEY = {
+  berita: SEED_BERITA,
+  dosen: SEED_DOSEN,
+  dokumen: SEED_DOKUMEN,
+  galeri: SEED_GALERI,
+  pengumuman: SEED_PENGUMUMAN,
+  kegiatan: SEED_KEGIATAN,
+  pendaftar: SEED_PENDAFTAR,
+  pesan: SEED_PESAN,
+  artikel: SEED_ARTIKEL,
+  prestasi: SEED_PRESTASI,
+  kurikulum: SEED_KURIKULUM,
+  alumni: SEED_ALUMNI,
+  pengguna: SEED_PENGGUNA,
+  aktivitas: SEED_AKTIVITAS,
+  notifikasi: SEED_NOTIFIKASI,
+  profil: SEED_PROFIL,
+  struktur: SEED_STRUKTUR,
+  pengaturan: SEED_PENGATURAN
+};
+
 const CONTENT_DB_KEYS = new Set([
   'berita', 'dosen', 'dokumen', 'galeri', 'pengumuman', 'kegiatan',
   'artikel', 'prestasi', 'kurikulum', 'alumni', 'profil', 'struktur', 'pengaturan'
@@ -2144,9 +2166,19 @@ window.addEventListener('db-update', (event) => {
 window.addEventListener('storage', (event) => {
   if (!event.key || !event.key.startsWith(DB.NS)) return;
   const key = event.key.slice(DB.NS.length);
+  if (event.newValue === null) {
+    if (!Object.prototype.hasOwnProperty.call(SEED_DATA_BY_KEY, key)) return;
+    const data = JSON.parse(JSON.stringify(SEED_DATA_BY_KEY[key]));
+    if (!DB.save(key, data)) {
+      console.error(`DB: gagal memulihkan data "${key}" setelah key dihapus.`);
+      window.dispatchEvent(new CustomEvent('db-update', { detail: { key, data } }));
+    }
+    return;
+  }
+
   let data;
   try {
-    data = event.newValue === null ? [] : JSON.parse(event.newValue);
+    data = JSON.parse(event.newValue);
   } catch (error) {
     console.warn(`DB: data lintas-tab "${key}" tidak valid.`, error);
     return;

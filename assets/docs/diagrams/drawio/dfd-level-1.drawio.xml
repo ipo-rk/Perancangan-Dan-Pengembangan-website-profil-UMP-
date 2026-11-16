@@ -51,7 +51,7 @@
         <!-- ============================================================= -->
         <!-- DATA STORES (DI TENGAH DIAGRAM)                               -->
         <!-- ============================================================= -->
-        <mxCell id="ds_master" value="&lt;b&gt;D1 | localStorage&lt;/b&gt;&lt;br&gt;18 key entitas data utama (prodihukum_db_v1_*)" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;fillColor=#ffffff;strokeColor=#475569;fontColor=#0f172a;fontSize=12;align=center;verticalAlign=middle;fontFamily=Arial;" parent="1" vertex="1">
+        <mxCell id="ds_master" value="D1 | Data aplikasi (18 entitas) in localStorage (prodihukum_db_v1_*)" style="shape=partialRectangle;top=1;bottom=1;left=0;right=0;fillColor=#ffffff;strokeColor=#475569;fontColor=#0f172a;fontSize=12;align=center;verticalAlign=middle;fontFamily=Arial;" parent="1" vertex="1">
           <mxGeometry x="580" y="240" width="400" height="50" as="geometry" />
         </mxCell>
 
@@ -83,7 +83,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="df_p1_ds_read" value="Baca akun dan status pengguna" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#475569;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontFamily=Arial;" parent="1" edge="1" source="ds_master" target="p1">
+        <mxCell id="df_p1_ds_read" value="Baca pengguna lokal; seed jika key hilang atau JSON/bentuk data tidak valid" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#475569;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontFamily=Arial;" parent="1" edge="1" source="ds_master" target="p1">
           <mxGeometry relative="1" as="geometry">
             <Array as="points">
               <mxPoint x="980" y="130" />

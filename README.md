@@ -1,7 +1,7 @@
 # 🏛️ Website Profil Program Studi Hukum — Universitas Muhammadiyah Papua (UMP)
 
-> Website resmi Program Studi Hukum UMP berbasis teknologi **frontend-only** (tanpa server/database backend).  
-> Semua data dikelola melalui **localStorage** dan **IndexedDB** langsung di browser pengguna.
+> Website profil Program Studi Hukum UMP ini merupakan prototipe **frontend-only**, tanpa backend/database server.
+> `localStorage` menjadi penyimpanan utama per origin dan profil browser; IndexedDB hanya salinan tambahan best-effort.
 
 ---
 
@@ -15,7 +15,7 @@
 - [Data Dosen](#-data-dosen-11-orang)
 - [Data Kurikulum](#-data-kurikulum-57-mk--154-sks)
 - [Sistem Admin](#-sistem-admin)
-- [Alpine.js Functions](#-alpinejs-functions-28-fungsi)
+- [Komponen Alpine.js](#-komponen-alpinejs)
 - [Diagram & Dokumentasi](#-diagram--dokumentasi)
 - [Cara Menjalankan](#-cara-menjalankan)
 - [Reset Data](#️-reset-data)
@@ -28,10 +28,10 @@
 - 🎨 **Desain Neumorphism** — tampilan modern dengan efek raised/inset shadows
 - 🌙 **Dark Mode** — toggle otomatis, preferensi tersimpan di localStorage
 - 📱 **Responsive** — mobile-first, mendukung semua ukuran layar
-- 🔍 **Pencarian Global** — di header, mencari berita/artikel/kegiatan
+- 🔍 **Pencarian Global** — di header, mencari berbagai entitas konten
 - 🗂️ **18 Modul Data** — dosen, kurikulum, alumni, berita, galeri, hingga pengaturan situs
-- 🔐 **Panel Admin** — CRUD penuh untuk semua entitas data dengan guard autentikasi
-- 💾 **Persistensi Lokal** — localStorage (primer) + IndexedDB (async write-through)
+- 🔐 **Panel Admin** — pengelolaan data lokal dengan guard sesi sisi klien
+- 💾 **Persistensi Lokal** — localStorage (primer) + IndexedDB (salinan tambahan best-effort)
 - 🔔 **Notifikasi** — sistem notifikasi internal untuk admin
 - 📨 **Form Kontak** — pesan tersimpan ke store `pesan` (localStorage)
 - 📝 **Pendaftaran Kegiatan** — registrasi publik tersimpan ke store `pendaftar`
@@ -42,12 +42,12 @@
 
 | Teknologi | Versi | Keterangan |
 |-----------|-------|------------|
-| **Alpine.js** | 3.14.8 | Reaktivitas UI & komponen halaman (28 fungsi) |
-| **Tailwind CSS** | pre-built CDN | Utility-first CSS framework |
+| **Alpine.js** | 3.14.8 | Reaktivitas UI & komponen halaman |
+| **Tailwind CSS** | pre-built lokal | Utility-first CSS framework |
 | **SweetAlert2** | v11 | Dialog konfirmasi & notifikasi interaktif |
 | **Google Fonts** | CDN | Tipografi |
-| **localStorage** | Native Browser | Penyimpanan data utama — 18 JSON key |
-| **IndexedDB** | Native Browser | Async write-through (best-effort duplicate) |
+| **localStorage** | Native Browser | Penyimpanan data utama — hingga 18 entitas JSON |
+| **IndexedDB** | Native Browser | Salinan asinkron best-effort; bukan sumber pemulihan data |
 
 > **Catatan:** Tidak ada npm, build tool, atau framework backend. Semua berjalan langsung di browser tanpa instalasi.
 
@@ -110,10 +110,11 @@ Perancangan-Dan-Pengembangan-website-profil-UMP-/
 │
 ├── 📁 docs/
 │   ├── diagrams/
-│   │   ├── *.mmd                   # 8 diagram Mermaid (source)
+│   │   ├── *.mmd                   # 9 diagram Mermaid (source)
 │   │   └── drawio/
-│   │       ├── all-diagrams.drawio.xml     # Master — semua 8 diagram (multi-tab)
+│   │       ├── all-diagrams.drawio.xml     # Master — semua 9 diagram (multi-tab)
 │   │       ├── component-diagram.drawio.xml
+│   │       ├── activity-diagram.drawio.xml
 │   │       ├── deployment-diagram.drawio.xml
 │   │       ├── dfd-level-0.drawio.xml
 │   │       ├── dfd-level-1.drawio.xml
@@ -139,7 +140,7 @@ Perancangan-Dan-Pengembangan-website-profil-UMP-/
 
 ```
 SEED_*    →  Data default / awal (hardcoded dalam app.js)
-SAMPLE_*  →  Data aktif (dimuat dari localStorage, fallback ke SEED_* jika kosong)
+SAMPLE_*  →  Data aktif (dimuat dari localStorage, fallback ke SEED_* jika key hilang atau JSON/bentuk data tidak valid)
 ```
 
 Setiap entitas mengikuti pola yang konsisten:
@@ -147,14 +148,14 @@ Setiap entitas mengikuti pola yang konsisten:
 ```javascript
 const SEED_DOSEN = [ /* data default */ ];
 let SAMPLE_DOSEN = DB.load('dosen', SEED_DOSEN);
-//                  ↑ Cek localStorage dulu, pakai SEED jika kosong
+//                  ↑ Cek localStorage; pakai SEED jika key hilang atau data tidak valid
 ```
 
 ### Layer Penyimpanan (`DB` object)
 
 | Method | Fungsi |
 |--------|--------|
-| `DB.load(key, fallback)` | Ambil dari localStorage; gunakan `fallback` jika kosong atau bentuk data tidak sesuai |
+| `DB.load(key, fallback)` | Ambil dari localStorage; gunakan `fallback` jika key hilang, JSON rusak, atau bentuk data tidak sesuai |
 | `DB.save(key, data)` | Simpan ke localStorage (sync) + IndexedDB (async write-through) |
 
 ### Kunci localStorage (prefix: `prodihukum_db_v1_`)
@@ -210,7 +211,7 @@ Sesi admin disimpan di: `prodihukum_admin_session` (localStorage)
 | HKM010 | Ridwan, S.H., M.H. |
 | *(tanpa kode)* | Yohanis Tamatjita, S.H., M.H. |
 
-**Field `SEED_DOSEN`:** `id, kode, nama, jabatan, pendidikan, spesialisasi, foto, email, telepon`
+**Field `SEED_DOSEN`:** `id, nama, kode`
 
 ---
 
@@ -241,8 +242,6 @@ Sesi admin disimpan di: `prodihukum_admin_session` (localStorage)
   nama:      String,   // Nama mata kuliah
   sks:       Number,   // Jumlah SKS
   semester:  Number,   // 1 – 8
-  kategori:  String,   // 'Wajib' | 'Pilihan'
-  deskripsi: String,
   pengampu:  String,   // Nama dosen (string), '-' jika belum ada
   kodeDosen: String    // Kode dosen 'HKM001'–'HKM010', atau '-'
 }
@@ -254,7 +253,7 @@ Fungsi `coursesForLecturer()` mencocokkan `dosen.kode` dengan `kurikulum.kodeDos
 
 ### Import/Export Kurikulum
 
-Tombol Import/Export di `admin/kurikulum.html` adalah **simulasi** — menampilkan pesan informasi, tidak ada transfer file nyata.
+Admin Kurikulum menyediakan ekspor CSV sesuai pencarian dan filter yang aktif. Belum tersedia fitur impor kurikulum.
 
 ---
 
@@ -266,10 +265,10 @@ Akses panel admin: `admin/login.html`
 
 | Field | Nilai Default |
 |-------|--------------|
-| Username | `admin` |
-| Password | `admin123` |
+| Email | `admin@ump.ac.id` |
+| Password demo bawaan | `admin` |
 
-> ⚠️ Kredensial disimpan di `SEED_PENGGUNA` dalam `app.js`. **Ubah sebelum deploy ke publik.**
+> ⚠️ Kredensial demo berada di `SEED_PENGGUNA` dalam `app.js` dan disimpan di browser. Jangan gunakan akun atau data sensitif pada prototipe ini; autentikasi produksi memerlukan backend.
 
 ### Guard Autentikasi
 
@@ -293,7 +292,7 @@ Akses panel admin: `admin/login.html`
 | `admin/galeri.html` | `adminGaleriPage()` | Semua admin |
 | `admin/dokumen.html` | `adminDokumenTable()` | Semua admin |
 | `admin/aktivitas.html` | `adminAktivitasPage()` | Semua admin |
-| `admin/profil-prodi.html` | `adminCrudTable()` | Semua admin |
+| `admin/profil-prodi.html` | *(inline Alpine)* | Semua admin |
 | `admin/pengguna.html` | `adminPenggunaTable()` | **Super Admin** |
 | `admin/pengaturan.html` | *(inline Alpine)* | **Super Admin** |
 | `admin/login.html` | *(form login)* | Publik |
@@ -312,9 +311,9 @@ Akses panel admin: `admin/login.html`
 
 ---
 
-## 🏔️ Alpine.js Functions (28 Fungsi)
+## 🏔️ Komponen Alpine.js
 
-### Halaman Publik (20 fungsi)
+### Fungsi publik utama
 
 | Fungsi | File | Keterangan |
 |--------|------|------------|
@@ -339,7 +338,7 @@ Akses panel admin: `admin/login.html`
 | `detailPengumumanPage()` | `detail-pengumuman.html` | Detail satu pengumuman |
 | `detailGaleriPage()` | `detail-galeri.html` | Detail satu item galeri |
 
-### Admin (8 fungsi)
+### Fungsi admin utama
 
 | Fungsi | Keterangan |
 |--------|-----------|
@@ -354,12 +353,14 @@ Akses panel admin: `admin/login.html`
 
 ### Cara Kerja `adminCrudTable()` (Generic CRUD)
 
-Dikonfigurasi via atribut HTML data:
+Dikonfigurasi melalui objek opsi pada `x-data`, termasuk sumber baris, key entitas, kolom pencarian, validasi, serta kolom ekspor:
 
 ```html
-<div x-data="adminCrudTable()"
-     data-db-key="berita"
-     data-columns='["judul","tanggal","kategori"]'>
+<div x-data="adminCrudTable({
+  rows: SAMPLE_BERITA,
+  dbKey: 'berita',
+  searchKeys: ['judul', 'tanggal', 'kategori']
+})">
 ```
 
 ---
@@ -373,22 +374,23 @@ Semua diagram tersedia dalam 2 format: **Mermaid** (`.mmd`) dan **Draw.io** (`.d
 | ER Diagram | `er-diagram.mmd` | `er-diagram.drawio.xml` | 18 entitas, relasi lengkap |
 | DFD Level 0 | `dfd-level-0.mmd` | `dfd-level-0.drawio.xml` | Aliran data sistem keseluruhan |
 | DFD Level 1 | `dfd-level-1.mmd` | `dfd-level-1.drawio.xml` | Aliran data detail |
+| Activity Diagram | `activity-diagram.mmd` | `activity-diagram.drawio.xml` | Aktivitas pengunjung, admin, dan penyimpanan |
 | Flowchart Sistem | `flowchart-sistem.mmd` | `flowchart-sistem.drawio.xml` | Alur logika aplikasi |
 | Sequence Diagram | `sequence-diagram.mmd` | `sequence-diagram.drawio.xml` | 4 skenario interaksi |
 | Component Diagram | `component-diagram.mmd` | `component-diagram.drawio.xml` | Komponen teknis |
 | Usecase Diagram | `usecase-diagram.mmd` | `usecase-diagram.drawio.xml` | Aktor & use case |
 | Deployment Diagram | `deployment-diagram.mmd` | `deployment-diagram.drawio.xml` | Arsitektur deployment |
 
-> File master multi-tab: `docs/diagrams/drawio/all-diagrams.drawio.xml` (semua 8 diagram dalam satu file)
+> File master multi-tab: `docs/diagrams/drawio/all-diagrams.drawio.xml` (semua 9 diagram dalam satu file)
 
 ### Skenario Sequence Diagram (4 skenario)
 
 | Skenario | Alur |
 |----------|------|
-| 1 | Admin login → AUTH.check → session → dashboard |
-| 2 | Admin CRUD + penyimpanan localStorage + IDB |
-| 3 | Cross-tab update via storage event |
-| 4 | Publik kirim form kontak → DB.save('pesan') → SweetAlert |
+| 1 | Admin login → verifikasi akun lokal → sesi pada localStorage |
+| 2 | Admin CRUD → DB.save ke localStorage → update UI dan sinkronisasi tab |
+| 3 | Publik mendaftar kegiatan → cek duplikasi email per kegiatan → simpan pendaftar |
+| 4 | Publik mengirim formulir kontak → DB.save('pesan') → konfirmasi |
 
 ---
 
@@ -426,8 +428,10 @@ Ketika `app.js` diperbarui (data SEED berubah), localStorage di browser **tidak 
 ### Via Console Browser (F12)
 
 ```javascript
-// Reset semua 18 entitas sekaligus
-localStorage.clear();
+// Reset hanya data aplikasi (tema, sesi, dan preferensi browser tidak ikut terhapus)
+Object.keys(localStorage)
+  .filter(key => key.startsWith('prodihukum_db_v1_'))
+  .forEach(key => localStorage.removeItem(key));
 location.reload();
 
 // Reset satu entitas saja
@@ -490,4 +494,4 @@ Sacode 2025 — Latihan Perancangan & Pengembangan Website Profil
 
 ---
 
-*Terakhir diperbarui: Oktober 2026*
+*Terakhir diperbarui: November 2026*

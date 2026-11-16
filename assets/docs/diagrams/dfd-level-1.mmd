@@ -6,7 +6,7 @@ flowchart TB
 
     %% Data Stores
     subgraph STORES["Data Stores Sistem (localStorage & IndexedDB)"]
-        DS_MASTER[("D1 Basis Data 18 Entitas\n(localStorage: prodihukum_db_v1_*)")]
+        DS_MASTER[("D1 Data aplikasi (18 entitas)\n(localStorage: prodihukum_db_v1_*)")]
         DS_SESSION[("D2 Sesi Administrator\n(localStorage: prodihukum_admin_session)")]
         DS_VIEWS[("D3 Statistik Kunjungan\n(localStorage: prodihukum_pageviews_v1)")]
         DS_IDB[("D4 Salinan data best-effort\n(IndexedDB: ProdiHukumDB / entities)")]
@@ -28,7 +28,7 @@ flowchart TB
 
     %% 1.0 Autentikasi
     EXT_ADMIN -->|"Email & Password login / Permintaan reset"| P1
-    DS_MASTER -->|"Data kredensial pengguna (SEED_PENGGUNA)"| P1
+    DS_MASTER -->|"Data pengguna lokal; seed untuk key hilang atau data tidak valid"| P1
     P1 -->|"Simpan token sesi aktif"| DS_SESSION
     P1 -->|"Data password baru"| P8
     P1 -->|"Status login / pesan validasi"| EXT_ADMIN

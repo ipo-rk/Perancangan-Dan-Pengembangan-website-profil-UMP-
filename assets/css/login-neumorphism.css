@@ -1,0 +1,898 @@
+/* =========================================================
+   LOGIN ADMIN — NEUMORPHISM (Soft UI) · Prodi Hukum UMP
+   Dimuat SETELAH tailwind.min.css & style.css.
+   Semua kelas memakai prefiks .nl- agar tidak bentrok dengan
+   aturan !important lama (.admin-auth-*, .law-court-bg).
+   ========================================================= */
+
+.nl-page {
+  /* Token warna — mode terang */
+  --nl-bg: #f3f6fb;
+  --nl-surface: #f3f6fb;
+  --nl-hi: rgba(255, 255, 255, 0.95); /* sisi terkena cahaya */
+  --nl-lo: rgba(163, 180, 210, 0.5); /* sisi bayangan */
+  --nl-navy: #0a3a8f;
+  --nl-navy-2: #06265f;
+  --nl-royal: #1b5bc0;
+  --nl-royal-2: #0a3a8f;
+  --nl-text: #26324a;
+  --nl-muted: #5d6b86;
+  --nl-ok: #12a150;
+  --nl-warn: #c27800;
+  --nl-bad: #dc3d4a;
+  --nl-red: #c8102e;
+  --nl-gold: #ffc20e;
+  --nl-gold-title: #cf7700; /* kuning pekat agar terbaca di latar putih */
+  --nl-gold-bg: #ffc20e;
+  --nl-gold-tx: #06265f;
+  --nl-card: linear-gradient(
+    145deg,
+    rgba(250, 252, 255, 0.92),
+    rgba(238, 243, 251, 0.85)
+  );
+  --nl-wash: linear-gradient(
+    100deg,
+    rgba(243, 246, 251, 0.93) 0%,
+    rgba(243, 246, 251, 0.78) 28%,
+    rgba(243, 246, 251, 0.34) 55%,
+    rgba(243, 246, 251, 0.06) 100%
+  );
+  --nl-veil: radial-gradient(
+    ellipse 32% 78% at 50% 56%,
+    rgba(243, 246, 251, 0.72),
+    rgba(243, 246, 251, 0) 100%
+  );
+  --nl-wash-m: linear-gradient(
+    180deg,
+    rgba(243, 246, 251, 0.78),
+    rgba(243, 246, 251, 0.48)
+  );
+
+  position: relative;
+  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: hidden;
+  background: var(--nl-bg) !important;
+  background-image: none !important;
+  color: var(--nl-text);
+  font-family: "Inter", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.dark .nl-page {
+  --nl-bg: #0b1322;
+  --nl-surface: #101b31;
+  --nl-hi: rgba(60, 90, 150, 0.16);
+  --nl-lo: rgba(3, 8, 20, 0.78);
+  --nl-navy: #ffffff;
+  --nl-navy-2: #cfdcf7;
+  --nl-royal: #5b92ee;
+  --nl-royal-2: #1b5bc0;
+  --nl-text: #e6edfb;
+  --nl-muted: #9db0d6;
+  --nl-ok: #34d399;
+  --nl-warn: #ffc20e;
+  --nl-bad: #f87171;
+  --nl-red: #ef4444;
+  --nl-gold-title: #ffc20e;
+  --nl-gold-bg: #ffc20e;
+  --nl-gold-tx: #06265f;
+  --nl-card: linear-gradient(
+    145deg,
+    rgba(20, 33, 61, 0.92),
+    rgba(15, 26, 46, 0.88)
+  );
+  --nl-wash: linear-gradient(
+    100deg,
+    rgba(11, 19, 34, 0.92) 0%,
+    rgba(11, 19, 34, 0.74) 28%,
+    rgba(11, 19, 34, 0.34) 55%,
+    rgba(11, 19, 34, 0.08) 100%
+  );
+  --nl-veil: radial-gradient(
+    ellipse 32% 78% at 50% 56%,
+    rgba(11, 19, 34, 0.62),
+    rgba(11, 19, 34, 0) 100%
+  );
+  --nl-wash-m: linear-gradient(
+    180deg,
+    rgba(11, 19, 34, 0.8),
+    rgba(11, 19, 34, 0.5)
+  );
+}
+
+/* ---------- Latar: foto gedung + wash + pita diagonal ---------- */
+.nl-bg {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background: #dfe7f3 url("../image/Gedung-UMP-thumbnail.jpg") 70% center /
+    cover no-repeat;
+}
+.nl-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--nl-veil), var(--nl-wash);
+}
+.dark .nl-bg {
+  background-color: #0b1322;
+}
+.nl-rib {
+  position: absolute;
+  z-index: 1;
+  display: block;
+  height: auto;
+}
+.nl-rib--tr {
+  top: 0;
+  right: 0;
+  width: min(26vw, 380px);
+}
+.nl-rib--br {
+  bottom: 0;
+  right: 0;
+  width: min(26vw, 380px);
+}
+.nl-stripe {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  top: 22vh;
+  width: 32px;
+  height: 118px;
+  background: linear-gradient(
+    90deg,
+    #c8102e 0 18px,
+    transparent 18px 22px,
+    #ffc20e 22px 32px
+  );
+}
+
+.nl-dots {
+  position: absolute;
+  z-index: 1;
+  width: 104px;
+  height: 72px;
+  background-image: radial-gradient(
+    circle,
+    rgba(27, 91, 192, 0.5) 3.2px,
+    transparent 3.6px
+  );
+  background-size: 26px 26px;
+}
+.nl-dots--a {
+  top: 21vh;
+  left: 8vw;
+}
+.nl-dots--b {
+  bottom: 16vh;
+  right: 5vw;
+}
+.nl-dots--c {
+  top: 56vh;
+  left: 2.5vw;
+  width: 78px;
+  height: 78px;
+}
+
+/* ---------- Ilustrasi kiri ---------- */
+.nl-art {
+  display: none;
+  position: absolute;
+  z-index: 1;
+  left: 3vw;
+  bottom: 8vh;
+  width: clamp(300px, 26vw, 520px);
+  pointer-events: none;
+  filter: drop-shadow(0 24px 30px rgba(11, 42, 107, 0.22));
+}
+@media (min-width: 1360px) {
+  .nl-art {
+    display: block;
+  }
+}
+
+/* ---------- Tombol atas (raised) ---------- */
+.nl-top-btn {
+  position: absolute;
+  top: 28px;
+  z-index: 20;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 46px;
+  border-radius: 999px;
+  background: var(--nl-surface);
+  color: var(--nl-navy);
+  font:
+    700 13px/1 "Inter",
+    sans-serif;
+  text-decoration: none;
+  box-shadow:
+    6px 6px 14px var(--nl-lo),
+    -6px -6px 14px var(--nl-hi);
+  transition:
+    box-shadow 0.15s ease,
+    transform 0.15s ease,
+    color 0.15s ease;
+}
+.nl-top-btn:hover {
+  color: var(--nl-royal);
+  transform: translateY(-1px);
+}
+.nl-top-btn:active {
+  transform: none;
+  box-shadow:
+    inset 4px 4px 9px var(--nl-lo),
+    inset -4px -4px 9px var(--nl-hi);
+}
+.nl-top-btn--back {
+  left: 40px;
+  padding: 0 22px 0 18px;
+}
+.nl-top-btn--theme {
+  right: 40px;
+  width: 50px;
+  padding: 0;
+}
+.nl-top-btn svg {
+  width: 19px;
+  height: 19px;
+}
+
+/* ---------- Kolom tengah ---------- */
+.nl-shell {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 14px 16px 16px;
+  min-height: 100vh;
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.nl-brand {
+  text-align: center;
+  margin-bottom: 14px;
+}
+.nl-logo {
+  width: 82px;
+  height: 82px;
+  margin: 0 auto 6px;
+  object-fit: contain;
+  filter: drop-shadow(0 8px 12px rgba(11, 42, 107, 0.3));
+}
+.nl-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.nl-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+.nl-chip--navy {
+  background: linear-gradient(180deg, #e0213f, #c8102e 60%, #a30d25);
+  color: #fff;
+  box-shadow:
+    4px 4px 10px var(--nl-lo),
+    -3px -3px 8px var(--nl-hi);
+}
+.nl-chip--navy svg {
+  width: 17px;
+  height: 17px;
+  color: #ffc20e;
+}
+.nl-chip--gold {
+  background: var(--nl-gold-bg);
+  color: var(--nl-gold-tx);
+  font:
+    italic 600 12.5px/1 Georgia,
+    "Times New Roman",
+    serif;
+  box-shadow:
+    4px 4px 10px var(--nl-lo),
+    -3px -3px 8px var(--nl-hi);
+}
+.nl-title {
+  font-family: "Poppins", sans-serif;
+  font-weight: 800;
+  font-size: clamp(28px, 4.6vw, 36px);
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--nl-navy);
+  text-shadow: 1px 1px 0 var(--nl-hi);
+}
+.nl-title .nl-hukum {
+  color: var(--nl-gold-title);
+}
+.nl-subtitle {
+  margin-top: 4px;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--nl-navy-2);
+}
+.nl-rule {
+  position: relative;
+  width: 100px;
+  height: 2px;
+  margin: 12px auto 0;
+  border-radius: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #c8102e 25%,
+    #ffc20e 50%,
+    #1b5bc0 75%,
+    transparent
+  );
+}
+.nl-rule::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #ffc20e;
+  box-shadow: 0 0 0 2px var(--nl-surface);
+  transform: translate(-50%, -50%);
+}
+
+/* ---------- Kartu form (raised, frosted) ---------- */
+.nl-card {
+  width: 100%;
+  padding: 22px 30px 18px;
+  border-radius: 38px;
+  background: var(--nl-card);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow:
+    18px 18px 42px var(--nl-lo),
+    -14px -14px 34px var(--nl-hi),
+    inset 1px 1px 0 rgba(255, 255, 255, 0.7);
+  animation: nl-rise 0.55s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+.dark .nl-card {
+  border-color: rgba(120, 160, 240, 0.14);
+}
+@keyframes nl-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.nl-welcome {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+.nl-avatar {
+  flex: none;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: radial-gradient(circle at 32% 26%, #ef4a63, #c8102e 62%, #9c0b22);
+  box-shadow:
+    7px 7px 14px var(--nl-lo),
+    -5px -5px 12px var(--nl-hi),
+    inset 0 2px 3px rgba(255, 255, 255, 0.45);
+}
+.nl-avatar svg {
+  width: 27px;
+  height: 27px;
+}
+.nl-welcome h2 {
+  font-family: "Poppins", sans-serif;
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 1.15;
+  color: var(--nl-navy);
+}
+.nl-welcome p {
+  margin-top: 2px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--nl-muted);
+}
+
+.nl-field + .nl-field {
+  margin-top: 12px;
+}
+.nl-label {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  padding: 0 4px;
+  font-size: 13.5px;
+  font-weight: 700;
+  color: var(--nl-navy);
+}
+.nl-label small {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--nl-royal);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Input: cekung (inset) */
+.nl-input-wrap {
+  position: relative;
+}
+.nl-input {
+  width: 100%;
+  height: 46px;
+  padding: 0 48px 0 52px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--nl-surface);
+  color: var(--nl-text);
+  font:
+    600 14px/1 "Inter",
+    sans-serif;
+  box-shadow:
+    inset 6px 6px 12px var(--nl-lo),
+    inset -6px -6px 12px var(--nl-hi);
+  transition: box-shadow 0.18s ease;
+}
+.nl-input::placeholder {
+  color: var(--nl-muted);
+  opacity: 0.7;
+  font-weight: 500;
+}
+.nl-input:focus {
+  outline: none;
+  box-shadow:
+    inset 6px 6px 12px var(--nl-lo),
+    inset -6px -6px 12px var(--nl-hi),
+    0 0 0 3px rgba(27, 91, 192, 0.45);
+}
+.nl-input--pass {
+  letter-spacing: 0.12em;
+}
+.nl-input--pass[type="text"] {
+  letter-spacing: normal;
+}
+.nl-ico {
+  position: absolute;
+  top: 50%;
+  width: 20px;
+  height: 20px;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+.nl-ico--l {
+  left: 20px;
+  color: var(--nl-royal);
+}
+.nl-ico--gold {
+  color: #e8890a;
+}
+.nl-ico--r {
+  right: 20px;
+  color: var(--nl-muted);
+  width: 18px;
+  height: 18px;
+}
+.nl-eye {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  width: 36px;
+  height: 36px;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--nl-muted);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+.nl-eye:hover {
+  color: var(--nl-royal);
+}
+.nl-eye svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Kekuatan sandi */
+.nl-strength {
+  margin-top: 8px;
+  padding: 0 4px;
+}
+.nl-strength-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--nl-muted);
+}
+.nl-strength-head b {
+  font-weight: 800;
+  color: var(--nl-ok);
+}
+.nl-strength[data-level="0"] .nl-strength-head b {
+  color: var(--nl-muted);
+  font-weight: 600;
+}
+.nl-strength[data-level="1"] .nl-strength-head b {
+  color: var(--nl-bad);
+}
+.nl-strength[data-level="2"] .nl-strength-head b {
+  color: var(--nl-warn);
+}
+.nl-strength[data-level="3"] .nl-strength-head b {
+  color: var(--nl-royal);
+}
+.nl-meter {
+  height: 8px;
+  margin-top: 6px;
+  border-radius: 999px;
+  background: var(--nl-surface);
+  box-shadow:
+    inset 2px 2px 4px var(--nl-lo),
+    inset -2px -2px 4px var(--nl-hi);
+  overflow: hidden;
+}
+.nl-meter i {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: 999px;
+  background: var(--nl-ok);
+  transition:
+    width 0.3s ease,
+    background-color 0.3s ease;
+}
+.nl-strength[data-level="1"] .nl-meter i {
+  background: var(--nl-bad);
+}
+.nl-strength[data-level="2"] .nl-meter i {
+  background: #ffc20e;
+}
+.nl-strength[data-level="3"] .nl-meter i {
+  background: var(--nl-royal);
+}
+.nl-strength[data-level="4"] .nl-meter i {
+  background: linear-gradient(90deg, #12a150, #22c55e);
+}
+
+.nl-checks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px 14px;
+  margin-top: 6px;
+  padding: 7px 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.28);
+  list-style: none;
+}
+.dark .nl-checks {
+  background: rgba(255, 255, 255, 0.04);
+}
+.nl-checks li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12.5px;
+  color: var(--nl-muted);
+  transition: color 0.2s ease;
+}
+.nl-checks svg {
+  width: 15px;
+  height: 15px;
+  flex: none;
+  color: var(--nl-muted);
+  opacity: 0.45;
+  transition:
+    color 0.2s ease,
+    opacity 0.2s ease;
+}
+.nl-checks li.is-ok {
+  color: var(--nl-text);
+}
+.nl-checks li.is-ok svg {
+  color: var(--nl-ok);
+  opacity: 1;
+}
+
+/* Ingat saya / lupa */
+.nl-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 10px;
+  padding: 0 4px;
+  font-size: 13px;
+}
+.nl-remember {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 500;
+  color: var(--nl-text);
+}
+.nl-check {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin: 0;
+  border-radius: 7px;
+  background: var(--nl-surface);
+  box-shadow:
+    inset 3px 3px 6px var(--nl-lo),
+    inset -3px -3px 6px var(--nl-hi);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition:
+    background 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.nl-check::after {
+  content: "";
+  width: 11px;
+  height: 6px;
+  margin-top: -2px;
+  border-left: 2.5px solid #fff;
+  border-bottom: 2.5px solid #fff;
+  transform: rotate(-45deg) scale(0);
+  transition: transform 0.15s ease;
+}
+.nl-check:checked {
+  background: linear-gradient(145deg, #1b5bc0, #0a3a8f);
+  box-shadow:
+    3px 3px 7px var(--nl-lo),
+    -2px -2px 6px var(--nl-hi);
+}
+.nl-check:checked::after {
+  transform: rotate(-45deg) scale(1);
+}
+.nl-forgot {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  color: var(--nl-royal);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.nl-forgot svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* Tombol utama (raised + glow biru) */
+.nl-submit {
+  width: 100%;
+  height: 52px;
+  margin-top: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border: 0;
+  border-radius: 999px;
+  color: #fff;
+  font:
+    700 16.5px/1 "Poppins",
+    sans-serif;
+  cursor: pointer;
+  background: linear-gradient(180deg, #e0213f 0%, #c8102e 55%, #a30d25 100%);
+  box-shadow:
+    0 14px 26px rgba(200, 16, 46, 0.38),
+    8px 8px 16px var(--nl-lo),
+    -6px -6px 14px var(--nl-hi),
+    inset 0 2px 1px rgba(255, 255, 255, 0.4),
+    inset 0 -3px 6px rgba(100, 5, 22, 0.35);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    filter 0.15s ease;
+}
+.nl-submit svg {
+  width: 22px;
+  height: 22px;
+}
+.nl-submit:hover {
+  filter: brightness(1.06);
+  transform: translateY(-1px);
+}
+.nl-submit:active {
+  transform: none;
+  box-shadow:
+    inset 5px 5px 12px rgba(100, 5, 22, 0.6),
+    inset -3px -3px 8px rgba(255, 120, 140, 0.35);
+}
+.nl-submit:disabled {
+  opacity: 0.8;
+  cursor: not-allowed;
+  transform: none;
+}
+.nl-spin {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.35);
+  border-top-color: #fff;
+  animation: nl-spin 0.8s linear infinite;
+}
+@keyframes nl-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.nl-note {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 12px;
+  font-size: 12.5px;
+  line-height: 1.5;
+  text-align: center;
+  color: var(--nl-muted);
+}
+.nl-note svg {
+  width: 15px;
+  height: 15px;
+  flex: none;
+  margin-top: 2px;
+  color: var(--nl-navy);
+}
+.nl-demo {
+  display: block;
+  margin: 4px auto 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--nl-royal);
+  background: none;
+  border: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+/* ---------- Footer ---------- */
+.nl-foot {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 12.5px;
+}
+.nl-foot .nl-rule {
+  width: 200px;
+  margin: 0 auto 12px;
+  height: 1.5px;
+  opacity: 0.7;
+}
+.nl-home {
+  font-weight: 600;
+  color: var(--nl-red);
+}
+.nl-home:hover {
+  text-decoration: underline;
+}
+.nl-foot p {
+  margin-top: 4px;
+  color: var(--nl-muted);
+}
+.nl-foot .nl-help {
+  font-weight: 700;
+  color: var(--nl-navy);
+}
+.nl-foot .nl-help a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ---------- Fokus & aksesibilitas ---------- */
+.nl-page a:focus-visible,
+.nl-page button:focus-visible,
+.nl-check:focus-visible {
+  outline: 3px solid rgba(255, 194, 14, 0.9);
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .nl-card {
+    animation: none;
+  }
+  .nl-page * {
+    transition: none !important;
+  }
+}
+
+/* ---------- Responsif ---------- */
+@media (max-width: 640px) {
+  .nl-input {
+    height: 48px;
+  }
+  .nl-top-btn {
+    top: 16px;
+    height: 42px;
+  }
+  .nl-top-btn--back {
+    left: 14px;
+    padding: 0 16px 0 14px;
+  }
+  .nl-top-btn--theme {
+    right: 14px;
+    width: 44px;
+  }
+  .nl-shell {
+    justify-content: flex-start;
+    padding-top: 72px;
+  }
+  .nl-card {
+    padding: 24px 20px 22px;
+    border-radius: 30px;
+  }
+  .nl-logo {
+    width: 84px;
+    height: 84px;
+  }
+  .nl-dots--a,
+  .nl-dots--c,
+  .nl-stripe {
+    display: none;
+  }
+}
+@media (max-width: 380px) {
+  .nl-checks {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Bola kaca di mode gelap dibuat lebih halus */
+.dark .nl-glass {
+  fill-opacity: 0.12;
+  stroke-opacity: 0.25;
+}
+.dark .nl-art {
+  filter: drop-shadow(0 24px 30px rgba(0, 0, 0, 0.5));
+}
+
+/* Layar sempit: foto tetap terlihat di balik kartu dengan kabut merata */
+@media (max-width: 900px) {
+  .nl-bg::after {
+    background: var(--nl-wash-m);
+  }
+}

@@ -2,7 +2,7 @@ erDiagram
     %% Asosiasi berikut adalah lookup aplikasi; tidak ada foreign-key enforcement.
     KEGIATAN o|--o{ PENDAFTAR : "lookup opsional melalui kegiatanId"
     DOSEN o|--o{ STRUKTUR : "lookup opsional melalui dosenId"
-    DOSEN o|--o{ KURIKULUM : "pencocokan nama pengampu"
+    DOSEN o|--o{ KURIKULUM : "lookup kodeDosen; fallback nama pengampu"
 
     %% ==========================================
     %% DOMAIN 1: AKADEMIK & STRUKTUR ORGANISASI
@@ -10,13 +10,7 @@ erDiagram
     DOSEN {
         number id PK "ID unik dosen"
         string nama "Nama lengkap beserta gelar"
-        string kode "Kode dosen (contoh: HKM001; dapat kosong)"
-        string jabatan "Jabatan akademik"
-        string pendidikan "Riwayat pendidikan terakhir"
-        string spesialisasi "Bidang keahlian hukum"
-        string foto "Path file foto dosen"
-        string email "Email resmi dosen"
-        string telepon "Nomor kontak telepon"
+        string kode "Kode dosen (contoh: HKM001; dapat tidak tercantum)"
     }
 
     STRUKTUR {
@@ -33,10 +27,8 @@ erDiagram
         string nama "Nama mata kuliah"
         number sks "Bobot SKS (1-6)"
         number semester "Semester sajian (1-8)"
-        string kategori "Wajib / Pilihan / MBKM"
-        string deskripsi "Deskripsi singkat capaian MK"
-        string pengampu "Nama pengampu; dicocokkan setelah normalisasi"
-        string kodeDosen "Kode dosen opsional; teks biasa, bukan relasi"
+        string pengampu "Nama pengampu; fallback pencocokan ternormalisasi"
+        string kodeDosen "Kode dosen opsional; lookup aplikasi, bukan foreign key"
     }
 
     ALUMNI {

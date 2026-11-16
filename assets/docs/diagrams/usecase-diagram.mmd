@@ -30,7 +30,7 @@ flowchart LR
         %% Modul khusus yang dibatasi AUTH.guard() untuk Super Admin
         UC_USERS(["Kelola Akun Pengguna & Hak Akses"])
         UC_SETTINGS(["Kelola Pengaturan Website & Media Sosial"])
-        UC_BACKUP(["Backup & Restore Basis Data JSON"])
+        UC_BACKUP(["Backup & Restore Data Aplikasi JSON"])
     end
 
     %% Relasi Pengunjung ke Use Case Publik
@@ -55,6 +55,6 @@ flowchart LR
     SUPER --- UC_BACKUP
 
     %% Catatan Arsitektural Sistem (Non-Use Case)
-    NOTE_STORAGE["Catatan sistem\nData utama dan sesi disimpan pada browser. Reset kata sandi tidak memakai verifikasi email. Backup/restore JSON tersedia bagi Super Admin; ekspor kurikulum mengunduh CSV sesuai filter, sedangkan import masih simulasi."]
+    NOTE_STORAGE["Catatan sistem\nData utama dan sesi disimpan pada browser. Reset kata sandi tidak memakai verifikasi email. Backup/restore JSON tersedia bagi Super Admin; ekspor kurikulum mengunduh CSV sesuai filter dan impor CSV belum tersedia."]
     UC_AKADEMIK -.- NOTE_STORAGE
     UC_SETTINGS -.- NOTE_STORAGE

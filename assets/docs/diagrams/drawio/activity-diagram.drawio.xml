@@ -60,7 +60,7 @@
         <mxCell id="act_area" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff7ed;strokeColor=#f97316;fontColor=#7c2d12;fontStyle=1;fontSize=11;fontFamily=Arial;" value="Area yang diakses?" vertex="1">
           <mxGeometry height="75" width="130" x="815" y="170" as="geometry" />
         </mxCell>
-        <mxCell id="act_load" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#64748b;fontColor=#0f172a;fontSize=11;fontFamily=Arial;" value="Muat data dari localStorage; seed hanya jika key belum ada" vertex="1">
+        <mxCell id="act_load" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#64748b;fontColor=#0f172a;fontSize=11;fontFamily=Arial;" value="Muat data dari localStorage; seed jika key hilang, JSON rusak, atau bentuk tidak sesuai" vertex="1">
           <mxGeometry height="65" width="230" x="70" y="315" as="geometry" />
         </mxCell>
         <mxCell id="act_view" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#64748b;fontColor=#0f172a;fontSize=11;fontFamily=Arial;" value="Tampilkan konten; berita dan artikel publik berstatus Published" vertex="1">
@@ -105,13 +105,13 @@
         <mxCell id="act_login" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#64748b;fontColor=#0f172a;fontSize=11;fontFamily=Arial;" value="Masukkan email dan kata sandi" vertex="1">
           <mxGeometry height="55" width="180" x="710" y="435" as="geometry" />
         </mxCell>
-        <mxCell id="act_credentials" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff7ed;strokeColor=#f97316;fontColor=#7c2d12;fontStyle=1;fontSize=10;fontFamily=Arial;" value="Email dan sandi cocok, akun aktif, serta data sesi valid?" vertex="1">
+        <mxCell id="act_credentials" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff7ed;strokeColor=#f97316;fontColor=#7c2d12;fontStyle=1;fontSize=10;fontFamily=Arial;" value="Email dan sandi cocok, akun aktif, serta AUTH.login() berhasil?" vertex="1">
           <mxGeometry height="85" width="180" x="710" y="510" as="geometry" />
         </mxCell>
         <mxCell id="act_login_error" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fef2f2;strokeColor=#ef4444;fontColor=#7f1d1d;fontSize=10;fontFamily=Arial;" value="Tampilkan kegagalan login" vertex="1">
           <mxGeometry height="55" width="180" x="710" y="620" as="geometry" />
         </mxCell>
-        <mxCell id="act_session" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#64748b;fontColor=#0f172a;fontSize=11;fontFamily=Arial;" value="AUTH.login(): simpan sesi pada localStorage" vertex="1">
+        <mxCell id="act_session" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#64748b;fontColor=#0f172a;fontSize=11;fontFamily=Arial;" value="Sesi lokal tersimpan" vertex="1">
           <mxGeometry height="60" width="180" x="710" y="700" as="geometry" />
         </mxCell>
         <mxCell id="act_guard" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#64748b;fontColor=#0f172a;fontSize=11;fontFamily=Arial;" value="AUTH.guard(): periksa sesi" vertex="1">
@@ -138,7 +138,7 @@
         <mxCell id="act_admin_save" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#3b82f6;fontColor=#1e3a8a;fontSize=11;fontFamily=Arial;" value="Siapkan perubahan data" vertex="1">
           <mxGeometry height="55" width="180" x="800" y="910" as="geometry" />
         </mxCell>
-        <mxCell id="act_backup" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#3b82f6;fontColor=#1e3a8a;fontSize=11;fontFamily=Arial;" value="Minta salinan IndexedDB secara asinkron (best-effort)" vertex="1">
+        <mxCell id="act_backup" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#3b82f6;fontColor=#1e3a8a;fontSize=11;fontFamily=Arial;" value="Jadwalkan salinan IndexedDB asinkron (best-effort)" vertex="1">
           <mxGeometry height="60" width="250" x="555" y="1120" as="geometry" />
         </mxCell>
         <mxCell id="act_write" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#3b82f6;fontColor=#1e3a8a;fontSize=11;fontFamily=Arial;" value="DB.save(): tulis sinkron ke localStorage" vertex="1">
@@ -340,7 +340,7 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="ae_saved_yes" edge="1" parent="1" source="act_saved" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#10b981;fontSize=9;" target="act_log" value="Ya">
+        <mxCell id="ae_saved_yes" edge="1" parent="1" source="act_saved" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#10b981;fontSize=9;" target="act_update" value="Ya">
           <mxGeometry relative="1" x="-0.5829" as="geometry">
             <Array as="points">
               <mxPoint x="820" y="1320" />
@@ -348,13 +348,13 @@
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="ae_retry_yes" edge="1" parent="1" source="act_retry" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#10b981;fontSize=9;" target="act_log" value="Ya">
+        <mxCell id="ae_retry_yes" edge="1" parent="1" source="act_retry" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#10b981;fontSize=9;" target="act_update" value="Ya">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="ae_log_result" edge="1" parent="1" source="act_log" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#64748b;" target="act_result" value="">
+        <mxCell id="ae_log_result" edge="1" parent="1" source="act_update" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#64748b;" target="act_log" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="ae_result_update" edge="1" parent="1" source="act_result" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#64748b;" target="act_update" value="">
+        <mxCell id="ae_result_update" edge="1" parent="1" source="act_log" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#64748b;" target="act_result" value="">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
         <mxCell id="ae_update_event" edge="1" parent="1" source="act_update" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#64748b;" target="act_storage_event" value="">

@@ -311,7 +311,33 @@
     ],
     exportFilename: 'kurikulum-prodi-hukum.csv',
     itemLabel: 'mata kuliah ini',
-    validate(f) { if(!f.kode || !f.nama){ NeuAlert.error('Kode dan Nama Mata Kuliah wajib diisi.'); return false; } return true; }
+    validate(f) {
+      const kode = String(f.kode || '').trim();
+      const nama = String(f.nama || '').trim();
+      const sks = Number(f.sks);
+      const semester = Number(f.semester);
+
+      if (!kode || !nama) {
+        NeuAlert.error('Kode dan Nama Mata Kuliah wajib diisi.');
+        return false;
+      }
+      if (!Number.isInteger(sks) || sks < 1 || sks > 6) {
+        NeuAlert.error('SKS harus berupa bilangan bulat dari 1 sampai 6.');
+        return false;
+      }
+      if (!Number.isInteger(semester) || semester < 1 || semester > 8) {
+        NeuAlert.error('Semester harus berupa bilangan bulat dari 1 sampai 8.');
+        return false;
+      }
+
+      f.kode = kode;
+      f.nama = nama;
+      f.sks = sks;
+      f.semester = semester;
+      f.pengampu = String(f.pengampu || '').trim();
+      f.kodeDosen = String(f.kodeDosen || '').trim();
+      return true;
+    }
   })">
           <div class="space-y-4 mb-6">
             <div class="curriculum-filter-grid">

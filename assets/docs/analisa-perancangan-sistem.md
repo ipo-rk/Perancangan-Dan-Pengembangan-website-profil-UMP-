@@ -12,7 +12,7 @@ Website ini adalah prototipe client-side tanpa backend aplikasi. Berkas HTML sta
 
 ## 2. Alur data dan antarmuka
 
-1. Halaman memuat script aplikasi, menginisialisasi tema, memuat setiap entitas dari `localStorage`, dan mengisi seed ketika key belum ada.
+1. Halaman memuat script aplikasi, menginisialisasi tema, dan memuat setiap entitas dari `localStorage`. `DB.load()` memakai seed ketika key belum ada, JSON rusak, atau bentuk data tidak sesuai. Jika key entitas dihapus pada tab lain, tab yang menerima event memulihkan seed sesuai tipe data (daftar maupun objek) dan menyebarkan pembaruan ke komponen lain.
 2. Alpine.js menghubungkan data aplikasi dengan tampilan HTML dan interaksi pengguna.
 3. Panel admin menulis konten ke key lokal. Tab publik lain pada origin yang sama memproses event `storage` dan memuat ulang halaman ketika entitas konten berubah.
 4. Form kontak menambah `pesan`; formulir pendaftaran menambah `pendaftar`. Keduanya berjalan lokal, bukan mengirim data ke server atau email.
@@ -32,7 +32,7 @@ Lupa sandi memverifikasi kecocokan email dan status aktif terhadap data lokal, l
 
 Aplikasi memakai 18 key entitas: `berita`, `dosen`, `dokumen`, `galeri`, `pengumuman`, `kegiatan`, `pendaftar`, `pesan`, `artikel`, `prestasi`, `kurikulum`, `alumni`, `pengguna`, `aktivitas`, `notifikasi`, `profil`, `struktur`, dan `pengaturan`.
 
-Enam belas key menyimpan daftar record; `profil` dan `pengaturan` menyimpan satu objek. Kode menerapkan tiga asosiasi melalui lookup aplikasi: `pendaftar.kegiatanId` ke `kegiatan.id`, `struktur.dosenId` opsional ke `dosen.id`, dan `kurikulum.kodeDosen` ke `dosen.kode` dengan pencocokan nama `pengampu` sebagai fallback untuk record tanpa kode. `pendaftar.kegiatanNama` adalah salinan teks nama kegiatan. Lookup tidak menegakkan integritas referensial, cascade, atau transaksi; karena itu data yatim dapat tertinggal. Seed struktur lama dapat tidak memiliki `dosenId`. Field `penulis`, `user`, dan teks sejenis bukan relasi ke entitas pengguna/dosen.
+Enam belas key menyimpan daftar record; `profil` dan `pengaturan` menyimpan satu objek. Kode menerapkan tiga asosiasi melalui lookup aplikasi: `pendaftar.kegiatanId` ke `kegiatan.id`, `struktur.dosenId` opsional ke `dosen.id`, dan `kurikulum.kodeDosen` ke `dosen.kode` saat kedua kode tersedia. Jika salah satu kode kosong atau tidak tercantum, `pengampu` dicocokkan dengan nama dosen setelah normalisasi. `pendaftar.kegiatanNama` adalah salinan teks nama kegiatan. Lookup tidak menegakkan integritas referensial, cascade, atau transaksi; karena itu data yatim dapat tertinggal. Seed struktur lama dapat tidak memiliki `dosenId`. Field `penulis`, `user`, dan teks sejenis bukan relasi ke entitas pengguna/dosen.
 
 Rincian kolom dan batas implementasi dicatat pada [`spesifikasi-sistem.md`](spesifikasi-sistem.md).
 
@@ -58,9 +58,9 @@ Audit kode dan uji browser memverifikasi bahwa halaman Admin dan publik mengguna
 
 Temuan dan batasan yang terverifikasi:
 
-- Tiga record seed struktur organisasi menggunakan nama lama dan tidak mempunyai `dosenId`; nama tersebut tidak cocok dengan roster dosen saat audit. UI Admin sudah mendukung tautan berdasarkan ID, tetapi record seed/tersimpan tersebut perlu ditautkan secara manual agar nama, kode, dan foto mengikuti dosen.
-- Ringkasan `154 SKS (8 Semester)` di halaman Profil ditulis statis, bukan dihitung dari data kurikulum. Nilainya dapat tertinggal setelah perubahan kurikulum.
-- Ekspor pada Admin Kurikulum mengunduh CSV sesuai pencarian dan filter aktif; tombol Import masih menampilkan notifikasi simulasi. Unduhan CSV halaman publik merupakan fungsi tersendiri.
+- Seed struktur organisasi terkini menautkan anggota ke roster dosen melalui `dosenId`; record lokal lama yang tidak cocok dengan pola migrasi otomatis masih dapat ditautkan melalui Admin agar nama dan foto mengikuti dosen.
+- Ringkasan beban studi halaman Profil dihitung dari entitas `kurikulum` aktif dan mengikuti perubahan mata kuliah serta SKS.
+- Admin Kurikulum menyediakan ekspor CSV sesuai pencarian dan filter aktif; belum tersedia kontrol impor. Unduhan CSV halaman publik merupakan fungsi tersendiri.
 - Angka mahasiswa aktif diatur melalui Pengaturan dan tidak dihitung dari record mahasiswa; aplikasi tidak memiliki entitas atau modul mahasiswa.
 - Sejumlah mata kuliah tidak mencantumkan pengampu. Kedua tampilan menggunakan data yang sama dan menampilkan status tidak tercantum; aplikasi tidak mengisi pengampu dari sumber lain.
 - Berita dan artikel publik memfilter record dengan status `Published`.

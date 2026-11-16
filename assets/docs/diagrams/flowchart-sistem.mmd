@@ -6,7 +6,7 @@ flowchart TD
 
     subgraph PUBLIC["Alur Pengunjung"]
         direction TD
-        LOAD_PUBLIC["Muat halaman dan data dari localStorage; gunakan seed bila key belum tersedia"]
+        LOAD_PUBLIC["Muat data dari localStorage; seed dipakai jika key hilang, JSON rusak, atau bentuknya tidak sesuai"]
         PUBLISHED["Tampilkan konten sesuai modul; berita dan artikel hanya berstatus Published"]
         PAGEVIEW["Catat pageview pada browser"]
         PUBLIC_ACTION{Aksi pengunjung?}
@@ -46,7 +46,9 @@ flowchart TD
         LOGIN_FORM["Masukkan email dan kata sandi"]
         LOGIN_CHECK{Akun aktif dan kredensial cocok?}
         LOGIN_DENIED["Tampilkan pesan login gagal"]
-        LOGIN_SESSION["Simpan sesi lokal prodihukum_admin_session"]
+        LOGIN_SESSION["AUTH.login(): simpan sesi lokal"]
+        SESSION_SAVED{Sesi valid dan berhasil disimpan?}
+        SESSION_ERROR["Tampilkan kegagalan membuat atau menyimpan sesi"]
         LOGIN_HOME["Buka dashboard admin"]
         RESET_FORM["Masukkan email terdaftar"]
         RESET_CHECK{Email ditemukan dan akun aktif?}
@@ -65,7 +67,9 @@ flowchart TD
 
         ADMIN_ROUTE -->|login.html| LOGIN_FORM --> LOGIN_CHECK
         LOGIN_CHECK -->|Tidak| LOGIN_DENIED --> FINISH
-        LOGIN_CHECK -->|Ya| LOGIN_SESSION --> LOGIN_HOME --> FINISH
+        LOGIN_CHECK -->|Ya| LOGIN_SESSION --> SESSION_SAVED
+        SESSION_SAVED -->|Ya| LOGIN_HOME --> FINISH
+        SESSION_SAVED -->|Tidak| SESSION_ERROR --> FINISH
         ADMIN_ROUTE -->|lupa-sandi.html| RESET_FORM --> RESET_CHECK
         RESET_CHECK -->|Tidak, tampilkan pesan| RESET_FORM
         RESET_CHECK -->|Ya| RESET_PASSWORD --> RESET_PASSWORD_CHECK
@@ -92,7 +96,7 @@ flowchart TD
         RETRY["Pangkas log internal yang dibatasi, lalu coba sekali lagi"]
         RETRY_RESULT{Percobaan ulang berhasil?}
         SAVE_FAIL["Batalkan perubahan dan beri tahu admin"]
-        ASYNC_COPY["Minta salinan IndexedDB secara asinkron (best-effort)"]
+        ASYNC_COPY["Jadwalkan salinan IndexedDB asinkron (best-effort)"]
         ACTIVITY["Catat aktivitas dan notifikasi"]
         UPDATE_VIEW["Pancarkan db-update; tab lain menerima storage event"]
         SAVE_OK["Perbarui tampilan dan tampilkan hasil"]
@@ -101,10 +105,10 @@ flowchart TD
         LOGOUT["Hapus sesi lokal dan kembali ke login"]
 
         ADMIN_HOME --> ADMIN_ACTION
-        ADMIN_ACTION -->|CRUD| CRUD --> SAVE --> SAVE_RESULT
-        SAVE_RESULT -->|Ya| ASYNC_COPY --> ACTIVITY --> UPDATE_VIEW --> SAVE_OK --> FINISH
+        ADMIN_ACTION -->|CRUD| CRUD --> ASYNC_COPY --> SAVE --> SAVE_RESULT
+        SAVE_RESULT -->|Ya| UPDATE_VIEW --> ACTIVITY --> SAVE_OK --> FINISH
         SAVE_RESULT -->|Tidak| RETRY --> RETRY_RESULT
-        RETRY_RESULT -->|Ya| ASYNC_COPY
+        RETRY_RESULT -->|Ya| UPDATE_VIEW
         RETRY_RESULT -->|Tidak| SAVE_FAIL --> FINISH
         ADMIN_ACTION -->|Backup / restore| BACKUP --> FINISH
         ADMIN_ACTION -->|Ekspor kurikulum| EXPORT --> FINISH

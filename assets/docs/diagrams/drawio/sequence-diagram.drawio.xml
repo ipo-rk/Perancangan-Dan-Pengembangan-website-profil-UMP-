@@ -108,7 +108,7 @@
           </mxGeometry>
         </mxCell>
 
-        <mxCell id="m_s1_3" value="3. Kembalikan data daftar pengguna (atau SEED_PENGGUNA)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#475569;dashed=1;fontSize=11;fontFamily=Arial;" parent="1" edge="1">
+        <mxCell id="m_s1_3" value="3. Data pengguna (seed jika key hilang, JSON rusak, atau bentuk tidak sesuai)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#475569;dashed=1;fontSize=11;fontFamily=Arial;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="860" y="250" as="sourcePoint" />
             <mxPoint x="640" y="250" as="targetPoint" />
@@ -159,14 +159,14 @@
           <mxGeometry x="60" y="520" width="300" height="20" as="geometry" />
         </mxCell>
 
-        <mxCell id="m_s1_9" value="9. Kembalikan status false (Autentikasi ditolak)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#ef4444;dashed=1;fontSize=11;fontFamily=Arial;" parent="1" edge="1">
+        <mxCell id="m_s1_9" value="9. Kredensial ditolak atau AUTH.login() gagal menyimpan sesi" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#ef4444;dashed=1;fontSize=11;fontFamily=Arial;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="640" y="560" as="sourcePoint" />
             <mxPoint x="430" y="560" as="targetPoint" />
           </mxGeometry>
         </mxCell>
 
-        <mxCell id="m_s1_10" value="10. Tampilkan dialog SweetAlert error: Kredensial Tidak Cocok" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#ef4444;fontSize=11;fontFamily=Arial;" parent="1" edge="1">
+        <mxCell id="m_s1_10" value="10. Tampilkan pesan kegagalan login atau penyimpanan sesi" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#ef4444;fontSize=11;fontFamily=Arial;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="430" y="590" as="sourcePoint" />
             <mxPoint x="70" y="590" as="targetPoint" />
@@ -187,14 +187,14 @@
           </mxGeometry>
         </mxCell>
 
-        <mxCell id="m_s2_2" value="12. Panggil DB.save(entityKey, dataArray)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#2563eb;fontSize=11;fontFamily=Arial;" parent="1" edge="1">
+        <mxCell id="m_s2_2" value="12. Panggil DB.save(entityKey, data sesuai bentuk entitas)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#2563eb;fontSize=11;fontFamily=Arial;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="430" y="760" as="sourcePoint" />
             <mxPoint x="640" y="760" as="targetPoint" />
           </mxGeometry>
         </mxCell>
 
-        <mxCell id="m_s2_3" value="14. setItem(&#x27;prodihukum_db_v1_&#x27; + entityKey, JSON.stringify(dataArray))" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#475569;fontSize=11;fontFamily=Arial;" parent="1" edge="1">
+        <mxCell id="m_s2_3" value="14. setItem(key entitas, JSON.stringify(data))" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#475569;fontSize=11;fontFamily=Arial;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="640" y="800" as="sourcePoint" />
             <mxPoint x="860" y="800" as="targetPoint" />
@@ -206,14 +206,14 @@
           <mxGeometry x="50" y="840" width="1380" height="540" as="geometry" />
         </mxCell>
 
-        <mxCell id="m_s2_4" value="15. logActivity(): catat perubahan admin" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#2563eb;fontSize=11;fontFamily=Arial;" parent="1" edge="1">
+        <mxCell id="m_s2_4" value="16. Panggil logActivity(): catat perubahan admin" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#2563eb;fontSize=11;fontFamily=Arial;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="640" y="880" as="sourcePoint" />
             <mxPoint x="860" y="880" as="targetPoint" />
           </mxGeometry>
         </mxCell>
 
-        <mxCell id="m_s2_5" value="16. Dispatch CustomEvent(&#x27;db-update&#x27;) pada tab aktif" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#16a34a;fontSize=11;fontFamily=Arial;" parent="1" edge="1">
+        <mxCell id="m_s2_5" value="15. Dispatch CustomEvent(db-update) pada tab aktif" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#16a34a;fontSize=11;fontFamily=Arial;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="640" y="930" as="sourcePoint" />
             <mxPoint x="430" y="930" as="targetPoint" />

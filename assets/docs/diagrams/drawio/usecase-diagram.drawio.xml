@@ -160,7 +160,7 @@
         <!-- ============================================================= -->
         <!-- CATATAN ARSITEKTURAL (NOTE NODE)                              -->
         <!-- ============================================================= -->
-        <mxCell id="n_note_system" value="&lt;b&gt;Catatan sistem&lt;/b&gt;&lt;br&gt;Sesi dan data dikelola di browser. AUTH.guard() mewajibkan login pada halaman admin dan membatasi Pengguna serta Pengaturan untuk Super Admin. Pemeriksaan ini berjalan di sisi klien, bukan kontrol keamanan server. Backup/restore JSON tersedia untuk Super Admin; ekspor kurikulum mengunduh CSV sesuai filter, sedangkan import masih simulasi." style="shape=note;whiteSpace=wrap;html=1;size=15;align=left;verticalAlign=middle;fillColor=#fefce8;strokeColor=#ca8a04;fontColor=#713f12;fontSize=11;fontFamily=Arial;" parent="1" vertex="1">
+        <mxCell id="n_note_system" value="&lt;b&gt;Catatan sistem&lt;/b&gt;&lt;br/&gt;Sesi dan data dikelola di browser. AUTH.guard() membatasi Pengguna serta Pengaturan untuk Super Admin; pemeriksaan berjalan di sisi klien, bukan kontrol keamanan server. Backup/restore JSON tersedia untuk Super Admin; ekspor kurikulum mengunduh CSV sesuai filter dan impor CSV belum tersedia." style="shape=note;whiteSpace=wrap;html=1;size=15;align=left;verticalAlign=middle;fillColor=#fefce8;strokeColor=#ca8a04;fontColor=#713f12;fontSize=11;fontFamily=Arial;" parent="1" vertex="1">
           <mxGeometry x="240" y="940" width="840" height="70" as="geometry" />
         </mxCell>
 

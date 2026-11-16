@@ -4,7 +4,7 @@ flowchart TD
 
     subgraph PUBLIC["Alur Pengunjung"]
         direction TB
-        LOAD["Muat data dari localStorage; seed dipakai hanya jika key belum ada"]
+        LOAD["Muat data dari localStorage; seed dipakai jika key hilang, JSON rusak, atau bentuknya tidak sesuai"]
         VIEW["Tampilkan konten; berita dan artikel publik berstatus Published"]
         ACTION{Aksi pengunjung?}
         BROWSE["Jelajah, cari, atau unduh dokumen"]
@@ -34,9 +34,10 @@ flowchart TD
         direction TB
         ENTRY{Login atau buka modul admin?}
         LOGIN["Masukkan email dan kata sandi"]
-        CREDENTIALS{Email dan sandi cocok, akun aktif, serta data sesi valid?}
+        CREDENTIALS{Email dan sandi cocok serta akun aktif?}
         LOGIN_ERROR["Tampilkan kegagalan login"]
         SESSION["AUTH.login(): simpan sesi pada localStorage"]
+        SESSION_SAVED{Data sesi valid dan berhasil disimpan?}
         GUARD["AUTH.guard(): periksa sesi"]
         SESSION_VALID{Sesi valid?}
         REDIRECT["Arahkan ke halaman login"]
@@ -48,7 +49,9 @@ flowchart TD
 
         ENTRY -->|Login| LOGIN --> CREDENTIALS
         CREDENTIALS -->|Tidak| LOGIN_ERROR --> LOGIN
-        CREDENTIALS -->|Ya| SESSION --> ADMIN_ACTION
+        CREDENTIALS -->|Ya| SESSION --> SESSION_SAVED
+        SESSION_SAVED -->|Ya| ADMIN_ACTION
+        SESSION_SAVED -->|Tidak| LOGIN_ERROR
         ENTRY -->|Modul admin| GUARD --> SESSION_VALID
         SESSION_VALID -->|Tidak| REDIRECT
         SESSION_VALID -->|Ya| ROLE_PAGE
@@ -64,7 +67,7 @@ flowchart TD
 
     subgraph PERSISTENCE["Penyimpanan dan pembaruan"]
         direction TB
-        BACKUP["Minta salinan IndexedDB secara asinkron (best-effort)"]
+        BACKUP["Jadwalkan salinan IndexedDB asinkron (best-effort)"]
         WRITE["DB.save(): tulis sinkron ke localStorage"]
         SAVED{Penulisan berhasil?}
         PRUNE["Pangkas aktivitas/pageview yang dibatasi; coba sekali lagi"]
@@ -80,9 +83,9 @@ flowchart TD
         BACKUP --> WRITE --> SAVED
         SAVED -->|Tidak| PRUNE --> RETRY
         RETRY -->|Tidak| ROLLBACK
-        SAVED -->|Ya| LOG
-        RETRY -->|Ya| LOG
-        LOG --> RESULT --> UPDATE
+        SAVED -->|Ya| UPDATE
+        RETRY -->|Ya| UPDATE
+        UPDATE --> LOG --> RESULT
         UPDATE --> STORAGE_EVENT --> CONTENT_CHANGED
         CONTENT_CHANGED -->|Ya| RELOAD
         CONTENT_CHANGED -->|Tidak| FINISH

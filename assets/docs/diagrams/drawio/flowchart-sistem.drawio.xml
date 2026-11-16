@@ -25,7 +25,7 @@
         <!-- ============================================================= -->
         <!-- JALUR KIRI: HALAMAN PUBLIK                                    -->
         <!-- ============================================================= -->
-        <mxCell id="f_pub_load" value="Muat Dokumen HTML &amp;amp; Inisialisasi DB&#xa;(Baca localStorage; Fallback ke SEED)" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#16a34a;fontSize=11;fontFamily=Arial;" parent="1" vertex="1">
+        <mxCell id="f_pub_load" value="Muat data dari localStorage; seed jika key hilang, JSON rusak, atau bentuk tidak sesuai" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#16a34a;fontSize=11;fontFamily=Arial;" parent="1" vertex="1">
           <mxGeometry x="140" y="230" width="260" height="60" as="geometry" />
         </mxCell>
 
@@ -84,7 +84,7 @@
           <mxGeometry x="500" y="520" width="190" height="50" as="geometry" />
         </mxCell>
 
-        <mxCell id="f_login_ok" value="Buat prodihukum_admin_session&#xa;&amp;amp; Redirect ke dashboard.html" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#16a34a;fontSize=11;fontFamily=Arial;" parent="1" vertex="1">
+        <mxCell id="f_login_ok" value="Simpan sesi lokal; lanjut ke dashboard jika berhasil, tampilkan error jika gagal" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#16a34a;fontSize=11;fontFamily=Arial;" parent="1" vertex="1">
           <mxGeometry x="710" y="520" width="200" height="50" as="geometry" />
         </mxCell>
 
@@ -144,7 +144,7 @@
         </mxCell>
 
         <!-- Eksekusi CRUD Admin -->
-        <mxCell id="f_crud_op" value="DB.save(): tulis ke localStorage; minta salinan IndexedDB best-effort" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#2563eb;fontSize=11;fontFamily=Arial;" parent="1" vertex="1">
+        <mxCell id="f_crud_op" value="DB.save(): jadwalkan salinan IndexedDB, tulis localStorage, pancarkan db-update" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#2563eb;fontSize=11;fontFamily=Arial;" parent="1" vertex="1">
           <mxGeometry x="1050" y="830" width="240" height="70" as="geometry" />
         </mxCell>
 
