@@ -268,6 +268,12 @@ const DB = (() => {
     return copy;
   }
 
+  function mirrorToIndexedDB(key, data) {
+    if (typeof IDB !== 'undefined' && IDB.set) {
+      IDB.set(NS + key, data).catch(() => { });
+    }
+  }
+
   // PENTING: save() HANYA boleh menulis/menghapus key milik modul yang
   // sedang disimpan (NS + key) itu sendiri. Modul lain (mis. Dosen, Galeri,
   // Prestasi) TIDAK PERNAH boleh disentuh di sini — sebelumnya, saat
@@ -281,18 +287,23 @@ const DB = (() => {
   // jika localStorage benar-benar gagal ditulis, supaya kode pemanggil bisa
   // membatalkan perubahan di memori dan memberi tahu admin alasannya.
   function save(key, data) {
-    // 1. Cadangkan ke IndexedDB di latar belakang (kapasitas ratusan MB).
-    //    Ini murni cadangan tambahan (best-effort) — TIDAK PERNAH menghapus
-    //    apa pun, jadi tidak berisiko menyebabkan kehilangan data modul lain.
-    if (typeof IDB !== 'undefined' && IDB.set) {
-      IDB.set(NS + key, data).catch(() => { });
+    let serialized;
+    try {
+      serialized = JSON.stringify(data);
+    } catch (e) {
+      console.warn('DB: gagal menyiapkan data "' + key + '" untuk disimpan.', e);
+      return false;
+    }
+    if (typeof serialized !== 'string') {
+      console.warn('DB: data "' + key + '" tidak dapat diserialisasi untuk disimpan.');
+      return false;
     }
 
-    const serialized = JSON.stringify(data);
-
-    // 2. Simpan ke localStorage.
+    // localStorage adalah sumber utama. IndexedDB hanya dicerminkan setelah
+    // penulisan utama berhasil agar kedua salinan tidak berbeda saat gagal.
     try {
       localStorage.setItem(NS + key, serialized);
+      mirrorToIndexedDB(key, data);
       window.dispatchEvent(new CustomEvent('db-update', {
         detail: { key, data }
       }));
@@ -306,6 +317,7 @@ const DB = (() => {
       pruneStorage();
       try {
         localStorage.setItem(NS + key, serialized);
+        mirrorToIndexedDB(key, data);
         window.dispatchEvent(new CustomEvent('db-update', {
           detail: { key, data }
         }));
@@ -480,8 +492,8 @@ function logActivity(aksi, icon) {
     tanggalIso: new Date().toISOString(),
     icon: icon || '\u{1F4DD}'
   };
-  SAMPLE_AKTIVITAS = [entry, ...SAMPLE_AKTIVITAS].slice(0, 25);
-  DB.save('aktivitas', SAMPLE_AKTIVITAS);
+  const nextActivity = [entry, ...SAMPLE_AKTIVITAS].slice(0, 25);
+  DB.save('aktivitas', nextActivity);
 
   const notif = {
     id: Date.now() + 1,
@@ -491,11 +503,8 @@ function logActivity(aksi, icon) {
     read: false,
     icon: icon || '\u{1F514}'
   };
-  SAMPLE_NOTIFIKASI = [notif, ...SAMPLE_NOTIFIKASI].slice(0, 30);
-  DB.save('notifikasi', SAMPLE_NOTIFIKASI);
-
-  // Dispatch event so adminShell can reactively sync _notifications
-  window.dispatchEvent(new CustomEvent('notif-update'));
+  const nextNotifications = [notif, ...SAMPLE_NOTIFIKASI].slice(0, 30);
+  DB.save('notifikasi', nextNotifications);
 }
 
 /* =========================================================
@@ -941,6 +950,263 @@ function globalSearch(query) {
   window.location.href = results[0].url;
 }
 
+const PUBLIC_NAV_ICON_PATHS = {
+  home: ['M3 10.5 12 3l9 7.5', 'M5 9v12h14V9', 'M9 21v-7h6v7'],
+  profile: ['M20 21a8 8 0 0 0-16 0', 'M12 13a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z'],
+  faculty: ['M3 21h18', 'M5 21V7l7-4 7 4v14', 'M9 10h.01', 'M15 10h.01', 'M9 14h.01', 'M15 14h.01'],
+  book: ['M4 5.5A2.5 2.5 0 0 1 6.5 3H20v17H6.5A2.5 2.5 0 0 0 4 22z', 'M4 5.5v14A2.5 2.5 0 0 1 6.5 17H20'],
+  info: ['M12 16v-4', 'M12 8h.01', 'M22 12a10 10 0 1 1-20 0 10 10 0 0 1 20 0Z'],
+  people: ['M16 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2', 'M10 7a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z', 'M20 21v-2a4 4 0 0 0-3-3.87', 'M16 3.13a4 4 0 0 1 0 7.75'],
+  news: ['M4 4h16v16H4z', 'M8 8h8', 'M8 12h8', 'M8 16h5'],
+  bell: ['M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9', 'M10 21h4'],
+  calendar: ['M8 3v4', 'M16 3v4', 'M3 9h18', 'M5 5h14a2 2 0 0 1 2 2v13H3V7a2 2 0 0 1 2-2Z', 'M8 13h.01', 'M12 13h.01', 'M16 13h.01'],
+  article: ['M4 5h16v14H4z', 'M8 9h8', 'M8 13h8', 'M8 16h5'],
+  trophy: ['M8 21h8', 'M12 17v4', 'M7 4h10v6a5 5 0 0 1-10 0V4Z', 'M7 7H4v2a4 4 0 0 0 4 4', 'M17 7h3v2a4 4 0 0 1-4 4'],
+  gallery: ['M4 5h16v14H4z', 'M8 13l3-3 6 7H7z', 'M15.5 9.5h.01'],
+  file: ['M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z', 'M14 2v6h6', 'M8 13h8', 'M8 17h8'],
+  mail: ['M4 5h16v14H4z', 'M4 7l8 6 8-6'],
+  phone: ['M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.4 19.4 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1 1 .4 1.9.7 2.8a2 2 0 0 1-.5 2.1L8 9.9a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.5c.9.3 1.8.6 2.8.7a2 2 0 0 1 1.8 2.1z'],
+  location: ['M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z', 'M12 10h.01'],
+  login: ['M10 17l5-5-5-5', 'M15 12H3', 'M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6'],
+  top: ['M12 19V5', 'M5 12l7-7 7 7'],
+  close: ['M18 6 6 18', 'm6 6 12 12']
+};
+
+const PUBLIC_NAV_ICON_BY_FILE = {
+  'index.html': 'home',
+  'profil.html': 'profile',
+  'dosen.html': 'faculty',
+  'kurikulum.html': 'book',
+  'berita.html': 'news',
+  'detail-berita.html': 'news',
+  'pengumuman.html': 'bell',
+  'detail-pengumuman.html': 'bell',
+  'kegiatan.html': 'calendar',
+  'detail-kegiatan.html': 'calendar',
+  'artikel.html': 'article',
+  'detail-artikel.html': 'article',
+  'prestasi.html': 'trophy',
+  'alumni.html': 'people',
+  'galeri.html': 'gallery',
+  'detail-galeri.html': 'gallery',
+  'dokumen.html': 'file',
+  'kontak.html': 'mail'
+};
+
+function createPublicIcon(name, className) {
+  const paths = PUBLIC_NAV_ICON_PATHS[name];
+  if (!paths) return null;
+
+  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+  svg.setAttribute('class', className);
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('fill', 'none');
+  svg.setAttribute('stroke', 'currentColor');
+  svg.setAttribute('stroke-width', '1.8');
+  svg.setAttribute('stroke-linecap', 'round');
+  svg.setAttribute('stroke-linejoin', 'round');
+  svg.setAttribute('aria-hidden', 'true');
+  svg.setAttribute('focusable', 'false');
+
+  paths.forEach((pathData) => {
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', pathData);
+    svg.appendChild(path);
+  });
+  return svg;
+}
+
+function publicNavIconName(item) {
+  if (item.hasAttribute('href')) {
+    const href = item.getAttribute('href').split(/[?#]/)[0];
+    const file = href.split('/').pop().toLowerCase();
+    if (PUBLIC_NAV_ICON_BY_FILE[file]) return PUBLIC_NAV_ICON_BY_FILE[file];
+  }
+
+  const label = item.textContent.replace(/\s+/g, ' ').trim().toLowerCase();
+  return {
+    profil: 'profile',
+    informasi: 'info',
+    mahasiswa: 'people'
+  }[label] || null;
+}
+
+function enhancePublicNavbar() {
+  document.querySelectorAll('nav.main').forEach((nav) => {
+    nav.querySelectorAll('a[href], button').forEach((item) => {
+      if (item.classList.contains('admin-login')) return;
+
+      const existingIcon = Array.prototype.find.call(item.children, (child) =>
+        child.localName === 'svg' && !child.classList.contains('ui-icon-xs')
+      );
+      if (existingIcon) {
+        existingIcon.classList.add('nav-icon');
+        return;
+      }
+
+      const icon = createPublicIcon(publicNavIconName(item), 'ui-icon ui-icon-sm nav-icon');
+      if (icon) item.insertBefore(icon, item.firstChild);
+    });
+  });
+}
+
+function initPublicTopbar(settings) {
+  const header = document.querySelector('header.top');
+  if (!header || header.parentElement.querySelector(':scope > .public-topbar')) return;
+
+  const tools = header.querySelector('.tools');
+  const social = tools && tools.querySelector(':scope > .soc');
+  const topbar = document.createElement('div');
+  topbar.className = 'public-topbar';
+
+  const inner = document.createElement('div');
+  inner.className = 'public-topbar-inner';
+  const contacts = document.createElement('div');
+  contacts.className = 'public-topbar-contact';
+  contacts.setAttribute('aria-label', 'Informasi kontak');
+
+  const appendContact = (iconName, label, value, href) => {
+    const text = String(value || '').trim();
+    if (!text) return;
+    const link = document.createElement('a');
+    link.className = 'public-topbar-link';
+    link.href = href;
+    link.setAttribute('aria-label', `${label}: ${text}`);
+    if (iconName === 'location') {
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+    }
+    link.appendChild(createPublicIcon(iconName, 'public-topbar-icon'));
+    const content = document.createElement('span');
+    content.textContent = text;
+    link.appendChild(content);
+    contacts.appendChild(link);
+  };
+
+  const phone = String(settings.telepon || '').trim();
+  const phoneHref = phone.replace(/[^\d+]/g, '');
+  if (phoneHref.replace(/\D/g, '')) appendContact('phone', 'Telepon', phone, `tel:${phoneHref}`);
+  appendContact('mail', 'Email', settings.email, `mailto:${String(settings.email || '').trim()}`);
+  appendContact('location', 'Alamat', settings.alamat, `https://maps.google.com/?q=${encodeURIComponent(String(settings.alamat || ''))}`);
+
+  inner.appendChild(contacts);
+  if (social) {
+    social.classList.add('public-topbar-social');
+    social.setAttribute('role', 'group');
+    social.setAttribute('aria-label', 'Media sosial');
+    inner.appendChild(social);
+  }
+  topbar.appendChild(inner);
+  header.parentElement.insertBefore(topbar, header);
+}
+
+function initMobileNavDrawer() {
+  document.querySelectorAll('nav.main').forEach((nav) => {
+    if (nav.dataset.mobileDrawerReady === 'true') return;
+
+    const wrap = nav.querySelector('.wrap');
+    const menu = nav.querySelector('ul');
+    const burger = document.querySelector('header.top .burger');
+    if (!wrap || !menu || !burger) return;
+
+    if (!menu.id) menu.id = 'public-main-navigation';
+    burger.setAttribute('aria-controls', menu.id);
+    burger.setAttribute('aria-expanded', 'false');
+
+    const closeButton = document.createElement('button');
+    closeButton.type = 'button';
+    closeButton.className = 'nav-drawer-close';
+    closeButton.setAttribute('aria-label', 'Tutup menu navigasi');
+    closeButton.setAttribute('title', 'Tutup menu navigasi');
+    closeButton.appendChild(createPublicIcon('close', 'nav-drawer-close-icon'));
+    wrap.insertBefore(closeButton, wrap.firstChild);
+
+    const backdrop = document.createElement('button');
+    backdrop.type = 'button';
+    backdrop.className = 'nav-mobile-backdrop';
+    backdrop.setAttribute('aria-label', 'Tutup menu navigasi');
+    backdrop.setAttribute('aria-hidden', 'true');
+    backdrop.tabIndex = -1;
+    backdrop.hidden = true;
+    document.body.appendChild(backdrop);
+
+    const setOpen = (isOpen) => {
+      nav.classList.toggle('mobile-open', isOpen);
+      backdrop.classList.toggle('is-open', isOpen);
+      backdrop.hidden = !isOpen;
+      burger.setAttribute('aria-expanded', String(isOpen));
+      document.body.classList.toggle('nav-drawer-open', isOpen);
+      if (isOpen) closeButton.focus();
+      else burger.focus();
+    };
+
+    const toggle = () => setOpen(!nav.classList.contains('mobile-open'));
+    const requestToggle = () => window.dispatchEvent(new CustomEvent('nav-mobile-toggle'));
+    window.addEventListener('nav-mobile-toggle', toggle);
+    window.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && nav.classList.contains('mobile-open')) {
+        setOpen(false);
+      }
+    });
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 980 && nav.classList.contains('mobile-open')) {
+        requestToggle();
+      }
+    }, { passive: true });
+    closeButton.addEventListener('click', requestToggle);
+    backdrop.addEventListener('click', requestToggle);
+    nav.dataset.mobileDrawerReady = 'true';
+  });
+}
+
+function initPublicQuickActions() {
+  if (!document.querySelector('nav.main') || document.querySelector('.public-quick-actions')) return;
+
+  const actions = document.createElement('div');
+  actions.className = 'public-quick-actions';
+  actions.setAttribute('role', 'group');
+  actions.setAttribute('aria-label', 'Aksi cepat');
+
+  const topButton = document.createElement('button');
+  topButton.type = 'button';
+  topButton.className = 'public-quick-action public-fab-top';
+  topButton.setAttribute('aria-label', 'Kembali ke atas');
+  topButton.setAttribute('title', 'Kembali ke atas');
+  topButton.setAttribute('data-label', 'Kembali ke atas');
+  topButton.appendChild(createPublicIcon('top', 'public-fab-icon'));
+  topButton.addEventListener('click', () => {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: reducedMotion ? 'auto' : 'smooth' });
+  });
+
+  const loginLink = document.createElement('a');
+  loginLink.href = 'admin/login.html';
+  loginLink.className = 'public-quick-action public-fab-login';
+  loginLink.setAttribute('aria-label', 'Login Admin');
+  loginLink.setAttribute('title', 'Login Admin');
+  loginLink.setAttribute('data-label', 'Login Admin');
+  loginLink.appendChild(createPublicIcon('login', 'public-fab-icon'));
+
+  const contactLink = document.createElement('a');
+  contactLink.href = 'kontak.html';
+  contactLink.className = 'public-quick-action public-fab-contact';
+  contactLink.setAttribute('aria-label', 'Hubungi Kami');
+  contactLink.setAttribute('title', 'Hubungi Kami');
+  contactLink.setAttribute('data-label', 'Hubungi Kami');
+  contactLink.appendChild(createPublicIcon('mail', 'public-fab-icon'));
+
+  actions.appendChild(topButton);
+  actions.appendChild(loginLink);
+  actions.appendChild(contactLink);
+  document.body.appendChild(actions);
+
+  const updateTopButtonVisibility = () => {
+    topButton.hidden = window.scrollY < 320;
+  };
+  window.addEventListener('scroll', updateTopButtonVisibility, { passive: true });
+  updateTopButtonVisibility();
+}
+
 function siteHeader() {
   return {
     mobileOpen: false,
@@ -989,6 +1255,7 @@ function siteHeader() {
       });
 
       const settings = SAMPLE_PENGATURAN || {};
+      initPublicTopbar(settings);
       const logo = publicAssetPath(settings.logo);
       if (logo) {
         document.querySelectorAll('.brand img.logo').forEach((image) => {
@@ -1006,11 +1273,18 @@ function siteHeader() {
         if (!socialKey) return;
 
         const url = safeExternalUrl(settings[socialKey]);
-        link.hidden = !url;
         if (url) {
           link.href = url;
           link.target = '_blank';
           link.rel = 'noopener noreferrer';
+          link.removeAttribute('aria-disabled');
+          link.removeAttribute('tabindex');
+        } else {
+          link.removeAttribute('href');
+          link.removeAttribute('target');
+          link.removeAttribute('rel');
+          link.setAttribute('aria-disabled', 'true');
+          link.setAttribute('tabindex', '-1');
         }
       });
 
@@ -1032,6 +1306,10 @@ function siteHeader() {
         }
         if (keywords && settings.keywords) keywords.content = settings.keywords;
       }
+
+      enhancePublicNavbar();
+      initMobileNavDrawer();
+      initPublicQuickActions();
     }
   };
 }
@@ -1113,15 +1391,20 @@ function adminShell() {
       this._notifications = [...(SAMPLE_NOTIFIKASI || [])];
     },
     markAllRead() {
-      this._notifications = this._notifications.map(n => ({ ...n, read: true }));
-      SAMPLE_NOTIFIKASI = [...this._notifications];
-      DB.save('notifikasi', SAMPLE_NOTIFIKASI);
+      const updated = this._notifications.map(n => ({ ...n, read: true }));
+      if (!DB.save('notifikasi', updated)) {
+        NeuAlert.storageFull();
+        return;
+      }
+      this._notifications = updated;
       if (typeof NeuAlert !== 'undefined') NeuAlert.success('Semua notifikasi ditandai dibaca.');
     },
     clearNotifs() {
+      if (!DB.save('notifikasi', [])) {
+        NeuAlert.storageFull();
+        return;
+      }
       this._notifications = [];
-      SAMPLE_NOTIFIKASI = [];
-      DB.save('notifikasi', []);
       if (typeof NeuAlert !== 'undefined') NeuAlert.success('Semua notifikasi dibersihkan.');
     },
     get stats() {
@@ -1647,6 +1930,19 @@ function detailBeritaPage() {
   return {
     item,
     related: publishedBerita.filter(b => b.id !== item.id).slice(0, 3)
+  };
+}
+
+function detailSidebar(currentType) {
+  return {
+    pengumuman: SAMPLE_PENGUMUMAN.slice(0, 3),
+    kegiatan: SAMPLE_KEGIATAN.slice(0, 3),
+    artikel: SAMPLE_ARTIKEL.filter(a => a.status === 'Published').slice(0, 3),
+    berita: SAMPLE_BERITA.filter(b => b.status === 'Published').slice(0, 3),
+    showPengumuman: currentType !== 'pengumuman',
+    showKegiatan: currentType !== 'kegiatan',
+    showArtikel: currentType !== 'artikel',
+    showBerita: currentType !== 'berita'
   };
 }
 
@@ -2320,8 +2616,10 @@ function kurikulumPage() {
 }
 
 function detailPengumumanPage() {
+  const item = detailFromQuery(SAMPLE_PENGUMUMAN);
   return {
-    item: detailFromQuery(SAMPLE_PENGUMUMAN),
+    item,
+    related: SAMPLE_PENGUMUMAN.filter(p => p.id !== item.id).slice(0, 3),
     download() {
       if (!this.item.lampiran) {
         NeuAlert.error('Lampiran tidak tersedia.');
@@ -2333,8 +2631,10 @@ function detailPengumumanPage() {
 }
 
 function detailKegiatanPage() {
+  const item = detailFromQuery(SAMPLE_KEGIATAN);
   return {
-    item: detailFromQuery(SAMPLE_KEGIATAN),
+    item,
+    related: SAMPLE_KEGIATAN.filter(k => k.id !== item.id).slice(0, 3),
     daftarOpen: false,
     submitting: false,
     participantRevision: 0,
@@ -2438,8 +2738,9 @@ function adminGaleriPage() {
       });
     },
     persist() {
+      if (!DB.save('galeri', this.foto)) return false;
       SAMPLE_GALERI = this.foto;
-      return DB.save('galeri', this.foto);
+      return true;
     },
     async onFile(e) {
       const file = e.target.files && e.target.files[0];
@@ -2537,8 +2838,9 @@ function adminDokumenTable() {
       return this.rows.filter(r => (r.nama || '').toLowerCase().includes(this.q.toLowerCase()));
     },
     persist() {
+      if (!DB.save('dokumen', this.rows)) return false;
       SAMPLE_DOKUMEN = this.rows;
-      return DB.save('dokumen', this.rows);
+      return true;
     },
     async onFile(e) {
       const file = e.target.files && e.target.files[0];
@@ -2658,8 +2960,9 @@ function adminPenggunaTable(config) {
       );
     },
     persist() {
+      if (!DB.save('pengguna', this.rows)) return false;
       SAMPLE_PENGGUNA = this.rows;
-      return DB.save('pengguna', this.rows);
+      return true;
     },
     openAdd() {
       this.editing = null;

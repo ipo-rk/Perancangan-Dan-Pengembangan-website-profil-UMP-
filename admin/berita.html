@@ -306,7 +306,11 @@
             }
           });
         },
-        persist() { SAMPLE_BERITA = this.berita; return DB.save('berita', this.berita); },
+        persist() {
+          if (!DB.save('berita', this.berita)) return false;
+          SAMPLE_BERITA = this.berita;
+          return true;
+        },
         emptyForm() { return { judul:'', slug:'', kategori:'Akademik', excerpt:'', konten:'', status:'Draft', gambar:'' }; },
         form: {},
         uploadingGambar: false,
@@ -364,8 +368,13 @@
           }
         },
         publish(item){
+          const previousStatus = item.status;
           item.status='Published';
-          if(!this.persist()){ NeuAlert.storageFull(); return; }
+          if(!this.persist()){
+            item.status = previousStatus;
+            NeuAlert.storageFull();
+            return;
+          }
           logActivity(`Mempublikasikan berita: ${item.judul}`, '\u{2705}');
           NeuAlert.updated('Berita berhasil dipublikasikan.');
         },

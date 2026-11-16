@@ -291,7 +291,11 @@
         }
       });
     },
-    persist() { SAMPLE_ARTIKEL = this.artikel; return DB.save('artikel', this.artikel); },
+    persist() {
+      if (!DB.save('artikel', this.artikel)) return false;
+      SAMPLE_ARTIKEL = this.artikel;
+      return true;
+    },
     emptyForm() { return { judul:'', penulis:'', kategori:'Hukum Pidana', thumbnail:'', isi:'', referensi:'', tags:'', status:'Draft', tanggal:'' }; },
     form: {},
     uploadingThumb: false,

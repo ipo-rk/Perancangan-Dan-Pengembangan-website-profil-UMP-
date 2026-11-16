@@ -144,9 +144,10 @@
   </section>
   <!-- ══ END PREMIUM PAGE HERO BANNER ══ -->
 
-  <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
-    <a href="kegiatan.html" class="text-sm text-red font-medium mb-6 inline-block">&larr; Kembali ke Kegiatan</a>
-    <article class="neu-raised overflow-hidden">
+  <main class="detail-news-layout max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-14">
+    <div class="detail-news-primary">
+      <a href="kegiatan.html" class="text-sm text-red font-medium mb-6 inline-block">&larr; Kembali ke Kegiatan</a>
+      <article class="neu-raised overflow-hidden">
       <!-- Poster kegiatan ditampilkan utuh (object-contain) karena berupa infografis
            lengkap (judul, foto, & info) — bukan foto polos. Memakai object-cover di
            kotak pendek akan memotong tengah gambar dan terlihat seperti "pecah". -->
@@ -217,7 +218,133 @@
           </div>
         </div>
       </div>
-    </article>
+      </article>
+      <section class="detail-related-news" aria-labelledby="related-events-heading">
+        <div class="detail-section-heading">
+          <div>
+            <p class="detail-section-kicker">Agenda akademik lainnya</p>
+            <h2 id="related-events-heading">Kegiatan Terkait</h2>
+          </div>
+          <a href="kegiatan.html">Semua kegiatan <span aria-hidden="true">&rarr;</span></a>
+        </div>
+        <div class="detail-related-grid">
+          <template x-for="relatedEvent in related" :key="relatedEvent.id">
+            <a :href="'detail-kegiatan.html?id=' + relatedEvent.id" class="detail-related-card">
+              <span class="detail-related-category">Kegiatan</span>
+              <p x-text="relatedEvent.nama"></p>
+              <span class="detail-related-date" x-text="relatedEvent.tanggal"></span>
+            </a>
+          </template>
+          <p class="detail-empty-state" x-show="related.length === 0">Belum ada kegiatan terkait.</p>
+        </div>
+      </section>
+    </div>
+    <aside class="detail-news-sidebar" aria-label="Informasi dan bacaan lainnya" x-data="detailSidebar('kegiatan')">
+      <section class="detail-side-card" aria-labelledby="sidebar-announcement-heading" x-show="showPengumuman">
+        <div class="detail-side-heading">
+          <span class="detail-side-icon detail-side-icon-red" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+              stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" /><path d="M10 21h4" /></svg>
+          </span>
+          <div>
+            <p class="detail-side-kicker">Informasi program studi</p>
+            <h2 id="sidebar-announcement-heading">Pengumuman</h2>
+          </div>
+        </div>
+        <div class="detail-side-list">
+          <template x-for="notice in pengumuman" :key="notice.id">
+            <a class="detail-side-item" :href="'detail-pengumuman.html?id=' + notice.id">
+              <span class="detail-side-item-top">
+                <span class="detail-side-status" :class="getPengumumanBadge(notice.status)"
+                  x-text="notice.status"></span>
+                <time class="detail-side-date" x-text="notice.tanggal"></time>
+              </span>
+              <span class="detail-side-title" x-text="notice.judul"></span>
+            </a>
+          </template>
+          <p class="detail-empty-state" x-show="pengumuman.length === 0">Belum ada pengumuman.</p>
+        </div>
+        <a class="detail-side-more" href="pengumuman.html">Lihat semua pengumuman <span aria-hidden="true">&rarr;</span></a>
+      </section>
+      <section class="detail-side-card" aria-labelledby="sidebar-events-heading" x-show="showKegiatan">
+        <div class="detail-side-heading">
+          <span class="detail-side-icon detail-side-icon-gold" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+              stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2" /><path d="M16 3v4M8 3v4M3 10h18" /></svg>
+          </span>
+          <div>
+            <p class="detail-side-kicker">Agenda akademik</p>
+            <h2 id="sidebar-events-heading">Kegiatan</h2>
+          </div>
+        </div>
+        <div class="detail-side-list">
+          <template x-for="agenda in kegiatan" :key="agenda.id">
+            <a class="detail-side-event" :href="'detail-kegiatan.html?id=' + agenda.id">
+              <span class="detail-event-date">
+                <strong x-text="agenda.hari || parseHari(agenda.tanggal)"></strong>
+                <small x-text="agenda.bulan || parseBulan(agenda.tanggal)"></small>
+              </span>
+              <span class="detail-event-copy">
+                <span class="detail-side-title" x-text="agenda.nama"></span>
+                <time class="detail-side-date" x-text="agenda.tanggal"></time>
+              </span>
+            </a>
+          </template>
+          <p class="detail-empty-state" x-show="kegiatan.length === 0">Belum ada kegiatan.</p>
+        </div>
+        <a class="detail-side-more" href="kegiatan.html">Lihat semua kegiatan <span aria-hidden="true">&rarr;</span></a>
+      </section>
+      <section class="detail-side-card" aria-labelledby="sidebar-articles-heading" x-show="showArtikel">
+        <div class="detail-side-heading">
+          <span class="detail-side-icon detail-side-icon-blue" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+              stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v17H6.5A2.5 2.5 0 0 0 4 22z" /><path d="M4 5.5v14A2.5 2.5 0 0 1 6.5 17H20" /></svg>
+          </span>
+          <div>
+            <p class="detail-side-kicker">Wawasan hukum</p>
+            <h2 id="sidebar-articles-heading">Artikel Hukum</h2>
+          </div>
+        </div>
+        <div class="detail-side-list">
+          <template x-for="lawArticle in artikel" :key="lawArticle.id">
+            <a class="detail-side-item" :href="'detail-artikel.html?id=' + lawArticle.id">
+              <span class="detail-side-item-top">
+                <span class="detail-side-category" x-text="lawArticle.kategori"></span>
+                <time class="detail-side-date" x-text="lawArticle.tanggal"></time>
+              </span>
+              <span class="detail-side-title" x-text="lawArticle.judul"></span>
+            </a>
+          </template>
+          <p class="detail-empty-state" x-show="artikel.length === 0">Belum ada artikel hukum.</p>
+        </div>
+        <a class="detail-side-more" href="artikel.html">Lihat semua artikel <span aria-hidden="true">&rarr;</span></a>
+      </section>
+      <section class="detail-side-card" aria-labelledby="sidebar-news-heading" x-show="showBerita">
+        <div class="detail-side-heading">
+          <span class="detail-side-icon detail-side-icon-blue" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+              stroke-linejoin="round"><path d="M4 4h16v16H4z" /><path d="M8 8h8M8 12h8M8 16h5" /></svg>
+          </span>
+          <div>
+            <p class="detail-side-kicker">Kabar terbaru</p>
+            <h2 id="sidebar-news-heading">Berita Terbaru</h2>
+          </div>
+        </div>
+        <div class="detail-side-list">
+          <template x-for="newsItem in berita" :key="newsItem.id">
+            <a class="detail-side-item" :href="'detail-berita.html?id=' + newsItem.id">
+              <span class="detail-side-item-top">
+                <span class="detail-side-category" x-text="newsItem.kategori"></span>
+                <time class="detail-side-date" x-text="newsItem.tanggal"></time>
+              </span>
+              <span class="detail-side-title" x-text="newsItem.judul"></span>
+            </a>
+          </template>
+          <p class="detail-empty-state" x-show="berita.length === 0">Belum ada berita.</p>
+        </div>
+        <a class="detail-side-more" href="berita.html">Lihat semua berita <span aria-hidden="true">&rarr;</span></a>
+      </section>
+    </aside>
   </main>
 
   <!-- Modal: Formulir Pendaftaran Kegiatan -->

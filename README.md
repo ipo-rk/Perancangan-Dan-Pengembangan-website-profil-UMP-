@@ -197,21 +197,33 @@ Sesi admin disimpan di: `prodihukum_admin_session` (localStorage)
 
 ## 👨‍🏫 Data Dosen (11 Orang)
 
-| Kode | Nama Dosen |
-|------|-----------|
-| HKM001 | Sitti Rahmawati Talango, S.H., M.H. |
-| HKM002 | Muhamad Yamin, S.H., M.H. |
-| HKM003 | Ernestin Manganang, S.H., M.H. |
-| HKM004 | Hendra, S.H., M.H. |
-| HKM005 | Muh. Rizal Rustam, S.H., M.H. |
-| HKM006 | Erisnawati, S.H., M.H. |
-| HKM007 | Dg. Fajar Wahyu Sejati, S.H., M.H. |
-| HKM008 | Ahmad Mustanir, S.H., M.H. |
-| HKM009 | Sugimanto, S.H., M.Kn. |
-| HKM010 | Ridwan, S.H., M.H. |
-| *(tanpa kode)* | Yohanis Tamatjita, S.H., M.H. |
+Daftar berikut adalah isi awal `SEED_DOSEN` yang dipakai dashboard admin dan halaman publik ketika data dosen belum tersimpan di browser:
 
-**Field `SEED_DOSEN`:** `id, nama, kode`
+| ID | Kode | Nama Dosen |
+|----|------|------------|
+| 1 | HKM001 | Dr. Muhammad Yusuf, S.H., M.H |
+| 2 | HKM002 | Dr. Hendrik Dengah, S.H., M.H |
+| 3 | HKM003 | Dr. Tri Mulyadi, S.H., M.H |
+| 4 | HKM004 | Ismail Maswatu, S.E., S.H., M.H |
+| 5 | HKM005 | Irfun, M.Pd |
+| 6 | HKM006 | Adimas Reza Prayudi M, S.H., M.H. |
+| 7 | HKM007 | Mursani, S.H., M.H. |
+| 8 | HKM008 | Rizki Wisudawan Katjong, S.H., M.H. |
+| 9 | HKM009 | Rifqi Anan Pratama, S.H., M.H |
+| 10 | HKM010 | Ratna Jaya, S.H., M.H |
+| 11 | `-` | Midah Nurhidayah |
+
+### Field `SEED_DOSEN`
+
+```javascript
+{
+  id:   Number,
+  nama: String, // Nama dosen
+  kode: String  // 'HKM001'–'HKM010', atau '-' jika kode tidak tersedia
+}
+```
+
+Dashboard admin dan halaman publik memakai data aktif yang sama, yaitu `SAMPLE_DOSEN`. Data ini dimuat dari key `prodihukum_db_v1_dosen` dan menggunakan `SEED_DOSEN` sebagai data awal.
 
 ---
 
@@ -231,9 +243,11 @@ Sesi admin disimpan di: `prodihukum_admin_session` (localStorage)
 | 8 | 1 MK | ~4 SKS |
 | **Total** | **57 MK** | **154 SKS** |
 
-> **Catatan:** 10 mata kuliah memiliki `pengampu: '-'` dan `kodeDosen: '-'` secara sengaja (data belum tersedia).
+> **Catatan:** 10 mata kuliah belum memiliki dosen pengampu dan memiliki `kodeDosen: '-'`. Pada seed saat ini, properti `pengampu` tidak dicantumkan untuk mata kuliah tersebut; dashboard dan halaman publik menampilkannya sebagai “Tidak tercantum pada MK Baru”.
 
 ### Field `SEED_KURIKULUM`
+
+Struktur field kurikulum yang dipakai dashboard admin dan halaman publik:
 
 ```javascript
 {
@@ -246,6 +260,8 @@ Sesi admin disimpan di: `prodihukum_admin_session` (localStorage)
   kodeDosen: String    // Kode dosen 'HKM001'–'HKM010', atau '-'
 }
 ```
+
+Deklarasi awal `SEED_KURIKULUM` di `app.js` juga menyertakan `sumber: String` (saat ini bernilai `'MK Baru'`). Saat data dimuat, migrasi menghapus metadata `sumber` dan `catatan` dari data kurikulum aktif. Untuk mata kuliah tanpa dosen, field `pengampu` dapat tidak ada di record seed dan diperlakukan sebagai belum tercantum.
 
 ### Pencocokan Dosen
 
@@ -263,10 +279,28 @@ Admin Kurikulum menyediakan ekspor CSV sesuai pencarian dan filter yang aktif. B
 
 Akses panel admin: `admin/login.html`
 
-| Field | Nilai Default |
-|-------|--------------|
-| Email | `admin@ump.ac.id` |
-| Password demo bawaan | `admin` |
+Login memakai `SEED_PENGGUNA` sebagai data awal dan `SAMPLE_PENGGUNA` sebagai data akun aktif. Data aktif dimuat dari key `prodihukum_db_v1_pengguna`; akun yang telah dikelola admin dapat berbeda dari data seed. Tidak ada konstanta terpisah bernama `SEED_LOGIN`.
+
+#### Field `SEED_PENGGUNA`
+
+```javascript
+{
+  id:       Number,
+  nama:     String, // Nama pengguna admin
+  email:    String, // Email untuk login
+  password: String, // Password demo; disimpan di browser pada prototipe ini
+  role:     String, // 'Super Admin', 'Editor', atau 'Operator'
+  status:   String  // 'Aktif' atau 'Nonaktif'
+}
+```
+
+#### Akun bawaan `SEED_PENGGUNA`
+
+| ID | Nama | Email | Password demo | Role | Status |
+|----|------|-------|---------------|------|--------|
+| 1 | Admin Prodi | `admin@ump.ac.id` | `admin` | Super Admin | Aktif |
+| 2 | Rina Marlina | `editor.rina@ump.ac.id` | `editor123` | Editor | Aktif |
+| 3 | Yusuf Kamal | `operator.yusuf@ump.ac.id` | `operator123` | Operator | Nonaktif |
 
 > ⚠️ Kredensial demo berada di `SEED_PENGGUNA` dalam `app.js` dan disimpan di browser. Jangan gunakan akun atau data sensitif pada prototipe ini; autentikasi produksi memerlukan backend.
 
