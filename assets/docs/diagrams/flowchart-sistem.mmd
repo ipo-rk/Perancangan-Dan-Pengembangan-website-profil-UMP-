@@ -96,7 +96,7 @@ flowchart TD
         RETRY["Pangkas log internal yang dibatasi, lalu coba sekali lagi"]
         RETRY_RESULT{Percobaan ulang berhasil?}
         SAVE_FAIL["Batalkan perubahan dan beri tahu admin"]
-        ASYNC_COPY["Jadwalkan salinan IndexedDB asinkron (best-effort)"]
+        ASYNC_COPY["Setelah localStorage berhasil, jadwalkan salinan IndexedDB (best-effort)"]
         ACTIVITY["Catat aktivitas dan notifikasi"]
         UPDATE_VIEW["Pancarkan db-update; tab lain menerima storage event"]
         SAVE_OK["Perbarui tampilan dan tampilkan hasil"]
@@ -105,10 +105,10 @@ flowchart TD
         LOGOUT["Hapus sesi lokal dan kembali ke login"]
 
         ADMIN_HOME --> ADMIN_ACTION
-        ADMIN_ACTION -->|CRUD| CRUD --> ASYNC_COPY --> SAVE --> SAVE_RESULT
-        SAVE_RESULT -->|Ya| UPDATE_VIEW --> ACTIVITY --> SAVE_OK --> FINISH
+        ADMIN_ACTION -->|CRUD| CRUD --> SAVE --> SAVE_RESULT
+        SAVE_RESULT -->|Ya| ASYNC_COPY --> UPDATE_VIEW --> ACTIVITY --> SAVE_OK --> FINISH
         SAVE_RESULT -->|Tidak| RETRY --> RETRY_RESULT
-        RETRY_RESULT -->|Ya| UPDATE_VIEW
+        RETRY_RESULT -->|Ya| ASYNC_COPY
         RETRY_RESULT -->|Tidak| SAVE_FAIL --> FINISH
         ADMIN_ACTION -->|Backup / restore| BACKUP --> FINISH
         ADMIN_ACTION -->|Ekspor kurikulum| EXPORT --> FINISH

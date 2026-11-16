@@ -194,7 +194,7 @@
           </mxGeometry>
         </mxCell>
 
-        <mxCell id="m_s2_3" value="14. setItem(key entitas, JSON.stringify(data))" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#475569;fontSize=11;fontFamily=Arial;" parent="1" edge="1">
+        <mxCell id="m_s2_3" value="13. setItem(key entitas, JSON.stringify(data))" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#475569;fontSize=11;fontFamily=Arial;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="640" y="800" as="sourcePoint" />
             <mxPoint x="860" y="800" as="targetPoint" />
@@ -215,8 +215,8 @@
 
         <mxCell id="m_s2_5" value="15. Dispatch CustomEvent(db-update) pada tab aktif" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#16a34a;fontSize=11;fontFamily=Arial;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="640" y="930" as="sourcePoint" />
-            <mxPoint x="430" y="930" as="targetPoint" />
+            <mxPoint x="640" y="840" as="sourcePoint" />
+            <mxPoint x="430" y="840" as="targetPoint" />
           </mxGeometry>
         </mxCell>
 
@@ -246,10 +246,10 @@
           </mxGeometry>
         </mxCell>
 
-        <mxCell id="m_s2_9" value="13. Minta IDB.set() secara asinkron (best-effort)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#475569;strokeWidth=1.5;dashed=1;fontSize=11;fontFamily=Arial;" parent="1" edge="1">
+        <mxCell id="m_s2_9" value="14. Jadwalkan IDB.set() setelah localStorage berhasil (best-effort)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#475569;strokeWidth=1.5;dashed=1;fontSize=11;fontFamily=Arial;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="640" y="780" as="sourcePoint" />
-            <mxPoint x="1080" y="780" as="targetPoint" />
+            <mxPoint x="640" y="820" as="sourcePoint" />
+            <mxPoint x="1080" y="820" as="targetPoint" />
           </mxGeometry>
         </mxCell>
 
@@ -417,10 +417,10 @@
           </mxGeometry>
         </mxCell>
 
-        <mxCell id="m_s4_5" value="38. Minta salinan IndexedDB asinkron (best-effort)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#475569;strokeWidth=1.5;dashed=1;fontSize=11;fontFamily=Arial;" parent="1" edge="1">
+        <mxCell id="m_s4_5" value="39. Jadwalkan salinan IndexedDB setelah localStorage berhasil (best-effort)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#475569;strokeWidth=1.5;dashed=1;fontSize=11;fontFamily=Arial;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
-            <mxPoint x="640" y="2330" as="sourcePoint" />
-            <mxPoint x="1080" y="2330" as="targetPoint" />
+            <mxPoint x="640" y="2410" as="sourcePoint" />
+            <mxPoint x="1080" y="2410" as="targetPoint" />
           </mxGeometry>
         </mxCell>
 
@@ -428,7 +428,7 @@
           <mxGeometry x="50" y="2360" width="1380" height="330" as="geometry" />
         </mxCell>
 
-        <mxCell id="m_s4_4" value="39. Simpan pesan ke localStorage" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#475569;fontSize=11;fontFamily=Arial;" parent="1" edge="1">
+        <mxCell id="m_s4_4" value="38. Simpan pesan ke localStorage" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;endArrow=block;strokeColor=#475569;fontSize=11;fontFamily=Arial;" parent="1" edge="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="640" y="2390" as="sourcePoint" />
             <mxPoint x="860" y="2390" as="targetPoint" />

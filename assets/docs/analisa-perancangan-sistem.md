@@ -6,7 +6,7 @@ Dokumen ini mencatat arsitektur dan alur implementasi yang ditemukan pada reposi
 
 ## 1. Ringkasan arsitektur aktual
 
-Website ini adalah prototipe client-side tanpa backend aplikasi. Berkas HTML statis dan aset disajikan oleh web server statis. JavaScript di [`assets/js/app.js`](../assets/js/app.js) memuat seed, membaca dan menyimpan data, menyediakan controller Alpine.js, serta menangani sesi admin. Pustaka Alpine.js dan SweetAlert2 dimuat dari CDN; Chart.js dipakai pada dashboard admin.
+Website ini adalah prototipe client-side tanpa backend aplikasi. Berkas HTML statis dan aset disajikan oleh web server statis. JavaScript di [`app.js`](../js/app.js) memuat seed, membaca dan menyimpan data, menyediakan controller Alpine.js, serta menangani sesi admin. Pustaka Alpine.js dan SweetAlert2 dimuat dari CDN; Chart.js dipakai pada dashboard admin.
 
 `localStorage` pada origin dan profil browser aktif adalah penyimpanan utama. Key data menggunakan `prodihukum_db_v1_<entitas>`. IndexedDB dengan nama `ProdiHukumDB` hanya menerima salinan asinkron best-effort; aplikasi tidak membacanya kembali saat memuat data. Tidak ada sinkronisasi server atau lintas perangkat.
 

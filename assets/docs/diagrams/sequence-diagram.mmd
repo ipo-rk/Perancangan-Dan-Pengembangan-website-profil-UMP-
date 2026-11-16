@@ -40,9 +40,9 @@ sequenceDiagram
         Note over Admin,OtherTab: SKENARIO 2 - Simpan Konten dan Perbarui Tampilan Lintas Tab
         Admin->>Page: Simpan formulir data (Tambah/Edit/Hapus)
         Page->>App: Panggil DB.save(entityKey, data sesuai bentuk entitas)
-        App-)IDB: Minta IDB.set() secara asinkron (best-effort)
         App->>Store: setItem('prodihukum_db_v1_' + entityKey, JSON.stringify(data))
         alt Penyimpanan localStorage Berhasil
+            App-)IDB: Jadwalkan IDB.set() setelah localStorage berhasil (best-effort)
             App-->>Page: Dispatch CustomEvent 'db-update' pada tab aktif
             Store-->>OtherTab: Browser memancarkan 'storage' event secara otomatis
             OtherTab->>OtherTab: Dispatch event 'db-update' pada komponen Alpine lokal
@@ -53,7 +53,9 @@ sequenceDiagram
             App->>App: Panggil pruneStorage() -> pangkas riwayat lama
             App->>Store: Coba ulang setItem() setelah pemangkasan
             alt Coba Ulang Berhasil
-                App-->>Page: Simpan berhasil setelah pemangkasan dan pancarkan db-update
+                App-)IDB: Jadwalkan IDB.set() setelah localStorage berhasil (best-effort)
+                App-->>Page: Dispatch CustomEvent 'db-update' pada tab aktif
+                App-->>Page: DB.save() mengembalikan berhasil
                 App->>App: Panggil logActivity() -> catat aktivitas & notifikasi
                 Page-->>Admin: Tampilkan notifikasi berhasil dengan optimasi
             else Tetap Gagal
@@ -93,9 +95,9 @@ sequenceDiagram
         Public->>Page: Isi formulir kontak pada kontak.html & klik Kirim
         Page->>App: Validasi dan simpan pesan melalui contactForm()
         App->>App: Jalankan DB.save('pesan', SAMPLE_PESAN)
-        App-)IDB: Minta salinan IndexedDB secara asinkron (best-effort)
         App->>Store: Simpan pesan ke localStorage
         alt Penyimpanan localStorage Berhasil
+            App-)IDB: Jadwalkan salinan IndexedDB setelah localStorage berhasil (best-effort)
             Store-->>App: DB.save('pesan') berhasil
             App->>App: Panggil logPublicEvent() untuk aktivitas dan notifikasi
             App-->>Page: Kembalikan status berhasil

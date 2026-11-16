@@ -3,6 +3,18 @@
    Dark mode, SweetAlert2, Alpine.js modules, sample data
    ========================================================= */
 
+function updateCopyrightYear() {
+  const currentYear = String(new Date().getFullYear());
+  document.querySelectorAll('[data-current-year]').forEach((element) => {
+    element.textContent = currentYear;
+  });
+}
+
+updateCopyrightYear();
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) updateCopyrightYear();
+});
+
 // Warna address-bar mobile (meta[name=theme-color]) HARUS mengikuti mode
 // yang benar-benar aktif di situs (toggle manual + localStorage), BUKAN
 // preferensi OS (prefers-color-scheme) — supaya saat pengunjung menekan

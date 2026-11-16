@@ -144,7 +144,7 @@
         </mxCell>
 
         <!-- Eksekusi CRUD Admin -->
-        <mxCell id="f_crud_op" value="DB.save(): jadwalkan salinan IndexedDB, tulis localStorage, pancarkan db-update" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#2563eb;fontSize=11;fontFamily=Arial;" parent="1" vertex="1">
+        <mxCell id="f_crud_op" value="DB.save(): tulis localStorage; setelah berhasil, jadwalkan salinan IndexedDB dan pancarkan db-update" style="rounded=1;arcSize=10;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#2563eb;fontSize=11;fontFamily=Arial;" parent="1" vertex="1">
           <mxGeometry x="1050" y="830" width="240" height="70" as="geometry" />
         </mxCell>
 

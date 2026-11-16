@@ -2,7 +2,7 @@
 
 ## Website Profil & Panel Admin Program Studi Hukum — Universitas Muhammadiyah Papua (UMP)
 
-> Dokumen ini adalah **kumpulan lengkap diagram rekayasa perangkat lunak dalam format Mermaid** dan analisis perancangan sistem untuk Website Profil dan Panel Administrasi Program Studi Hukum Universitas Muhammadiyah Papua. Seluruh kode Mermaid di bawah ini diverifikasi konsisten dan akurat terhadap basis kode frontend (`assets/js/app.js`, `assets/css/style.css`, 36 berkas HTML) berdasarkan audit Oktober 2026.
+> Dokumen ini mendokumentasikan diagram rekayasa perangkat lunak dan analisis sistem untuk Website Profil dan Panel Administrasi Program Studi Hukum Universitas Muhammadiyah Papua. Sumber diagram Mermaid yang dipelihara berada di [`assets/docs/diagrams/`](assets/docs/diagrams/); salinan kode di bawah diselaraskan dengan sumber tersebut. Sistem adalah prototipe frontend-only, bukan backend/database server.
 
 ---
 
@@ -33,8 +33,8 @@
 | Total Dosen | **11 dosen** (10 berkode HKM001–HKM010, 1 tanpa kode) |
 | Alpine.js functions | **28 functions** |
 | Total halaman HTML | **36 files** (13 publik + 5 detail + 18 admin) |
-| DOSEN fields aktual | `id, nama, kode, jabatan, pendidikan, spesialisasi, foto, email, telepon` |
-| KURIKULUM fields aktual | `id, kode, nama, sks, semester, kategori, deskripsi, pengampu, kodeDosen` |
+| DOSEN fields aktual | `id, nama, kode` |
+| KURIKULUM fields aktual | `id, kode, nama, sks, semester, pengampu (opsional pada beberapa seed), kodeDosen` |
 | PENGATURAN social media | `facebook, instagram, youtube, linkedin, tiktok` |
 | Bad chars di app.js | 0 |
 | DB.save/DB.load parity | ✅ Semua 18 key konsisten |
@@ -93,7 +93,7 @@ flowchart LR
 
 ### 2.1 Deskripsi Proses & Media Penyimpanan
 
-DFD Level 1 membedah proses utama menjadi **10 Sub-Proses Fungsional** dan menghubungkannya dengan **18 Data Store** berbasis `localStorage` dengan namespace `prodihukum_db_v1_<entity>` serta cadangan asinkron IndexedDB.
+DFD Level 1 membedah proses utama menjadi **8 proses fungsional**. Diagram membedakan empat kelompok penyimpanan: 18 key entitas di `localStorage`, sesi admin, statistik pageview, dan salinan best-effort di IndexedDB. D1 adalah satu kelompok logis yang berisi 18 key, bukan 18 data store terpisah.
 
 ### 2.2 Kode Mermaid (DFD Level 1)
 
@@ -106,7 +106,7 @@ flowchart TB
 
     %% Data Stores
     subgraph STORES["Data Stores Sistem (localStorage & IndexedDB)"]
-        DS_MASTER[("D1 Basis Data 18 Entitas\n(localStorage: prodihukum_db_v1_*)")]
+        DS_MASTER[("D1 Data aplikasi (18 entitas)\n(localStorage: prodihukum_db_v1_*)")]
         DS_SESSION[("D2 Sesi Administrator\n(localStorage: prodihukum_admin_session)")]
         DS_VIEWS[("D3 Statistik Kunjungan\n(localStorage: prodihukum_pageviews_v1)")]
         DS_IDB[("D4 Salinan data best-effort\n(IndexedDB: ProdiHukumDB / entities)")]
@@ -128,7 +128,7 @@ flowchart TB
 
     %% 1.0 Autentikasi
     EXT_ADMIN -->|"Email & Password login / Permintaan reset"| P1
-    DS_MASTER -->|"Data kredensial pengguna (SEED_PENGGUNA)"| P1
+    DS_MASTER -->|"Data pengguna lokal; seed untuk key hilang atau data tidak valid"| P1
     P1 -->|"Simpan token sesi aktif"| DS_SESSION
     P1 -->|"Data password baru"| P8
     P1 -->|"Status login / pesan validasi"| EXT_ADMIN
@@ -200,7 +200,7 @@ flowchart TD
 
     subgraph PUBLIC["Alur Pengunjung"]
         direction TD
-        LOAD_PUBLIC["Muat halaman dan data dari localStorage; gunakan seed bila key belum tersedia"]
+        LOAD_PUBLIC["Muat data dari localStorage; seed dipakai jika key hilang, JSON rusak, atau bentuknya tidak sesuai"]
         PUBLISHED["Tampilkan konten sesuai modul; berita dan artikel hanya berstatus Published"]
         PAGEVIEW["Catat pageview pada browser"]
         PUBLIC_ACTION{Aksi pengunjung?}
@@ -240,7 +240,9 @@ flowchart TD
         LOGIN_FORM["Masukkan email dan kata sandi"]
         LOGIN_CHECK{Akun aktif dan kredensial cocok?}
         LOGIN_DENIED["Tampilkan pesan login gagal"]
-        LOGIN_SESSION["Simpan sesi lokal prodihukum_admin_session"]
+        LOGIN_SESSION["AUTH.login(): simpan sesi lokal"]
+        SESSION_SAVED{Sesi valid dan berhasil disimpan?}
+        SESSION_ERROR["Tampilkan kegagalan membuat atau menyimpan sesi"]
         LOGIN_HOME["Buka dashboard admin"]
         RESET_FORM["Masukkan email terdaftar"]
         RESET_CHECK{Email ditemukan dan akun aktif?}
@@ -259,7 +261,9 @@ flowchart TD
 
         ADMIN_ROUTE -->|login.html| LOGIN_FORM --> LOGIN_CHECK
         LOGIN_CHECK -->|Tidak| LOGIN_DENIED --> FINISH
-        LOGIN_CHECK -->|Ya| LOGIN_SESSION --> LOGIN_HOME --> FINISH
+        LOGIN_CHECK -->|Ya| LOGIN_SESSION --> SESSION_SAVED
+        SESSION_SAVED -->|Ya| LOGIN_HOME --> FINISH
+        SESSION_SAVED -->|Tidak| SESSION_ERROR --> FINISH
         ADMIN_ROUTE -->|lupa-sandi.html| RESET_FORM --> RESET_CHECK
         RESET_CHECK -->|Tidak, tampilkan pesan| RESET_FORM
         RESET_CHECK -->|Ya| RESET_PASSWORD --> RESET_PASSWORD_CHECK
@@ -286,7 +290,7 @@ flowchart TD
         RETRY["Pangkas log internal yang dibatasi, lalu coba sekali lagi"]
         RETRY_RESULT{Percobaan ulang berhasil?}
         SAVE_FAIL["Batalkan perubahan dan beri tahu admin"]
-        ASYNC_COPY["Minta salinan IndexedDB secara asinkron (best-effort)"]
+        ASYNC_COPY["Setelah localStorage berhasil, jadwalkan salinan IndexedDB (best-effort)"]
         ACTIVITY["Catat aktivitas dan notifikasi"]
         UPDATE_VIEW["Pancarkan db-update; tab lain menerima storage event"]
         SAVE_OK["Perbarui tampilan dan tampilkan hasil"]
@@ -296,7 +300,7 @@ flowchart TD
 
         ADMIN_HOME --> ADMIN_ACTION
         ADMIN_ACTION -->|CRUD| CRUD --> SAVE --> SAVE_RESULT
-        SAVE_RESULT -->|Ya| ASYNC_COPY --> ACTIVITY --> UPDATE_VIEW --> SAVE_OK --> FINISH
+        SAVE_RESULT -->|Ya| ASYNC_COPY --> UPDATE_VIEW --> ACTIVITY --> SAVE_OK --> FINISH
         SAVE_RESULT -->|Tidak| RETRY --> RETRY_RESULT
         RETRY_RESULT -->|Ya| ASYNC_COPY
         RETRY_RESULT -->|Tidak| SAVE_FAIL --> FINISH
@@ -319,7 +323,7 @@ ERD mendefinisikan **18 entitas data** (16 array record + 2 objek tunggal) yang 
 
 - **Relasi Lookup 1**: `KEGIATAN.id ← PENDAFTAR.kegiatanId` — pendaftar menyimpan snapshot `kegiatanNama` sebagai teks.
 - **Relasi Lookup 2**: `DOSEN.id ← STRUKTUR.dosenId` — opsional; baris STRUKTUR boleh tanpa dosenId.
-- **Relasi Lookup 3**: `DOSEN.nama ↔ KURIKULUM.pengampu` — pencocokan nama ternormalisasi; `kodeDosen` hanya teks informatif, bukan FK.
+- **Relasi Lookup 3**: `KURIKULUM.kodeDosen` dicocokkan dengan `DOSEN.kode` jika keduanya tersedia; jika tidak, aplikasi memakai pencocokan nama ternormalisasi melalui `pengampu`. Ini lookup aplikasi, bukan foreign key.
 - **PESAN**: ditulis oleh `contactForm()`, tidak memiliki relasi FK ke entitas lain.
 - **PROFIL & PENGATURAN**: objek tunggal (bukan array); PENGATURAN menyimpan identitas situs, SEO, dan **5 akun sosial media**.
 
@@ -339,7 +343,7 @@ erDiagram
     %% Asosiasi berikut adalah lookup aplikasi; tidak ada foreign-key enforcement.
     KEGIATAN o|--o{ PENDAFTAR : "lookup opsional melalui kegiatanId"
     DOSEN o|--o{ STRUKTUR : "lookup opsional melalui dosenId"
-    DOSEN o|--o{ KURIKULUM : "pencocokan nama pengampu"
+    DOSEN o|--o{ KURIKULUM : "lookup kodeDosen; fallback nama pengampu"
 
     %% ==========================================
     %% DOMAIN 1: AKADEMIK & STRUKTUR ORGANISASI
@@ -347,13 +351,7 @@ erDiagram
     DOSEN {
         number id PK "ID unik dosen"
         string nama "Nama lengkap beserta gelar"
-        string kode "Kode dosen (contoh: HKM001; dapat kosong)"
-        string jabatan "Jabatan akademik"
-        string pendidikan "Riwayat pendidikan terakhir"
-        string spesialisasi "Bidang keahlian hukum"
-        string foto "Path file foto dosen"
-        string email "Email resmi dosen"
-        string telepon "Nomor kontak telepon"
+        string kode "Kode dosen (contoh: HKM001; dapat tidak tercantum)"
     }
 
     STRUKTUR {
@@ -370,10 +368,8 @@ erDiagram
         string nama "Nama mata kuliah"
         number sks "Bobot SKS (1-6)"
         number semester "Semester sajian (1-8)"
-        string kategori "Wajib / Pilihan / MBKM"
-        string deskripsi "Deskripsi singkat capaian MK"
-        string pengampu "Nama pengampu; dicocokkan setelah normalisasi"
-        string kodeDosen "Kode dosen opsional; teks biasa, bukan relasi"
+        string pengampu "Nama pengampu; fallback pencocokan ternormalisasi"
+        string kodeDosen "Kode dosen opsional; lookup aplikasi, bukan foreign key"
     }
 
     ALUMNI {
@@ -577,10 +573,10 @@ erDiagram
 
 Sistem dirancang dengan arsitektur **4-Layer murni di sisi peramban**:
 
-1. **Presentation & Styling Layer**: 36 berkas HTML (13 publik + 5 detail + 18 admin), Neumorphism Design System (`style.css`), Tailwind CSS pre-built.
+1. **Presentation & Styling Layer**: 36 berkas HTML (13 halaman publik utama + 5 detail + 18 admin), stylesheet `style.css`, `style1.css`, Tailwind CSS pre-built, dan aset gambar.
 2. **Reactive Controller Layer**: Alpine.js 3.14.8 — **28 functions** (`siteHeader`, `homeStats`, `kurikulumPage`, `dosenPage`, `contactForm`, `adminShell`, `adminDosenPage`, `adminCrudTable`, `adminGaleriPage`, `adminPenggunaTable`, `adminDokumenTable`, `kegiatanAdminPage`, `adminAktivitasPage`, dll.)
 3. **Core Engine & Business Logic Layer**: `AUTH` module, `DB` engine, `IDB` module, `SEED_*` 18 fixtures, pruning manager, activity logger.
-4. **Storage & External Services Layer**: `localStorage` (~5 MB quota), IndexedDB (write-through only), Google Maps Embed, Google Fonts, CDN providers.
+4. **Storage & External Services Layer**: `localStorage` (penyimpanan utama), IndexedDB (salinan asinkron best-effort, tidak dibaca sebagai fallback), Google Maps Embed, Google Fonts, CDN providers.
 
 ### 5.2 Kode Mermaid (Component Diagram)
 
@@ -650,9 +646,9 @@ flowchart TB
 
 ### 6.1 Deskripsi Skenario
 
-1. **Skenario 1**: Registrasi Kegiatan oleh Pengunjung Publik (validasi email unik per kegiatanId + logPublicEvent).
-2. **Skenario 2**: Autentikasi Login Admin & RBAC Guard.
-3. **Skenario 3**: CRUD dengan Auto-Pruning Storage (QuotaExceededError handler).
+1. **Skenario 1**: Autentikasi login admin dan pembuatan sesi lokal.
+2. **Skenario 2**: CRUD dengan auto-pruning terbatas; IndexedDB hanya dicerminkan setelah localStorage berhasil.
+3. **Skenario 3**: Pendaftaran kegiatan publik (validasi email unik per kegiatanId + logPublicEvent).
 4. **Skenario 4**: Pengiriman Pesan Kontak ke pesan store.
 
 ### 6.2 Kode Mermaid (Sequence Diagram)
@@ -674,14 +670,19 @@ sequenceDiagram
     rect rgb(239, 246, 255)
         Note over Admin,Store: SKENARIO 1 - Autentikasi Login Admin & Pembuatan Sesi Klien
         App->>Store: Baca prodihukum_db_v1_pengguna saat halaman dimuat
-        Store-->>App: Data daftar pengguna (fallback ke SEED_PENGGUNA jika kosong)
+        Store-->>App: Data pengguna (seed jika key hilang, JSON rusak, atau bentuk tidak sesuai)
         Admin->>Page: Kirim email dan kata sandi pada login.html
         Page->>App: Cocokkan email, status, dan kata sandi dengan data pengguna lokal
         alt Akun Ditemukan, Status 'Aktif', dan Password Cocok
             Page->>App: Panggil AUTH.login(matchedUser)
-            App->>Store: Simpan data sesi ke prodihukum_admin_session
-            App-->>Page: Login Berhasil (true)
-            Page-->>Admin: Arahkan ke admin/dashboard.html
+            alt Data sesi valid dan localStorage berhasil menyimpan sesi
+                App->>Store: Simpan data sesi ke prodihukum_admin_session
+                App-->>Page: Login berhasil
+                Page-->>Admin: Arahkan ke admin/dashboard.html
+            else Validasi sesi atau penyimpanan gagal
+                App-->>Page: AUTH.login() gagal
+                Page-->>Admin: Tampilkan pesan sesi tidak dapat disimpan
+            end
         else Kredensial Tidak Cocok / Akun Nonaktif
             App-->>Page: Login Ditolak (false)
             Page-->>Admin: Tampilkan Notifikasi Error (SweetAlert)
@@ -694,21 +695,24 @@ sequenceDiagram
     rect rgb(240, 253, 244)
         Note over Admin,OtherTab: SKENARIO 2 - Simpan Konten dan Perbarui Tampilan Lintas Tab
         Admin->>Page: Simpan formulir data (Tambah/Edit/Hapus)
-        Page->>App: Panggil DB.save(entityKey, dataArray)
-        App-)IDB: Minta IDB.set() secara asinkron (best-effort)
-        App->>Store: setItem('prodihukum_db_v1_' + entityKey, JSON.stringify(dataArray))
+        Page->>App: Panggil DB.save(entityKey, data sesuai bentuk entitas)
+        App->>Store: setItem('prodihukum_db_v1_' + entityKey, JSON.stringify(data))
         alt Penyimpanan localStorage Berhasil
-            App->>App: Panggil logActivity() -> catat ke store 'aktivitas' & 'notifikasi'
+            App-)IDB: Jadwalkan IDB.set() setelah localStorage berhasil (best-effort)
             App-->>Page: Dispatch CustomEvent 'db-update' pada tab aktif
             Store-->>OtherTab: Browser memancarkan 'storage' event secara otomatis
             OtherTab->>OtherTab: Dispatch event 'db-update' pada komponen Alpine lokal
-            OtherTab-->>Public: Halaman publik memuat ulang setelah storage event
+            OtherTab-->>Public: Halaman publik memuat ulang jika key konten berubah
+            App->>App: Panggil logActivity() -> catat ke store 'aktivitas' & 'notifikasi'
             Page-->>Admin: Tampilkan SweetAlert sukses & perbarui tabel
         else QuotaExceededError (Kapasitas Penyimpanan Penuh)
             App->>App: Panggil pruneStorage() -> pangkas riwayat lama
             App->>Store: Coba ulang setItem() setelah pemangkasan
             alt Coba Ulang Berhasil
-                App-->>Page: Simpan terkonfirmasi setelah optimasi ruang
+                App-)IDB: Jadwalkan IDB.set() setelah localStorage berhasil (best-effort)
+                App-->>Page: Dispatch CustomEvent 'db-update' pada tab aktif
+                App-->>Page: DB.save() mengembalikan berhasil
+                App->>App: Panggil logActivity() -> catat aktivitas & notifikasi
                 Page-->>Admin: Tampilkan notifikasi berhasil dengan optimasi
             else Tetap Gagal
                 App-->>Page: Kembalikan false (Rollback status form)
@@ -732,8 +736,8 @@ sequenceDiagram
             Page-->>Public: Tampilkan peringatan: Email sudah terdaftar untuk kegiatan ini
         else Data Baru & Valid
             App->>Store: Simpan data pendaftar baru via DB.save('pendaftar')
+            Store-->>App: DB.save('pendaftar') berhasil
             App->>App: Panggil logPublicEvent() -> catat aktivitas pendaftar baru
-            Store-->>App: Konfirmasi simpan data
             App-->>Page: Registrasi berhasil
             Page-->>Public: Tampilkan konfirmasi pendaftaran berhasil & reset form
         end
@@ -747,9 +751,9 @@ sequenceDiagram
         Public->>Page: Isi formulir kontak pada kontak.html & klik Kirim
         Page->>App: Validasi dan simpan pesan melalui contactForm()
         App->>App: Jalankan DB.save('pesan', SAMPLE_PESAN)
-        App-)IDB: Minta salinan IndexedDB secara asinkron (best-effort)
         App->>Store: Simpan pesan ke localStorage
         alt Penyimpanan localStorage Berhasil
+            App-)IDB: Jadwalkan salinan IndexedDB setelah localStorage berhasil (best-effort)
             Store-->>App: DB.save('pesan') berhasil
             App->>App: Panggil logPublicEvent() untuk aktivitas dan notifikasi
             App-->>Page: Kembalikan status berhasil
@@ -806,7 +810,7 @@ flowchart LR
         %% Modul khusus yang dibatasi AUTH.guard() untuk Super Admin
         UC_USERS(["Kelola Akun Pengguna & Hak Akses"])
         UC_SETTINGS(["Kelola Pengaturan Website & Media Sosial"])
-        UC_BACKUP(["Backup & Restore Basis Data JSON"])
+        UC_BACKUP(["Backup & Restore Data Aplikasi JSON"])
     end
 
     %% Relasi Pengunjung ke Use Case Publik
@@ -831,7 +835,7 @@ flowchart LR
     SUPER --- UC_BACKUP
 
     %% Catatan Arsitektural Sistem (Non-Use Case)
-    NOTE_STORAGE["Catatan sistem\nData utama dan sesi disimpan pada browser. Reset kata sandi tidak memakai verifikasi email. Backup/restore JSON tersedia bagi Super Admin; ekspor kurikulum mengunduh CSV sesuai filter, sedangkan import masih simulasi."]
+    NOTE_STORAGE["Catatan sistem\nData utama dan sesi disimpan pada browser. Reset kata sandi tidak memakai verifikasi email. Backup/restore JSON tersedia bagi Super Admin; ekspor kurikulum mengunduh CSV sesuai filter dan impor CSV belum tersedia."]
     UC_AKADEMIK -.- NOTE_STORAGE
     UC_SETTINGS -.- NOTE_STORAGE
 ```
@@ -909,7 +913,7 @@ flowchart TB
 
 Activity diagram merangkum validasi formulir publik, pemeriksaan login dan guard admin, operasi CRUD, serta perilaku `DB.save()` saat penulisan lokal berhasil atau gagal. Salinan IndexedDB hanya best-effort. Tab lain menerima `storage` event, tetapi halaman publik hanya memuat ulang untuk perubahan data konten yang relevan.
 
-Sumber Mermaid: [`activity-diagram.mmd`](docs/diagrams/activity-diagram.mmd). Draw.io: [`activity-diagram.drawio.xml`](docs/diagrams/drawio/activity-diagram.drawio.xml).
+Sumber Mermaid: [`activity-diagram.mmd`](assets/docs/diagrams/activity-diagram.mmd). Draw.io: [`activity-diagram.drawio.xml`](assets/docs/diagrams/drawio/activity-diagram.drawio.xml).
 
 ### 9.1 Kode Mermaid (Activity Diagram)
 
@@ -920,7 +924,7 @@ flowchart TD
 
     subgraph PUBLIC["Alur Pengunjung"]
         direction TB
-        LOAD["Muat data dari localStorage; seed dipakai hanya jika key belum ada"]
+        LOAD["Muat data dari localStorage; seed dipakai jika key hilang, JSON rusak, atau bentuknya tidak sesuai"]
         VIEW["Tampilkan konten; berita dan artikel publik berstatus Published"]
         ACTION{Aksi pengunjung?}
         BROWSE["Jelajah, cari, atau unduh dokumen"]
@@ -950,9 +954,10 @@ flowchart TD
         direction TB
         ENTRY{Login atau buka modul admin?}
         LOGIN["Masukkan email dan kata sandi"]
-        CREDENTIALS{Email dan sandi cocok, akun aktif, serta data sesi valid?}
+        CREDENTIALS{Email dan sandi cocok serta akun aktif?}
         LOGIN_ERROR["Tampilkan kegagalan login"]
         SESSION["AUTH.login(): simpan sesi pada localStorage"]
+        SESSION_SAVED{Data sesi valid dan berhasil disimpan?}
         GUARD["AUTH.guard(): periksa sesi"]
         SESSION_VALID{Sesi valid?}
         REDIRECT["Arahkan ke halaman login"]
@@ -964,7 +969,9 @@ flowchart TD
 
         ENTRY -->|Login| LOGIN --> CREDENTIALS
         CREDENTIALS -->|Tidak| LOGIN_ERROR --> LOGIN
-        CREDENTIALS -->|Ya| SESSION --> ADMIN_ACTION
+        CREDENTIALS -->|Ya| SESSION --> SESSION_SAVED
+        SESSION_SAVED -->|Ya| ADMIN_ACTION
+        SESSION_SAVED -->|Tidak| LOGIN_ERROR
         ENTRY -->|Modul admin| GUARD --> SESSION_VALID
         SESSION_VALID -->|Tidak| REDIRECT
         SESSION_VALID -->|Ya| ROLE_PAGE
@@ -980,8 +987,8 @@ flowchart TD
 
     subgraph PERSISTENCE["Penyimpanan dan pembaruan"]
         direction TB
-        BACKUP["Minta salinan IndexedDB secara asinkron (best-effort)"]
         WRITE["DB.save(): tulis sinkron ke localStorage"]
+        BACKUP["Setelah berhasil, jadwalkan salinan IndexedDB asinkron (best-effort)"]
         SAVED{Penulisan berhasil?}
         PRUNE["Pangkas aktivitas/pageview yang dibatasi; coba sekali lagi"]
         RETRY{Percobaan ulang berhasil?}
@@ -993,19 +1000,19 @@ flowchart TD
         CONTENT_CHANGED{Tab penerima publik dan key termasuk konten?}
         RELOAD["Halaman publik memuat ulang"]
 
-        BACKUP --> WRITE --> SAVED
+        WRITE --> SAVED
         SAVED -->|Tidak| PRUNE --> RETRY
         RETRY -->|Tidak| ROLLBACK
-        SAVED -->|Ya| LOG
-        RETRY -->|Ya| LOG
-        LOG --> RESULT --> UPDATE
+        SAVED -->|Ya| BACKUP
+        RETRY -->|Ya| BACKUP
+        BACKUP --> UPDATE --> LOG --> RESULT
         UPDATE --> STORAGE_EVENT --> CONTENT_CHANGED
         CONTENT_CHANGED -->|Ya| RELOAD
         CONTENT_CHANGED -->|Tidak| FINISH
     end
-    CONTACT_SAVE --> BACKUP
-    REG_SAVE --> BACKUP
-    ADMIN_SAVE --> BACKUP
+    CONTACT_SAVE --> WRITE
+    REG_SAVE --> WRITE
+    ADMIN_SAVE --> WRITE
     BROWSE --> FINISH
     ROLLBACK --> FINISH
     RELOAD --> FINISH
@@ -1029,24 +1036,24 @@ flowchart TD
 
 ## 10. Panduan Penggunaan Berkas Draw.io XML
 
-Untuk mengedit atau membuka diagram di aplikasi **[draw.io (diagrams.net)](https://app.diagrams.net)**, gunakan berkas XML yang tersedia di folder [`docs/diagrams/drawio/`](docs/diagrams/drawio/):
+Untuk mengedit atau membuka diagram di aplikasi **[draw.io (diagrams.net)](https://app.diagrams.net)**, gunakan berkas XML yang tersedia di folder [`assets/docs/diagrams/drawio/`](assets/docs/diagrams/drawio/):
 
 | Nama Diagram | Berkas XML Draw.io | Tipe |
 | --- | --- | --- |
-| **DFD Level 0** | [`dfd-level-0.drawio.xml`](docs/diagrams/drawio/dfd-level-0.drawio.xml) | `.drawio.xml` |
-| **DFD Level 1** | [`dfd-level-1.drawio.xml`](docs/diagrams/drawio/dfd-level-1.drawio.xml) | `.drawio.xml` |
-| **Flowchart Sistem** | [`flowchart-sistem.drawio.xml`](docs/diagrams/drawio/flowchart-sistem.drawio.xml) | `.drawio.xml` |
-| **ER Diagram (18 Entitas)** | [`er-diagram.drawio.xml`](docs/diagrams/drawio/er-diagram.drawio.xml) | `.drawio.xml` |
-| **Component Diagram** | [`component-diagram.drawio.xml`](docs/diagrams/drawio/component-diagram.drawio.xml) | `.drawio.xml` |
-| **Sequence Diagram** | [`sequence-diagram.drawio.xml`](docs/diagrams/drawio/sequence-diagram.drawio.xml) | `.drawio.xml` |
-| **Use Case Diagram** | [`usecase-diagram.drawio.xml`](docs/diagrams/drawio/usecase-diagram.drawio.xml) | `.drawio.xml` |
-| **Deployment Diagram** | [`deployment-diagram.drawio.xml`](docs/diagrams/drawio/deployment-diagram.drawio.xml) | `.drawio.xml` |
-| **Activity Diagram** | [`activity-diagram.drawio.xml`](docs/diagrams/drawio/activity-diagram.drawio.xml) | `.drawio.xml` |
-| **Master Semua Diagram (9 Tab)** | [`all-diagrams.drawio.xml`](docs/diagrams/drawio/all-diagrams.drawio.xml) | `.drawio.xml` |
+| **DFD Level 0** | [`dfd-level-0.drawio.xml`](assets/docs/diagrams/drawio/dfd-level-0.drawio.xml) | `.drawio.xml` |
+| **DFD Level 1** | [`dfd-level-1.drawio.xml`](assets/docs/diagrams/drawio/dfd-level-1.drawio.xml) | `.drawio.xml` |
+| **Flowchart Sistem** | [`flowchart-sistem.drawio.xml`](assets/docs/diagrams/drawio/flowchart-sistem.drawio.xml) | `.drawio.xml` |
+| **ER Diagram (18 Entitas)** | [`er-diagram.drawio.xml`](assets/docs/diagrams/drawio/er-diagram.drawio.xml) | `.drawio.xml` |
+| **Component Diagram** | [`component-diagram.drawio.xml`](assets/docs/diagrams/drawio/component-diagram.drawio.xml) | `.drawio.xml` |
+| **Sequence Diagram** | [`sequence-diagram.drawio.xml`](assets/docs/diagrams/drawio/sequence-diagram.drawio.xml) | `.drawio.xml` |
+| **Use Case Diagram** | [`usecase-diagram.drawio.xml`](assets/docs/diagrams/drawio/usecase-diagram.drawio.xml) | `.drawio.xml` |
+| **Deployment Diagram** | [`deployment-diagram.drawio.xml`](assets/docs/diagrams/drawio/deployment-diagram.drawio.xml) | `.drawio.xml` |
+| **Activity Diagram** | [`activity-diagram.drawio.xml`](assets/docs/diagrams/drawio/activity-diagram.drawio.xml) | `.drawio.xml` |
+| **Master Semua Diagram (9 Tab)** | [`all-diagrams.drawio.xml`](assets/docs/diagrams/drawio/all-diagrams.drawio.xml) | `.drawio.xml` |
 
 ### Cara Buka di Draw.io
 
 1. **Via File**: Buka [app.diagrams.net](https://app.diagrams.net) → **Open Existing Diagram** → pilih file `.drawio.xml`.
 2. **Via Copy-Paste**: Buka file `.drawio.xml` di VS Code → Ctrl+A, Ctrl+C → di draw.io klik **Extras** → **Edit Diagram...** → Ctrl+V → **Apply**.
 
-> **Catatan:** Berkas Draw.io XML (`.drawio.xml`) adalah representasi visual dari diagram yang sama dengan file `.mmd` di `docs/diagrams/`. Sumber kebenaran terbaru adalah file `.mmd` — update draw.io XML setelah perubahan signifikan pada data.
+> **Catatan:** Berkas Draw.io XML (`.drawio.xml`) adalah ekspor statis dari diagram Mermaid di `assets/docs/diagrams/`. Sumber yang dipelihara adalah `.mmd`; perbarui ekspor Draw.io setiap kali sumber berubah.

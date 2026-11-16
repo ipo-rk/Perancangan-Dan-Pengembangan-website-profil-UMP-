@@ -67,8 +67,8 @@ flowchart TD
 
     subgraph PERSISTENCE["Penyimpanan dan pembaruan"]
         direction TB
-        BACKUP["Jadwalkan salinan IndexedDB asinkron (best-effort)"]
         WRITE["DB.save(): tulis sinkron ke localStorage"]
+        BACKUP["Setelah berhasil, jadwalkan salinan IndexedDB asinkron (best-effort)"]
         SAVED{Penulisan berhasil?}
         PRUNE["Pangkas aktivitas/pageview yang dibatasi; coba sekali lagi"]
         RETRY{Percobaan ulang berhasil?}
@@ -80,19 +80,19 @@ flowchart TD
         CONTENT_CHANGED{Tab penerima publik dan key termasuk konten?}
         RELOAD["Halaman publik memuat ulang"]
 
-        BACKUP --> WRITE --> SAVED
+        WRITE --> SAVED
         SAVED -->|Tidak| PRUNE --> RETRY
         RETRY -->|Tidak| ROLLBACK
-        SAVED -->|Ya| UPDATE
-        RETRY -->|Ya| UPDATE
-        UPDATE --> LOG --> RESULT
+        SAVED -->|Ya| BACKUP
+        RETRY -->|Ya| BACKUP
+        BACKUP --> UPDATE --> LOG --> RESULT
         UPDATE --> STORAGE_EVENT --> CONTENT_CHANGED
         CONTENT_CHANGED -->|Ya| RELOAD
         CONTENT_CHANGED -->|Tidak| FINISH
     end
-    CONTACT_SAVE --> BACKUP
-    REG_SAVE --> BACKUP
-    ADMIN_SAVE --> BACKUP
+    CONTACT_SAVE --> WRITE
+    REG_SAVE --> WRITE
+    ADMIN_SAVE --> WRITE
     BROWSE --> FINISH
     ROLLBACK --> FINISH
     RELOAD --> FINISH

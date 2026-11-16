@@ -447,13 +447,21 @@ Sumber asli: [`../js/app.js`](../js/app.js), fungsi `DB.save(key, data)`.
 
 ```javascript
 function save(key, data) {
-  if (typeof IDB !== 'undefined' && IDB.set) {
-    IDB.set(NS + key, data).catch(() => {});
+  let serialized;
+  try {
+    serialized = JSON.stringify(data);
+  } catch (e) {
+    console.warn('DB: gagal menyiapkan data "' + key + '" untuk disimpan.', e);
+    return false;
+  }
+  if (typeof serialized !== 'string') {
+    console.warn('DB: data "' + key + '" tidak dapat diserialisasi untuk disimpan.');
+    return false;
   }
 
-  const serialized = JSON.stringify(data);
   try {
     localStorage.setItem(NS + key, serialized);
+    mirrorToIndexedDB(key, data);
     window.dispatchEvent(new CustomEvent('db-update', {
       detail: { key, data }
     }));
@@ -462,6 +470,7 @@ function save(key, data) {
     pruneStorage();
     try {
       localStorage.setItem(NS + key, serialized);
+      mirrorToIndexedDB(key, data);
       window.dispatchEvent(new CustomEvent('db-update', {
         detail: { key, data }
       }));

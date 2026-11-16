@@ -1,0 +1,16 @@
+erDiagram
+    DOSEN o|--o{ KURIKULUM : "lookup kodeDosen ke kode; fallback nama"
+    DOSEN {
+        number id PK "ID unik dosen"
+        string nama "Nama lengkap beserta gelar"
+        string kode "Kode dosen, opsional"
+    }
+    KURIKULUM {
+        number id PK "ID mata kuliah"
+        string kode "Kode mata kuliah"
+        string nama "Nama mata kuliah"
+        number sks "Bobot SKS"
+        number semester "Semester sajian"
+        string pengampu "Nama dosen pengampu, opsional"
+        string kodeDosen "Kode dosen untuk lookup, opsional"
+    }

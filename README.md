@@ -108,7 +108,7 @@ Perancangan-Dan-Pengembangan-website-profil-UMP-/
 │   └── image/
 │       └── logo-ump.png            # Logo UMP
 │
-├── 📁 docs/
+├── 📁 assets/docs/
 │   ├── diagrams/
 │   │   ├── *.mmd                   # 9 diagram Mermaid (source)
 │   │   └── drawio/
@@ -122,11 +122,11 @@ Perancangan-Dan-Pengembangan-website-profil-UMP-/
 │   │       ├── flowchart-sistem.drawio.xml
 │   │       ├── sequence-diagram.drawio.xml
 │   │       └── usecase-diagram.drawio.xml
-│   ├── mermaid.md                  # Semua diagram Mermaid inline
-│   ├── analisa-perancangan.md      # Dokumen analisa
+│   ├── analisa-perancangan-sistem.md # Dokumen analisa
 │   └── spesifikasi-sistem.md       # Spesifikasi teknis
 │
-├── mermaid.md                      # Ringkasan diagram (root)
+├── mermaid.md                      # Ringkasan dan dokumentasi diagram
+│
 ├── sitemap.xml                     # Sitemap HTML
 ├── package.json                    # Metadata proyek
 └── README.md                       # File ini
@@ -156,7 +156,7 @@ let SAMPLE_DOSEN = DB.load('dosen', SEED_DOSEN);
 | Method | Fungsi |
 |--------|--------|
 | `DB.load(key, fallback)` | Ambil dari localStorage; gunakan `fallback` jika key hilang, JSON rusak, atau bentuk data tidak sesuai |
-| `DB.save(key, data)` | Simpan ke localStorage (sync) + IndexedDB (async write-through) |
+| `DB.save(key, data)` | Simpan ke localStorage (utama); setelah berhasil, minta salinan IndexedDB (best-effort) |
 
 ### Kunci localStorage (prefix: `prodihukum_db_v1_`)
 
@@ -405,17 +405,17 @@ Semua diagram tersedia dalam 2 format: **Mermaid** (`.mmd`) dan **Draw.io** (`.d
 
 | Diagram | Mermaid | Draw.io | Keterangan |
 |---------|---------|---------|------------|
-| ER Diagram | `er-diagram.mmd` | `er-diagram.drawio.xml` | 18 entitas, relasi lengkap |
-| DFD Level 0 | `dfd-level-0.mmd` | `dfd-level-0.drawio.xml` | Aliran data sistem keseluruhan |
-| DFD Level 1 | `dfd-level-1.mmd` | `dfd-level-1.drawio.xml` | Aliran data detail |
-| Activity Diagram | `activity-diagram.mmd` | `activity-diagram.drawio.xml` | Aktivitas pengunjung, admin, dan penyimpanan |
-| Flowchart Sistem | `flowchart-sistem.mmd` | `flowchart-sistem.drawio.xml` | Alur logika aplikasi |
-| Sequence Diagram | `sequence-diagram.mmd` | `sequence-diagram.drawio.xml` | 4 skenario interaksi |
-| Component Diagram | `component-diagram.mmd` | `component-diagram.drawio.xml` | Komponen teknis |
-| Usecase Diagram | `usecase-diagram.mmd` | `usecase-diagram.drawio.xml` | Aktor & use case |
-| Deployment Diagram | `deployment-diagram.mmd` | `deployment-diagram.drawio.xml` | Arsitektur deployment |
+| ER Diagram | [`er-diagram.mmd`](assets/docs/diagrams/er-diagram.mmd) | [`er-diagram.drawio.xml`](assets/docs/diagrams/drawio/er-diagram.drawio.xml) | 18 key data; asosiasi adalah lookup aplikasi |
+| DFD Level 0 | [`dfd-level-0.mmd`](assets/docs/diagrams/dfd-level-0.mmd) | [`dfd-level-0.drawio.xml`](assets/docs/diagrams/drawio/dfd-level-0.drawio.xml) | Aliran data sistem keseluruhan |
+| DFD Level 1 | [`dfd-level-1.mmd`](assets/docs/diagrams/dfd-level-1.mmd) | [`dfd-level-1.drawio.xml`](assets/docs/diagrams/drawio/dfd-level-1.drawio.xml) | 8 proses, 4 kelompok penyimpanan |
+| Activity Diagram | [`activity-diagram.mmd`](assets/docs/diagrams/activity-diagram.mmd) | [`activity-diagram.drawio.xml`](assets/docs/diagrams/drawio/activity-diagram.drawio.xml) | Aktivitas pengunjung, admin, dan penyimpanan |
+| Flowchart Sistem | [`flowchart-sistem.mmd`](assets/docs/diagrams/flowchart-sistem.mmd) | [`flowchart-sistem.drawio.xml`](assets/docs/diagrams/drawio/flowchart-sistem.drawio.xml) | Alur logika aplikasi |
+| Sequence Diagram | [`sequence-diagram.mmd`](assets/docs/diagrams/sequence-diagram.mmd) | [`sequence-diagram.drawio.xml`](assets/docs/diagrams/drawio/sequence-diagram.drawio.xml) | 4 skenario interaksi |
+| Component Diagram | [`component-diagram.mmd`](assets/docs/diagrams/component-diagram.mmd) | [`component-diagram.drawio.xml`](assets/docs/diagrams/drawio/component-diagram.drawio.xml) | Komponen teknis |
+| Usecase Diagram | [`usecase-diagram.mmd`](assets/docs/diagrams/usecase-diagram.mmd) | [`usecase-diagram.drawio.xml`](assets/docs/diagrams/drawio/usecase-diagram.drawio.xml) | Aktor & use case |
+| Deployment Diagram | [`deployment-diagram.mmd`](assets/docs/diagrams/deployment-diagram.mmd) | [`deployment-diagram.drawio.xml`](assets/docs/diagrams/drawio/deployment-diagram.drawio.xml) | Arsitektur deployment |
 
-> File master multi-tab: `docs/diagrams/drawio/all-diagrams.drawio.xml` (semua 9 diagram dalam satu file)
+> File master multi-tab: [`all-diagrams.drawio.xml`](assets/docs/diagrams/drawio/all-diagrams.drawio.xml) (semua 9 diagram dalam satu file). Mermaid di `assets/docs/diagrams/*.mmd` adalah sumber yang dipelihara; ekspor Draw.io harus diperbarui setiap kali diagram sumber berubah.
 
 ### Skenario Sequence Diagram (4 skenario)
 
@@ -475,7 +475,7 @@ location.reload();
 
 ### Via DevTools
 
-`F12` → **Application** → **Local Storage** → klik kanan → **Clear All**
+`F12` → **Application** → **Local Storage** → klik kanan → **Clear All**. Tindakan ini menghapus semua data pada origin tersebut, bukan hanya data aplikasi.
 
 ---
 
@@ -497,12 +497,13 @@ location.reload();
 Jika localStorage masih berisi data format lama, sistem mereset otomatis ke SEED terbaru.  
 **Jangan hapus** — biarkan tetap ada di `app.js`.
 
-### Penyimpanan Write-Through
+### Penyimpanan Lokal dan Salinan IndexedDB
 
 Setiap `DB.save()` melakukan:
-1. **Sync**: `localStorage.setItem(key, JSON.stringify(data))`
-2. **Async**: IndexedDB async write-through (best-effort duplicate, tidak memblokir UI)
-3. **Event**: Dispatch `db-update` di tab aktif + `storage` event ke tab lain
+1. **Sync**: `localStorage.setItem(key, JSON.stringify(data))` sebagai penyimpanan utama.
+2. **Jika berhasil**: minta salinan IndexedDB secara asinkron (best-effort), lalu pancarkan `db-update` pada tab aktif.
+3. **Jika gagal**: pangkas log aktivitas/pageview yang dibatasi dan coba sekali lagi; jika tetap gagal, tidak ada salinan IndexedDB yang diminta dan CRUD memulihkan state di memori.
+4. **Antartab**: browser mengirim `storage` event saat key localStorage berubah.
 
 ### Logging Aktivitas Publik
 
@@ -526,6 +527,8 @@ Tidak ada foreign key nyata. Semua relasi adalah **logical lookup** di JavaScrip
 **Program Studi Hukum — Universitas Muhammadiyah Papua (UMP)**  
 Sacode 2025 — Latihan Perancangan & Pengembangan Website Profil
 
+Hak cipta website: **© 2025–sekarang**. Tahun pada footer website mengikuti tahun browser; README adalah dokumen statis.
+
 ---
 
-*Terakhir diperbarui: November 2026*
+*Terakhir diperbarui: 16 November 2026*
