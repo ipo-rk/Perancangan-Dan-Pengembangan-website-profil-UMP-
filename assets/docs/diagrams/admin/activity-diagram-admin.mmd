@@ -1,0 +1,97 @@
+---
+title: Activity Diagram - Proses Admin
+---
+flowchart TD
+    START((Mulai)) --> OPEN["Buka halaman admin"]
+    OPEN --> LOGIN_PAGE{Jenis halaman autentikasi?}
+
+    subgraph AUTH["Autentikasi dan otorisasi"]
+        direction TB
+        LOGIN["Masukkan email dan kata sandi"]
+        CREDENTIALS{Akun aktif dan kredensial cocok?}
+        LOGIN_FAIL["Tampilkan pesan login gagal"]
+        SESSION["AUTH.login(): simpan sesi lokal"]
+        SESSION_OK{Sesi tersimpan?}
+        SESSION_FAIL["Tampilkan kegagalan sesi"]
+        RESET_EMAIL["Masukkan email akun pada lupa-sandi.html"]
+        RESET_ACCOUNT{Email akun aktif ditemukan?}
+        RESET_PASSWORD["Masukkan dan konfirmasi kata sandi baru"]
+        RESET_VALID{Minimal 4 karakter dan konfirmasi cocok?}
+        RESET_SAVE["DB.save('pengguna'): simpan kata sandi baru"]
+        RESET_RESULT{Penyimpanan berhasil?}
+        RESET_DONE["Tampilkan konfirmasi dan kembali ke login"]
+        GUARD["AUTH.guard(): periksa sesi pada halaman admin"]
+        LOGGED_IN{Sesi valid?}
+        REDIRECT["Arahkan ke login"]
+        ADMIN_PAGE{Halaman Pengguna atau Pengaturan?}
+        SUPER{Peran Super Admin?}
+        DENY["Tolak akses dan arahkan ke dashboard"]
+        LOGIN --> CREDENTIALS
+        CREDENTIALS -->|Tidak| LOGIN_FAIL
+        CREDENTIALS -->|Ya| SESSION --> SESSION_OK
+        SESSION_OK -->|Ya| DASHBOARD["Buka dashboard"]
+        SESSION_OK -->|Tidak| SESSION_FAIL
+        RESET_EMAIL --> RESET_ACCOUNT
+        RESET_ACCOUNT -->|Tidak| RESET_EMAIL
+        RESET_ACCOUNT -->|Ya| RESET_PASSWORD --> RESET_VALID
+        RESET_VALID -->|Tidak| RESET_PASSWORD
+        RESET_VALID -->|Ya| RESET_SAVE --> RESET_RESULT
+        RESET_RESULT -->|Ya| RESET_DONE
+        RESET_RESULT -->|Tidak| RESET_PASSWORD
+        GUARD --> LOGGED_IN
+        LOGGED_IN -->|Tidak| REDIRECT
+        LOGGED_IN -->|Ya| ADMIN_PAGE
+        ADMIN_PAGE -->|Tidak| MODULE["Buka modul admin"]
+        ADMIN_PAGE -->|Ya| SUPER
+        SUPER -->|Ya| MODULE
+        SUPER -->|Tidak| DENY
+    end
+    LOGIN_PAGE -->|Login| LOGIN
+    LOGIN_PAGE -->|Lupa sandi| RESET_EMAIL
+    LOGIN_PAGE -->|Tidak| GUARD
+
+    subgraph MANAGE["Pengelolaan data dan konfigurasi"]
+        direction TB
+        ACTION{Pilih operasi}
+        CRUD["Tambah, ubah, atau hapus data"]
+        VALIDATE{Validasi form berhasil?}
+        FIX["Tampilkan validasi dan perbaiki input"]
+        SAVE["DB.save(): tulis ke localStorage"]
+        SAVE_OK{Penyimpanan berhasil?}
+        RETRY["Pangkas log terbatas lalu coba simpan sekali lagi"]
+        RETRY_OK{Percobaan ulang berhasil?}
+        FAIL["Batalkan perubahan dan tampilkan kegagalan"]
+        IDB["Jadwalkan salinan IndexedDB best-effort"]
+        LOG["Catat aktivitas/notifikasi sesuai operasi"]
+        REFRESH["Perbarui tampilan dan konfirmasi hasil"]
+        USERS["Kelola akun pengguna (Super Admin)"]
+        SETTINGS["Kelola pengaturan, backup, restore, atau reset (Super Admin)"]
+        READ["Baca pesan, pendaftar, dan aktivitas"]
+        LOGOUT["AUTH.logout(): hapus sesi lokal"]
+
+        DASHBOARD --> ACTION
+        MODULE --> ACTION
+        ACTION -->|Kelola konten akademik, profil, atau publikasi| CRUD
+        CRUD --> VALIDATE
+        VALIDATE -->|Tidak| FIX --> CRUD
+        VALIDATE -->|Ya| SAVE --> SAVE_OK
+        SAVE_OK -->|Tidak| RETRY --> RETRY_OK
+        RETRY_OK -->|Tidak| FAIL
+        SAVE_OK -->|Ya| IDB
+        RETRY_OK -->|Ya| IDB
+        IDB --> LOG --> REFRESH
+        ACTION -->|Baca inbox, pendaftar, atau aktivitas| READ --> REFRESH
+        ACTION -->|Akun pengguna| USERS --> CRUD
+        ACTION -->|Pengaturan / backup / restore / reset| SETTINGS --> REFRESH
+        ACTION -->|Logout| LOGOUT
+    end
+
+    REDIRECT --> LOGIN
+    LOGIN_FAIL --> LOGIN
+    SESSION_FAIL --> LOGIN
+    DENY --> DASHBOARD
+    REFRESH --> ACTION
+    FAIL --> ACTION
+    LOGOUT --> FINISH([Selesai])
+    NOTE["Aplikasi berjalan di browser. localStorage adalah sumber utama; IndexedDB hanya salinan asinkron. Tidak ada backend atau sinkronisasi antarperangkat."]
+    MANAGE -.-> NOTE

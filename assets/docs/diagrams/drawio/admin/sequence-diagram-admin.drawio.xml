@@ -1,0 +1,293 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" modified="2026-11-23T04:56:40.000Z" agent="OpenAI" version="24.7.17" type="device">
+  <diagram id="diagram-admin_sequence_diagram_admin" name="Sequence Diagram - Operasi Admin">
+    <mxGraphModel dx="1600" dy="1460" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1460" math="0" shadow="0">
+      <root>
+        <mxCell id="admin_sequence_diagram_admin_root" />
+        <mxCell id="admin_sequence_diagram_admin_layer" parent="admin_sequence_diagram_admin_root" />
+        <mxCell id="admin_sequence_diagram_admin_Admin" value="Administrator" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;fontSize=11;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" vertex="1">
+          <mxGeometry x="50" y="38" width="195" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_life_Admin" value="" style="shape=line;html=1;strokeColor=#94A3B8;dashed=1;strokeWidth=1;" parent="admin_sequence_diagram_admin_layer" vertex="1">
+          <mxGeometry x="147" y="100" width="0" height="1260" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_Page" value="Halaman Admin / Alpine.js" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;fontSize=11;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" vertex="1">
+          <mxGeometry x="264" y="38" width="195" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_life_Page" value="" style="shape=line;html=1;strokeColor=#94A3B8;dashed=1;strokeWidth=1;" parent="admin_sequence_diagram_admin_layer" vertex="1">
+          <mxGeometry x="361" y="100" width="0" height="1260" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_Auth" value="AUTH pada app.js" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;fontSize=11;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" vertex="1">
+          <mxGeometry x="478" y="38" width="195" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_life_Auth" value="" style="shape=line;html=1;strokeColor=#94A3B8;dashed=1;strokeWidth=1;" parent="admin_sequence_diagram_admin_layer" vertex="1">
+          <mxGeometry x="575" y="100" width="0" height="1260" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_App" value="DB dan controller admin" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;fontSize=11;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" vertex="1">
+          <mxGeometry x="692" y="38" width="195" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_life_App" value="" style="shape=line;html=1;strokeColor=#94A3B8;dashed=1;strokeWidth=1;" parent="admin_sequence_diagram_admin_layer" vertex="1">
+          <mxGeometry x="789" y="100" width="0" height="1260" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_Local" value="localStorage" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;fontSize=11;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" vertex="1">
+          <mxGeometry x="906" y="38" width="195" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_life_Local" value="" style="shape=line;html=1;strokeColor=#94A3B8;dashed=1;strokeWidth=1;" parent="admin_sequence_diagram_admin_layer" vertex="1">
+          <mxGeometry x="1003" y="100" width="0" height="1260" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_IDB" value="IndexedDB" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;fontSize=11;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" vertex="1">
+          <mxGeometry x="1120" y="38" width="195" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_life_IDB" value="" style="shape=line;html=1;strokeColor=#94A3B8;dashed=1;strokeWidth=1;" parent="admin_sequence_diagram_admin_layer" vertex="1">
+          <mxGeometry x="1217" y="100" width="0" height="1260" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_Tab" value="Tab lain pada origin sama" style="rounded=1;whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;fontSize=11;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" vertex="1">
+          <mxGeometry x="1334" y="38" width="195" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_life_Tab" value="" style="shape=line;html=1;strokeColor=#94A3B8;dashed=1;strokeWidth=1;" parent="admin_sequence_diagram_admin_layer" vertex="1">
+          <mxGeometry x="1431" y="100" width="0" height="1260" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_0" value="Masukkan email dan kata sandi" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_Admin" target="admin_sequence_diagram_admin_Page">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="147" y="125" />
+              <mxPoint x="361" y="125" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_1" value="Baca data pengguna lokal dan validasi akun" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_Page" target="admin_sequence_diagram_admin_App">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="361" y="167" />
+              <mxPoint x="789" y="167" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_2" value="Baca entitas pengguna" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_App" target="admin_sequence_diagram_admin_Local">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="789" y="209" />
+              <mxPoint x="1003" y="209" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_3" value="Data akun" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_Local" target="admin_sequence_diagram_admin_App">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1003" y="251" />
+              <mxPoint x="789" y="251" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_4" value="AUTH.login(user)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_Page" target="admin_sequence_diagram_admin_Auth">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="361" y="293" />
+              <mxPoint x="575" y="293" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_5" value="Simpan prodihukum_admin_session" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_Auth" target="admin_sequence_diagram_admin_Local">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="575" y="335" />
+              <mxPoint x="1003" y="335" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_6" value="Status penulisan" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_Local" target="admin_sequence_diagram_admin_Auth">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1003" y="377" />
+              <mxPoint x="575" y="377" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_7" value="Sesi berhasil dibuat" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_Auth" target="admin_sequence_diagram_admin_Page">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="575" y="419" />
+              <mxPoint x="361" y="419" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_8" value="AUTH.guard()" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_Page" target="admin_sequence_diagram_admin_Auth">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="361" y="461" />
+              <mxPoint x="575" y="461" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_9" value="Baca sesi saat ini" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_Auth" target="admin_sequence_diagram_admin_Local">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="575" y="503" />
+              <mxPoint x="1003" y="503" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_10" value="Nama, email, dan role" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_Local" target="admin_sequence_diagram_admin_Auth">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1003" y="545" />
+              <mxPoint x="575" y="545" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_11" value="Tolak akses dan arahkan ke dashboard" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_Auth" target="admin_sequence_diagram_admin_Page">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="575" y="587" />
+              <mxPoint x="361" y="587" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_12" value="Tampilkan modul admin" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_Auth" target="admin_sequence_diagram_admin_Page">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="575" y="629" />
+              <mxPoint x="361" y="629" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_13" value="Login ditolak" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_App" target="admin_sequence_diagram_admin_Page">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="789" y="671" />
+              <mxPoint x="361" y="671" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_14" value="Tampilkan pesan kegagalan" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_Page" target="admin_sequence_diagram_admin_Admin">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="361" y="713" />
+              <mxPoint x="147" y="713" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_15" value="Kirim form tambah/edit atau konfirmasi hapus" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_Admin" target="admin_sequence_diagram_admin_Page">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="147" y="755" />
+              <mxPoint x="361" y="755" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_16" value="Validasi lalu DB.save(entitas, data)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_Page" target="admin_sequence_diagram_admin_App">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="361" y="797" />
+              <mxPoint x="789" y="797" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_17" value="Tulis JSON entitas" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_App" target="admin_sequence_diagram_admin_Local">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="789" y="839" />
+              <mxPoint x="1003" y="839" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_18" value="Jadwalkan salinan asinkron best-effort" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_App" target="admin_sequence_diagram_admin_IDB">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="789" y="881" />
+              <mxPoint x="1217" y="881" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_19" value="Dispatch db-update pada tab aktif" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_App" target="admin_sequence_diagram_admin_Page">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="789" y="923" />
+              <mxPoint x="361" y="923" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_20" value="Browser memancarkan storage event" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_Local" target="admin_sequence_diagram_admin_Tab">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1003" y="965" />
+              <mxPoint x="1431" y="965" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_21" value="Terbitkan db-update dan perbarui komponen" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_Tab" target="admin_sequence_diagram_admin_Tab">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="1431" y="1007" />
+              <mxPoint x="1431" y="1007" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_22" value="Catat aktivitas/notifikasi sesuai operasi" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_App" target="admin_sequence_diagram_admin_App">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="789" y="1049" />
+              <mxPoint x="789" y="1049" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_23" value="Tampilkan hasil dan perbarui tabel" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_Page" target="admin_sequence_diagram_admin_Admin">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="361" y="1091" />
+              <mxPoint x="147" y="1091" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_24" value="Pangkas log/pageview yang dibatasi lalu coba ulang" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_App" target="admin_sequence_diagram_admin_App">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="789" y="1133" />
+              <mxPoint x="789" y="1133" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_25" value="Coba tulis kembali" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_App" target="admin_sequence_diagram_admin_Local">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="789" y="1175" />
+              <mxPoint x="1003" y="1175" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_26" value="Jadwalkan salinan best-effort" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_App" target="admin_sequence_diagram_admin_IDB">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="789" y="1217" />
+              <mxPoint x="1217" y="1217" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_27" value="Laporkan berhasil dan perbarui tampilan" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_App" target="admin_sequence_diagram_admin_Page">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="789" y="1259" />
+              <mxPoint x="361" y="1259" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_28" value="Laporkan gagal tanpa menghapus data entitas lain" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_App" target="admin_sequence_diagram_admin_Page">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="789" y="1301" />
+              <mxPoint x="361" y="1301" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="admin_sequence_diagram_admin_message_29" value="Rollback perubahan dan tampilkan peringatan" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_sequence_diagram_admin_layer" edge="1" source="admin_sequence_diagram_admin_Page" target="admin_sequence_diagram_admin_Admin">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="361" y="1343" />
+              <mxPoint x="147" y="1343" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

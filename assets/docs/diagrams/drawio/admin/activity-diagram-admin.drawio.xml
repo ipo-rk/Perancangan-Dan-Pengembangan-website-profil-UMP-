@@ -1,0 +1,281 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" modified="2026-11-23T04:56:40.000Z" agent="OpenAI" version="24.7.17" type="device">
+  <diagram id="diagram-admin_activity_diagram_admin" name="Activity Diagram - Proses Admin">
+    <mxGraphModel dx="1600" dy="1388" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1388" math="0" shadow="0">
+      <root>
+        <mxCell id="admin_activity_diagram_admin_root" />
+        <mxCell id="admin_activity_diagram_admin_layer" parent="admin_activity_diagram_admin_root" />
+        <mxCell id="admin_activity_diagram_admin_START" value="Mulai" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=ellipse;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_activity_diagram_admin_layer" vertex="1">
+          <mxGeometry x="50" y="35" width="250" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_OPEN" value="Buka halaman admin" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_activity_diagram_admin_layer" vertex="1">
+          <mxGeometry x="350" y="35" width="250" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_LOGIN_PAGE" value="Jenis halaman autentikasi?" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=rhombus;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=1.5;fontColor=#7C2D12;" parent="admin_activity_diagram_admin_layer" vertex="1">
+          <mxGeometry x="650" y="35" width="250" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_FINISH" value="Selesai" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=ellipse;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_activity_diagram_admin_layer" vertex="1">
+          <mxGeometry x="950" y="35" width="250" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_NOTE" value="Aplikasi berjalan di browser. localStorage adalah sumber utama; IndexedDB hanya salinan asinkron. Tidak ada backend atau sinkronisasi antarperangkat." style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_activity_diagram_admin_layer" vertex="1">
+          <mxGeometry x="1250" y="35" width="250" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_AUTH" value="Autentikasi dan otorisasi" style="swimlane;html=1;startSize=30;rounded=1;whiteSpace=wrap;fillColor=#F8FAFC;strokeColor=#CBD5E1;fontColor=#0F172A;fontStyle=1;fontSize=13;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" vertex="1">
+          <mxGeometry x="40" y="150" width="1520" height="615" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_LOGIN" value="Masukkan email dan kata sandi" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_activity_diagram_admin_AUTH" vertex="1">
+          <mxGeometry x="28" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_CREDENTIALS" value="Akun aktif dan kredensial cocok?" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=rhombus;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=1.5;fontColor=#7C2D12;" parent="admin_activity_diagram_admin_AUTH" vertex="1">
+          <mxGeometry x="323" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_LOGIN_FAIL" value="Tampilkan pesan login gagal" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_activity_diagram_admin_AUTH" vertex="1">
+          <mxGeometry x="618" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_SESSION" value="AUTH.login(): simpan sesi lokal" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_activity_diagram_admin_AUTH" vertex="1">
+          <mxGeometry x="913" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_SESSION_OK" value="Sesi tersimpan?" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=rhombus;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=1.5;fontColor=#7C2D12;" parent="admin_activity_diagram_admin_AUTH" vertex="1">
+          <mxGeometry x="1208" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_SESSION_FAIL" value="Tampilkan kegagalan sesi" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_activity_diagram_admin_AUTH" vertex="1">
+          <mxGeometry x="28" y="154" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_RESET_EMAIL" value="Masukkan email akun pada lupa-sandi.html" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_activity_diagram_admin_AUTH" vertex="1">
+          <mxGeometry x="323" y="154" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_RESET_ACCOUNT" value="Email akun aktif ditemukan?" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=rhombus;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=1.5;fontColor=#7C2D12;" parent="admin_activity_diagram_admin_AUTH" vertex="1">
+          <mxGeometry x="618" y="154" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_RESET_PASSWORD" value="Masukkan dan konfirmasi kata sandi baru" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_activity_diagram_admin_AUTH" vertex="1">
+          <mxGeometry x="913" y="154" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_RESET_VALID" value="Minimal 4 karakter dan konfirmasi cocok?" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=rhombus;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=1.5;fontColor=#7C2D12;" parent="admin_activity_diagram_admin_AUTH" vertex="1">
+          <mxGeometry x="1208" y="154" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_RESET_SAVE" value="DB.save('pengguna'): simpan kata sandi baru" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_activity_diagram_admin_AUTH" vertex="1">
+          <mxGeometry x="28" y="266" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_RESET_RESULT" value="Penyimpanan berhasil?" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=rhombus;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=1.5;fontColor=#7C2D12;" parent="admin_activity_diagram_admin_AUTH" vertex="1">
+          <mxGeometry x="323" y="266" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_RESET_DONE" value="Tampilkan konfirmasi dan kembali ke login" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_activity_diagram_admin_AUTH" vertex="1">
+          <mxGeometry x="618" y="266" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_GUARD" value="AUTH.guard(): periksa sesi pada halaman admin" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_activity_diagram_admin_AUTH" vertex="1">
+          <mxGeometry x="913" y="266" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_LOGGED_IN" value="Sesi valid?" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=rhombus;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=1.5;fontColor=#7C2D12;" parent="admin_activity_diagram_admin_AUTH" vertex="1">
+          <mxGeometry x="1208" y="266" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_REDIRECT" value="Arahkan ke login" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_activity_diagram_admin_AUTH" vertex="1">
+          <mxGeometry x="28" y="378" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_ADMIN_PAGE" value="Halaman Pengguna atau Pengaturan?" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=rhombus;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=1.5;fontColor=#7C2D12;" parent="admin_activity_diagram_admin_AUTH" vertex="1">
+          <mxGeometry x="323" y="378" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_SUPER" value="Peran Super Admin?" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=rhombus;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=1.5;fontColor=#7C2D12;" parent="admin_activity_diagram_admin_AUTH" vertex="1">
+          <mxGeometry x="618" y="378" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_DENY" value="Tolak akses dan arahkan ke dashboard" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_activity_diagram_admin_AUTH" vertex="1">
+          <mxGeometry x="913" y="378" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_DASHBOARD" value="Buka dashboard" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_activity_diagram_admin_AUTH" vertex="1">
+          <mxGeometry x="1208" y="378" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_MODULE" value="Buka modul admin" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_activity_diagram_admin_AUTH" vertex="1">
+          <mxGeometry x="28" y="490" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_MANAGE" value="Pengelolaan data dan konfigurasi" style="swimlane;html=1;startSize=30;rounded=1;whiteSpace=wrap;fillColor=#F8FAFC;strokeColor=#CBD5E1;fontColor=#0F172A;fontStyle=1;fontSize=13;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" vertex="1">
+          <mxGeometry x="40" y="800" width="1520" height="503" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_ACTION" value="Pilih operasi" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=rhombus;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=1.5;fontColor=#7C2D12;" parent="admin_activity_diagram_admin_MANAGE" vertex="1">
+          <mxGeometry x="28" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_CRUD" value="Tambah, ubah, atau hapus data" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_activity_diagram_admin_MANAGE" vertex="1">
+          <mxGeometry x="323" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_VALIDATE" value="Validasi form berhasil?" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=rhombus;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=1.5;fontColor=#7C2D12;" parent="admin_activity_diagram_admin_MANAGE" vertex="1">
+          <mxGeometry x="618" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_FIX" value="Tampilkan validasi dan perbaiki input" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_activity_diagram_admin_MANAGE" vertex="1">
+          <mxGeometry x="913" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_SAVE" value="DB.save(): tulis ke localStorage" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_activity_diagram_admin_MANAGE" vertex="1">
+          <mxGeometry x="1208" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_SAVE_OK" value="Penyimpanan berhasil?" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=rhombus;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=1.5;fontColor=#7C2D12;" parent="admin_activity_diagram_admin_MANAGE" vertex="1">
+          <mxGeometry x="28" y="154" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_RETRY" value="Pangkas log terbatas lalu coba simpan sekali lagi" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_activity_diagram_admin_MANAGE" vertex="1">
+          <mxGeometry x="323" y="154" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_RETRY_OK" value="Percobaan ulang berhasil?" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=rhombus;fillColor=#FFF7ED;strokeColor=#EA580C;strokeWidth=1.5;fontColor=#7C2D12;" parent="admin_activity_diagram_admin_MANAGE" vertex="1">
+          <mxGeometry x="618" y="154" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_FAIL" value="Batalkan perubahan dan tampilkan kegagalan" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_activity_diagram_admin_MANAGE" vertex="1">
+          <mxGeometry x="913" y="154" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_IDB" value="Jadwalkan salinan IndexedDB best-effort" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_activity_diagram_admin_MANAGE" vertex="1">
+          <mxGeometry x="1208" y="154" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_LOG" value="Catat aktivitas/notifikasi sesuai operasi" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_activity_diagram_admin_MANAGE" vertex="1">
+          <mxGeometry x="28" y="266" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_REFRESH" value="Perbarui tampilan dan konfirmasi hasil" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_activity_diagram_admin_MANAGE" vertex="1">
+          <mxGeometry x="323" y="266" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_USERS" value="Kelola akun pengguna (Super Admin)" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_activity_diagram_admin_MANAGE" vertex="1">
+          <mxGeometry x="618" y="266" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_SETTINGS" value="Kelola pengaturan, backup, restore, atau reset (Super Admin)" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_activity_diagram_admin_MANAGE" vertex="1">
+          <mxGeometry x="913" y="266" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_READ" value="Baca pesan, pendaftar, dan aktivitas" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_activity_diagram_admin_MANAGE" vertex="1">
+          <mxGeometry x="1208" y="266" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_LOGOUT" value="AUTH.logout(): hapus sesi lokal" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_activity_diagram_admin_MANAGE" vertex="1">
+          <mxGeometry x="28" y="378" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_0" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_OPEN" target="admin_activity_diagram_admin_LOGIN_PAGE">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_LOGIN" target="admin_activity_diagram_admin_CREDENTIALS">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_2" value="Tidak" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#EA580C;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_CREDENTIALS" target="admin_activity_diagram_admin_LOGIN_FAIL">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_3" value="Ya" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_CREDENTIALS" target="admin_activity_diagram_admin_SESSION">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_4" value="Ya" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_SESSION_OK" target="admin_activity_diagram_admin_DASHBOARD">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_5" value="Tidak" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#EA580C;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_SESSION_OK" target="admin_activity_diagram_admin_SESSION_FAIL">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_RESET_EMAIL" target="admin_activity_diagram_admin_RESET_ACCOUNT">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_7" value="Tidak" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#EA580C;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_RESET_ACCOUNT" target="admin_activity_diagram_admin_RESET_EMAIL">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_8" value="Ya" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_RESET_ACCOUNT" target="admin_activity_diagram_admin_RESET_PASSWORD">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_9" value="Tidak" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#EA580C;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_RESET_VALID" target="admin_activity_diagram_admin_RESET_PASSWORD">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_10" value="Ya" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_RESET_VALID" target="admin_activity_diagram_admin_RESET_SAVE">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_11" value="Ya" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_RESET_RESULT" target="admin_activity_diagram_admin_RESET_DONE">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_12" value="Tidak" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#EA580C;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_RESET_RESULT" target="admin_activity_diagram_admin_RESET_PASSWORD">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_13" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_GUARD" target="admin_activity_diagram_admin_LOGGED_IN">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_14" value="Tidak" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#EA580C;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_LOGGED_IN" target="admin_activity_diagram_admin_REDIRECT">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_15" value="Ya" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_LOGGED_IN" target="admin_activity_diagram_admin_ADMIN_PAGE">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_16" value="Tidak" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#EA580C;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_ADMIN_PAGE" target="admin_activity_diagram_admin_MODULE">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_17" value="Ya" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_ADMIN_PAGE" target="admin_activity_diagram_admin_SUPER">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_18" value="Ya" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_SUPER" target="admin_activity_diagram_admin_MODULE">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_19" value="Tidak" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#EA580C;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_SUPER" target="admin_activity_diagram_admin_DENY">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_20" value="Login" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_LOGIN_PAGE" target="admin_activity_diagram_admin_LOGIN">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_21" value="Lupa sandi" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_LOGIN_PAGE" target="admin_activity_diagram_admin_RESET_EMAIL">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_22" value="Tidak" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#EA580C;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_LOGIN_PAGE" target="admin_activity_diagram_admin_GUARD">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_23" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_DASHBOARD" target="admin_activity_diagram_admin_ACTION">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_24" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_MODULE" target="admin_activity_diagram_admin_ACTION">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_25" value="Kelola konten akademik, profil, atau publikasi" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_ACTION" target="admin_activity_diagram_admin_CRUD">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_26" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_CRUD" target="admin_activity_diagram_admin_VALIDATE">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_27" value="Tidak" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#EA580C;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_VALIDATE" target="admin_activity_diagram_admin_FIX">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_28" value="Ya" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_VALIDATE" target="admin_activity_diagram_admin_SAVE">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_29" value="Tidak" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#EA580C;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_SAVE_OK" target="admin_activity_diagram_admin_RETRY">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_30" value="Tidak" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#EA580C;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_RETRY_OK" target="admin_activity_diagram_admin_FAIL">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_31" value="Ya" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_SAVE_OK" target="admin_activity_diagram_admin_IDB">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_32" value="Ya" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_RETRY_OK" target="admin_activity_diagram_admin_IDB">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_33" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_IDB" target="admin_activity_diagram_admin_LOG">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_34" value="Baca inbox, pendaftar, atau aktivitas" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_ACTION" target="admin_activity_diagram_admin_READ">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_35" value="Akun pengguna" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_ACTION" target="admin_activity_diagram_admin_USERS">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_36" value="Pengaturan / backup / restore / reset" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_ACTION" target="admin_activity_diagram_admin_SETTINGS">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_37" value="Logout" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_ACTION" target="admin_activity_diagram_admin_LOGOUT">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_38" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_REDIRECT" target="admin_activity_diagram_admin_LOGIN">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_39" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_LOGIN_FAIL" target="admin_activity_diagram_admin_LOGIN">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_40" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_SESSION_FAIL" target="admin_activity_diagram_admin_LOGIN">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_41" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_DENY" target="admin_activity_diagram_admin_DASHBOARD">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_42" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_REFRESH" target="admin_activity_diagram_admin_ACTION">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_43" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_FAIL" target="admin_activity_diagram_admin_ACTION">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_44" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_LOGOUT" target="admin_activity_diagram_admin_FINISH">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_activity_diagram_admin_edge_45" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;dashed=1;" parent="admin_activity_diagram_admin_layer" edge="1" source="admin_activity_diagram_admin_MANAGE" target="admin_activity_diagram_admin_NOTE">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

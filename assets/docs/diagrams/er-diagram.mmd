@@ -1,3 +1,6 @@
+---
+title: Entity Relationship Diagram
+---
 erDiagram
     %% Asosiasi berikut adalah lookup aplikasi; tidak ada foreign-key enforcement.
     KEGIATAN o|--o{ PENDAFTAR : "lookup opsional melalui kegiatanId"
@@ -40,7 +43,7 @@ erDiagram
         string kategori "Kategori karir alumni"
         string email "Email kontak alumni"
         string linkedin "Tautan profil LinkedIn"
-        string status "Status verifikasi (Aktif/Pending)"
+        string status "Status alumni (Aktif)"
         string foto "Path file foto alumni"
     }
 
@@ -91,7 +94,7 @@ erDiagram
     PENGUMUMAN {
         number id PK "ID pengumuman"
         string judul "Judul pengumuman akademik"
-        string status "Penting / Info / Urgent"
+        string status "Penting / Baru / Aktif / Berakhir"
         string badge "Teks label badge visual"
         string tanggal "Tanggal rilis"
         string isi "Informasi detail pengumuman"
@@ -104,7 +107,7 @@ erDiagram
         string tanggal "Tanggal kegiatan"
         string hari "Nama hari pelaksanaan"
         string bulan "Bulan pelaksanaan"
-        string waktu "Waktu pelaksanaan (WIB/WIT)"
+        string waktu "Rentang waktu pelaksanaan"
         string lokasi "Tempat atau media online"
         string penyelenggara "Panitia pelaksana"
         string deskripsi "Deskripsi lengkap acara"
@@ -121,8 +124,8 @@ erDiagram
     PRESTASI {
         number id PK "ID prestasi mahasiswa/prodi"
         string nama "Nama prestasi atau kejuaraan"
-        string kategori "Akademik / Non-Akademik"
-        string tingkat "Lokal / Regional / Nasional / Internasional"
+        string kategori "Mahasiswa / Dosen / Alumni / Program Studi"
+        string tingkat "Internasional / Nasional / Provinsi / Regional / Universitas"
         string tahun "Tahun perolehan prestasi"
         string foto "Dokumentasi foto sertifikat/trofi"
     }
@@ -131,7 +134,7 @@ erDiagram
         number id PK "ID dokumen unduhan"
         string nama "Nama resmi dokumen"
         string kategori "Panduan / Formulir / SK / Kurikulum"
-        string format "Format ekstensi file (PDF/DOCX)"
+        string format "Format ekstensi file (PDF/DOC/DOCX)"
         string ukuran "Ukuran file (contoh: 2.4 MB)"
         string fileName "Nama berkas fisik"
         string fileData "Base64 data URI atau path file"
@@ -148,7 +151,7 @@ erDiagram
         string email "Email; duplikasi dicek per kegiatan oleh aplikasi"
         string whatsapp "Nomor WhatsApp aktif"
         string instansi "Asal kampus/sekolah/instansi"
-        string waktuDaftar "Timestamp ISO pendaftaran"
+        string waktuDaftar "Teks waktu lokal pendaftaran"
     }
 
     PESAN {
@@ -157,7 +160,7 @@ erDiagram
         string email "Email pengirim"
         string subjek "Topik atau perihal pesan"
         string pesan "Isi pesan kontak"
-        string waktu "Timestamp waktu kirim pesan"
+        string waktu "Teks waktu lokal kirim pesan"
         boolean read "Status sudah dibaca oleh admin"
     }
 

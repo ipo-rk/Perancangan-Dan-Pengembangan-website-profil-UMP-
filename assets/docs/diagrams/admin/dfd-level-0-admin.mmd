@@ -1,0 +1,17 @@
+---
+title: DFD Level 0 - Proses Admin
+---
+flowchart LR
+    ADMIN["Administrator\nSuper Admin, Editor, atau Operator"]
+    SYSTEM(("Website Profil Prodi Hukum UMP\nArea Admin"))
+    DATA[("Data aplikasi dan sesi\nlocalStorage pada browser")]
+    BACKUP[("Salinan data best-effort\nIndexedDB pada browser")]
+
+    ADMIN -->|"Kredensial login, permintaan kelola,\nperubahan data, operasi backup/restore"| SYSTEM
+    SYSTEM -->|"Dashboard, validasi, notifikasi,\nstatus penyimpanan dan riwayat aktivitas"| ADMIN
+    SYSTEM -->|"Baca dan simpan data, sesi, pengaturan"| DATA
+    DATA -->|"Data pengguna dan entitas aplikasi"| SYSTEM
+    SYSTEM -.->|"Salinan tulis asinkron setelah penyimpanan utama berhasil"| BACKUP
+
+    NOTE["Akses ke pengguna dan pengaturan/backup/restore dibatasi oleh AUTH.guard() untuk Super Admin. Seluruh proses berjalan lokal di browser."]
+    SYSTEM -.- NOTE

@@ -1,0 +1,64 @@
+---
+title: Sequence Diagram - Operasi Admin
+---
+sequenceDiagram
+    autonumber
+    actor Admin as Administrator
+    participant Page as Halaman Admin / Alpine.js
+    participant Auth as AUTH pada app.js
+    participant App as DB dan controller admin
+    participant Local as localStorage
+    participant IDB as IndexedDB
+    participant Tab as Tab lain pada origin sama
+
+    rect rgb(239, 246, 255)
+        Note over Admin,Local: Login dan pemeriksaan role
+        Admin->>Page: Masukkan email dan kata sandi
+        Page->>App: Baca data pengguna lokal dan validasi akun
+        App->>Local: Baca entitas pengguna
+        Local-->>App: Data akun
+        alt Kredensial cocok dan akun aktif
+            Page->>Auth: AUTH.login(user)
+            Auth->>Local: Simpan prodihukum_admin_session
+            Local-->>Auth: Status penulisan
+            Auth-->>Page: Sesi berhasil dibuat
+            Page->>Auth: AUTH.guard()
+            Auth->>Local: Baca sesi saat ini
+            Local-->>Auth: Nama, email, dan role
+            alt Halaman dibatasi dan role bukan Super Admin
+                Auth-->>Page: Tolak akses dan arahkan ke dashboard
+            else Sesi valid dan akses diizinkan
+                Auth-->>Page: Tampilkan modul admin
+            end
+        else Kredensial tidak cocok atau akun nonaktif
+            App-->>Page: Login ditolak
+            Page-->>Admin: Tampilkan pesan kegagalan
+        end
+    end
+
+    rect rgb(240, 253, 244)
+        Note over Admin,Tab: Simpan perubahan data admin
+        Admin->>Page: Kirim form tambah/edit atau konfirmasi hapus
+        Page->>App: Validasi lalu DB.save(entitas, data)
+        App->>Local: Tulis JSON entitas
+        alt Penyimpanan utama berhasil
+            App-)IDB: Jadwalkan salinan asinkron best-effort
+            App-->>Page: Dispatch db-update pada tab aktif
+            Local-->>Tab: Browser memancarkan storage event
+            Tab->>Tab: Terbitkan db-update dan perbarui komponen
+            App->>App: Catat aktivitas/notifikasi sesuai operasi
+            Page-->>Admin: Tampilkan hasil dan perbarui tabel
+        else Penulisan gagal
+            App->>App: Pangkas log/pageview yang dibatasi lalu coba ulang
+            App->>Local: Coba tulis kembali
+            alt Percobaan ulang berhasil
+                App-)IDB: Jadwalkan salinan best-effort
+                App-->>Page: Laporkan berhasil dan perbarui tampilan
+            else Tetap gagal
+                App-->>Page: Laporkan gagal tanpa menghapus data entitas lain
+                Page-->>Admin: Rollback perubahan dan tampilkan peringatan
+            end
+        end
+    end
+
+    Note over Admin,IDB: IndexedDB bukan sumber baca, dan data tidak tersinkron antarperangkat.

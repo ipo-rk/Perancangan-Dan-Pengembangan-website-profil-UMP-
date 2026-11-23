@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" modified="2026-11-23T04:56:40.000Z" agent="OpenAI" version="24.7.17" type="device">
+  <diagram id="diagram-admin_deployment_diagram_admin" name="Deployment Diagram - Area Admin">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="admin_deployment_diagram_admin_root" />
+        <mxCell id="admin_deployment_diagram_admin_layer" parent="admin_deployment_diagram_admin_root" />
+        <mxCell id="admin_deployment_diagram_admin_CDN" value="CDN pustaka dan font" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_deployment_diagram_admin_layer" vertex="1">
+          <mxGeometry x="50" y="35" width="250" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_deployment_diagram_admin_ADMIN" value="Administrator&lt;br/&gt;Super Admin, Editor, atau Operator" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_deployment_diagram_admin_layer" vertex="1">
+          <mxGeometry x="350" y="35" width="250" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_deployment_diagram_admin_NOTE" value="Tidak ada server autentikasi atau API aplikasi. Data dan sesi terpisah per origin/browser; tidak tersinkron otomatis antarperangkat." style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_deployment_diagram_admin_layer" vertex="1">
+          <mxGeometry x="650" y="35" width="250" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_deployment_diagram_admin_STATIC" value="Server web statis" style="swimlane;html=1;startSize=30;rounded=1;whiteSpace=wrap;fillColor=#F8FAFC;strokeColor=#CBD5E1;fontColor=#0F172A;fontStyle=1;fontSize=13;fontFamily=Arial;" parent="admin_deployment_diagram_admin_layer" vertex="1">
+          <mxGeometry x="40" y="150" width="1520" height="167" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_deployment_diagram_admin_ADMIN_HTML" value="Berkas admin&lt;br/&gt;login, dashboard, modul kelola" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_deployment_diagram_admin_STATIC" vertex="1">
+          <mxGeometry x="28" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_deployment_diagram_admin_APP_JS" value="assets/js/app.js" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_deployment_diagram_admin_STATIC" vertex="1">
+          <mxGeometry x="323" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_deployment_diagram_admin_ASSETS" value="CSS, gambar, dan aset lokal" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_deployment_diagram_admin_STATIC" vertex="1">
+          <mxGeometry x="618" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_deployment_diagram_admin_DEVICE" value="Perangkat administrator" style="swimlane;html=1;startSize=30;rounded=1;whiteSpace=wrap;fillColor=#F8FAFC;strokeColor=#CBD5E1;fontColor=#0F172A;fontStyle=1;fontSize=13;fontFamily=Arial;" parent="admin_deployment_diagram_admin_layer" vertex="1">
+          <mxGeometry x="40" y="352" width="1520" height="167" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_deployment_diagram_admin_BROWSER" value="Browser pada origin website" style="swimlane;html=1;startSize=30;rounded=1;whiteSpace=wrap;fillColor=#F8FAFC;strokeColor=#CBD5E1;fontColor=#0F172A;fontStyle=1;fontSize=13;fontFamily=Arial;" parent="admin_deployment_diagram_admin_layer" vertex="1">
+          <mxGeometry x="40" y="554" width="1520" height="167" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_deployment_diagram_admin_DOM" value="DOM halaman admin dan Alpine.js" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_deployment_diagram_admin_BROWSER" vertex="1">
+          <mxGeometry x="28" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_deployment_diagram_admin_RUNTIME" value="JavaScript runtime&lt;br/&gt;AUTH, DB, controller admin" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_deployment_diagram_admin_BROWSER" vertex="1">
+          <mxGeometry x="323" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_deployment_diagram_admin_ORIGIN_STORE" value="Penyimpanan browser" style="swimlane;html=1;startSize=30;rounded=1;whiteSpace=wrap;fillColor=#F8FAFC;strokeColor=#CBD5E1;fontColor=#0F172A;fontStyle=1;fontSize=13;fontFamily=Arial;" parent="admin_deployment_diagram_admin_layer" vertex="1">
+          <mxGeometry x="40" y="756" width="1520" height="167" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_deployment_diagram_admin_LOCAL" value="localStorage&lt;br/&gt;Entitas aplikasi dan sesi admin" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=partialRectangle;top=1;bottom=1;left=0;right=0;fillColor=#F8FAFC;strokeColor=#475569;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_deployment_diagram_admin_ORIGIN_STORE" vertex="1">
+          <mxGeometry x="28" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_deployment_diagram_admin_INDEXED" value="IndexedDB&lt;br/&gt;Salinan asinkron best-effort" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=partialRectangle;top=1;bottom=1;left=0;right=0;fillColor=#F8FAFC;strokeColor=#475569;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_deployment_diagram_admin_ORIGIN_STORE" vertex="1">
+          <mxGeometry x="323" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_deployment_diagram_admin_edge_0" value="HTTPS: unduh halaman" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_deployment_diagram_admin_layer" edge="1" source="admin_deployment_diagram_admin_ADMIN_HTML" target="admin_deployment_diagram_admin_DOM">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_deployment_diagram_admin_edge_1" value="HTTPS: unduh kode" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_deployment_diagram_admin_layer" edge="1" source="admin_deployment_diagram_admin_APP_JS" target="admin_deployment_diagram_admin_RUNTIME">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_deployment_diagram_admin_edge_2" value="HTTPS: unduh aset" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_deployment_diagram_admin_layer" edge="1" source="admin_deployment_diagram_admin_ASSETS" target="admin_deployment_diagram_admin_DOM">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_deployment_diagram_admin_edge_3" value="HTTPS: pustaka UI" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_deployment_diagram_admin_layer" edge="1" source="admin_deployment_diagram_admin_CDN" target="admin_deployment_diagram_admin_DOM">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_deployment_diagram_admin_edge_4" value="Interaksi form dan menu" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_deployment_diagram_admin_layer" edge="1" source="admin_deployment_diagram_admin_ADMIN" target="admin_deployment_diagram_admin_DOM">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_deployment_diagram_admin_edge_5" value="Tulis salinan best-effort" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;dashed=1;" parent="admin_deployment_diagram_admin_layer" edge="1" source="admin_deployment_diagram_admin_RUNTIME" target="admin_deployment_diagram_admin_INDEXED">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

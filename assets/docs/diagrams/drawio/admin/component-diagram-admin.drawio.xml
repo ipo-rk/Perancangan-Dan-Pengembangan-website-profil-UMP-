@@ -1,0 +1,122 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" modified="2026-11-23T04:56:40.000Z" agent="OpenAI" version="24.7.17" type="device">
+  <diagram id="diagram-admin_component_diagram_admin" name="Component Diagram - Area Admin">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="admin_component_diagram_admin_root" />
+        <mxCell id="admin_component_diagram_admin_layer" parent="admin_component_diagram_admin_root" />
+        <mxCell id="admin_component_diagram_admin_CONTENT" value="Halaman publik&lt;br/&gt;Membaca konten tersimpan" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_component_diagram_admin_layer" vertex="1">
+          <mxGeometry x="50" y="35" width="250" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_CDN" value="CDN pustaka UI dan font" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_component_diagram_admin_layer" vertex="1">
+          <mxGeometry x="350" y="35" width="250" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_NOTE" value="Guard halaman: hanya pengelolaan pengguna dan pengaturan yang dibatasi ke peran Super Admin. Data akun dan autentikasi tersimpan lokal di browser." style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_component_diagram_admin_layer" vertex="1">
+          <mxGeometry x="950" y="35" width="250" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_UI" value="Lapisan halaman admin" style="swimlane;html=1;startSize=30;rounded=1;whiteSpace=wrap;fillColor=#F8FAFC;strokeColor=#CBD5E1;fontColor=#0F172A;fontStyle=1;fontSize=13;fontFamily=Arial;" parent="admin_component_diagram_admin_layer" vertex="1">
+          <mxGeometry x="40" y="150" width="1520" height="279" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_LOGIN" value="login.html dan lupa-sandi.html" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_component_diagram_admin_UI" vertex="1">
+          <mxGeometry x="28" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_DASHBOARD" value="dashboard.html" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_component_diagram_admin_UI" vertex="1">
+          <mxGeometry x="323" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_CRUD_PAGES" value="Halaman CRUD&lt;br/&gt;Dosen, kurikulum, profil, publikasi, media, alumni" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_component_diagram_admin_UI" vertex="1">
+          <mxGeometry x="618" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_ADMIN_PAGES" value="Halaman operasional&lt;br/&gt;Pesan, pendaftar, aktivitas" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_component_diagram_admin_UI" vertex="1">
+          <mxGeometry x="913" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_SUPER_PAGES" value="pengguna.html dan pengaturan.html&lt;br/&gt;Khusus Super Admin" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_component_diagram_admin_UI" vertex="1">
+          <mxGeometry x="1208" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_ALPINE" value="Alpine.js: form, tabel, modal, filter, event UI" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_component_diagram_admin_UI" vertex="1">
+          <mxGeometry x="28" y="154" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_APP" value="Logika bersama: assets/js/app.js" style="swimlane;html=1;startSize=30;rounded=1;whiteSpace=wrap;fillColor=#F8FAFC;strokeColor=#CBD5E1;fontColor=#0F172A;fontStyle=1;fontSize=13;fontFamily=Arial;" parent="admin_component_diagram_admin_layer" vertex="1">
+          <mxGeometry x="40" y="464" width="1520" height="279" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_AUTH" value="AUTH&lt;br/&gt;login(), current(), logout(), guard()" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_component_diagram_admin_APP" vertex="1">
+          <mxGeometry x="28" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_DB" value="DB&lt;br/&gt;load(), save(), pruneStorage()" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_component_diagram_admin_APP" vertex="1">
+          <mxGeometry x="323" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_CRUD_LOGIC" value="Controller admin&lt;br/&gt;CRUD, validasi, rollback perubahan" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_component_diagram_admin_APP" vertex="1">
+          <mxGeometry x="618" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_AUDIT" value="logActivity() dan notifikasi" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_component_diagram_admin_APP" vertex="1">
+          <mxGeometry x="913" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_EVENTS" value="db-update dan storage event" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_component_diagram_admin_APP" vertex="1">
+          <mxGeometry x="1208" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_MEDIA" value="Kompresi gambar dan pengelolaan aset form" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_component_diagram_admin_APP" vertex="1">
+          <mxGeometry x="28" y="154" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_STORAGE" value="Penyimpanan pada browser" style="swimlane;html=1;startSize=30;rounded=1;whiteSpace=wrap;fillColor=#F8FAFC;strokeColor=#CBD5E1;fontColor=#0F172A;fontStyle=1;fontSize=13;fontFamily=Arial;" parent="admin_component_diagram_admin_layer" vertex="1">
+          <mxGeometry x="40" y="778" width="1520" height="167" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_LS" value="localStorage&lt;br/&gt;Data aplikasi, sesi admin, pageview" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=partialRectangle;top=1;bottom=1;left=0;right=0;fillColor=#F8FAFC;strokeColor=#475569;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_component_diagram_admin_STORAGE" vertex="1">
+          <mxGeometry x="28" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_IDB" value="IndexedDB&lt;br/&gt;Salinan data asinkron best-effort" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=partialRectangle;top=1;bottom=1;left=0;right=0;fillColor=#F8FAFC;strokeColor=#475569;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_component_diagram_admin_STORAGE" vertex="1">
+          <mxGeometry x="323" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_edge_0" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_component_diagram_admin_layer" edge="1" source="admin_component_diagram_admin_LOGIN" target="admin_component_diagram_admin_ALPINE">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_edge_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_component_diagram_admin_layer" edge="1" source="admin_component_diagram_admin_DASHBOARD" target="admin_component_diagram_admin_ALPINE">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_edge_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_component_diagram_admin_layer" edge="1" source="admin_component_diagram_admin_CRUD_PAGES" target="admin_component_diagram_admin_ALPINE">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_edge_3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_component_diagram_admin_layer" edge="1" source="admin_component_diagram_admin_ADMIN_PAGES" target="admin_component_diagram_admin_ALPINE">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_edge_4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_component_diagram_admin_layer" edge="1" source="admin_component_diagram_admin_SUPER_PAGES" target="admin_component_diagram_admin_ALPINE">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_edge_5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_component_diagram_admin_layer" edge="1" source="admin_component_diagram_admin_ALPINE" target="admin_component_diagram_admin_AUTH">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_edge_6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_component_diagram_admin_layer" edge="1" source="admin_component_diagram_admin_ALPINE" target="admin_component_diagram_admin_CRUD_LOGIC">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_edge_7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_component_diagram_admin_layer" edge="1" source="admin_component_diagram_admin_CRUD_LOGIC" target="admin_component_diagram_admin_DB">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_edge_8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_component_diagram_admin_layer" edge="1" source="admin_component_diagram_admin_CRUD_LOGIC" target="admin_component_diagram_admin_MEDIA">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_edge_9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_component_diagram_admin_layer" edge="1" source="admin_component_diagram_admin_AUTH" target="admin_component_diagram_admin_LS">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_edge_10" value="Salinan setelah localStorage berhasil" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;dashed=1;" parent="admin_component_diagram_admin_layer" edge="1" source="admin_component_diagram_admin_DB" target="admin_component_diagram_admin_IDB">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_edge_11" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_component_diagram_admin_layer" edge="1" source="admin_component_diagram_admin_CRUD_LOGIC" target="admin_component_diagram_admin_AUDIT">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_edge_12" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_component_diagram_admin_layer" edge="1" source="admin_component_diagram_admin_AUDIT" target="admin_component_diagram_admin_DB">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_edge_13" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_component_diagram_admin_layer" edge="1" source="admin_component_diagram_admin_DB" target="admin_component_diagram_admin_EVENTS">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_edge_14" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_component_diagram_admin_layer" edge="1" source="admin_component_diagram_admin_EVENTS" target="admin_component_diagram_admin_ALPINE">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_edge_15" value="Pembaruan konten pada origin/tab" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;dashed=1;" parent="admin_component_diagram_admin_layer" edge="1" source="admin_component_diagram_admin_EVENTS" target="admin_component_diagram_admin_CONTENT">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_component_diagram_admin_edge_16" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_component_diagram_admin_layer" edge="1" source="admin_component_diagram_admin_CDN" target="admin_component_diagram_admin_UI">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

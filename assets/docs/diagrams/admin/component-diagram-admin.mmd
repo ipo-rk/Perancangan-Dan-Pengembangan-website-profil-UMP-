@@ -1,0 +1,51 @@
+---
+title: Component Diagram - Area Admin
+---
+flowchart TB
+    subgraph UI["Lapisan halaman admin"]
+        LOGIN["login.html dan lupa-sandi.html"]
+        DASHBOARD["dashboard.html"]
+        CRUD_PAGES["Halaman CRUD\nDosen, kurikulum, profil, publikasi, media, alumni"]
+        ADMIN_PAGES["Halaman operasional\nPesan, pendaftar, aktivitas"]
+        SUPER_PAGES["pengguna.html dan pengaturan.html\nKhusus Super Admin"]
+        ALPINE["Alpine.js: form, tabel, modal, filter, event UI"]
+    end
+
+    subgraph APP["Logika bersama: assets/js/app.js"]
+        AUTH["AUTH\nlogin(), current(), logout(), guard()"]
+        DB["DB\nload(), save(), pruneStorage()"]
+        CRUD_LOGIC["Controller admin\nCRUD, validasi, rollback perubahan"]
+        AUDIT["logActivity() dan notifikasi"]
+        EVENTS["db-update dan storage event"]
+        MEDIA["Kompresi gambar dan pengelolaan aset form"]
+    end
+
+    subgraph STORAGE["Penyimpanan pada browser"]
+        LS[("localStorage\nData aplikasi, sesi admin, pageview")]
+        IDB[("IndexedDB\nSalinan data asinkron best-effort")]
+    end
+
+    CONTENT["Halaman publik\nMembaca konten tersimpan"]
+    CDN["CDN pustaka UI dan font"]
+
+    LOGIN --> ALPINE
+    DASHBOARD --> ALPINE
+    CRUD_PAGES --> ALPINE
+    ADMIN_PAGES --> ALPINE
+    SUPER_PAGES --> ALPINE
+    ALPINE --> AUTH
+    ALPINE --> CRUD_LOGIC
+    CRUD_LOGIC --> DB
+    CRUD_LOGIC --> MEDIA
+    AUTH --> LS
+    DB <-->|"Baca / tulis utama"| LS
+    DB -.->|"Salinan setelah localStorage berhasil"| IDB
+    CRUD_LOGIC --> AUDIT
+    AUDIT --> DB
+    DB --> EVENTS
+    EVENTS --> ALPINE
+    EVENTS -.->|"Pembaruan konten pada origin/tab"| CONTENT
+    CDN --> UI
+
+    NOTE["Guard halaman: hanya pengelolaan pengguna dan pengaturan yang dibatasi ke peran Super Admin. Data akun dan autentikasi tersimpan lokal di browser."]
+    AUTH -.- NOTE

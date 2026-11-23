@@ -1,0 +1,149 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" modified="2026-11-23T04:56:40.000Z" agent="OpenAI" version="24.7.17" type="device">
+  <diagram id="diagram-admin_dfd_level_1_admin" name="DFD Level 1 - Proses Admin">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="admin_dfd_level_1_admin_root" />
+        <mxCell id="admin_dfd_level_1_admin_layer" parent="admin_dfd_level_1_admin_root" />
+        <mxCell id="admin_dfd_level_1_admin_ADMIN" value="Administrator" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_dfd_level_1_admin_layer" vertex="1">
+          <mxGeometry x="50" y="35" width="250" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_SUPER" value="Super Admin" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_dfd_level_1_admin_layer" vertex="1">
+          <mxGeometry x="350" y="35" width="250" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_guard" value="" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=ellipse;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_dfd_level_1_admin_layer" vertex="1">
+          <mxGeometry x="650" y="35" width="250" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_NOTE" value="Editor dan Operator memakai modul admin umum. Pengguna dan Pengaturan hanya Super Admin. Reset kata sandi tidak memakai verifikasi email." style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_dfd_level_1_admin_layer" vertex="1">
+          <mxGeometry x="950" y="35" width="250" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_PROCESS" value="Proses admin" style="swimlane;html=1;startSize=30;rounded=1;whiteSpace=wrap;fillColor=#F8FAFC;strokeColor=#CBD5E1;fontColor=#0F172A;fontStyle=1;fontSize=13;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" vertex="1">
+          <mxGeometry x="40" y="150" width="1520" height="279" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_P1" value="1.0 Autentikasi,&lt;br/&gt;sesi, dan pemeriksaan peran" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=ellipse;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_dfd_level_1_admin_PROCESS" vertex="1">
+          <mxGeometry x="28" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_P2" value="2.0 Kelola data akademik,&lt;br/&gt;profil, dan publikasi" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=ellipse;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_dfd_level_1_admin_PROCESS" vertex="1">
+          <mxGeometry x="323" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_P3" value="3.0 Kelola pesan,&lt;br/&gt;pendaftar, dan aktivitas" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=ellipse;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_dfd_level_1_admin_PROCESS" vertex="1">
+          <mxGeometry x="618" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_P4" value="4.0 Kelola akun&lt;br/&gt;pengguna" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=ellipse;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_dfd_level_1_admin_PROCESS" vertex="1">
+          <mxGeometry x="913" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_P5" value="5.0 Pengaturan,&lt;br/&gt;backup, restore, dan reset" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=ellipse;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_dfd_level_1_admin_PROCESS" vertex="1">
+          <mxGeometry x="1208" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_P6" value="6.0 Validasi, log,&lt;br/&gt;dan notifikasi" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=ellipse;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_dfd_level_1_admin_PROCESS" vertex="1">
+          <mxGeometry x="28" y="154" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_P7" value="7.0 Persistensi DB.save" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=ellipse;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_dfd_level_1_admin_PROCESS" vertex="1">
+          <mxGeometry x="323" y="154" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_STORE" value="Data store pada browser" style="swimlane;html=1;startSize=30;rounded=1;whiteSpace=wrap;fillColor=#F8FAFC;strokeColor=#CBD5E1;fontColor=#0F172A;fontStyle=1;fontSize=13;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" vertex="1">
+          <mxGeometry x="40" y="464" width="1520" height="167" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_D1" value="D1 Data aplikasi&lt;br/&gt;18 entitas di localStorage" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=partialRectangle;top=1;bottom=1;left=0;right=0;fillColor=#F8FAFC;strokeColor=#475569;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_dfd_level_1_admin_STORE" vertex="1">
+          <mxGeometry x="28" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_D2" value="D2 Sesi admin&lt;br/&gt;prodihukum_admin_session" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=partialRectangle;top=1;bottom=1;left=0;right=0;fillColor=#F8FAFC;strokeColor=#475569;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_dfd_level_1_admin_STORE" vertex="1">
+          <mxGeometry x="323" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_D3" value="D3 Pageview lokal" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=partialRectangle;top=1;bottom=1;left=0;right=0;fillColor=#F8FAFC;strokeColor=#475569;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_dfd_level_1_admin_STORE" vertex="1">
+          <mxGeometry x="618" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_D4" value="D4 Salinan best-effort&lt;br/&gt;IndexedDB" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=partialRectangle;top=1;bottom=1;left=0;right=0;fillColor=#F8FAFC;strokeColor=#475569;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_dfd_level_1_admin_STORE" vertex="1">
+          <mxGeometry x="913" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_0" value="Email dan kata sandi" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_ADMIN" target="admin_dfd_level_1_admin_P1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_1" value="Email akun dan kata sandi baru untuk reset" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_ADMIN" target="admin_dfd_level_1_admin_P1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_2" value="Data akun lokal" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_D1" target="admin_dfd_level_1_admin_P1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_3" value="Simpan sesi" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_P1" target="admin_dfd_level_1_admin_D2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_4" value="Kata sandi baru setelah reset lokal" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_P1" target="admin_dfd_level_1_admin_P7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_5" value="Sesi untuk AUTH.guard()" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_D2" target="admin_dfd_level_1_admin_P1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_6" value="Hasil login / penolakan akses" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_P1" target="admin_dfd_level_1_admin_ADMIN">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_7" value="Input/edit/hapus konten" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_ADMIN" target="admin_dfd_level_1_admin_P2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_8" value="Data saat ini untuk tabel/form" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_D1" target="admin_dfd_level_1_admin_P2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_9" value="Perubahan entitas" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_P2" target="admin_dfd_level_1_admin_P7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_10" value="Buka dan tindak lanjuti pesan / pendaftar" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_ADMIN" target="admin_dfd_level_1_admin_P3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_11" value="Data pesan dan pendaftar" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_D1" target="admin_dfd_level_1_admin_P3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_12" value="Status baca dan perubahan yang didukung" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_P3" target="admin_dfd_level_1_admin_P7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_13" value="Kelola akun" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_SUPER" target="admin_dfd_level_1_admin_P4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_14" value="Data pengguna" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_D1" target="admin_dfd_level_1_admin_P4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_15" value="Data akun yang diubah" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_P4" target="admin_dfd_level_1_admin_P7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_16" value="Perintah pengaturan / backup / restore / reset" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_SUPER" target="admin_dfd_level_1_admin_P5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_17" value="Data untuk ekspor atau validasi pulihan" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_D1" target="admin_dfd_level_1_admin_P5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_18" value="Entitas yang dipulihkan / pengaturan" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_P5" target="admin_dfd_level_1_admin_P7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_19" value="Unduhan JSON dan status operasi" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_P5" target="admin_dfd_level_1_admin_SUPER">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_20" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_P2" target="admin_dfd_level_1_admin_P6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_21" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_P3" target="admin_dfd_level_1_admin_P6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_22" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_P4" target="admin_dfd_level_1_admin_P6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_23" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_P5" target="admin_dfd_level_1_admin_P6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_24" value="Aktivitas dan notifikasi" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_P6" target="admin_dfd_level_1_admin_P7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_25" value="Tulis sinkron" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_P7" target="admin_dfd_level_1_admin_D1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_26" value="Salinan setelah localStorage berhasil" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;dashed=1;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_P7" target="admin_dfd_level_1_admin_D4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_27" value="Statistik dashboard lokal" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_D3" target="admin_dfd_level_1_admin_P6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_1_admin_edge_28" value="Konfirmasi, notifikasi, riwayat" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_1_admin_layer" edge="1" source="admin_dfd_level_1_admin_P6" target="admin_dfd_level_1_admin_ADMIN">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

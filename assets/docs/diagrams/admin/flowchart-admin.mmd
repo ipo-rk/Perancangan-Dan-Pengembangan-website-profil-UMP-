@@ -1,0 +1,94 @@
+---
+title: Flowchart Proses Admin
+---
+flowchart TD
+    START([Mulai]) --> OPEN["Buka halaman admin"]
+    OPEN --> PAGE{Jenis halaman autentikasi?}
+
+    subgraph AUTH["Login dan pemeriksaan akses"]
+        LOGIN["Masukkan email dan kata sandi"]
+        CHECK{Kredensial cocok dan akun aktif?}
+        REJECT["Tampilkan login gagal"]
+        RESET_EMAIL["Masukkan email terdaftar"]
+        RESET_ACCOUNT{Email ditemukan dan akun aktif?}
+        NEW_PASSWORD["Masukkan kata sandi baru dan konfirmasi"]
+        PASSWORD_VALID{Minimal 4 karakter dan konfirmasi cocok?}
+        SAVE_PASSWORD["DB.save('pengguna'): simpan kata sandi"]
+        PASSWORD_SAVED{Perubahan tersimpan?}
+        RESET_DONE["Tampilkan konfirmasi dan kembali ke login"]
+        CREATE_SESSION["AUTH.login(): simpan sesi di localStorage"]
+        SESSION_SAVED{Sesi tersimpan?}
+        SESSION_FAIL["Tampilkan kegagalan sesi"]
+        GUARD["AUTH.guard(): periksa sesi"]
+        VALID_SESSION{Sesi valid?}
+        REDIRECT["Arahkan ke login"]
+        RESTRICTED{Halaman Pengguna atau Pengaturan?}
+        IS_SUPER{Peran Super Admin?}
+        DENIED["Tolak akses dan arahkan ke dashboard"]
+        ADMIN_HOME["Buka dashboard atau modul admin"]
+
+        LOGIN --> CHECK
+        CHECK -->|Tidak| REJECT
+        CHECK -->|Ya| CREATE_SESSION --> SESSION_SAVED
+        RESET_EMAIL --> RESET_ACCOUNT
+        RESET_ACCOUNT -->|Tidak| RESET_EMAIL
+        RESET_ACCOUNT -->|Ya| NEW_PASSWORD --> PASSWORD_VALID
+        PASSWORD_VALID -->|Tidak| NEW_PASSWORD
+        PASSWORD_VALID -->|Ya| SAVE_PASSWORD --> PASSWORD_SAVED
+        PASSWORD_SAVED -->|Ya| RESET_DONE
+        PASSWORD_SAVED -->|Tidak| NEW_PASSWORD
+        SESSION_SAVED -->|Ya| ADMIN_HOME
+        SESSION_SAVED -->|Tidak| SESSION_FAIL
+        GUARD --> VALID_SESSION
+        VALID_SESSION -->|Tidak| REDIRECT
+        VALID_SESSION -->|Ya| RESTRICTED
+        RESTRICTED -->|Tidak| ADMIN_HOME
+        RESTRICTED -->|Ya| IS_SUPER
+        IS_SUPER -->|Ya| ADMIN_HOME
+        IS_SUPER -->|Tidak| DENIED
+    end
+    PAGE -->|Login| LOGIN
+    PAGE -->|Lupa sandi| RESET_EMAIL
+    PAGE -->|Tidak| GUARD
+
+    subgraph OPERATIONS["Operasi admin"]
+        ACTION{Pilih operasi}
+        MODULE["Pilih modul dan data"]
+        CRUD["Tambah, ubah, atau hapus"]
+        VALIDATE{Data valid?}
+        FIX["Tampilkan kesalahan validasi"]
+        WRITE["DB.save(): tulis ke localStorage"]
+        STORED{Berhasil disimpan?}
+        PRUNE["Pangkas log/pageview terbatas; coba sekali lagi"]
+        RETRY{Percobaan ulang berhasil?}
+        ROLLBACK["Batalkan perubahan dan beri tahu admin"]
+        MIRROR["Jadwalkan salinan IndexedDB best-effort"]
+        AUDIT["Catat aktivitas/notifikasi"]
+        UPDATE["Perbarui tampilan; db-update/storage event"]
+        READ["Baca pesan, pendaftar, atau aktivitas"]
+        SUPER_ACTION["Kelola akun, pengaturan, backup/restore/reset"]
+        LOGOUT["Hapus sesi dan kembali ke login"]
+
+        ADMIN_HOME --> ACTION
+        ACTION -->|Data umum| MODULE --> CRUD --> VALIDATE
+        VALIDATE -->|Tidak| FIX --> CRUD
+        VALIDATE -->|Ya| WRITE --> STORED
+        STORED -->|Ya| MIRROR
+        STORED -->|Tidak| PRUNE --> RETRY
+        RETRY -->|Ya| MIRROR
+        RETRY -->|Tidak| ROLLBACK
+        MIRROR --> AUDIT --> UPDATE
+        ACTION -->|Inbox / pendaftar / aktivitas| READ --> UPDATE
+        ACTION -->|Khusus Super Admin| SUPER_ACTION --> UPDATE
+        ACTION -->|Logout| LOGOUT
+    end
+
+    REJECT --> LOGIN
+    SESSION_FAIL --> LOGIN
+    REDIRECT --> LOGIN
+    DENIED --> ADMIN_HOME
+    UPDATE --> ACTION
+    ROLLBACK --> ACTION
+    LOGOUT --> FINISH([Selesai])
+    NOTE["Sumber utama: localStorage. IndexedDB adalah salinan asinkron, bukan sumber baca dan bukan sinkronisasi antarperangkat."]
+    OPERATIONS -.-> NOTE

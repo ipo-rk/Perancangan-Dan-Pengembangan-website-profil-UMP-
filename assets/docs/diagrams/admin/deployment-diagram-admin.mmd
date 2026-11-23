@@ -1,0 +1,35 @@
+---
+title: Deployment Diagram - Area Admin
+---
+flowchart TB
+    subgraph STATIC["Server web statis"]
+        ADMIN_HTML["Berkas admin\nlogin, dashboard, modul kelola"]
+        APP_JS["assets/js/app.js"]
+        ASSETS["CSS, gambar, dan aset lokal"]
+    end
+
+    subgraph DEVICE["Perangkat administrator"]
+        subgraph BROWSER["Browser pada origin website"]
+            DOM["DOM halaman admin dan Alpine.js"]
+            RUNTIME["JavaScript runtime\nAUTH, DB, controller admin"]
+            subgraph ORIGIN_STORE["Penyimpanan browser"]
+                LOCAL[("localStorage\nEntitas aplikasi dan sesi admin")]
+                INDEXED[("IndexedDB\nSalinan asinkron best-effort")]
+            end
+        end
+    end
+
+    CDN["CDN pustaka dan font"]
+    ADMIN["Administrator\nSuper Admin, Editor, atau Operator"]
+
+    ADMIN_HTML -->|"HTTPS: unduh halaman"| DOM
+    APP_JS -->|"HTTPS: unduh kode"| RUNTIME
+    ASSETS -->|"HTTPS: unduh aset"| DOM
+    CDN -->|"HTTPS: pustaka UI"| DOM
+    ADMIN -->|"Interaksi form dan menu"| DOM
+    DOM <--> RUNTIME
+    RUNTIME <-->|"Baca / tulis sinkron"| LOCAL
+    RUNTIME -.->|"Tulis salinan best-effort"| INDEXED
+
+    NOTE["Tidak ada server autentikasi atau API aplikasi. Data dan sesi terpisah per origin/browser; tidak tersinkron otomatis antarperangkat."]
+    DEVICE -.- NOTE

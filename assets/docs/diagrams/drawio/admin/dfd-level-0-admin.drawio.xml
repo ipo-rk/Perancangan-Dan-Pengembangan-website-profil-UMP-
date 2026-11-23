@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" modified="2026-11-23T04:56:40.000Z" agent="OpenAI" version="24.7.17" type="device">
+  <diagram id="diagram-admin_dfd_level_0_admin" name="DFD Level 0 - Proses Admin">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="admin_dfd_level_0_admin_root" />
+        <mxCell id="admin_dfd_level_0_admin_layer" parent="admin_dfd_level_0_admin_root" />
+        <mxCell id="admin_dfd_level_0_admin_ADMIN" value="Administrator&lt;br/&gt;Super Admin, Editor, atau Operator" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_dfd_level_0_admin_layer" vertex="1">
+          <mxGeometry x="50" y="35" width="250" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_0_admin_SYSTEM" value="Website Profil Prodi Hukum UMP&lt;br/&gt;Area Admin" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=ellipse;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_dfd_level_0_admin_layer" vertex="1">
+          <mxGeometry x="350" y="35" width="250" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_0_admin_DATA" value="Data aplikasi dan sesi&lt;br/&gt;localStorage pada browser" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=partialRectangle;top=1;bottom=1;left=0;right=0;fillColor=#F8FAFC;strokeColor=#475569;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_dfd_level_0_admin_layer" vertex="1">
+          <mxGeometry x="650" y="35" width="250" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_0_admin_BACKUP" value="Salinan data best-effort&lt;br/&gt;IndexedDB pada browser" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=partialRectangle;top=1;bottom=1;left=0;right=0;fillColor=#F8FAFC;strokeColor=#475569;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_dfd_level_0_admin_layer" vertex="1">
+          <mxGeometry x="950" y="35" width="250" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_0_admin_NOTE" value="Akses ke pengguna dan pengaturan/backup/restore dibatasi oleh AUTH.guard() untuk Super Admin. Seluruh proses berjalan lokal di browser." style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_dfd_level_0_admin_layer" vertex="1">
+          <mxGeometry x="1250" y="35" width="250" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_0_admin_edge_0" value="Kredensial login, permintaan kelola,\nperubahan data, operasi backup/restore" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_0_admin_layer" edge="1" source="admin_dfd_level_0_admin_ADMIN" target="admin_dfd_level_0_admin_SYSTEM">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_0_admin_edge_1" value="Dashboard, validasi, notifikasi,\nstatus penyimpanan dan riwayat aktivitas" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_0_admin_layer" edge="1" source="admin_dfd_level_0_admin_SYSTEM" target="admin_dfd_level_0_admin_ADMIN">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_0_admin_edge_2" value="Baca dan simpan data, sesi, pengaturan" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_0_admin_layer" edge="1" source="admin_dfd_level_0_admin_SYSTEM" target="admin_dfd_level_0_admin_DATA">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_0_admin_edge_3" value="Data pengguna dan entitas aplikasi" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_dfd_level_0_admin_layer" edge="1" source="admin_dfd_level_0_admin_DATA" target="admin_dfd_level_0_admin_SYSTEM">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_dfd_level_0_admin_edge_4" value="Salinan tulis asinkron setelah penyimpanan utama berhasil" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;dashed=1;" parent="admin_dfd_level_0_admin_layer" edge="1" source="admin_dfd_level_0_admin_SYSTEM" target="admin_dfd_level_0_admin_BACKUP">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

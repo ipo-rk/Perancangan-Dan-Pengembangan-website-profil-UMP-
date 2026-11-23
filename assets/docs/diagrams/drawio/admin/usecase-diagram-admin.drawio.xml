@@ -1,0 +1,104 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" modified="2026-11-23T04:56:40.000Z" agent="OpenAI" version="24.7.17" type="device">
+  <diagram id="diagram-admin_usecase_diagram_admin" name="Use Case Diagram - Administrator">
+    <mxGraphModel dx="1600" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="admin_usecase_diagram_admin_root" />
+        <mxCell id="admin_usecase_diagram_admin_layer" parent="admin_usecase_diagram_admin_root" />
+        <mxCell id="admin_usecase_diagram_admin_ADMIN" value="Administrator&lt;br/&gt;Editor / Operator / Super Admin" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_usecase_diagram_admin_layer" vertex="1">
+          <mxGeometry x="50" y="35" width="250" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_SUPER" value="Super Admin" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_usecase_diagram_admin_layer" vertex="1">
+          <mxGeometry x="350" y="35" width="250" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_NOTE" value="Pengguna dan Pengaturan dibatasi oleh AUTH.guard() untuk Super Admin. Reset kata sandi lokal tidak menggunakan verifikasi email; backup/restore memakai berkas JSON." style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;rounded=1;arcSize=12;fillColor=#FFFFFF;strokeColor=#64748B;strokeWidth=1.3;fontColor=#0F172A;" parent="admin_usecase_diagram_admin_layer" vertex="1">
+          <mxGeometry x="650" y="35" width="250" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_SYSTEM" value="Batas Sistem: Area Admin Website Profil Prodi Hukum UMP" style="swimlane;html=1;startSize=30;rounded=1;whiteSpace=wrap;fillColor=#F8FAFC;strokeColor=#CBD5E1;fontColor=#0F172A;fontStyle=1;fontSize=13;fontFamily=Arial;" parent="admin_usecase_diagram_admin_layer" vertex="1">
+          <mxGeometry x="40" y="150" width="1520" height="391" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_UC_LOGIN" value="Login dan membuat sesi lokal" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=ellipse;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_usecase_diagram_admin_SYSTEM" vertex="1">
+          <mxGeometry x="28" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_UC_RESET" value="Reset kata sandi lokal" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=ellipse;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_usecase_diagram_admin_SYSTEM" vertex="1">
+          <mxGeometry x="323" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_UC_GUARD" value="Mengakses dashboard dan modul admin" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=ellipse;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_usecase_diagram_admin_SYSTEM" vertex="1">
+          <mxGeometry x="618" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_UC_CONTENT" value="Kelola profil, struktur, dosen,&lt;br/&gt;kurikulum, alumni" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=ellipse;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_usecase_diagram_admin_SYSTEM" vertex="1">
+          <mxGeometry x="913" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_UC_PUBLICATION" value="Kelola berita, artikel,&lt;br/&gt;pengumuman, kegiatan" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=ellipse;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_usecase_diagram_admin_SYSTEM" vertex="1">
+          <mxGeometry x="1208" y="42" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_UC_MEDIA" value="Kelola galeri, prestasi,&lt;br/&gt;dan dokumen" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=ellipse;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_usecase_diagram_admin_SYSTEM" vertex="1">
+          <mxGeometry x="28" y="154" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_UC_INBOX" value="Baca dan tindak lanjuti&lt;br/&gt;pesan serta pendaftar" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=ellipse;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_usecase_diagram_admin_SYSTEM" vertex="1">
+          <mxGeometry x="323" y="154" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_UC_AUDIT" value="Lihat aktivitas dan notifikasi" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=ellipse;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_usecase_diagram_admin_SYSTEM" vertex="1">
+          <mxGeometry x="618" y="154" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_UC_EXPORT" value="Ekspor CSV kurikulum&lt;br/&gt;sesuai filter aktif" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=ellipse;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_usecase_diagram_admin_SYSTEM" vertex="1">
+          <mxGeometry x="913" y="154" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_UC_LOGOUT" value="Logout dan menghapus sesi" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=ellipse;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_usecase_diagram_admin_SYSTEM" vertex="1">
+          <mxGeometry x="1208" y="154" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_UC_USERS" value="Kelola akun pengguna" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=ellipse;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_usecase_diagram_admin_SYSTEM" vertex="1">
+          <mxGeometry x="28" y="266" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_UC_SETTINGS" value="Kelola pengaturan website" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=ellipse;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_usecase_diagram_admin_SYSTEM" vertex="1">
+          <mxGeometry x="323" y="266" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_UC_BACKUP" value="Backup, restore, atau reset data" style="whiteSpace=wrap;html=1;align=center;verticalAlign=middle;fontFamily=Arial;fontSize=12;spacing=8;shape=ellipse;fillColor=#EFF6FF;strokeColor=#2563EB;strokeWidth=1.5;fontColor=#0F172A;" parent="admin_usecase_diagram_admin_SYSTEM" vertex="1">
+          <mxGeometry x="618" y="266" width="255" height="78" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_edge_0" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;dashed=1;" parent="admin_usecase_diagram_admin_layer" edge="1" source="admin_usecase_diagram_admin_ADMIN" target="admin_usecase_diagram_admin_UC_LOGIN">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_edge_1" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;dashed=1;" parent="admin_usecase_diagram_admin_layer" edge="1" source="admin_usecase_diagram_admin_ADMIN" target="admin_usecase_diagram_admin_UC_RESET">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_edge_2" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;dashed=1;" parent="admin_usecase_diagram_admin_layer" edge="1" source="admin_usecase_diagram_admin_ADMIN" target="admin_usecase_diagram_admin_UC_GUARD">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_edge_3" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;dashed=1;" parent="admin_usecase_diagram_admin_layer" edge="1" source="admin_usecase_diagram_admin_ADMIN" target="admin_usecase_diagram_admin_UC_CONTENT">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_edge_4" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;dashed=1;" parent="admin_usecase_diagram_admin_layer" edge="1" source="admin_usecase_diagram_admin_ADMIN" target="admin_usecase_diagram_admin_UC_PUBLICATION">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_edge_5" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;dashed=1;" parent="admin_usecase_diagram_admin_layer" edge="1" source="admin_usecase_diagram_admin_ADMIN" target="admin_usecase_diagram_admin_UC_MEDIA">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_edge_6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;dashed=1;" parent="admin_usecase_diagram_admin_layer" edge="1" source="admin_usecase_diagram_admin_ADMIN" target="admin_usecase_diagram_admin_UC_INBOX">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_edge_7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;dashed=1;" parent="admin_usecase_diagram_admin_layer" edge="1" source="admin_usecase_diagram_admin_ADMIN" target="admin_usecase_diagram_admin_UC_AUDIT">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_edge_8" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;dashed=1;" parent="admin_usecase_diagram_admin_layer" edge="1" source="admin_usecase_diagram_admin_ADMIN" target="admin_usecase_diagram_admin_UC_EXPORT">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_edge_9" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;dashed=1;" parent="admin_usecase_diagram_admin_layer" edge="1" source="admin_usecase_diagram_admin_ADMIN" target="admin_usecase_diagram_admin_UC_LOGOUT">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_edge_10" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;dashed=1;" parent="admin_usecase_diagram_admin_layer" edge="1" source="admin_usecase_diagram_admin_SUPER" target="admin_usecase_diagram_admin_UC_USERS">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_edge_11" value="mewarisi akses umum" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;" parent="admin_usecase_diagram_admin_layer" edge="1" source="admin_usecase_diagram_admin_SUPER" target="admin_usecase_diagram_admin_ADMIN">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_edge_12" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;dashed=1;" parent="admin_usecase_diagram_admin_layer" edge="1" source="admin_usecase_diagram_admin_SUPER" target="admin_usecase_diagram_admin_UC_SETTINGS">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_usecase_diagram_admin_edge_13" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563EB;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;dashed=1;" parent="admin_usecase_diagram_admin_layer" edge="1" source="admin_usecase_diagram_admin_SUPER" target="admin_usecase_diagram_admin_UC_BACKUP">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

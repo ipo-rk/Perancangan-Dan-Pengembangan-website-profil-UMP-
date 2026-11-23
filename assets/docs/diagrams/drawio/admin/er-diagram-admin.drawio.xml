@@ -1,0 +1,77 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net" modified="2026-11-23T04:56:40.000Z" agent="OpenAI" version="24.7.17" type="device">
+  <diagram id="diagram-admin_er_diagram_admin" name="ER Diagram - Data yang Dikelola Admin">
+    <mxGraphModel dx="1600" dy="1640" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1640" math="0" shadow="0">
+      <root>
+        <mxCell id="admin_er_diagram_admin_root" />
+        <mxCell id="admin_er_diagram_admin_layer" parent="admin_er_diagram_admin_root" />
+        <mxCell id="admin_er_diagram_admin_title" value="&lt;b&gt;Data Admin: Entitas dan Relasi&lt;/b&gt;&lt;br/&gt;Data JSON client-side; relasi hanya lookup aplikasi" style="text;html=1;align=left;verticalAlign=middle;whiteSpace=wrap;strokeColor=none;fillColor=none;fontFamily=Arial;fontSize=18;fontColor=#0F172A;" parent="admin_er_diagram_admin_layer" vertex="1">
+          <mxGeometry x="35" y="18" width="1520" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_er_diagram_admin_DOSEN" value="&lt;b&gt;DOSEN&lt;/b&gt;&lt;hr/&gt;number id [PK]&lt;br/&gt;string nama&lt;br/&gt;string kode" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" parent="admin_er_diagram_admin_layer" vertex="1">
+          <mxGeometry x="40" y="100" width="465" height="118" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_er_diagram_admin_STRUKTUR" value="&lt;b&gt;STRUKTUR&lt;/b&gt;&lt;hr/&gt;number id [PK]&lt;br/&gt;number dosenId&lt;br/&gt;string nama&lt;br/&gt;string jabatan&lt;br/&gt;string foto" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" parent="admin_er_diagram_admin_layer" vertex="1">
+          <mxGeometry x="550" y="100" width="465" height="158" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_er_diagram_admin_KURIKULUM" value="&lt;b&gt;KURIKULUM&lt;/b&gt;&lt;hr/&gt;number id [PK]&lt;br/&gt;string kode&lt;br/&gt;string nama&lt;br/&gt;number sks&lt;br/&gt;number semester&lt;br/&gt;string pengampu&lt;br/&gt;string kodeDosen" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" parent="admin_er_diagram_admin_layer" vertex="1">
+          <mxGeometry x="1060" y="100" width="465" height="198" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_er_diagram_admin_PROFIL" value="&lt;b&gt;PROFIL&lt;/b&gt;&lt;hr/&gt;string nama&lt;br/&gt;string kode&lt;br/&gt;string akreditasi&lt;br/&gt;string visi&lt;br/&gt;string misi&lt;br/&gt;string tujuan" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" parent="admin_er_diagram_admin_layer" vertex="1">
+          <mxGeometry x="40" y="345" width="465" height="178" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_er_diagram_admin_ALUMNI" value="&lt;b&gt;ALUMNI&lt;/b&gt;&lt;hr/&gt;number id [PK]&lt;br/&gt;string nama&lt;br/&gt;string angkatan&lt;br/&gt;string pekerjaan&lt;br/&gt;string instansi&lt;br/&gt;string status" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" parent="admin_er_diagram_admin_layer" vertex="1">
+          <mxGeometry x="550" y="345" width="465" height="178" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_er_diagram_admin_BERITA" value="&lt;b&gt;BERITA&lt;/b&gt;&lt;hr/&gt;number id [PK]&lt;br/&gt;string slug&lt;br/&gt;string judul&lt;br/&gt;string kategori&lt;br/&gt;string status&lt;br/&gt;boolean featured" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" parent="admin_er_diagram_admin_layer" vertex="1">
+          <mxGeometry x="1060" y="345" width="465" height="178" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_er_diagram_admin_ARTIKEL" value="&lt;b&gt;ARTIKEL&lt;/b&gt;&lt;hr/&gt;number id [PK]&lt;br/&gt;string judul&lt;br/&gt;string kategori&lt;br/&gt;string status&lt;br/&gt;string referensi" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" parent="admin_er_diagram_admin_layer" vertex="1">
+          <mxGeometry x="40" y="590" width="465" height="158" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_er_diagram_admin_PENGUMUMAN" value="&lt;b&gt;PENGUMUMAN&lt;/b&gt;&lt;hr/&gt;number id [PK]&lt;br/&gt;string judul&lt;br/&gt;string status&lt;br/&gt;string tanggal&lt;br/&gt;string isi" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" parent="admin_er_diagram_admin_layer" vertex="1">
+          <mxGeometry x="550" y="590" width="465" height="158" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_er_diagram_admin_KEGIATAN" value="&lt;b&gt;KEGIATAN&lt;/b&gt;&lt;hr/&gt;number id [PK]&lt;br/&gt;string nama&lt;br/&gt;string tanggal&lt;br/&gt;string lokasi&lt;br/&gt;string penyelenggara" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" parent="admin_er_diagram_admin_layer" vertex="1">
+          <mxGeometry x="1060" y="590" width="465" height="158" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_er_diagram_admin_GALERI" value="&lt;b&gt;GALERI&lt;/b&gt;&lt;hr/&gt;number id [PK]&lt;br/&gt;string judul&lt;br/&gt;string album&lt;br/&gt;string src" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" parent="admin_er_diagram_admin_layer" vertex="1">
+          <mxGeometry x="40" y="835" width="465" height="138" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_er_diagram_admin_PRESTASI" value="&lt;b&gt;PRESTASI&lt;/b&gt;&lt;hr/&gt;number id [PK]&lt;br/&gt;string nama&lt;br/&gt;string kategori&lt;br/&gt;string tingkat&lt;br/&gt;string tahun" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" parent="admin_er_diagram_admin_layer" vertex="1">
+          <mxGeometry x="550" y="835" width="465" height="158" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_er_diagram_admin_DOKUMEN" value="&lt;b&gt;DOKUMEN&lt;/b&gt;&lt;hr/&gt;number id [PK]&lt;br/&gt;string nama&lt;br/&gt;string kategori&lt;br/&gt;string format&lt;br/&gt;string fileData" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" parent="admin_er_diagram_admin_layer" vertex="1">
+          <mxGeometry x="1060" y="835" width="465" height="158" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_er_diagram_admin_PENDAFTAR" value="&lt;b&gt;PENDAFTAR&lt;/b&gt;&lt;hr/&gt;number id [PK]&lt;br/&gt;number kegiatanId&lt;br/&gt;string kegiatanNama&lt;br/&gt;string nama&lt;br/&gt;string email&lt;br/&gt;string waktuDaftar" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" parent="admin_er_diagram_admin_layer" vertex="1">
+          <mxGeometry x="40" y="1080" width="465" height="178" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_er_diagram_admin_PESAN" value="&lt;b&gt;PESAN&lt;/b&gt;&lt;hr/&gt;number id [PK]&lt;br/&gt;string nama&lt;br/&gt;string email&lt;br/&gt;string subjek&lt;br/&gt;string pesan&lt;br/&gt;boolean read" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" parent="admin_er_diagram_admin_layer" vertex="1">
+          <mxGeometry x="550" y="1080" width="465" height="178" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_er_diagram_admin_PENGGUNA" value="&lt;b&gt;PENGGUNA&lt;/b&gt;&lt;hr/&gt;number id [PK]&lt;br/&gt;string nama&lt;br/&gt;string email&lt;br/&gt;string password&lt;br/&gt;string role&lt;br/&gt;string status" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" parent="admin_er_diagram_admin_layer" vertex="1">
+          <mxGeometry x="1060" y="1080" width="465" height="178" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_er_diagram_admin_AKTIVITAS" value="&lt;b&gt;AKTIVITAS&lt;/b&gt;&lt;hr/&gt;number id [PK]&lt;br/&gt;string user&lt;br/&gt;string aksi&lt;br/&gt;string tanggalIso&lt;br/&gt;string icon" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" parent="admin_er_diagram_admin_layer" vertex="1">
+          <mxGeometry x="40" y="1325" width="465" height="158" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_er_diagram_admin_NOTIFIKASI" value="&lt;b&gt;NOTIFIKASI&lt;/b&gt;&lt;hr/&gt;number id [PK]&lt;br/&gt;string judul&lt;br/&gt;string pesan&lt;br/&gt;boolean read&lt;br/&gt;string icon" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" parent="admin_er_diagram_admin_layer" vertex="1">
+          <mxGeometry x="550" y="1325" width="465" height="158" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_er_diagram_admin_PENGATURAN" value="&lt;b&gt;PENGATURAN&lt;/b&gt;&lt;hr/&gt;string namaWebsite&lt;br/&gt;string theme&lt;br/&gt;string primaryColor&lt;br/&gt;string metaTitle&lt;br/&gt;string email&lt;br/&gt;string telepon" style="rounded=1;arcSize=8;whiteSpace=wrap;html=1;align=left;verticalAlign=top;spacing=10;fillColor=#FFFFFF;strokeColor=#2563EB;strokeWidth=1.5;fontFamily=Arial;fontSize=11;fontColor=#0F172A;" parent="admin_er_diagram_admin_layer" vertex="1">
+          <mxGeometry x="1060" y="1325" width="465" height="178" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_er_diagram_admin_rel_0" value="lookup kegiatanId opsional" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#B45309;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;dashed=1;" parent="admin_er_diagram_admin_layer" edge="1" source="admin_er_diagram_admin_KEGIATAN" target="admin_er_diagram_admin_PENDAFTAR">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_er_diagram_admin_rel_1" value="lookup dosenId opsional" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#B45309;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;dashed=1;" parent="admin_er_diagram_admin_layer" edge="1" source="admin_er_diagram_admin_DOSEN" target="admin_er_diagram_admin_STRUKTUR">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="admin_er_diagram_admin_rel_2" value="lookup kodeDosen opsional" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#B45309;strokeWidth=1.5;endArrow=block;endFill=1;fontSize=10;fontColor=#334155;fontFamily=Arial;dashed=1;" parent="admin_er_diagram_admin_layer" edge="1" source="admin_er_diagram_admin_DOSEN" target="admin_er_diagram_admin_KURIKULUM">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

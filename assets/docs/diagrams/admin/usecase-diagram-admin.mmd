@@ -1,0 +1,41 @@
+---
+title: Use Case Diagram - Administrator
+---
+flowchart LR
+    ADMIN["Administrator\nEditor / Operator / Super Admin"]
+    SUPER["Super Admin"]
+
+    subgraph SYSTEM["Batas Sistem: Area Admin Website Profil Prodi Hukum UMP"]
+        UC_LOGIN(["Login dan membuat sesi lokal"])
+        UC_RESET(["Reset kata sandi lokal"])
+        UC_GUARD(["Mengakses dashboard dan modul admin"])
+        UC_CONTENT(["Kelola profil, struktur, dosen,\nkurikulum, alumni"])
+        UC_PUBLICATION(["Kelola berita, artikel,\npengumuman, kegiatan"])
+        UC_MEDIA(["Kelola galeri, prestasi,\ndan dokumen"])
+        UC_INBOX(["Baca dan tindak lanjuti\npesan serta pendaftar"])
+        UC_AUDIT(["Lihat aktivitas dan notifikasi"])
+        UC_EXPORT(["Ekspor CSV kurikulum\nsesuai filter aktif"])
+        UC_LOGOUT(["Logout dan menghapus sesi"])
+        UC_USERS(["Kelola akun pengguna"])
+        UC_SETTINGS(["Kelola pengaturan website"])
+        UC_BACKUP(["Backup, restore, atau reset data"])
+    end
+
+    ADMIN --- UC_LOGIN
+    ADMIN --- UC_RESET
+    ADMIN --- UC_GUARD
+    ADMIN --- UC_CONTENT
+    ADMIN --- UC_PUBLICATION
+    ADMIN --- UC_MEDIA
+    ADMIN --- UC_INBOX
+    ADMIN --- UC_AUDIT
+    ADMIN --- UC_EXPORT
+    ADMIN --- UC_LOGOUT
+
+    SUPER --- UC_USERS
+    SUPER -->|"mewarisi akses umum"| ADMIN
+    SUPER --- UC_SETTINGS
+    SUPER --- UC_BACKUP
+
+    NOTE["Pengguna dan Pengaturan dibatasi oleh AUTH.guard() untuk Super Admin. Reset kata sandi lokal tidak menggunakan verifikasi email; backup/restore memakai berkas JSON."]
+    UC_USERS -.- NOTE

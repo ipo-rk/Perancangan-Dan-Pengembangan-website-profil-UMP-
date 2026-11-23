@@ -50,6 +50,17 @@ function themeStore() {
   };
 }
 
+function applySiteBranding(settings) {
+  const logo = publicAssetPath(settings.logo || '../assets/image/logo-ump-auth.png');
+  const favicon = publicAssetPath(settings.favicon || '../assets/image/logo-ump-auth.png');
+  document.querySelectorAll('.brand img.logo, .admin-sidebar img, .nl-logo, img[alt="Logo Program Studi Hukum UMP"]').forEach((image) => {
+    image.src = logo;
+  });
+  document.querySelectorAll('link[rel~="icon"]').forEach((icon) => {
+    icon.href = favicon;
+  });
+}
+
 /* =========================================================
    ANIMASI ANGKA (COUNT-UP) — Alpine custom directive
    ---------------------------------------------------------
@@ -625,6 +636,36 @@ function compressImageFile(file, { maxWidth = 480, maxHeight = 480, quality = 0.
   });
 }
 
+function compressBrandImageFile(file, { maxWidth = 300, maxHeight = 300 } = {}) {
+  return new Promise((resolve, reject) => {
+    if (!file || !file.type || !file.type.startsWith('image/')) {
+      reject(new Error('File yang dipilih bukan gambar.'));
+      return;
+    }
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Gagal membaca file gambar.'));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('File gambar tidak valid atau rusak.'));
+      img.onload = () => {
+        const ratio = Math.min(1, maxWidth / img.naturalWidth, maxHeight / img.naturalHeight);
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.round(img.naturalWidth * ratio));
+        canvas.height = Math.max(1, Math.round(img.naturalHeight * ratio));
+        const context = canvas.getContext('2d');
+        if (!context) {
+          reject(new Error('Browser tidak dapat memproses file gambar.'));
+          return;
+        }
+        context.drawImage(img, 0, 0, canvas.width, canvas.height);
+        resolve(canvas.toDataURL('image/png'));
+      };
+      img.src = reader.result;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
 /* =========================================================
    BERKAS DOKUMEN (PDF/DOC/DOCX) — Pembacaan & Validasi File
    ---------------------------------------------------------
@@ -916,9 +957,8 @@ function getSearchIndex() {
 // dikembalikan apa adanya.
 function assetPath(path) {
   if (!path) return path;
-  if (/^(https?:)?\/\//i.test(path) || /^data:/i.test(path)) return path;
-  const inAdmin = /\/admin\//.test(window.location.pathname);
-  return inAdmin ? '../' + path : path;
+  if (/^(blob:|https?:)?\/\//i.test(path) || /^data:/i.test(path)) return path;
+  return publicAssetPath(path);
 }
 
 function parseHari(str) {
@@ -1268,12 +1308,7 @@ function siteHeader() {
 
       const settings = SAMPLE_PENGATURAN || {};
       initPublicTopbar(settings);
-      const logo = publicAssetPath(settings.logo);
-      if (logo) {
-        document.querySelectorAll('.brand img.logo').forEach((image) => {
-          image.src = logo;
-        });
-      }
+      applySiteBranding(settings);
 
       document.querySelectorAll('.soc a').forEach((link) => {
         const socialKey = {
@@ -1300,10 +1335,6 @@ function siteHeader() {
         }
       });
 
-      const favicon = document.querySelector('link[rel~="icon"]');
-      const faviconUrl = publicAssetPath(settings.favicon);
-      if (favicon && faviconUrl) favicon.href = faviconUrl;
-
       const isHome = /\/(?:index\.html)?$/.test(window.location.pathname);
       if (isHome && settings.metaTitle) {
         document.title = settings.metaTitle;
@@ -1328,7 +1359,15 @@ function siteHeader() {
 
 function publicAssetPath(path) {
   if (!path || /^(https?:)?\/\//i.test(path) || /^(data:|\/)/i.test(path)) return path || '';
-  return path.replace(/^(\.\.\/)+/, '');
+  try {
+    const siteRoot = /\/admin\//.test(window.location.pathname)
+      ? new URL('../', document.baseURI)
+      : document.baseURI;
+    return new URL(path.replace(/^(\.\.\/)+/, ''), siteRoot).href;
+  } catch (error) {
+    console.warn('Branding: jalur aset tidak valid.', error);
+    return '';
+  }
 }
 
 function safeExternalUrl(value) {
@@ -2100,15 +2139,15 @@ let SAMPLE_PRESTASI = DB.load('prestasi', SEED_PRESTASI);
 
 const SEED_KURIKULUM = [
   // Semester 1 — MK Baru (dosen dari referensi Excel)
-  { id: 1,  kode: 'UMP1002', nama: 'AI Islam dan Kemuhammadiyahan 1', sks: 2, semester: 1, pengampu: 'Dr. Tri Mulyadi, S.H., M.H', kodeDosen: 'HKM003', sumber: 'MK Baru' },
-  { id: 2,  kode: 'UMP1001', nama: 'Pendidikan Pancasila', sks: 2, semester: 1, pengampu: 'Ismail Maswatu, S.E., S.H., M.H', kodeDosen: 'HKM004', sumber: 'MK Baru' },
-  { id: 3,  kode: 'UMP1004', nama: 'Teknologi dan Informasi', sks: 2, semester: 1, pengampu: 'Irfun, M.Pd', kodeDosen: 'HKM005', sumber: 'MK Baru' },
-  { id: 4,  kode: 'UMP1005', nama: 'Bahasa Indonesia', sks: 2, semester: 1, pengampu: 'Irfun, M.Pd', kodeDosen: 'HKM005', sumber: 'MK Baru' },
-  { id: 5,  kode: 'UMP1003', nama: 'Bahasa Inggris 1', sks: 2, semester: 1, pengampu: 'Irfun, M.Pd', kodeDosen: 'HKM005', sumber: 'MK Baru' },
-  { id: 6,  kode: 'HKM1301', nama: 'Pengantar Hukum Indonesia', sks: 3, semester: 1, pengampu: 'Dr. Hendrik Dengah, S.H., M.H', kodeDosen: 'HKM002', sumber: 'MK Baru' },
-  { id: 7,  kode: 'HKM1302', nama: 'Pengantar Ilmu Hukum', sks: 3, semester: 1, pengampu: 'Mursani, S.H., M.H.', kodeDosen: 'HKM007', sumber: 'MK Baru' },
-  { id: 8,  kode: 'HKM1203', nama: 'Pendidikan Anti Korupsi', sks: 2, semester: 1, pengampu: 'Dr. Muhammad Yusuf, S.H., M.H', kodeDosen: 'HKM001', sumber: 'MK Baru' },
-  { id: 9,  kode: 'HKM1204', nama: 'Ilmu Negara', sks: 2, semester: 1, pengampu: 'Rifqi Anan Pratama, S.H., M.H', kodeDosen: 'HKM009', sumber: 'MK Baru' },
+  { id: 1, kode: 'UMP1002', nama: 'AI Islam dan Kemuhammadiyahan 1', sks: 2, semester: 1, pengampu: 'Dr. Tri Mulyadi, S.H., M.H', kodeDosen: 'HKM003', sumber: 'MK Baru' },
+  { id: 2, kode: 'UMP1001', nama: 'Pendidikan Pancasila', sks: 2, semester: 1, pengampu: 'Ismail Maswatu, S.E., S.H., M.H', kodeDosen: 'HKM004', sumber: 'MK Baru' },
+  { id: 3, kode: 'UMP1004', nama: 'Teknologi dan Informasi', sks: 2, semester: 1, pengampu: 'Irfun, M.Pd', kodeDosen: 'HKM005', sumber: 'MK Baru' },
+  { id: 4, kode: 'UMP1005', nama: 'Bahasa Indonesia', sks: 2, semester: 1, pengampu: 'Irfun, M.Pd', kodeDosen: 'HKM005', sumber: 'MK Baru' },
+  { id: 5, kode: 'UMP1003', nama: 'Bahasa Inggris 1', sks: 2, semester: 1, pengampu: 'Irfun, M.Pd', kodeDosen: 'HKM005', sumber: 'MK Baru' },
+  { id: 6, kode: 'HKM1301', nama: 'Pengantar Hukum Indonesia', sks: 3, semester: 1, pengampu: 'Dr. Hendrik Dengah, S.H., M.H', kodeDosen: 'HKM002', sumber: 'MK Baru' },
+  { id: 7, kode: 'HKM1302', nama: 'Pengantar Ilmu Hukum', sks: 3, semester: 1, pengampu: 'Mursani, S.H., M.H.', kodeDosen: 'HKM007', sumber: 'MK Baru' },
+  { id: 8, kode: 'HKM1203', nama: 'Pendidikan Anti Korupsi', sks: 2, semester: 1, pengampu: 'Dr. Muhammad Yusuf, S.H., M.H', kodeDosen: 'HKM001', sumber: 'MK Baru' },
+  { id: 9, kode: 'HKM1204', nama: 'Ilmu Negara', sks: 2, semester: 1, pengampu: 'Rifqi Anan Pratama, S.H., M.H', kodeDosen: 'HKM009', sumber: 'MK Baru' },
   // Semester 2 — MK Baru (dosen dari referensi Excel)
   { id: 10, kode: 'UMP1203', nama: 'AI Islam dan Kemuhammadiyahan (AIK) 2', sks: 3, semester: 2, pengampu: 'Dr. Tri Mulyadi, S.H., M.H', kodeDosen: 'HKM003', sumber: 'MK Baru' },
   { id: 11, kode: 'UMP2005', nama: 'Bahasa Inggris 2', sks: 2, semester: 2, pengampu: 'Irfun, M.Pd', kodeDosen: 'HKM005', sumber: 'MK Baru' },
@@ -2204,7 +2243,7 @@ const PREVIOUS_MK_BARU_SIGNATURES = ['72b369af881db03a', '8b7326c6e85421d1', '0f
 const PREVIOUS_NORMALIZED_CURRICULUM_SIGNATURES = [];
 let SAMPLE_KURIKULUM = DB.load('kurikulum', SEED_KURIKULUM);
 if (Array.isArray(SAMPLE_KURIKULUM) &&
-    SAMPLE_KURIKULUM.some(course => course && ('sumber' in course || 'catatan' in course))) {
+  SAMPLE_KURIKULUM.some(course => course && ('sumber' in course || 'catatan' in course))) {
   const curriculumWithoutMetadata = SAMPLE_KURIKULUM.map(course => {
     if (!course || typeof course !== 'object') return course;
     const cleanCourse = { ...course };
@@ -2400,7 +2439,7 @@ let SAMPLE_STRUKTUR = DB.load('struktur', SEED_STRUKTUR);
 // di header, footer + halaman Kontak pada seluruh halaman publik.
 const SEED_PENGATURAN = {
   namaWebsite: 'Program Studi Hukum UMP', deskripsi: 'Website resmi Program Studi Hukum Universitas Muhammadiyah Papua.',
-  logo: '../assets/image/logo-ump.png', favicon: '../assets/image/logo-ump.png',
+  logo: '../assets/image/logo-ump-auth.png', favicon: '../assets/image/logo-ump-auth.png',
   theme: 'Neumorphism', primaryColor: '#2A4E9E', darkMode: true,
   metaTitle: 'Program Studi Hukum — UMP', metaDesc: 'Informasi akademik Program Studi Hukum UMP.', keywords: 'hukum, UMP, program studi hukum',
   facebook: '', instagram: '', youtube: '', linkedin: '', tiktok: '',
@@ -2411,11 +2450,23 @@ const SEED_PENGATURAN = {
   mahasiswaAktif: 350
 };
 let SAMPLE_PENGATURAN = DB.load('pengaturan', SEED_PENGATURAN);
+let brandingNeedsMigration = false;
+['logo', 'favicon'].forEach((key) => {
+  if (SAMPLE_PENGATURAN[key] === '../assets/image/logo-ump.png' ||
+      SAMPLE_PENGATURAN[key] === 'assets/image/logo-ump.png') {
+    SAMPLE_PENGATURAN[key] = SEED_PENGATURAN[key];
+    brandingNeedsMigration = true;
+  }
+});
+if (brandingNeedsMigration && !DB.save('pengaturan', SAMPLE_PENGATURAN)) {
+  console.error('DB: gagal memperbarui logo dan favicon bawaan pada pengaturan website.');
+}
 if (!SAMPLE_PENGATURAN.mapEmbed) {
   SAMPLE_PENGATURAN.mapEmbed = SEED_PENGATURAN.mapEmbed;
   SAMPLE_PENGATURAN.mapLink = SEED_PENGATURAN.mapLink;
   SAMPLE_PENGATURAN.koordinat = SEED_PENGATURAN.koordinat;
 }
+applySiteBranding(SAMPLE_PENGATURAN);
 
 const SEED_DATA_BY_KEY = {
   berita: SEED_BERITA,
@@ -2466,6 +2517,7 @@ window.addEventListener('db-update', (event) => {
   if (!event.detail || typeof event.detail.key !== 'string') return;
   const { key, data } = event.detail;
   applyDatabaseUpdate(key, data);
+  if (key === 'pengaturan') applySiteBranding(SAMPLE_PENGATURAN);
   if (key === 'notifikasi') window.dispatchEvent(new CustomEvent('notif-update'));
   if (CONTENT_DB_KEYS.has(key) && !/\/admin\//.test(window.location.pathname)) {
     window.location.reload();

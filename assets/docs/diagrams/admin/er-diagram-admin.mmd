@@ -1,0 +1,143 @@
+---
+title: ER Diagram - Data yang Dikelola Admin
+---
+erDiagram
+    KEGIATAN o|--o{ PENDAFTAR : "lookup kegiatanId opsional"
+    DOSEN o|--o{ STRUKTUR : "lookup dosenId opsional"
+    DOSEN o|--o{ KURIKULUM : "lookup kodeDosen opsional"
+
+    DOSEN {
+        number id PK
+        string nama
+        string kode
+    }
+    STRUKTUR {
+        number id PK
+        number dosenId
+        string nama
+        string jabatan
+        string foto
+    }
+    KURIKULUM {
+        number id PK
+        string kode
+        string nama
+        number sks
+        number semester
+        string pengampu
+        string kodeDosen
+    }
+    PROFIL {
+        string nama
+        string kode
+        string akreditasi
+        string visi
+        string misi
+        string tujuan
+    }
+    ALUMNI {
+        number id PK
+        string nama
+        string angkatan
+        string pekerjaan
+        string instansi
+        string status
+    }
+    BERITA {
+        number id PK
+        string slug
+        string judul
+        string kategori
+        string status
+        boolean featured
+    }
+    ARTIKEL {
+        number id PK
+        string judul
+        string kategori
+        string status
+        string referensi
+    }
+    PENGUMUMAN {
+        number id PK
+        string judul
+        string status
+        string tanggal
+        string isi
+    }
+    KEGIATAN {
+        number id PK
+        string nama
+        string tanggal
+        string lokasi
+        string penyelenggara
+    }
+    GALERI {
+        number id PK
+        string judul
+        string album
+        string src
+    }
+    PRESTASI {
+        number id PK
+        string nama
+        string kategori
+        string tingkat
+        string tahun
+    }
+    DOKUMEN {
+        number id PK
+        string nama
+        string kategori
+        string format
+        string fileData
+    }
+    PENDAFTAR {
+        number id PK
+        number kegiatanId
+        string kegiatanNama
+        string nama
+        string email
+        string waktuDaftar
+    }
+    PESAN {
+        number id PK
+        string nama
+        string email
+        string subjek
+        string pesan
+        boolean read
+    }
+    PENGGUNA {
+        number id PK
+        string nama
+        string email
+        string password
+        string role
+        string status
+    }
+    AKTIVITAS {
+        number id PK
+        string user
+        string aksi
+        string tanggalIso
+        string icon
+    }
+    NOTIFIKASI {
+        number id PK
+        string judul
+        string pesan
+        boolean read
+        string icon
+    }
+    PENGATURAN {
+        string namaWebsite
+        string theme
+        string primaryColor
+        string metaTitle
+        string email
+        string telepon
+    }
+
+    %% Entitas lain tidak memiliki relasi basis data yang ditegakkan oleh aplikasi.
+    %% Data disimpan sebagai JSON client-side; hubungan di atas hanya lookup aplikasi.

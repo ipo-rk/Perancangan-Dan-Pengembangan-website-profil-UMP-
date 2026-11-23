@@ -1,0 +1,59 @@
+---
+title: DFD Level 1 - Proses Admin
+---
+flowchart TB
+    ADMIN["Administrator"]
+    SUPER["Super Admin"]
+
+    subgraph PROCESS["Proses admin"]
+        P1(("1.0 Autentikasi,\nsesi, dan pemeriksaan peran"))
+        P2(("2.0 Kelola data akademik,\nprofil, dan publikasi"))
+        P3(("3.0 Kelola pesan,\npendaftar, dan aktivitas"))
+        P4(("4.0 Kelola akun\npengguna"))
+        P5(("5.0 Pengaturan,\nbackup, restore, dan reset"))
+        P6(("6.0 Validasi, log,\ndan notifikasi"))
+        P7(("7.0 Persistensi DB.save"))
+    end
+
+    subgraph STORE["Data store pada browser"]
+        D1[("D1 Data aplikasi\n18 entitas di localStorage")]
+        D2[("D2 Sesi admin\nprodihukum_admin_session")]
+        D3[("D3 Pageview lokal")]
+        D4[("D4 Salinan best-effort\nIndexedDB")]
+    end
+
+    ADMIN -->|"Email dan kata sandi"| P1
+    ADMIN -->|"Email akun dan kata sandi baru untuk reset"| P1
+    D1 -->|"Data akun lokal"| P1
+    P1 -->|"Simpan sesi"| D2
+    P1 -->|"Kata sandi baru setelah reset lokal"| P7
+    D2 -->|"Sesi untuk AUTH.guard()"| P1
+    P1 -->|"Hasil login / penolakan akses"| ADMIN
+
+    ADMIN -->|"Input/edit/hapus konten"| P2
+    D1 -->|"Data saat ini untuk tabel/form"| P2
+    P2 -->|"Perubahan entitas"| P7
+    ADMIN -->|"Buka dan tindak lanjuti pesan / pendaftar"| P3
+    D1 -->|"Data pesan dan pendaftar"| P3
+    P3 -->|"Status baca dan perubahan yang didukung"| P7
+
+    SUPER -->|"Kelola akun"| P4
+    D1 -->|"Data pengguna"| P4
+    P4 -->|"Data akun yang diubah"| P7
+    SUPER -->|"Perintah pengaturan / backup / restore / reset"| P5
+    D1 -->|"Data untuk ekspor atau validasi pulihan"| P5
+    P5 -->|"Entitas yang dipulihkan / pengaturan"| P7
+    P5 -->|"Unduhan JSON dan status operasi"| SUPER
+
+    P2 --> P6
+    P3 --> P6
+    P4 --> P6
+    P5 --> P6
+    P6 -->|"Aktivitas dan notifikasi"| P7
+    P7 -->|"Tulis sinkron"| D1
+    P7 -.->|"Salinan setelah localStorage berhasil"| D4
+    D3 -->|"Statistik dashboard lokal"| P6
+    P6 -->|"Konfirmasi, notifikasi, riwayat"| ADMIN
+
+    NOTE["Editor dan Operator memakai modul admin umum. Pengguna dan Pengaturan hanya Super Admin. Reset kata sandi tidak memakai verifikasi email."]
+    P1 -.- NOTE
