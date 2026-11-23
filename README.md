@@ -16,6 +16,7 @@
 - [Data Kurikulum](#-data-kurikulum-57-mk--154-sks)
 - [Sistem Admin](#-sistem-admin)
 - [Komponen Alpine.js](#-komponen-alpinejs)
+- [Implementasi Login dan CRUD Tabel](#implementasi-login-dan-crud-tabel)
 - [Diagram & Dokumentasi](#-diagram--dokumentasi)
 - [Cara Menjalankan](#-cara-menjalankan)
 - [Reset Data](#️-reset-data)
@@ -233,17 +234,17 @@ Dashboard admin dan halaman publik memakai data aktif yang sama, yaitu `SAMPLE_D
 
 | Semester | Jumlah MK | Total SKS |
 |----------|-----------|-----------|
-| 1 | 9 MK | ~20 SKS |
-| 2 | 8 MK | ~20 SKS |
-| 3 | 10 MK | ~22 SKS |
-| 4 | 10 MK | ~22 SKS |
-| 5 | 8 MK | ~20 SKS |
-| 6 | 9 MK | ~20 SKS |
-| 7 | 2 MK | ~6 SKS |
-| 8 | 1 MK | ~4 SKS |
+| 1 | 9 MK | 20 SKS |
+| 2 | 8 MK | 20 SKS |
+| 3 | 10 MK | 24 SKS |
+| 4 | 10 MK | 24 SKS |
+| 5 | 8 MK | 24 SKS |
+| 6 | 9 MK | 24 SKS |
+| 7 | 2 MK | 12 SKS |
+| 8 | 1 MK | 6 SKS |
 | **Total** | **57 MK** | **154 SKS** |
 
-> **Catatan:** 10 mata kuliah belum memiliki dosen pengampu dan memiliki `kodeDosen: '-'`. Pada seed saat ini, properti `pengampu` tidak dicantumkan untuk mata kuliah tersebut; dashboard dan halaman publik menampilkannya sebagai “Tidak tercantum pada MK Baru”.
+> Angka pada tabel dihitung dari `SEED_KURIKULUM` di [`assets/js/app.js`](assets/js/app.js). Sepuluh mata kuliah belum memiliki dosen pengampu (`kodeDosen: '-'`); properti `pengampu` memang tidak dicantumkan pada record tersebut.
 
 ### Field `SEED_KURIKULUM`
 
@@ -256,16 +257,16 @@ Struktur field kurikulum yang dipakai dashboard admin dan halaman publik:
   nama:      String,   // Nama mata kuliah
   sks:       Number,   // Jumlah SKS
   semester:  Number,   // 1 – 8
-  pengampu:  String,   // Nama dosen (string), '-' jika belum ada
+  pengampu:  String,   // Opsional; tidak ada jika dosen belum ditetapkan
   kodeDosen: String    // Kode dosen 'HKM001'–'HKM010', atau '-'
 }
 ```
 
-Deklarasi awal `SEED_KURIKULUM` di `app.js` juga menyertakan `sumber: String` (saat ini bernilai `'MK Baru'`). Saat data dimuat, migrasi menghapus metadata `sumber` dan `catatan` dari data kurikulum aktif. Untuk mata kuliah tanpa dosen, field `pengampu` dapat tidak ada di record seed dan diperlakukan sebagai belum tercantum.
+Deklarasi seed juga menyertakan metadata `sumber: 'MK Baru'`. Saat aplikasi memuat kurikulum, migrasi membuang properti `sumber` dan `catatan` dari data aktif. `DB.load()` memeriksa bentuk luar data (array), bukan memvalidasi setiap field pada setiap record; validasi field dilakukan saat form disimpan.
 
 ### Pencocokan Dosen
 
-Fungsi `coursesForLecturer()` mencocokkan `dosen.kode` dengan `kurikulum.kodeDosen` terlebih dahulu. Nama dosen menjadi fallback untuk data mata kuliah lama yang belum memiliki kode. Tampilan pengampu kurikulum mengikuti nama dosen terkini jika kodenya terhubung ke roster, sehingga perubahan nama dosen tidak memutus hubungan.
+`coursesForLecturer()` mengutamakan pencocokan kode dan menggunakan nama sebagai fallback untuk record lama. Relasi ini adalah lookup aplikasi, bukan foreign key. Implementasi ringkasnya ada pada [bagian logika tabel](#implementasi-login-dan-crud-tabel).
 
 ### Import/Export Kurikulum
 
@@ -385,17 +386,533 @@ Login memakai `SEED_PENGGUNA` sebagai data awal dan `SAMPLE_PENGGUNA` sebagai da
 | `kegiatanAdminPage()` | CRUD kegiatan + lihat pendaftar |
 | `adminAktivitasPage()` | Log aktivitas admin (read-only) |
 
-### Cara Kerja `adminCrudTable()` (Generic CRUD)
+### Implementasi Login dan CRUD Tabel
 
-Dikonfigurasi melalui objek opsi pada `x-data`, termasuk sumber baris, key entitas, kolom pencarian, validasi, serta kolom ekspor:
+Cuplikan berikut merangkum implementasi yang dipakai aplikasi, bukan satu file JavaScript mandiri. Bagian ini disusun dari [`sourcecode-logika-tabel-bab4.md`](sourcecode-logika-tabel-bab4.md) dan diselaraskan dengan [`assets/js/app.js`](assets/js/app.js), [`admin/login.html`](admin/login.html), serta [`admin/kurikulum.html`](admin/kurikulum.html).
 
-```html
-<div x-data="adminCrudTable({
-  rows: SAMPLE_BERITA,
-  dbKey: 'berita',
-  searchKeys: ['judul', 'tanggal', 'kategori']
-})">
+#### 1. Login, validasi akun, dan sesi
+
+`AUTH.login()` memvalidasi data sesi, sedangkan form login mencocokkan email, status, dan kata sandi terhadap `SAMPLE_PENGGUNA`. Seluruh autentikasi ini berjalan di browser.
+
+```javascript
+const AUTH = (() => {
+  const KEY = 'prodihukum_admin_session';
+
+  function login(user) {
+    const roles = ['Super Admin', 'Editor', 'Operator'];
+    if (
+      !user ||
+      typeof user.nama !== 'string' || !user.nama.trim() ||
+      typeof user.email !== 'string' || !user.email.trim() ||
+      !roles.includes(user.role)
+    ) {
+      throw new Error('Data akun admin tidak lengkap atau perannya tidak dikenali.');
+    }
+
+    const session = {
+      nama: user.nama,
+      email: user.email,
+      role: user.role,
+      loginAt: new Date().toISOString()
+    };
+    localStorage.setItem(KEY, JSON.stringify(session));
+    return session;
+  }
+
+  function current() {
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (!raw) return { nama: '', email: '', role: '' };
+      const session = JSON.parse(raw);
+      if (!session || typeof session !== 'object' || Array.isArray(session)) {
+        return { nama: '', email: '', role: '' };
+      }
+      return {
+        nama: typeof session.nama === 'string' ? session.nama : '',
+        email: typeof session.email === 'string' ? session.email : '',
+        role: typeof session.role === 'string' ? session.role : ''
+      };
+    } catch (e) { /* noop */ }
+    return { nama: '', email: '', role: '' };
+  }
+
+  function isLoggedIn() {
+    const session = current();
+    return Boolean(
+      session.nama &&
+      session.email &&
+      ['Super Admin', 'Editor', 'Operator'].includes(session.role)
+    );
+  }
+
+  function logout() {
+    localStorage.removeItem(KEY);
+  }
+
+  const SUPER_ADMIN_ONLY_PAGES = ['pengguna.html', 'pengaturan.html'];
+  function guard() {
+    const path = window.location.pathname;
+    const page = path.substring(path.lastIndexOf('/') + 1);
+    const isLoginPage = page === 'login.html';
+    if (!isLoginPage && !isLoggedIn()) {
+      window.location.href = 'login.html';
+      return;
+    }
+    if (isLoginPage) return;
+    if (SUPER_ADMIN_ONLY_PAGES.includes(page) && current().role !== 'Super Admin') {
+      if (typeof NeuAlert !== 'undefined') {
+        NeuAlert.error('Halaman ini khusus untuk Super Admin.');
+      }
+      window.location.href = 'dashboard.html';
+    }
+  }
+
+  return { login, current, isLoggedIn, logout, guard };
+})();
 ```
+
+Inti `submit()` pada halaman login:
+
+```javascript
+submit() {
+  const email = (this.form.email || '').trim();
+  const pass = (this.form.password || '').trim();
+  if (!email || !pass) {
+    NeuAlert.error('Mohon isi email terdaftar dan kata sandi.');
+    return;
+  }
+
+  this.loading = true;
+  setTimeout(() => {
+    this.loading = false;
+    const users = (typeof SAMPLE_PENGGUNA !== 'undefined') ? SAMPLE_PENGGUNA : [];
+    const matched = users.find(p => p.email && p.email.toLowerCase() === email.toLowerCase());
+
+    if (!matched) {
+      NeuAlert.error('Email tidak terdaftar. Periksa kembali email Anda.');
+      return;
+    }
+    if (matched.status !== 'Aktif') {
+      NeuAlert.error('Akun ini nonaktif. Hubungi Super Admin untuk mengaktifkan kembali.');
+      return;
+    }
+    if (matched.password !== pass) {
+      NeuAlert.error('Password salah. Silakan coba lagi.');
+      return;
+    }
+
+    try {
+      AUTH.login(matched);
+    } catch {
+      NeuAlert.error('Akun tidak dapat masuk. Pastikan nama dan peran akun valid serta browser dapat menyimpan sesi login.');
+      return;
+    }
+
+    let rememberEmailSaved = true;
+    try {
+      if (this.form.remember) {
+        localStorage.setItem('prodihukum_remembered_email', email);
+      } else {
+        localStorage.removeItem('prodihukum_remembered_email');
+      }
+    } catch {
+      rememberEmailSaved = false;
+    }
+
+    logActivity('Login ke panel admin', '\u{1F510}');
+    NeuAlert.base({
+      icon: 'success',
+      title: 'Login Berhasil',
+      text: rememberEmailSaved
+        ? 'Selamat datang di Panel Manajemen Program Studi Hukum UMP.'
+        : 'Login berhasil, tetapi email tidak dapat disimpan untuk fitur Ingat Saya.',
+      timer: 1100,
+      showConfirmButton: false
+    }).then(() => {
+      window.location.href = 'dashboard.html';
+    });
+  }, 650);
+}
+```
+
+#### 2. Lookup Dosen dan Kurikulum
+
+`kodeDosen` dicocokkan dengan `dosen.kode` setelah normalisasi. Nama pengampu menjadi fallback untuk record tanpa kode; bukan relasi foreign key.
+
+```javascript
+function normalizeLecturerCode(value) {
+  const code = String(value || '').trim().toLocaleLowerCase('id-ID');
+  return code && !['-', '—', 'tidak tercantum', 'n/a'].includes(code) ? code : '';
+}
+
+function coursesForLecturer(dosen) {
+  const normalizeName = value =>
+    String(value || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+  const lecturerName = normalizeName(dosen.nama);
+  const lecturerCode = normalizeLecturerCode(dosen.kode);
+  if (!lecturerName && !lecturerCode) return [];
+
+  return SAMPLE_KURIKULUM.filter(course => {
+    const courseCode = normalizeLecturerCode(course.kodeDosen);
+    if (lecturerCode && courseCode) return lecturerCode === courseCode;
+    return Boolean(
+      course.pengampu &&
+      lecturerName &&
+      normalizeName(course.pengampu) === lecturerName
+    );
+  });
+}
+
+function courseLecturerName(course) {
+  const code = normalizeLecturerCode(course.kodeDosen);
+  const lecturer = code &&
+    SAMPLE_DOSEN.find(dosen => normalizeLecturerCode(dosen.kode) === code);
+  return lecturer ? lecturer.nama : (course.pengampu || '');
+}
+```
+
+#### 3. Mencegah edit menimpa data yang berubah
+
+Form edit menyimpan snapshot record. Sebelum menyimpan, aplikasi memastikan record masih ada dan belum diubah pada tab lain.
+
+```javascript
+function hasCurrentRecord(rows, id, label, expectedSnapshot) {
+  const current = rows.find(row => String(row.id) === String(id));
+  if (!current) {
+    NeuAlert.error(`${label} yang akan diperbarui tidak ditemukan. Muat ulang halaman lalu coba lagi.`);
+    return false;
+  }
+  if (expectedSnapshot !== undefined && JSON.stringify(current) !== expectedSnapshot) {
+    NeuAlert.error(`${label} telah diubah pada tab lain. Tutup formulir, muat ulang data, lalu coba lagi.`);
+    return false;
+  }
+  return true;
+}
+```
+
+#### 4. CRUD Dosen
+
+Contoh berikut adalah metode inti di objek yang dikembalikan `adminDosenPage()`. Perubahan baru dianggap berhasil setelah `DB.save()` berhasil; jika gagal, state lokal dikembalikan.
+
+```javascript
+emptyForm() {
+  return { id: null, nama: '', kode: '' };
+},
+openAdd() {
+  this.editing = null;
+  this.editingSnapshot = undefined;
+  this.form = this.emptyForm();
+  this.showModal = true;
+},
+openEdit(dosen) {
+  this.editing = dosen.id;
+  this.editingSnapshot = JSON.stringify(dosen);
+  this.form = { ...dosen };
+  this.showModal = true;
+},
+persist() {
+  if (!DB.save('dosen', this.dosen)) return false;
+  SAMPLE_DOSEN = this.dosen;
+  return true;
+},
+save() {
+  if (!String(this.form.nama || '').trim()) {
+    NeuAlert.error('Nama dosen wajib diisi.');
+    return;
+  }
+  this.form.nama = this.form.nama.trim();
+  this.form.kode = String(this.form.kode || '').trim();
+
+  if (this.editing !== null) {
+    if (!hasCurrentRecord(this.dosen, this.editing, 'Data dosen', this.editingSnapshot)) return;
+    const index = this.dosen.findIndex(dosen => dosen.id === this.editing);
+    if (index < 0) {
+      NeuAlert.error('Data dosen yang akan diperbarui tidak ditemukan. Muat ulang halaman lalu coba lagi.');
+      return;
+    }
+    const previous = this.dosen[index];
+    this.dosen[index] = { ...this.form };
+    if (!this.persist()) {
+      this.dosen[index] = previous;
+      NeuAlert.storageFull();
+      return;
+    }
+    logActivity(`Memperbarui data dosen: ${this.form.nama}`, '\u{270F}\u{FE0F}');
+    NeuAlert.updated('Data dosen berhasil diperbarui.');
+  } else {
+    this.form.id = Date.now();
+    this.dosen.unshift({ ...this.form });
+    if (!this.persist()) {
+      this.dosen.shift();
+      NeuAlert.storageFull();
+      return;
+    }
+    logActivity(`Menambahkan dosen baru: ${this.form.nama}`, '\u{2795}');
+    NeuAlert.success('Data dosen berhasil disimpan.');
+  }
+  this.showModal = false;
+  this.editing = null;
+  this.editingSnapshot = undefined;
+},
+async remove(dosen) {
+  const confirmed = await NeuAlert.confirmDelete('data dosen ini');
+  if (!confirmed) return;
+  const previous = this.dosen;
+  this.dosen = this.dosen.filter(item => item.id !== dosen.id);
+  if (!this.persist()) {
+    this.dosen = previous;
+    NeuAlert.storageFull();
+    return;
+  }
+  logActivity(`Menghapus data dosen: ${dosen.nama}`, '\u{1F5D1}\u{FE0F}');
+  NeuAlert.deleted('Data dosen berhasil dihapus.');
+}
+```
+
+#### 5. Konfigurasi tabel Kurikulum
+
+Halaman `admin/kurikulum.html` menggunakan `adminCrudTable(config)` dengan pencarian, filter semester, validasi, dan ekspor CSV.
+
+```javascript
+adminCrudTable({
+  rows: SAMPLE_KURIKULUM,
+  dbKey: 'kurikulum',
+  emptyForm: {
+    kode: '',
+    nama: '',
+    sks: 2,
+    semester: 1,
+    pengampu: '',
+    kodeDosen: ''
+  },
+  searchKeys: ['kode', 'nama', 'pengampu', 'kodeDosen'],
+  filter(row, semester) {
+    return semester === 'all' || Number(row.semester) === Number(semester);
+  },
+  searchValue(row, key) {
+    return key === 'pengampu' ? courseLecturerName(row) : row[key];
+  },
+  exportColumns: [
+    ['Semester', 'semester'],
+    ['Kode MK', 'kode'],
+    ['Mata Kuliah', 'nama'],
+    ['SKS', 'sks'],
+    ['Dosen Pengampu', 'pengampu', row => courseLecturerName(row)],
+    ['Kode Dosen', 'kodeDosen']
+  ],
+  exportFilename: 'kurikulum-prodi-hukum.csv',
+  itemLabel: 'mata kuliah ini',
+  validate(f) {
+    const kode = String(f.kode || '').trim();
+    const nama = String(f.nama || '').trim();
+    const sks = Number(f.sks);
+    const semester = Number(f.semester);
+
+    if (!kode || !nama) {
+      NeuAlert.error('Kode dan Nama Mata Kuliah wajib diisi.');
+      return false;
+    }
+    if (!Number.isInteger(sks) || sks < 1 || sks > 6) {
+      NeuAlert.error('SKS harus berupa bilangan bulat dari 1 sampai 6.');
+      return false;
+    }
+    if (!Number.isInteger(semester) || semester < 1 || semester > 8) {
+      NeuAlert.error('Semester harus berupa bilangan bulat dari 1 sampai 8.');
+      return false;
+    }
+
+    f.kode = kode;
+    f.nama = nama;
+    f.sks = sks;
+    f.semester = semester;
+    f.pengampu = String(f.pengampu || '').trim();
+    f.kodeDosen = String(f.kodeDosen || '').trim();
+    return true;
+  }
+});
+```
+
+#### 6. Inti CRUD generik
+
+`adminCrudTable(config)` memasok perilaku tabel bersama untuk modul yang memakai konfigurasi serupa.
+
+```javascript
+persist() {
+  if (config.dbKey) {
+    const saved = DB.save(config.dbKey, this.rows);
+    if (!saved) return false;
+    if (config.dbKey === 'alumni') SAMPLE_ALUMNI = this.rows;
+    else if (config.dbKey === 'kurikulum') SAMPLE_KURIKULUM = this.rows;
+    else if (config.dbKey === 'dokumen') SAMPLE_DOKUMEN = this.rows;
+    else if (config.dbKey === 'kegiatan') SAMPLE_KEGIATAN = this.rows;
+    else if (config.dbKey === 'pengguna') SAMPLE_PENGGUNA = this.rows;
+    else if (config.dbKey === 'pengumuman') SAMPLE_PENGUMUMAN = this.rows;
+    else if (config.dbKey === 'prestasi') SAMPLE_PRESTASI = this.rows;
+    return true;
+  }
+  return true;
+},
+init() {
+  window.addEventListener('db-update', event => {
+    if (!event.detail) return;
+    if (config.dbKey === 'kurikulum' && event.detail.key === 'dosen') {
+      this.relatedDataRevision += 1;
+      return;
+    }
+    if (event.detail.key !== config.dbKey || !Array.isArray(event.detail.data)) return;
+    this.rows = [...event.detail.data];
+  });
+},
+openAdd() {
+  this.editing = null;
+  this.editingSnapshot = undefined;
+  this.form = { ...config.emptyForm };
+  this.showModal = true;
+},
+openEdit(row) {
+  this.editing = row.id;
+  this.editingSnapshot = JSON.stringify(row);
+  this.form = { ...row };
+  this.showModal = true;
+},
+save() {
+  if (config.validate && !config.validate(this.form)) return;
+  const label = config.itemLabel ? config.itemLabel.replace(/ ini$/, '') : 'Data';
+  if (this.editing !== null && this.editing !== undefined) {
+    if (!hasCurrentRecord(this.rows, this.editing, label, this.editingSnapshot)) return;
+    const idx = this.rows.findIndex(x => x.id === this.editing);
+    const prev = this.rows[idx];
+    this.rows[idx] = { ...this.form };
+    if (!this.persist()) {
+      this.rows[idx] = prev;
+      NeuAlert.storageFull();
+      return;
+    }
+    logActivity(`Memperbarui ${label}: ${this.form[config.labelKey || 'nama'] || ''}`.trim(), '\u{270F}\u{FE0F}');
+    NeuAlert.updated();
+  } else {
+    this.form.id = Date.now();
+    this.rows.unshift({ ...this.form });
+    if (!this.persist()) {
+      this.rows.shift();
+      NeuAlert.storageFull();
+      return;
+    }
+    logActivity(`Menambahkan ${label} baru: ${this.form[config.labelKey || 'nama'] || ''}`.trim(), '\u{2795}');
+    NeuAlert.success();
+  }
+  this.showModal = false;
+  this.editing = null;
+  this.editingSnapshot = undefined;
+},
+async remove(row) {
+  const ok = await NeuAlert.confirmDelete(config.itemLabel || 'data ini');
+  if (ok) {
+    const label = config.itemLabel ? config.itemLabel.replace(/ ini$/, '') : 'data';
+    const prevList = this.rows;
+    this.rows = this.rows.filter(x => x.id !== row.id);
+    if (!this.persist()) {
+      this.rows = prevList;
+      NeuAlert.storageFull();
+      return;
+    }
+    logActivity(`Menghapus ${label}: ${row[config.labelKey || 'nama'] || ''}`.trim(), '\u{1F5D1}\u{FE0F}');
+    NeuAlert.deleted();
+  }
+}
+```
+
+#### 7. Penyimpanan dan sinkronisasi data tabel
+
+`DB.save()` menulis sinkron ke localStorage terlebih dahulu. IndexedDB hanya menerima salinan setelah penulisan utama berhasil.
+
+```javascript
+function save(key, data) {
+  let serialized;
+  try {
+    serialized = JSON.stringify(data);
+  } catch (e) {
+    console.warn('DB: gagal menyiapkan data "' + key + '" untuk disimpan.', e);
+    return false;
+  }
+  if (typeof serialized !== 'string') {
+    console.warn('DB: data "' + key + '" tidak dapat diserialisasi untuk disimpan.');
+    return false;
+  }
+
+  try {
+    localStorage.setItem(NS + key, serialized);
+    mirrorToIndexedDB(key, data);
+    window.dispatchEvent(new CustomEvent('db-update', {
+      detail: { key, data }
+    }));
+    return true;
+  } catch (e) {
+    pruneStorage();
+    try {
+      localStorage.setItem(NS + key, serialized);
+      mirrorToIndexedDB(key, data);
+      window.dispatchEvent(new CustomEvent('db-update', {
+        detail: { key, data }
+      }));
+      return true;
+    } catch (e2) {
+      console.warn('DB: localStorage penuh, gagal menyimpan "' + key + '".', e2);
+      return false;
+    }
+  }
+}
+```
+
+Jika penulisan tetap gagal setelah pemangkasan log internal, fungsi mengembalikan `false`; CRUD lalu mengembalikan perubahan di memori. Perubahan key pada tab lain memicu `storage` event dan disalurkan ke komponen melalui `db-update`.
+
+#### 8. Model JavaScript dan normalisasi seed
+
+Contoh record berikut memakai field yang ada pada seed saat ini:
+
+```javascript
+const contohDosen = {
+  id: 3,
+  nama: 'Dr. Tri Mulyadi, S.H., M.H',
+  kode: 'HKM003'
+};
+
+const contohKurikulum = {
+  id: 1,
+  kode: 'UMP1002',
+  nama: 'AI Islam dan Kemuhammadiyahan 1',
+  sks: 2,
+  semester: 1,
+  pengampu: 'Dr. Tri Mulyadi, S.H., M.H',
+  kodeDosen: 'HKM003',
+  sumber: 'MK Baru'
+};
+
+let SAMPLE_DOSEN = DB.load('dosen', SEED_DOSEN);
+let SAMPLE_KURIKULUM = DB.load('kurikulum', SEED_KURIKULUM);
+```
+
+Seed kurikulum awal membawa metadata `sumber`; aplikasi membuang metadata impor lama sebelum data aktif dipakai:
+
+```javascript
+if (Array.isArray(SAMPLE_KURIKULUM) &&
+    SAMPLE_KURIKULUM.some(course => course && ('sumber' in course || 'catatan' in course))) {
+  const curriculumWithoutMetadata = SAMPLE_KURIKULUM.map(course => {
+    if (!course || typeof course !== 'object') return course;
+    const cleanCourse = { ...course };
+    delete cleanCourse.sumber;
+    delete cleanCourse.catatan;
+    return cleanCourse;
+  });
+  if (DB.save('kurikulum', curriculumWithoutMetadata)) {
+    SAMPLE_KURIKULUM = curriculumWithoutMetadata;
+  } else {
+    console.error('DB: gagal menghapus metadata sumber dan keterangan dari kurikulum tersimpan.');
+  }
+}
+```
+
+`DB.load()` menggunakan seed jika key belum ada, JSON rusak, atau bentuk luar data tidak sesuai. Field `pengampu` dapat tidak ada pada 10 record seed tanpa dosen; validasi field dilakukan saat CRUD disimpan.
 
 ---
 
@@ -531,4 +1048,4 @@ Hak cipta website: **© 2026–sekarang**. Tahun pada footer website mengikuti t
 
 ---
 
-*Terakhir diperbarui: 16 November 2026*
+*Terakhir diperbarui: 23 November 2026*
