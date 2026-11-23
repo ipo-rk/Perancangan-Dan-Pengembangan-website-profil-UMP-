@@ -525,7 +525,7 @@ Tidak ada foreign key nyata. Semua relasi adalah **logical lookup** di JavaScrip
 ## 👥 Tim Pengembang
 
 **Program Studi Hukum — Universitas Muhammadiyah Papua (UMP)**  
-Sacode 2025 — Latihan Perancangan & Pengembangan Website Profil
+Sacode 2026 — Latihan Perancangan & Pengembangan Website Profil
 
 Hak cipta website: **© 2025–sekarang**. Tahun pada footer website mengikuti tahun browser; README adalah dokumen statis.
 
